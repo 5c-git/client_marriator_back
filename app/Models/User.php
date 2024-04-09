@@ -6,6 +6,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class User extends Authenticatable
 {
@@ -20,6 +22,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'api_token'
     ];
 
     /**
@@ -43,5 +46,34 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class, 'user_roles');
+    }
+
+    public function isAdmin()
+    {
+        return $this->roles()->where('name', 'admin')->exists();
+    }
+
+    public function generateToken()
+    {
+        $this->api_token =  Str::random(60);
+        $this->save();
+
+        return $this->api_token;
+    }
+
+    static function checkToken($api_token)
+    {
+        $user = User::where('api_token','=',$api_token)->first();
+        if($user) {
+            Auth::login($user, true);
+            return $user;
+        }else{
+            return false;
+        }
     }
 }
