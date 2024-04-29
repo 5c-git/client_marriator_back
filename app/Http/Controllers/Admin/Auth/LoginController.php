@@ -4,10 +4,8 @@ namespace App\Http\Controllers\Admin\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Models\UserRole;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 
 class LoginController extends Controller
@@ -37,7 +35,7 @@ class LoginController extends Controller
         $user = User::where('email', $data['email'])->first();
 
         if ($user && $user->isAdmin()) {
-            $response = Auth::attempt(['email' => $data['email'], 'password' => $data['password']], true);
+            $response = Auth::attempt(['email' => $data['email'], 'password' => $data['password']]);
             if ($response) {
                 return 'success';
             }
