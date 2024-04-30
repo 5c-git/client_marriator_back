@@ -47,10 +47,19 @@
             <label for="select" class="col-sm-2 col-form-label">Тип поля</label>
             <div class="col-sm-10">
                 <select class="custom-select" name="type" required>
-                    <option value="1">int</option>
-                    <option value="2">string</option>
-                    <option value="3">select</option>
-                    <option value="4">Справочник</option>
+                    @foreach($typeEnum as $type)
+                        <option value="{{$type->value}}" {{$field->type == $type->value?'selected="selected"':''}}>{{$type->typeName()}}</option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="select" class="col-sm-2 col-form-label">Справочник</label>
+            <div class="col-sm-10">
+                <select class="custom-select" name="directory" required>
+                    @foreach($directoryEnum as $directory)
+                        <option value="{{$directory->value}}" {{$field->directory == $directory->value?'selected="selected"':''}}>{{$directory->directoryName()}}</option>
+                    @endforeach
                 </select>
             </div>
         </div>

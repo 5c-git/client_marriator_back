@@ -7,6 +7,9 @@ use App\Models\Fields\Fields;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
+use App\Enum\Fields\FieldsTypeEnum;
+use App\Enum\Fields\FieldsDirectoryEnum;
+
 class FieldsController extends Controller
 {
 
@@ -29,8 +32,13 @@ class FieldsController extends Controller
     public function fieldsEdit(Request $request)
     {
         $field = Fields::where('id', '=', $request->id)->first();
-
-        return view('admin.fields.fieldsEdit', compact('field'));
+        $typeEnum = FieldsTypeEnum::cases();
+        $directoryEnum = FieldsDirectoryEnum::cases();
+        if($field) {
+            return view('admin.fields.fieldsEdit', compact('field','typeEnum','directoryEnum'));
+        }else{
+            return redirect()->back();
+        }
 
     }
 
@@ -41,9 +49,9 @@ class FieldsController extends Controller
 
         $data = $request->input();
 
-        $field = new Fields();
         $field->name = $data['name'];
         $field->uuid = $data['uuid'];
+        $field->type = $data['type'];
         $field->description = $data['description'];
         if(!empty($data['active'])) {
             $field->active = true;
@@ -64,7 +72,9 @@ class FieldsController extends Controller
 
     public function fieldsCreate()
     {
-        return view('admin.fields.fieldsAdd');
+        $typeEnum = FieldsTypeEnum::cases();
+        $directoryEnum = FieldsDirectoryEnum::cases();
+        return view('admin.fields.fieldsAdd',compact('typeEnum','directoryEnum'));
     }
 
     public function fieldsCreateAjax(Request $request)

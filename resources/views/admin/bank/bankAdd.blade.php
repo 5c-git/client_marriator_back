@@ -5,13 +5,13 @@
 @section('content_header')
     <div class="row">
         <div class="col-sm-11">
-            <h1>Создание нового поля</h1>
+            <h1>Создание банка</h1>
         </div>
     </div>
 @stop
 
 @section('content')
-    <form class="status formCustomSubmit" action="{{route('fieldsCreateAjax')}}">
+    <form class="status formCustomSubmit" action="{{route('bankCreateAjax')}}">
         @csrf
 
         <div class="form-group row">
@@ -28,37 +28,21 @@
         </div>
 
         <div class="form-group row">
+            <label for="bic" class="col-sm-2 col-form-label">Bic</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" name="bic" id="bic" required>
+            </div>
+        </div>
+
+        <div class="form-group row">
             <label for="description" class="col-sm-2 col-form-label">Описание</label>
             <div class="col-sm-10">
                 <textarea type="text" class="form-control" name="description" id="description"></textarea>
             </div>
         </div>
-        <div class="form-group row">
-            <label for="select" class="col-sm-2 col-form-label">Тип поля</label>
-            <div class="col-sm-10">
-                <select class="custom-select" name="type" required>
-                    @foreach($typeEnum as $type)
-                        <option value="{{$type->value}}">{{$type->typeName()}}</option>
-                    @endforeach
-                </select>
-            </div>
-        </div>
-
-        <div class="form-group row">
-            <label for="select" class="col-sm-2 col-form-label">Справочник</label>
-            <div class="col-sm-10">
-                <select class="custom-select" name="directory" required>
-                    @foreach($directoryEnum as $directory)
-                        <option value="{{$directory->value}}">{{$directory->directoryName()}}</option>
-                    @endforeach
-                </select>
-            </div>
-        </div>
 
        // parentFields
-
-
-
+       // fields
 
         <div class="form-group row">
             <label for="active" class="col-sm-2 col-form-label">Активность</label>
@@ -74,7 +58,7 @@
         <div class="form-group row">
             <div class="col-sm-10">
                 <button type="submit" class="btn btn-success">Сохранить</button>
-                <a href="{{route('fieldsList')}}" style="margin-left: 10px" class="btn btn-secondary btn-md active"
+                <a href="{{route('bankList')}}" style="margin-left: 10px" class="btn btn-secondary btn-md active"
                    role="button" aria-pressed="true">Вернуться</a>
             </div>
         </div>

@@ -349,11 +349,11 @@ return [
                     'submenu' => [
                         [
                             'text' => 'Города',
-                            'url' => '#',
+                            'url' => 'admin/directory_country',
                         ],
                         [
                             'text' => 'Банки',
-                            'url' => '#',
+                            'url' => 'admin/directory_bank',
                         ],
                     ],
                 ],

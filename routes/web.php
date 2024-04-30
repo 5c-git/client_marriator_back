@@ -34,5 +34,23 @@ Route::group(['prefix' => 'admin'], function () {
             Route::get('/delete/{id}/', 'App\Http\Controllers\Admin\Page\Fields\FieldsController@fieldsDelete')->name('fieldsDelete');
         });
 
+        Route::group(['prefix' => 'directory_country'], function () {
+            Route::get('/create/', 'App\Http\Controllers\Admin\Page\Fields\Directory\CountryController@countryCreate')->name('countryCreate');
+            Route::post('/createAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\CountryController@countryCreateAjax')->name('countryCreateAjax');
+            Route::get('/', 'App\Http\Controllers\Admin\Page\Fields\Directory\CountryController@countryList')->name('countryList');
+            Route::get('/edit/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\CountryController@countryEdit')->name('countryEdit');
+            Route::post('/editAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\CountryController@countryEditAjax')->name('countryEditAjax');
+            Route::get('/delete/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\CountryController@countryDelete')->name('countryDelete');
+        });
+
+        Route::group(['prefix' => 'directory_bank'], function () {
+            Route::get('/create/', 'App\Http\Controllers\Admin\Page\Fields\Directory\BankController@bankCreate')->name('bankCreate');
+            Route::post('/createAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\BankController@bankCreateAjax')->name('bankCreateAjax');
+            Route::get('/', 'App\Http\Controllers\Admin\Page\Fields\Directory\BankController@bankList')->name('bankList');
+            Route::get('/edit/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\BankController@bankEdit')->name('bankEdit');
+            Route::post('/editAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\BankController@bankEditAjax')->name('bankEditAjax');
+            Route::get('/delete/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\BankController@bankDelete')->name('bankDelete');
+        });
+
     });
 });
