@@ -34,8 +34,15 @@ class FieldsController extends Controller
         $field = Fields::where('id', '=', $request->id)->first();
         $typeEnum = FieldsTypeEnum::cases();
         $directoryEnum = FieldsDirectoryEnum::cases();
+        $fields = Fields::where('id', '!=', $request->id)->get();
+
         if($field) {
-            return view('admin.fields.fieldsEdit', compact('field','typeEnum','directoryEnum'));
+            if(!empty($field->parentFields)) {
+                $field->parentFields = json_decode($field->parentFields, true);
+            }else{
+                $field->parentFields = [];
+            }
+            return view('admin.fields.fieldsEdit', compact('field','typeEnum','directoryEnum','fields'));
         }else{
             return redirect()->back();
         }
@@ -53,6 +60,11 @@ class FieldsController extends Controller
         $field->uuid = $data['uuid'];
         $field->type = $data['type'];
         $field->description = $data['description'];
+        if(empty($data['parentFields'])){
+            $data['parentFields'] = [];
+        }
+        $field->parentFields = json_encode($data['parentFields']);
+
         if(!empty($data['active'])) {
             $field->active = true;
         }else{
@@ -74,7 +86,8 @@ class FieldsController extends Controller
     {
         $typeEnum = FieldsTypeEnum::cases();
         $directoryEnum = FieldsDirectoryEnum::cases();
-        return view('admin.fields.fieldsAdd',compact('typeEnum','directoryEnum'));
+        $fields = Fields::get();
+        return view('admin.fields.fieldsAdd',compact('typeEnum','directoryEnum','fields'));
     }
 
     public function fieldsCreateAjax(Request $request)
@@ -86,6 +99,10 @@ class FieldsController extends Controller
         $field->uuid = $data['uuid'];
         $field->type = $data['type'];
         $field->description = $data['description'];
+        if(empty($data['parentFields'])){
+            $data['parentFields'] = [];
+        }
+        $field->parentFields = json_encode($data['parentFields']);
         if(!empty($data['active'])) {
             $field->active = true;
         }else{

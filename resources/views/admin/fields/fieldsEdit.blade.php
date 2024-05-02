@@ -63,6 +63,24 @@
                 </select>
             </div>
         </div>
+
+        <div class="form-group row">
+            <label for="select" class="col-sm-2 col-form-label">Привязка полей</label>
+            <div class="col-sm-10">
+                <x-adminlte-select2 id="parentFields" name="parentFields[]" multiple>
+                    @foreach($fields as $fieldOne)
+                        @if(!empty($fieldOne->uuid))
+                            @if(in_array($fieldOne->uuid,$field->parentFields))
+                                <option selected value="{{$fieldOne->uuid}}">{{$fieldOne->name}} [{{$fieldOne->uuid}}]</option>
+                            @else
+                                <option value="{{$fieldOne->uuid}}">{{$fieldOne->name}} [{{$fieldOne->uuid}}]</option>
+                            @endif
+                        @endif
+                    @endforeach
+                </x-adminlte-select2>
+            </div>
+        </div>
+
         <div class="form-group row">
             <label for="active" class="col-sm-2 col-form-label">Активность</label>
             <div class="offset-sm-2 col-sm-10">

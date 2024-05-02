@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\Page\Fields\Directory;
 
 use App\Http\Controllers\Controller;
 use App\Models\Fields\Directory\Bank;
+use App\Models\Fields\Fields;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -30,7 +31,13 @@ class BankController extends Controller
     {
         $bank = Bank::where('id', '=', $request->id)->first();
         if($bank) {
-            return view('admin.bank.bankEdit', compact('bank'));
+            $fields = Fields::get();
+            if(!empty($bank->parentFields)) {
+                $bank->parentFields = json_decode($bank->parentFields, true);
+            }else{
+                $bank->parentFields = [];
+            }
+            return view('admin.bank.bankEdit', compact('bank','fields'));
         }else{
             return redirect()->back();
         }
@@ -47,6 +54,11 @@ class BankController extends Controller
         $bank->uuid = $data['uuid'];
         $bank->bic = $data['bic'];
         $bank->description = $data['description'];
+        if(empty($data['parentFields'])){
+            $data['parentFields'] = [];
+        }
+        $bank->parentFields = json_encode($data['parentFields']);
+
         if(!empty($data['active'])) {
             $bank->active = true;
         }else{
@@ -66,7 +78,8 @@ class BankController extends Controller
 
     public function bankCreate()
     {
-        return view('admin.bank.bankAdd');
+        $fields = Fields::get();
+        return view('admin.bank.bankAdd',compact('fields'));
     }
 
     public function bankCreateAjax(Request $request)
@@ -78,6 +91,11 @@ class BankController extends Controller
         $bank->uuid = $data['uuid'];
         $bank->bic = $data['bic'];
         $bank->description = $data['description'];
+        if(empty($data['parentFields'])){
+            $data['parentFields'] = [];
+        }
+        $bank->parentFields = json_encode($data['parentFields']);
+
         if(!empty($data['active'])) {
             $bank->active = true;
         }else{

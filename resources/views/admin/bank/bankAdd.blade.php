@@ -41,7 +41,19 @@
             </div>
         </div>
 
-       // parentFields
+        <div class="form-group row">
+            <label for="select" class="col-sm-2 col-form-label">Привязка полей</label>
+            <div class="col-sm-10">
+                <x-adminlte-select2 id="parentFields" name="parentFields[]" multiple>
+                    @foreach($fields as $field)
+                        @if(!empty($field->uuid))
+                            <option value="{{$field->uuid}}">{{$field->name}} [{{$field->uuid}}]</option>
+                        @endif
+                    @endforeach
+                </x-adminlte-select2>
+            </div>
+        </div>
+
        // fields
 
         <div class="form-group row">
