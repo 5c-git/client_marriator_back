@@ -60,6 +60,7 @@ class FieldsController extends Controller
         $field->uuid = $data['uuid'];
         $field->type = $data['type'];
         $field->description = $data['description'];
+        $field->step = $data['step'];
         if(empty($data['parentFields'])){
             $data['parentFields'] = [];
         }
@@ -99,6 +100,7 @@ class FieldsController extends Controller
         $field->uuid = $data['uuid'];
         $field->type = $data['type'];
         $field->description = $data['description'];
+        $field->step = $data['step'];
         if(empty($data['parentFields'])){
             $data['parentFields'] = [];
         }

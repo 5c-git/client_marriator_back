@@ -43,6 +43,12 @@
                 </select>
             </div>
         </div>
+        <div class="form-group row">
+            <label for="step" class="col-sm-2 col-form-label">Этап</label>
+            <div class="col-sm-10">
+                <input type="number" class="form-control" name="step" id="step">
+            </div>
+        </div>
 
         <div class="form-group row">
             <label for="select" class="col-sm-2 col-form-label">Справочник</label>

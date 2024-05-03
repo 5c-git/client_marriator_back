@@ -18,6 +18,7 @@ class Fields extends Model
         'type',
         'directory',
         'active',
+        'step'
     ];
 
     public $timestamps = false;
