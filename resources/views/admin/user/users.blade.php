@@ -4,10 +4,10 @@
 
 @section('content_header')
     <div class="row">
-        <div class="col-sm-11">
+        <div class="col-sm-10">
             <h1>Users</h1>
         </div>
-        <div class="col-sm-1">
+        <div class="col-sm-2">
             <a href="{{route('usersCreate')}}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Create</a>
         </div>
     </div>
@@ -63,5 +63,7 @@ if(!empty($user->email_verified_at)){
             </tr>
         @endforeach
     </x-adminlte-datatable>
+    <script src="{{ asset('js/custom.js') }}" defer></script>
+
 @stop
 
