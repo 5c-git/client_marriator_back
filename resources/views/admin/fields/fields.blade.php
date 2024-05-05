@@ -18,6 +18,7 @@
         $heads = [
         'ID',
         'Name',
+        'Step',
         'Uuid',
         'active',
         ['label' => 'Actions', 'no-export' => true, 'width' => 5],
@@ -33,7 +34,7 @@
             </button></a>';
         $btnName = '<a href="'.route('fieldsEdit',$field->id).'">'.$field->name.'</a>';
 
-        $fieldData[] = [$field->id , $btnName, $field->uuid,$field->active, '<nobr>'.$btnEdit.$btnDelete.'</nobr>'];
+        $fieldData[] = [$field->id , $btnName, $field->step,$field->uuid,$field->active, '<nobr>'.$btnEdit.$btnDelete.'</nobr>'];
         }
 
         $config = [
@@ -41,7 +42,7 @@
         $fieldData
         ,
         'order' => [[0, 'desc']],
-        'columns' => [null, null,null, null, ['orderable' => false]],
+        'columns' => [null, null,null,null, null, ['orderable' => false]],
         ];
     @endphp
 
