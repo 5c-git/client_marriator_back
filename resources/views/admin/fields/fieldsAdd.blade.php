@@ -53,7 +53,8 @@
         <div class="form-group row">
             <label for="select" class="col-sm-2 col-form-label">Справочник</label>
             <div class="col-sm-10">
-                <select class="custom-select" name="directory" required>
+                <select class="custom-select" name="directory">
+                    <option value="">Не выбрано</option>
                     @foreach($directoryEnum as $directory)
                         <option value="{{$directory->value}}">{{$directory->directoryName()}}</option>
                     @endforeach
@@ -67,8 +68,8 @@
             <div class="col-sm-10">
                 <x-adminlte-select2 id="parentFields" name="parentFields[]" multiple>
                     @foreach($fields as $field)
-                        @if(!empty($field->uuid))
-                            <option value="{{$field->uuid}}">{{$field->name}} [{{$field->uuid}}]</option>
+                        @if(!empty($field['uuid']))
+                            <option value="{{$field['uuid']}}">{{$field['name']}} [{{$field['uuid']}}]</option>
                         @endif
                     @endforeach
                 </x-adminlte-select2>

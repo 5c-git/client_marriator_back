@@ -34,7 +34,7 @@ class FieldsController extends Controller
         $field = Fields::where('id', '=', $request->id)->first();
         $typeEnum = FieldsTypeEnum::cases();
         $directoryEnum = FieldsDirectoryEnum::cases();
-        $fields = Fields::where('id', '!=', $request->id)->get();
+        $fields = Fields::where('id', '!=', $request->id)->where('active',true)->get()->toArray();
 
         if($field) {
             if(!empty($field->parentFields)) {
@@ -42,6 +42,12 @@ class FieldsController extends Controller
             }else{
                 $field->parentFields = [];
             }
+            foreach (FieldsDirectoryEnum::values() as $directory){
+                if($directoryArr=$directory::where('active',true)->get()->toArray()) {
+                    $fields = array_merge($fields, $directoryArr);
+                }
+            }
+
             return view('admin.fields.fieldsEdit', compact('field','typeEnum','directoryEnum','fields'));
         }else{
             return redirect()->back();
@@ -61,6 +67,8 @@ class FieldsController extends Controller
         $field->type = $data['type'];
         $field->description = $data['description'];
         $field->step = $data['step'];
+        $field->directory = $data['directory'];
+
         if(empty($data['parentFields'])){
             $data['parentFields'] = [];
         }
@@ -87,7 +95,12 @@ class FieldsController extends Controller
     {
         $typeEnum = FieldsTypeEnum::cases();
         $directoryEnum = FieldsDirectoryEnum::cases();
-        $fields = Fields::get();
+        $fields = Fields::where('active',true)->get()->toArray();
+        foreach (FieldsDirectoryEnum::values() as $directory){
+            if($directoryArr=$directory::where('active',true)->get()->toArray()) {
+                $fields = array_merge($fields, $directoryArr);
+            }
+        }
         return view('admin.fields.fieldsAdd',compact('typeEnum','directoryEnum','fields'));
     }
 
@@ -101,6 +114,8 @@ class FieldsController extends Controller
         $field->type = $data['type'];
         $field->description = $data['description'];
         $field->step = $data['step'];
+        $field->directory = $data['directory'];
+
         if(empty($data['parentFields'])){
             $data['parentFields'] = [];
         }
