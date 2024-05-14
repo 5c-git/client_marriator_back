@@ -25,14 +25,17 @@ class FormController extends Controller
     }
 
     public function getForm(Request $request){
-        $step = 0;
+        $step = 2;
         if(!empty($request->step)){
             $step = $request->step;
         }
         $formData = [];
         if(!empty($request->formData)){
             $formData = $request->formData;
+
         }
+        $formData['1111'] = 1;
+        $formData['1112'] = 'city1';
         echo "<pre>";
         var_dump((new FormBuilderService($step,$formData))->createFormData());
         echo "</pre>";

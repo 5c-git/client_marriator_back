@@ -21,4 +21,15 @@ class Bank extends Model
     ];
 
     public $timestamps = false;
+
+    public function getDataDirectory(bool $allFields = false){
+        return false;
+    }
+
+    public function getDirectoryFields($value){
+        if($this->bic == $value){
+            return json_decode($this->fields,true);
+        }
+        return false;
+    }
 }
