@@ -24,6 +24,33 @@ class FormController extends Controller
 
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/getForm",
+     *     operationId="getForm",
+     *     tags={"getForm"},
+     *     summary="getForm",
+     *     description="getForm Endpoint",
+     *     @OA\RequestBody(
+     *         @OA\JsonContent(),
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                 type="object",
+     *                 required={"step"},
+     *                 @OA\Property(property="step",type="number"),
+     *                 @OA\Property(property="formData",type="json")
+     *             ),
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *       response="200",
+     *       description="form data",
+     *       @OA\JsonContent()
+     *     ),
+     * )
+     */
+
     public function getForm(Request $request){
         $step = 2;
         if(!empty($request->step)){
