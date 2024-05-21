@@ -72,7 +72,11 @@ class FieldsController extends Controller
         if(empty($data['parentFields'])){
             $data['parentFields'] = [];
         }
-        $field->parentFields = json_encode($data['parentFields']);
+        if(!empty($data['parentFields'])) {
+            $field->parentFields = json_encode($data['parentFields']);
+        }else{
+            $field->parentFields = json_encode([]);
+        }
 
         if(!empty($data['active'])) {
             $field->active = true;
@@ -119,7 +123,11 @@ class FieldsController extends Controller
         if(empty($data['parentFields'])){
             $data['parentFields'] = [];
         }
-        $field->parentFields = json_encode($data['parentFields']);
+        if(!empty($data['parentFields'])) {
+            $field->parentFields = json_encode($data['parentFields']);
+        }else{
+            $field->parentFields = json_encode([]);
+        }
         if(!empty($data['active'])) {
             $field->active = true;
         }else{

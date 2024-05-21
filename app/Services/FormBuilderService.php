@@ -23,11 +23,8 @@ class FormBuilderService
 
     public function createFormData(){
         $this->getFields();
-        if($this->step>1){
-            $this->filterFields();
-        }else{
-           // return $this->fieldsThisStep;
-        }
+        $this->filterFields();
+
         foreach ($this->fieldsThisStep as $tdgv){
             echo "<pre>";
             var_dump($tdgv->toArray());
@@ -38,7 +35,15 @@ class FormBuilderService
 
     private function filterFields(){
         $oldFieldUuid = [];
-        $formVal = array_flip($this->formData);
+        foreach ($this->formData as $kDataForm=>$formData){
+            if(is_array($formData)){
+                foreach ($formData as $oneData){
+                    $formVal[$oneData] = $kDataForm;
+                }
+            }else {
+                $formVal[$formData] = $kDataForm;
+            }
+        }
         foreach ($this->fieldsOldStep as $oldField){
             if(!empty($this->formData[$oldField->uuid]) || !empty($formVal[$oldField->uuid])) {
                 $oldFieldUuid[] = $oldField->uuid;
@@ -52,12 +57,23 @@ class FormBuilderService
             }
         }
         foreach ($this->fieldsThisStep as $k=>$newFields){
-           $parentFields = json_decode($newFields->parentFields,true);
-           foreach ($parentFields as $parentField) {
-               if (!in_array($parentField,$oldFieldUuid)){
-                   unset($this->fieldsThisStep[$k]);
-               }
-           }
+            $unset = false;
+            $parentFields = json_decode($newFields->parentFields,true);
+            foreach ($parentFields as $parentField) {
+                $unset = false;
+                foreach ($parentField as $oneField) {
+                    if (!in_array($oneField, $oldFieldUuid)) {
+                        $unset = true;
+                    }
+                }
+                if(!$unset){
+                    break;
+                }
+            }
+            if ($unset){
+                unset($this->fieldsThisStep[$k]);
+            }
+
         }
     }
 
@@ -77,7 +93,7 @@ class FormBuilderService
             }
             if($field->step == $this->step){
                 $this->fieldsThisStep[] = $field;
-            }elseif ($field->step < $this->step){
+            }elseif ($field->step <= $this->step){
                 $this->fieldsOldStep[] = $field;
             }
 

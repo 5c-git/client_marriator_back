@@ -157,10 +157,41 @@ $(document).ready(function () {
     })
 
 
-    $(document).on('click', '.addItemButton', function (e) {
+    $(document).on('click', '.addItemButtonSelect', function (e) {
         e.preventDefault();
-        var block = $(this).parents('.form-group').find('.addItem:last');
-        block.after('<br>' + block[0].outerHTML);
+        var count = 0
+        $(this).parents('.form-group').find('.addItemSelect').each(function (index,item){
+            if ($(item).find('select').hasClass("select2-hidden-accessible")) {
+                $(item).find('select').select2("destroy");
+            }
+        })
+        var block = $(this).parents('.form-group').find('.addItemSelect:last');
+        var clone = block.clone();
+
+        block.after(clone);
+        $(clone).find('select').attr('id',$(clone).find('select').attr('id')+generateRandomString(5));
+        $(clone).find('select').find('option').removeAttr('selected');
+        $(this).parents('.form-group').find('.addItemSelect').each(function (index,item){
+            $(item).find('select').attr('name','parentFields['+count+'][]');
+            $(item).find('select').select2({
+                theme: 'bootstrap4',
+            });
+            count++
+        })
+    })
+
+    $(document).on('click', '.removeItemButtonSelect', function (e) {
+        e.preventDefault();
+        $(this).parents('.addItemSelect').remove();
     })
 
 })
+function generateRandomString(length) {
+    var result = '';
+    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for (var i = 0; i<length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+}
