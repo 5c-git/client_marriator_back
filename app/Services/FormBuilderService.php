@@ -12,8 +12,8 @@ class FormBuilderService
 
     public array $directory = [];
     public object $fieldsAll;
-    public array $fieldsThisStep;
-    public array $fieldsOldStep;
+    public array $fieldsThisStep = [];
+    public array $fieldsOldStep = [];
 
     public function __construct(int $step,array $formData = [])
     {

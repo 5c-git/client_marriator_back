@@ -34,8 +34,8 @@ class FormController extends Controller
             $formData = $request->formData;
 
         }
-        $formData['1111'] = 1;
-        $formData['1112'] = 'city1';
+//        $formData['1111'] = 1;
+//        $formData['1112'] = 'city1';
         echo "<pre>";
         var_dump((new FormBuilderService($step,$formData))->createFormData());
         echo "</pre>";
