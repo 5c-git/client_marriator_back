@@ -14,41 +14,43 @@ class FormBuilderService
     public object $fieldsAll;
     public array $fieldsThisStep = [];
     public array $fieldsOldStep = [];
+    public array $formattedData = [];
 
-    public function __construct(int $step,array $formData = [])
+    private array $frontMap = [
+
+    ];
+
+    public function __construct(int $step, array $formData = [])
     {
-        $this->step = $step>0?$step:1;
+        $this->step = $step > 0 ? $step : 1;
         $this->formData = $formData;
     }
 
-    public function createFormData(){
+    public function createFormData()
+    {
         $this->getFields();
         $this->filterFields();
-
-        foreach ($this->fieldsThisStep as $tdgv){
-            echo "<pre>";
-            var_dump($tdgv->toArray());
-            echo "</pre>";
-        }
+        return $this->formatData($this->fieldsThisStep);
     }
 
 
-    private function filterFields(){
+    private function filterFields()
+    {
         $oldFieldUuid = [];
-        foreach ($this->formData as $kDataForm=>$formData){
-            if(is_array($formData)){
-                foreach ($formData as $oneData){
+        foreach ($this->formData as $kDataForm => $formData) {
+            if (is_array($formData)) {
+                foreach ($formData as $oneData) {
                     $formVal[$oneData] = $kDataForm;
                 }
-            }else {
+            } else {
                 $formVal[$formData] = $kDataForm;
             }
         }
-        foreach ($this->fieldsOldStep as $oldField){
-            if(!empty($this->formData[$oldField->uuid]) || !empty($formVal[$oldField->uuid])) {
+        foreach ($this->fieldsOldStep as $oldField) {
+            if (!empty($this->formData[$oldField->uuid]) || !empty($formVal[$oldField->uuid])) {
                 $oldFieldUuid[] = $oldField->uuid;
             }
-            if(!empty($oldField->directory)){
+            if (!empty($oldField->directory)) {
                 foreach ($this->getDirectory($oldField->directory) as $directoryUuid) {
                     if (!empty($this->formData[$directoryUuid]) || !empty($formVal[$directoryUuid])) {
                         $oldFieldUuid[$oldField->uuid] = $directoryUuid;
@@ -56,9 +58,9 @@ class FormBuilderService
                 }
             }
         }
-        foreach ($this->fieldsThisStep as $k=>$newFields){
+        foreach ($this->fieldsThisStep as $k => $newFields) {
             $unset = false;
-            $parentFields = json_decode($newFields->parentFields,true);
+            $parentFields = json_decode($newFields->parentFields, true);
             foreach ($parentFields as $parentField) {
                 $unset = false;
                 foreach ($parentField as $oneField) {
@@ -66,49 +68,49 @@ class FormBuilderService
                         $unset = true;
                     }
                 }
-                if(!$unset){
+                if (!$unset) {
                     break;
                 }
             }
-            if ($unset){
+            if ($unset) {
                 unset($this->fieldsThisStep[$k]);
             }
 
         }
     }
 
-    private function getFields():void
+    private function getFields(): void
     {
         $this->fieldsAll = Fields::get();
-        foreach ($this->fieldsAll as $field){
-            if(!empty($field->directory)){
-                if($valuesDirectory = $this->getDirectory($field->directory,true)) {
+        foreach ($this->fieldsAll as $field) {
+            if (!empty($field->directory)) {
+                if ($valuesDirectory = $this->getDirectory($field->directory, true)) {
                     $field->valuesDirectory = $valuesDirectory;
                 }
-                if($field->step == ($this->step-1) && !empty($this->formData[$field->uuid])){
-                    if($fieldsFromDirectory = $this->getNextStepFieldsFromDirectory($field->directory,$this->formData[$field->uuid])) {
+                if ($field->step == ($this->step - 1) && !empty($this->formData[$field->uuid])) {
+                    if ($fieldsFromDirectory = $this->getNextStepFieldsFromDirectory($field->directory, $this->formData[$field->uuid])) {
                         $this->fieldsThisStep = array_merge($this->fieldsThisStep, $fieldsFromDirectory);
                     }
                 }
             }
-            if($field->step == $this->step){
+            if ($field->step == $this->step) {
                 $this->fieldsThisStep[] = $field;
-            }elseif ($field->step <= $this->step){
+            } elseif ($field->step <= $this->step) {
                 $this->fieldsOldStep[] = $field;
             }
 
         }
     }
 
-    private function getDirectory($directory,bool $allFields = false):array
+    private function getDirectory($directory, bool $allFields = false): array
     {
         $directoryData = [];
-        if(class_exists($directory)) {
+        if (class_exists($directory)) {
             if (empty($this->directory[$directory])) {
                 $this->directory[$directory] = $directory::get();
             }
             foreach ($this->directory[$directory] as $directoryFields) {
-                if($dataDirectoryFromObj = $directoryFields->getDataDirectory()){
+                if ($dataDirectoryFromObj = $directoryFields->getDataDirectory()) {
                     $directoryData[] = $dataDirectoryFromObj;
                 }
             }
@@ -116,17 +118,17 @@ class FormBuilderService
         return $directoryData;
     }
 
-    private function getNextStepFieldsFromDirectory($directory,$value):array
+    private function getNextStepFieldsFromDirectory($directory, $value): array
     {
         $directoryFields = [];
-        if(class_exists($directory)) {
+        if (class_exists($directory)) {
             if (empty($this->directory[$directory])) {
                 $this->directory[$directory] = $directory::get();
             }
             foreach ($this->directory[$directory] as $directoryFieldsObj) {
-                if($dataDirectoryFromObj = $directoryFieldsObj->getDirectoryFields($value)){
+                if ($dataDirectoryFromObj = $directoryFieldsObj->getDirectoryFields($value)) {
                     foreach ($this->fieldsAll as $fields) {
-                        if(in_array($fields->uuid,$dataDirectoryFromObj)) {
+                        if (in_array($fields->uuid, $dataDirectoryFromObj)) {
                             $directoryFields[] = $fields;
                         }
                     }
@@ -134,6 +136,32 @@ class FormBuilderService
             }
         }
         return $directoryFields;
+    }
+
+    private function formatData($data):array
+    {
+        $dataJson = [];
+        foreach ($data as $fields) {
+            $dataJsonField = [];
+            $fieldsArr = $fields->toArray();
+            foreach ($fieldsArr as $kayField => $field) {
+                if (!empty($this->frontMap[$kayField])) {
+                    if (!is_array($this->frontMap[$kayField])) {
+                        $dataJsonField[$kayField] = $field;
+                    } else {
+                        if (is_array($field)) {
+                            foreach ($field as $kayFieldChild => $childField) {
+                                if (!empty($this->frontMap[$kayField][$kayFieldChild])) {
+                                    $dataJsonField[$kayField][$kayFieldChild] = $childField;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            $dataJson[] = $dataJsonField;
+        }
+        return $dataJson;
     }
 
 

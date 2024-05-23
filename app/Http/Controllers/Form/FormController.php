@@ -59,8 +59,21 @@ class FormController extends Controller
         $formData = [];
         if(!empty($request->formData)){
             $formData = $request->formData;
-
         }
+        if(empty($request->phone)){
+            die();
+        }
+        if($user = User::where('phone',$request->phone)->first()){
+            $formData = array_merge(json_decode($user->data,true),$formData);
+        }else{
+            $user = new User();
+            $user->phone = $request->phone;
+        }
+        $user->data = json_encode($formData);
+        $user->name = 'Тест';
+        $user->email = 'dfvddfvdv@tt.tt';
+        $user->password = 'dfvddfvdv@tt.tt';
+        $user->save();
 //        $formData['1111'] = 1;
 //        $formData['1112'] = 'city1';
         echo "<pre>";
