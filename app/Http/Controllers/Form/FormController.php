@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Services\FormBuilderService;
+use App\Services\CreatePdfFileService;
 
 class FormController extends Controller
 {
@@ -51,21 +52,22 @@ class FormController extends Controller
      * )
      */
 
-    public function getForm(Request $request){
+    public function getForm(Request $request)
+    {
         $step = 2;
-        if(!empty($request->step)){
+        if (!empty($request->step)) {
             $step = $request->step;
         }
         $formData = [];
-        if(!empty($request->formData)){
+        if (!empty($request->formData)) {
             $formData = $request->formData;
         }
-        if(empty($request->phone)){
+        if (empty($request->phone)) {
             die();
         }
-        if($user = User::where('phone',$request->phone)->first()){
-            $formData = array_merge(json_decode($user->data,true),$formData);
-        }else{
+        if ($user = User::where('phone', $request->phone)->first()) {
+            $formData = array_merge(json_decode($user->data, true), $formData);
+        } else {
             $user = new User();
             $user->phone = $request->phone;
         }
@@ -77,10 +79,35 @@ class FormController extends Controller
 //        $formData['1111'] = 1;
 //        $formData['1112'] = 'city1';
         echo "<pre>";
-        var_dump((new FormBuilderService($step,$formData))->createFormData());
+        var_dump((new FormBuilderService($step, $formData))->createFormData());
         echo "</pre>";
 
     }
 
+    public function saveFile(Request $request)
+    {
+
+        $uploadFiles = $request->allFiles();
+        $response['text1'] = 'под какими ключами прилители файлы (через запятую)  ' . implode(', ', array_keys($uploadFiles));
+        $response['fileName'] = [];
+
+
+        if(!empty($uploadFiles)) {
+            foreach (current($uploadFiles) as $uploadFile) {
+                $response['fileName'][] = $uploadFile->getClientOriginalName();
+            }
+            $userId = 1;
+            $createFileService = new CreatePdfFileService(current($uploadFiles),$userId);
+            if(!empty($createFileService->mergeFilePath)){
+                $response['resFile'] = $createFileService->mergeFilePath;
+            }else{
+                $response['error'] = 'хз';
+            }
+        }
+
+
+        return response()->json($response);
+
+    }
 
 }

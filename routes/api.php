@@ -8,4 +8,5 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::match(['get', 'post'],'/getForm/', 'App\Http\Controllers\Form\FormController@getForm')->name('getForm');
+Route::post('/saveFile/', 'App\Http\Controllers\Form\FormController@saveFile')->name('saveFile');
 
