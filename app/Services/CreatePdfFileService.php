@@ -45,7 +45,7 @@ class CreatePdfFileService
     {
         $extension = $file->getClientOriginalExtension();
         $tempPath = sys_get_temp_dir();
-        $outputPath = $tempPath . '/' . uniqid() . '.pdf';
+        $outputPath = $tempPath.'/'.uniqid().'.pdf';
 
         switch ($extension) {
             case 'pdf':
@@ -53,24 +53,20 @@ class CreatePdfFileService
             case 'doc':
             case 'docx':
                 $phpWord = IOFactory::load($file->getRealPath());
-               // $phpWord->save($outputPath, 'UTF-8'); // Сохранение документа в UTF-8
                 $xmlWriter = IOFactory::createWriter($phpWord, 'PDF');
                 $xmlWriter->save($outputPath);
                 break;
             case 'jpg':
             case 'jpeg':
             case 'png':
-                //$options = new Options();
-                //$options->set('isHtml5ParserEnabled', true);
+                $imageData = base64_encode($file->getContent());
+                $src = 'data:'.mime_content_type($file->getRealPath()).';base64,'.$imageData;
                 $dompdf = new Dompdf();
-                $dompdf->loadHtml('<html><body>');
-                $dompdf->loadHtml('<img src="data:image/jpeg;base64,' . base64_encode($file->getContent()) . '">');
-                $dompdf->loadHtml('</body></html>');
+                $html = '<html><body> <img style="max-height:1020px; max-width:660px;" src="'.$src.'"> </body></html>';
+                $dompdf->loadHtml($html);
                 $dompdf->setPaper('A4', 'portrait');
                 $dompdf->render();
                 file_put_contents($outputPath, $dompdf->output());
-            Storage::disk('public')->put('source/pdf/' . $this->userId . '/' . 'sdcsc.pdf', file_get_contents($outputPath));
-
                 break;
             default:
                 break;
@@ -82,12 +78,12 @@ class CreatePdfFileService
     private function mergePdf(): ?string
     {
         $pdf = new Fpdi();
-
         foreach ($this->filesTmp as $filePath) {
             $pageCount = $pdf->setSourceFile($filePath);
             for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
                 $tplIdx = $pdf->importPage($pageNo);
-                $pdf->AddPage();
+                $size = $pdf->getTemplateSize($tplIdx);
+                $pdf->AddPage($size['orientation'], [$size['width'], $size['height']]);
                 $pdf->useTemplate($tplIdx);
             }
         }
@@ -96,9 +92,9 @@ class CreatePdfFileService
 
     private function saveFile(string $content): ?string
     {
-        $filename = Str::random(20) . '.pdf';
-        Storage::disk('public')->put('source/pdf/' . $this->userId . '/' . $filename, $content);
-        return Storage::url('source/pdf/' . $this->userId . '/' . $filename);
+        $filename = Str::random(20).'.pdf';
+        Storage::disk('public')->put('source/pdf/'.$this->userId.'/'.$filename, $content);
+        return Storage::url('source/pdf/'.$this->userId.'/'.$filename);
     }
 
 

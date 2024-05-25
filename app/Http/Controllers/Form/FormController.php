@@ -91,13 +91,18 @@ class FormController extends Controller
         $response['text1'] = 'под какими ключами прилители файлы (через запятую)  ' . implode(', ', array_keys($uploadFiles));
         $response['fileName'] = [];
 
-
+        $files = [];
         if(!empty($uploadFiles)) {
-            foreach (current($uploadFiles) as $uploadFile) {
+            if(!is_array(current($uploadFiles))){
+                $files[] = current($uploadFiles);
+            }else{
+                $files = current($uploadFiles);
+            }
+            foreach ($files as $uploadFile) {
                 $response['fileName'][] = $uploadFile->getClientOriginalName();
             }
             $userId = 1;
-            $createFileService = new CreatePdfFileService(current($uploadFiles),$userId);
+            $createFileService = new CreatePdfFileService($files,$userId);
             if(!empty($createFileService->mergeFilePath)){
                 $response['resFile'] = $createFileService->mergeFilePath;
             }else{
