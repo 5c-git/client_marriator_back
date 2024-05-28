@@ -16,6 +16,8 @@ class CreatePdfFileService
     public int $userId;
     public string $mergeFilePath;
     public array $filesTmp = [];
+    public array $filesOriginalName = [];
+    public string $error = '';
 
     public function __construct(array $files, $userId)
     {
@@ -34,67 +36,100 @@ class CreatePdfFileService
     private function createOneFile(): void
     {
         foreach ($this->files as $file) {
-            $this->filesTmp[] = $this->convertToPdf($file);
+            [$this->filesTmp[], $this->filesOriginalName[]] = $this->convertToPdf($file);
         }
-        if (!empty($this->filesTmp)) {
+        if (!empty($this->filesTmp) && empty($this->error)) {
             $this->mergeFilePath = $this->saveFile($this->mergePdf());
         }
     }
 
-    private function convertToPdf(UploadedFile $file): ?string
+    private function convertToPdf(UploadedFile $file): ?array
     {
-        $extension = $file->getClientOriginalExtension();
-        $tempPath = sys_get_temp_dir();
-        $outputPath = $tempPath.'/'.uniqid().'.pdf';
+        try {
+            $extension = $file->getClientOriginalExtension();
+            $tempPath = sys_get_temp_dir();
+            $outputPath = $tempPath . '/' . uniqid() . '.pdf';
 
-        switch ($extension) {
-            case 'pdf':
-                return $file->getRealPath(); // Уже в PDF формате
-            case 'doc':
-            case 'docx':
-                $phpWord = IOFactory::load($file->getRealPath());
-                $xmlWriter = IOFactory::createWriter($phpWord, 'PDF');
-                $xmlWriter->save($outputPath);
-                break;
-            case 'jpg':
-            case 'jpeg':
-            case 'png':
-                $imageData = base64_encode($file->getContent());
-                $src = 'data:'.mime_content_type($file->getRealPath()).';base64,'.$imageData;
-                $dompdf = new Dompdf();
-                $html = '<html><body> <img style="max-height:1020px; max-width:660px;" src="'.$src.'"> </body></html>';
-                $dompdf->loadHtml($html);
-                $dompdf->setPaper('A4', 'portrait');
-                $dompdf->render();
-                file_put_contents($outputPath, $dompdf->output());
-                break;
-            default:
-                break;
+            switch ($extension) {
+                case 'pdf':
+                    return $file->getRealPath(); // Уже в PDF формате
+                case 'doc':
+                case 'docx':
+                    $phpWord = IOFactory::load($file->getRealPath());
+                    $xmlWriter = IOFactory::createWriter($phpWord, 'PDF');
+                    $xmlWriter->save($outputPath);
+                    break;
+                case 'jpg':
+                case 'jpeg':
+                case 'png':
+                    $imageData = base64_encode($file->getContent());
+                    $src = 'data:' . mime_content_type($file->getRealPath()) . ';base64,' . $imageData;
+                    $dompdf = new Dompdf();
+                    $html = '<html><body> <img style="max-height:1020px; max-width:660px;" src="' . $src . '"> </body></html>';
+                    $dompdf->loadHtml($html);
+                    $dompdf->setPaper('A4', 'portrait');
+                    $dompdf->render();
+                    file_put_contents($outputPath, $dompdf->output());
+                    break;
+                default:
+                    break;
+            }
+        } catch (\Throwable $e) {
+            $this->error = 'Ошибка конвертации файлов, ' . $file->getClientOriginalName() . ' замените его на скриншоты контента';
+            return ['',$file->getClientOriginalName()];
         }
 
-        return $outputPath;
+        return [$outputPath, $file->getClientOriginalName()];
     }
 
     private function mergePdf(): ?string
     {
+
         $pdf = new Fpdi();
-        foreach ($this->filesTmp as $filePath) {
-            $pageCount = $pdf->setSourceFile($filePath);
-            for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
-                $tplIdx = $pdf->importPage($pageNo);
-                $size = $pdf->getTemplateSize($tplIdx);
-                $pdf->AddPage($size['orientation'], [$size['width'], $size['height']]);
-                $pdf->useTemplate($tplIdx);
+        foreach ($this->filesTmp as $i=>$filePath) {
+            try {
+                $pageCount = $pdf->setSourceFile($filePath);
+                for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
+                    $tplIdx = $pdf->importPage($pageNo);
+                    $size = $pdf->getTemplateSize($tplIdx);
+                    $pdf->AddPage($size['orientation'], [$size['width'], $size['height']]);
+                    $pdf->useTemplate($tplIdx);
+                }
+            } catch (\Throwable $e) {
+                $this->error = 'Ошибка конвертации файлов, ' . $this->filesOriginalName[$i] . ' замените его на скриншоты контента';
+                return '';
             }
         }
+
         return $pdf->Output('S');
+//        $outputPdf = uniqid() . '.pdf';
+//        $pdf = new PDFlib();
+//        if ($pdf->begin_document($outputPdf, "") == 0) {
+//            die("Error: " . $pdf->get_errmsg());
+//        }
+//        foreach ($this->filesTmp as $pdfFile) {
+//            $pageCount = $pdf->pcos_get_number($pdfFile, "length:pages");
+//            for ($pageNumber = 1; $pageNumber <= $pageCount; $pageNumber++) {
+//                $pdfDoc = $pdf->open_pdi_document($pdfFile, "");
+//                $page = $pdf->open_pdi_page($pdfDoc, $pageNumber, "");
+//                $pdf->begin_page_ext(0, 0, "");
+//                $pdf->fit_pdi_page($page, 0, 0, "");
+//                $pdf->close_pdi_page($page);
+//                $pdf->end_page_ext("");
+//                $pdf->close_pdi_document($pdfDoc);
+//            }
+//        }
+//        $pdf->end_document("");
+//        $pdfContent = file_get_contents($outputPdf);
+//        unlink($outputPdf);
+//        return $pdfContent;
     }
 
     private function saveFile(string $content): ?string
     {
-        $filename = Str::random(20).'.pdf';
-        Storage::disk('public')->put('source/pdf/'.$this->userId.'/'.$filename, $content);
-        return Storage::url('source/pdf/'.$this->userId.'/'.$filename);
+        $filename = Str::random(20) . '.pdf';
+        Storage::disk('public')->put('source/pdf/' . $this->userId . '/' . $filename, $content);
+        return Storage::url('source/pdf/' . $this->userId . '/' . $filename);
     }
 
 

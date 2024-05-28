@@ -27,9 +27,9 @@ class FormController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/getForm",
+     *     path="/api/getForm/",
      *     operationId="getForm",
-     *     tags={"getForm"},
+     *     tags={"form"},
      *     summary="getForm",
      *     description="getForm Endpoint",
      *     @OA\RequestBody(
@@ -38,8 +38,9 @@ class FormController extends Controller
      *             mediaType="multipart/form-data",
      *             @OA\Schema(
      *                 type="object",
-     *                 required={"step"},
+     *                 required={"step","currentStep"},
      *                 @OA\Property(property="step",type="number"),
+     *                 @OA\Property(property="currentStep",type="number"),
      *                 @OA\Property(property="formData",type="json")
      *             ),
      *         ),
@@ -55,8 +56,12 @@ class FormController extends Controller
     public function getForm(Request $request)
     {
         $step = 2;
+        $currentStep = 2;
         if (!empty($request->step)) {
             $step = $request->step;
+        }
+        if (!empty($request->currentStep)) {
+            $currentStep = $request->currentStep;
         }
         $formData = [];
         if (!empty($request->formData)) {
@@ -66,23 +71,51 @@ class FormController extends Controller
             die();
         }
         if ($user = User::where('phone', $request->phone)->first()) {
-            $formData = array_merge(json_decode($user->data, true), $formData);
+            $userData = json_decode($user->data, true);
+            $userData[$currentStep] = $formData;
         } else {
             $user = new User();
             $user->phone = $request->phone;
         }
-        $user->data = json_encode($formData);
+        $user->data = json_encode($userData);
         $user->name = 'Тест';
         $user->email = 'dfvddfvdv@tt.tt';
         $user->password = 'dfvddfvdv@tt.tt';
         $user->save();
-//        $formData['1111'] = 1;
-//        $formData['1112'] = 'city1';
         echo "<pre>";
-        var_dump((new FormBuilderService($step, $formData))->createFormData());
+        var_dump((new FormBuilderService($step, $userData))->createFormData());
         echo "</pre>";
 
     }
+
+    /**
+     * @OA\Post(
+     *     path="/api/saveFile/",
+     *     operationId="saveFile",
+     *     tags={"form"},
+     *     summary="saveFile",
+     *     description="saveFile Endpoint",
+     *     @OA\RequestBody(
+     *         @OA\JsonContent(),
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                 type="object",
+     *                 required={"file[]"},
+     *                 @OA\Property(
+     *                  property="file[]",
+     *                  type="array",
+     *                  @OA\Items(type="file")),
+     *             ),
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *       response="200",
+     *       description="file info",
+     *       @OA\JsonContent()
+     *     ),
+     * )
+     */
 
     public function saveFile(Request $request)
     {
@@ -103,10 +136,10 @@ class FormController extends Controller
             }
             $userId = 1;
             $createFileService = new CreatePdfFileService($files,$userId);
-            if(!empty($createFileService->mergeFilePath)){
+            if(!empty($createFileService->mergeFilePath) && empty($createFileService->error)){
                 $response['resFile'] = $createFileService->mergeFilePath;
             }else{
-                $response['error'] = 'хз';
+                $response['error'] = $createFileService->error;
             }
         }
 

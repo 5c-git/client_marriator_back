@@ -23,7 +23,7 @@ class FormBuilderService
     public function __construct(int $step, array $formData = [])
     {
         $this->step = $step > 0 ? $step : 1;
-        $this->formData = $formData;
+        $this->formData = array_merge(...$formData);
     }
 
     public function createFormData()
