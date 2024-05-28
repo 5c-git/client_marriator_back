@@ -62,6 +62,13 @@
         </div>
 
         <div class="form-group row">
+            <label for="sort" class="col-sm-2 col-form-label">Сортировка</label>
+            <div class="col-sm-10">
+                <input type="number" class="form-control" name="sort" id="sort">
+            </div>
+        </div>
+
+        <div class="form-group row">
             <label for="select" class="col-sm-2 col-form-label">Справочник</label>
             <div class="col-sm-10">
                 <select class="custom-select" name="directory">

@@ -81,7 +81,7 @@ class FormBuilderService
 
     private function getFields(): void
     {
-        $this->fieldsAll = Fields::get();
+        $this->fieldsAll = Fields::orderBy('sort','asc')->get();
         foreach ($this->fieldsAll as $field) {
             if (!empty($field->directory)) {
                 if ($valuesDirectory = $this->getDirectory($field->directory, true)) {
@@ -138,30 +138,49 @@ class FormBuilderService
         return $directoryFields;
     }
 
-    private function formatData($data):array
+    private function formatData($data): array
     {
         $dataJson = [];
         foreach ($data as $fields) {
             $dataJsonField = [];
             $fieldsArr = $fields->toArray();
-            foreach ($fieldsArr as $kayField => $field) {
-                if (!empty($this->frontMap[$kayField])) {
-                    if (!is_array($this->frontMap[$kayField])) {
-                        $dataJsonField[$kayField] = $field;
-                    } else {
-                        if (is_array($field)) {
-                            foreach ($field as $kayFieldChild => $childField) {
-                                if (!empty($this->frontMap[$kayField][$kayFieldChild])) {
-                                    $dataJsonField[$kayField][$kayFieldChild] = $childField;
-                                }
-                            }
-                        }
-                    }
-                }
+            foreach ($this->frontMap as $kay => $field) {
+                $dataJsonField[$kay] = $this->recurrentMap($field, $fieldsArr);
             }
             $dataJson[] = $dataJsonField;
         }
+
+
+//        foreach ($data as $fields) {
+//            $dataJsonField = [];
+//            $fieldsArr = $fields->toArray();
+//            foreach ($fieldsArr as $kayField => $field) {
+//                if (!empty($this->frontMap[$kayField])) {
+//                    if (!is_array($this->frontMap[$kayField])) {
+//                        $dataJsonField[$kayField] = $field;
+//                    } else {
+//                        if (is_array($field)) {
+//                            foreach ($field as $kayFieldChild => $childField) {
+//                                if (!empty($this->frontMap[$kayField][$kayFieldChild])) {
+//                                    $dataJsonField[$kayField][$kayFieldChild] = $childField;
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//            $dataJson[] = $dataJsonField;
+//        }
         return $dataJson;
+    }
+
+    private function recurrentMap($field, $data)
+    {
+        if (is_array($field['value'])) {
+            return $this->recurrentMap($field['value'], $data);
+        } else {
+            return $data[$field['name']];
+        }
     }
 
 

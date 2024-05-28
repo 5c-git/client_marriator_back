@@ -65,6 +65,7 @@ class FieldsController extends Controller
         $field->name = $data['name'];
         $field->uuid = $data['uuid'];
         $field->type = $data['type'];
+        $field->sort = $data['sort'];
         $field->description = $data['description'];
         $field->step = $data['step'];
         $field->directory = $data['directory'];
@@ -116,6 +117,7 @@ class FieldsController extends Controller
         $field->name = $data['name'];
         $field->uuid = $data['uuid'];
         $field->type = $data['type'];
+        $field->sort = $data['sort'];
         $field->description = $data['description'];
         $field->step = $data['step'];
         $field->directory = $data['directory'];
