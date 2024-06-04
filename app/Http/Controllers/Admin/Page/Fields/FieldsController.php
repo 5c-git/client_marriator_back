@@ -32,7 +32,7 @@ class FieldsController extends Controller
     public function fieldsEdit(Request $request)
     {
         $field = Fields::where('id', '=', $request->id)->first();
-        $typeEnum = FieldsTypeEnum::cases();
+        $typeEnum = FieldsTypeEnum::fieldType();
         $directoryEnum = FieldsDirectoryEnum::cases();
         $fields = Fields::where('id', '!=', $request->id)->where('active',true)->get()->toArray();
 
@@ -98,7 +98,7 @@ class FieldsController extends Controller
 
     public function fieldsCreate()
     {
-        $typeEnum = FieldsTypeEnum::cases();
+        $typeEnum = FieldsTypeEnum::fieldType();
         $directoryEnum = FieldsDirectoryEnum::cases();
         $fields = Fields::where('active',true)->get()->toArray();
         foreach (FieldsDirectoryEnum::values() as $directory){

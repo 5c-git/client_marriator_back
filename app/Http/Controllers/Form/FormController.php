@@ -119,7 +119,6 @@ class FormController extends Controller
 
     public function saveFile(Request $request)
     {
-
         $uploadFiles = $request->allFiles();
         $response['text1'] = 'под какими ключами прилители файлы (через запятую)  ' . implode(', ', array_keys($uploadFiles));
         $response['fileName'] = [];

@@ -2,12 +2,16 @@
 
 namespace App\Models\Fields\Directory;
 
+use App\Enum\Fields\FieldsTypeEnum;
+use App\Models\Fields\Directory\ModelDirectoryInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Country extends Model
+class Country extends Model implements ModelDirectoryInterface
 {
     use HasFactory;
+
+    public static $fieldsTypeEnum = FieldsTypeEnum::select->value;
 
     protected $table = 'directory_country';
     protected $fillable = [

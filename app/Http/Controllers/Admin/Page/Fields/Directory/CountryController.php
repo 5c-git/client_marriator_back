@@ -23,14 +23,14 @@ class CountryController extends Controller
     public function countryList(Request $request)
     {
         $country = Country::get();
-        return view('admin.country.country', compact('country'));
+        return view('admin.directory.country.country', compact('country'));
     }
 
     public function countryEdit(Request $request)
     {
         $country = Country::where('id', '=', $request->id)->first();
         if($country) {
-            return view('admin.country.countryEdit', compact('country'));
+            return view('admin.directory.country.countryEdit', compact('country'));
         }else{
             return redirect()->back();
         }
@@ -65,7 +65,7 @@ class CountryController extends Controller
 
     public function countryCreate()
     {
-        return view('admin.country.countryAdd');
+        return view('admin.directory.country.countryAdd');
     }
 
     public function countryCreateAjax(Request $request)

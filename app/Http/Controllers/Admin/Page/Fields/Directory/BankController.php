@@ -24,7 +24,7 @@ class BankController extends Controller
     public function bankList(Request $request)
     {
         $banks = Bank::get();
-        return view('admin.bank.bank', compact('banks'));
+        return view('admin.directory.bank.bank', compact('banks'));
     }
 
     public function bankEdit(Request $request)
@@ -37,7 +37,7 @@ class BankController extends Controller
             }else{
                 $bank->parentFields = [];
             }
-            return view('admin.bank.bankEdit', compact('bank','fields'));
+            return view('admin.directory.bank.bankEdit', compact('bank','fields'));
         }else{
             return redirect()->back();
         }
@@ -79,7 +79,7 @@ class BankController extends Controller
     public function bankCreate()
     {
         $fields = Fields::get();
-        return view('admin.bank.bankAdd',compact('fields'));
+        return view('admin.directory.bank.bankAdd',compact('fields'));
     }
 
     public function bankCreateAjax(Request $request)

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Fields\Fields;
+use App\Enum\Fields\FieldsTypeEnum;
 
 class FormBuilderService
 {
@@ -14,11 +15,7 @@ class FormBuilderService
     public object $fieldsAll;
     public array $fieldsThisStep = [];
     public array $fieldsOldStep = [];
-    public array $formattedData = [];
-
-    private array $frontMap = [
-
-    ];
+    public array $formatedData = [];
 
     public function __construct(int $step, array $formData = [])
     {
@@ -26,7 +23,7 @@ class FormBuilderService
         $this->formData = array_merge(...$formData);
     }
 
-    public function createFormData()
+    public function createFormData(): array
     {
         $this->getFields();
         $this->filterFields();
@@ -34,7 +31,7 @@ class FormBuilderService
     }
 
 
-    private function filterFields()
+    private function filterFields(): void
     {
         $oldFieldUuid = [];
         foreach ($this->formData as $kDataForm => $formData) {
@@ -81,9 +78,13 @@ class FormBuilderService
 
     private function getFields(): void
     {
-        $this->fieldsAll = Fields::orderBy('sort','asc')->get();
+        $this->fieldsAll = Fields::orderBy('sort', 'asc')->get();
         foreach ($this->fieldsAll as $field) {
+
             if (!empty($field->directory)) {
+
+                $field->type = $this->getTypeDirectory($field->directory);
+
                 if ($valuesDirectory = $this->getDirectory($field->directory, true)) {
                     $field->valuesDirectory = $valuesDirectory;
                 }
@@ -118,6 +119,15 @@ class FormBuilderService
         return $directoryData;
     }
 
+    private function getTypeDirectory($directory): int
+    {
+        if (class_exists($directory)) {
+            return $directory::fieldsTypeEnum;
+        } else {
+            return 0;
+        }
+    }
+
     private function getNextStepFieldsFromDirectory($directory, $value): array
     {
         $directoryFields = [];
@@ -140,48 +150,11 @@ class FormBuilderService
 
     private function formatData($data): array
     {
-        $dataJson = [];
-        foreach ($data as $fields) {
-            $dataJsonField = [];
-            $fieldsArr = $fields->toArray();
-            foreach ($this->frontMap as $kay => $field) {
-                $dataJsonField[$kay] = $this->recurrentMap($field, $fieldsArr);
-            }
-            $dataJson[] = $dataJsonField;
+        foreach ($data as $field) {
+            $value = $this->formData[$field->uuid];
+            $this->formatedData[] = FieldsTypeEnum::from($field->type)?->typeClassFormatter()::createFormat($field, $value);
         }
-
-
-//        foreach ($data as $fields) {
-//            $dataJsonField = [];
-//            $fieldsArr = $fields->toArray();
-//            foreach ($fieldsArr as $kayField => $field) {
-//                if (!empty($this->frontMap[$kayField])) {
-//                    if (!is_array($this->frontMap[$kayField])) {
-//                        $dataJsonField[$kayField] = $field;
-//                    } else {
-//                        if (is_array($field)) {
-//                            foreach ($field as $kayFieldChild => $childField) {
-//                                if (!empty($this->frontMap[$kayField][$kayFieldChild])) {
-//                                    $dataJsonField[$kayField][$kayFieldChild] = $childField;
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//            $dataJson[] = $dataJsonField;
-//        }
-        return $dataJson;
+        return $this->formatedData;
     }
-
-    private function recurrentMap($field, $data)
-    {
-        if (is_array($field['value'])) {
-            return $this->recurrentMap($field['value'], $data);
-        } else {
-            return $data[$field['name']];
-        }
-    }
-
 
 }

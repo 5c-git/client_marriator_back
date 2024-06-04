@@ -296,7 +296,7 @@ return [
     'menu' => [
         [
             'text' => 'Пользователи',
-            'url'  => 'admin/users',
+            'url'  => 'admin/users/',
             'icon' => 'fas fa-fw fa-user',
         ],
         // Navbar items:
@@ -349,18 +349,78 @@ return [
                     'submenu' => [
                         [
                             'text' => 'Города',
-                            'url' => 'admin/directory_country',
+                            'url' => 'admin/directory_country/',
                         ],
                         [
                             'text' => 'Банки',
-                            'url' => 'admin/directory_bank',
+                            'url' => 'admin/directory_bank/',
                         ],
+                        [
+                            'text' => 'Направления деятельности',
+                            'url' => 'admin/directory_activities/',
+                        ],
+                        [
+                            'text' => 'Налоговый статус',
+                            'url' => 'admin/directory_tax_status/',
+                        ],
+                        [
+                            'text' => 'Гражданство',
+                            'url' => 'admin/directory_citizenship/',
+                        ],
+                        [
+                            'text' => 'Разрешение на проживание на территории РФ',
+                            'url' => 'admin/directory_residence/',
+                        ],
+                        [
+                            'text' => 'Регион проживания',
+                            'url' => 'admin/directory_region_of_residence/',
+                        ],
+                        [
+                            'text' => 'Территория поиска предложений',
+                            'url' => 'admin/directory_offer_search/',
+                        ],
+                        [
+                            'text' => 'Виды деятельности',
+                            'url' => 'admin/directory_view_activities/',
+                        ],
+                        [
+                            'text' => 'Вес, кг.',
+                            'url' => 'admin/directory_weight/',
+                        ],
+                        [
+                            'text' => 'Рост, см.',
+                            'url' => 'admin/directory_height/',
+                        ],
+                        [
+                            'text' => 'Размер обуви',
+                            'url' => 'admin/directory_shoe_size/',
+                        ],
+                        [
+                            'text' => 'Размер одежды',
+                            'url' => 'admin/directory_clothing_size/',
+                        ],
+                        [
+                            'text' => 'Цвет волос',
+                            'url' => 'admin/directory_hair_color/',
+                        ],
+                        [
+                            'text' => 'Длина волос',
+                            'url' => 'admin/directory_hair_length/',
+                        ],
+                        [
+                            'text' => 'Пол',
+                            'url' => 'admin/directory_gender/',
+                        ],
+                        [
+                            'text' => 'Мессенджеры',
+                            'url' => 'admin/directory_messengers/',
+                        ]
                     ],
                 ],
                 [
                     'text' => 'Простые поля',
                     'icon' => 'fas fa-fw fa-address-card',
-                    'url' => 'admin/fields',
+                    'url' => 'admin/fields/',
                 ],
             ],
         ],

@@ -52,5 +52,41 @@ Route::group(['prefix' => 'admin'], function () {
             Route::get('/delete/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\BankController@bankDelete')->name('bankDelete');
         });
 
+        Route::group(['prefix' => 'directory_activities'], function () {
+            Route::get('/create/', 'App\Http\Controllers\Admin\Page\Fields\Directory\ActivitiesController@create')->name('activitiesCreate');
+            Route::post('/createAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\ActivitiesController@createAjax')->name('activitiesCreateAjax');
+            Route::get('/', 'App\Http\Controllers\Admin\Page\Fields\Directory\ActivitiesController@list')->name('activitiesList');
+            Route::get('/edit/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\ActivitiesController@edit')->name('activitiesEdit');
+            Route::post('/editAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\ActivitiesController@editAjax')->name('activitiesEditAjax');
+            Route::get('/delete/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\ActivitiesController@delete')->name('activitiesDelete');
+        });
+
+        Route::group(['prefix' => 'directory_tax_status'], function () {
+            Route::get('/create/', 'App\Http\Controllers\Admin\Page\Fields\Directory\TaxStatusController@create')->name('taxStatusCreate');
+            Route::post('/createAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\TaxStatusController@createAjax')->name('taxStatusCreateAjax');
+            Route::get('/', 'App\Http\Controllers\Admin\Page\Fields\Directory\TaxStatusController@list')->name('taxStatusList');
+            Route::get('/edit/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\TaxStatusController@edit')->name('taxStatusEdit');
+            Route::post('/editAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\TaxStatusController@editAjax')->name('taxStatusEditAjax');
+            Route::get('/delete/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\TaxStatusController@delete')->name('taxStatusDelete');
+        });
+
+        Route::group(['prefix' => 'directory_citizenship'], function () {
+            Route::get('/create/', 'App\Http\Controllers\Admin\Page\Fields\Directory\CitizenshipController@create')->name('citizenshipCreate');
+            Route::post('/createAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\CitizenshipController@createAjax')->name('citizenshipCreateAjax');
+            Route::get('/', 'App\Http\Controllers\Admin\Page\Fields\Directory\CitizenshipController@list')->name('citizenshipList');
+            Route::get('/edit/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\CitizenshipController@edit')->name('citizenshipEdit');
+            Route::post('/editAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\CitizenshipController@editAjax')->name('citizenshipEditAjax');
+            Route::get('/delete/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\CitizenshipController@delete')->name('citizenshipDelete');
+        });
+
+        Route::group(['prefix' => 'directory_residence'], function () {
+            Route::get('/create/', 'App\Http\Controllers\Admin\Page\Fields\Directory\ResidenceController@create')->name('residenceCreate');
+            Route::post('/createAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\ResidenceController@createAjax')->name('residenceCreateAjax');
+            Route::get('/', 'App\Http\Controllers\Admin\Page\Fields\Directory\ResidenceController@list')->name('residenceList');
+            Route::get('/edit/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\ResidenceController@edit')->name('residenceEdit');
+            Route::post('/editAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\ResidenceController@editAjax')->name('residenceEditAjax');
+            Route::get('/delete/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\ResidenceController@delete')->name('residenceDelete');
+        });
+
     });
 });
