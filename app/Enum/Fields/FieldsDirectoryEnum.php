@@ -8,6 +8,22 @@ use ArchTech\Enums\Options;
 
 use App\Models\Fields\Directory\Country;
 use App\Models\Fields\Directory\Bank;
+use App\Models\Fields\Directory\Activities;
+use App\Models\Fields\Directory\Citizenship;
+use App\Models\Fields\Directory\ClothingSize;
+use App\Models\Fields\Directory\Gender;
+use App\Models\Fields\Directory\HairColor;
+use App\Models\Fields\Directory\HairLength;
+use App\Models\Fields\Directory\Height;
+use App\Models\Fields\Directory\Messengers;
+use App\Models\Fields\Directory\OfferSearch;
+use App\Models\Fields\Directory\RegionOfResidence;
+use App\Models\Fields\Directory\Residence;
+use App\Models\Fields\Directory\ShoeSize;
+use App\Models\Fields\Directory\TaxStatus;
+use App\Models\Fields\Directory\ViewActivities;
+use App\Models\Fields\Directory\Weight;
+
 
 enum FieldsDirectoryEnum: string
 {
@@ -18,6 +34,21 @@ enum FieldsDirectoryEnum: string
 
     case country = Country::class;
     case bank = Bank::class;
+    case activities = Activities::class;
+    case citizenship = Citizenship::class;
+    case clothingSize = ClothingSize::class;
+    case gender = Gender::class;
+    case hairColor = HairColor::class;
+    case hairLength = HairLength::class;
+    case height = Height::class;
+    case messengers = Messengers::class;
+    case offerSearch = OfferSearch::class;
+    case regionOfResidence = RegionOfResidence::class;
+    case residence = Residence::class;
+    case shoeSize = ShoeSize::class;
+    case taxStatus = TaxStatus::class;
+    case viewActivities = ViewActivities::class;
+    case weight = Weight::class;
 
     public function directoryName(): string
     {
@@ -25,6 +56,21 @@ enum FieldsDirectoryEnum: string
         {
             self::country => 'Справочник стран',
             self::bank => 'Справочник банков',
+            self::activities => 'Справочник направления деятельности',
+            self::citizenship => 'Справочник гражданств',
+            self::clothingSize => 'Справочник размер одежды',
+            self::gender => 'Справочник пол',
+            self::hairColor => 'Справочник цвет волос',
+            self::hairLength => 'Справочник длина волос',
+            self::height => 'Справочник рост, см.',
+            self::messengers => 'Справочник мессенджеры',
+            self::offerSearch => 'Справочник территории поиска предложений',
+            self::regionOfResidence => 'Справочник регион проживания',
+            self::residence => 'Справочник регионов проживания',
+            self::shoeSize => 'Справочник размеров обуви',
+            self::taxStatus => 'Налоговый статус',
+            self::viewActivities => 'Справочник виды деятельности',
+            self::weight => 'Справочник вес, кг.',
         };
     }
 
