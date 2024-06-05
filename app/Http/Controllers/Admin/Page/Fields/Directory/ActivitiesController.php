@@ -32,6 +32,9 @@ class ActivitiesController extends Controller
     public function edit(Request $request)
     {
         $edit = $this->objClass::where('id', '=', $request->id)->first();
+        if(!empty($edit->img)){
+            $edit->img = Storage::url($edit->img);
+        }
         if($edit) {
             return view('admin.directory.'.$this->view.'.edit', compact('edit'));
         }else{
@@ -49,7 +52,17 @@ class ActivitiesController extends Controller
         $editObj->name = $data['name'];
         $editObj->uuid = $data['uuid'];
 
-
+        if($request->file('img')) {
+            if(!empty($editObj->img)){
+                Storage::disk('public')->delete($editObj->img);
+            }
+            $fileImage = $request->file('img');
+            $editObj->img = Storage::disk('public')->putFileAs('/source/directory/'.$this->view.'/'.$editObj->id.'-img', $fileImage, $fileImage->getClientOriginalName(),'public');
+        }
+        if(!empty($data['delImg']) && $data['delImg'] == 'yes'){
+            Storage::disk('public')->delete($editObj->img);
+            $editObj->img = '';
+        }
 
         if(!empty($data['active'])) {
             $editObj->active = true;
@@ -86,8 +99,13 @@ class ActivitiesController extends Controller
         }else{
             $editObj->active = false;
         }
-
         $editObj->save();
+
+        if($request->file('img')) {
+            $fileImage = $request->file('img');
+            $editObj->img = Storage::disk('public')->putFileAs('/source/directory/'.$this->view.'/'.$editObj->id.'-img', $fileImage, $fileImage->getClientOriginalName(),'public');
+            $editObj->save();
+        }
 
         $response['status'] = 'success';
         $response['url'] = '/admin/directory_'.$this->view.'/edit/' . $editObj->id;

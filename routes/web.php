@@ -88,5 +88,100 @@ Route::group(['prefix' => 'admin'], function () {
             Route::get('/delete/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\ResidenceController@delete')->name('residenceDelete');
         });
 
+        Route::group(['prefix' => 'directory_region_of_residence'], function () {
+            Route::get('/create/', 'App\Http\Controllers\Admin\Page\Fields\Directory\RegionOfResidenceController@create')->name('region_of_residenceCreate');
+            Route::post('/createAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\RegionOfResidenceController@createAjax')->name('region_of_residenceCreateAjax');
+            Route::get('/', 'App\Http\Controllers\Admin\Page\Fields\Directory\RegionOfResidenceController@list')->name('region_of_residenceList');
+            Route::get('/edit/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\RegionOfResidenceController@edit')->name('region_of_residenceEdit');
+            Route::post('/editAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\RegionOfResidenceController@editAjax')->name('region_of_residenceEditAjax');
+            Route::get('/delete/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\RegionOfResidenceController@delete')->name('region_of_residenceDelete');
+        });
+        Route::group(['prefix' => 'directory_offer_search'], function () {
+            Route::get('/create/', 'App\Http\Controllers\Admin\Page\Fields\Directory\OfferSearchController@create')->name('offer_searchCreate');
+            Route::post('/createAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\OfferSearchController@createAjax')->name('offer_searchCreateAjax');
+            Route::get('/', 'App\Http\Controllers\Admin\Page\Fields\Directory\OfferSearchController@list')->name('offer_searchList');
+            Route::get('/edit/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\OfferSearchController@edit')->name('offer_searchEdit');
+            Route::post('/editAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\OfferSearchController@editAjax')->name('offer_searchEditAjax');
+            Route::get('/delete/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\OfferSearchController@delete')->name('offer_searchDelete');
+        });
+        Route::group(['prefix' => 'directory_view_activities'], function () {
+            Route::get('/create/', 'App\Http\Controllers\Admin\Page\Fields\Directory\ViewActivitiesController@create')->name('view_activitiesCreate');
+            Route::post('/createAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\ViewActivitiesController@createAjax')->name('view_activitiesCreateAjax');
+            Route::get('/', 'App\Http\Controllers\Admin\Page\Fields\Directory\ViewActivitiesController@list')->name('view_activitiesList');
+            Route::get('/edit/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\ViewActivitiesController@edit')->name('view_activitiesEdit');
+            Route::post('/editAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\ViewActivitiesController@editAjax')->name('view_activitiesEditAjax');
+            Route::get('/delete/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\ViewActivitiesController@delete')->name('view_activitiesDelete');
+        });
+        Route::group(['prefix' => 'directory_weight'], function () {
+            Route::get('/create/', 'App\Http\Controllers\Admin\Page\Fields\Directory\WeightController@create')->name('weightCreate');
+            Route::post('/createAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\WeightController@createAjax')->name('weightCreateAjax');
+            Route::get('/', 'App\Http\Controllers\Admin\Page\Fields\Directory\WeightController@list')->name('weightList');
+            Route::get('/edit/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\WeightController@edit')->name('weightEdit');
+            Route::post('/editAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\WeightController@editAjax')->name('weightEditAjax');
+            Route::get('/delete/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\WeightController@delete')->name('weightDelete');
+        });
+        Route::group(['prefix' => 'directory_height'], function () {
+            Route::get('/create/', 'App\Http\Controllers\Admin\Page\Fields\Directory\HeightController@create')->name('heightCreate');
+            Route::post('/createAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\HeightController@createAjax')->name('heightCreateAjax');
+            Route::get('/', 'App\Http\Controllers\Admin\Page\Fields\Directory\HeightController@list')->name('heightList');
+            Route::get('/edit/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\HeightController@edit')->name('heightEdit');
+            Route::post('/editAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\HeightController@editAjax')->name('heightEditAjax');
+            Route::get('/delete/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\HeightController@delete')->name('heightDelete');
+        });
+        Route::group(['prefix' => 'directory_shoe_size'], function () {
+            Route::get('/create/', 'App\Http\Controllers\Admin\Page\Fields\Directory\ShoeSizeController@create')->name('shoe_sizeCreate');
+            Route::post('/createAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\ShoeSizeController@createAjax')->name('shoe_sizeCreateAjax');
+            Route::get('/', 'App\Http\Controllers\Admin\Page\Fields\Directory\ShoeSizeController@list')->name('shoe_sizeList');
+            Route::get('/edit/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\ShoeSizeController@edit')->name('shoe_sizeEdit');
+            Route::post('/editAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\ShoeSizeController@editAjax')->name('shoe_sizeEditAjax');
+            Route::get('/delete/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\ShoeSizeController@delete')->name('shoe_sizeDelete');
+        });
+        Route::group(['prefix' => 'directory_clothing_size'], function () {
+            Route::get('/create/', 'App\Http\Controllers\Admin\Page\Fields\Directory\ClothingSizeController@create')->name('clothing_sizeCreate');
+            Route::post('/createAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\ClothingSizeController@createAjax')->name('clothing_sizeCreateAjax');
+            Route::get('/', 'App\Http\Controllers\Admin\Page\Fields\Directory\ClothingSizeController@list')->name('clothing_sizeList');
+            Route::get('/edit/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\ClothingSizeController@edit')->name('clothing_sizeEdit');
+            Route::post('/editAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\ClothingSizeController@editAjax')->name('clothing_sizeEditAjax');
+            Route::get('/delete/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\ClothingSizeController@delete')->name('clothing_sizeDelete');
+        });
+        Route::group(['prefix' => 'directory_hair_color'], function () {
+            Route::get('/create/', 'App\Http\Controllers\Admin\Page\Fields\Directory\HairColorController@create')->name('hair_colorCreate');
+            Route::post('/createAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\HairColorController@createAjax')->name('hair_colorCreateAjax');
+            Route::get('/', 'App\Http\Controllers\Admin\Page\Fields\Directory\HairColorController@list')->name('hair_colorList');
+            Route::get('/edit/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\HairColorController@edit')->name('hair_colorEdit');
+            Route::post('/editAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\HairColorController@editAjax')->name('hair_colorEditAjax');
+            Route::get('/delete/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\HairColorController@delete')->name('hair_colorDelete');
+        });
+        Route::group(['prefix' => 'directory_hair_length'], function () {
+            Route::get('/create/', 'App\Http\Controllers\Admin\Page\Fields\Directory\HairLengthController@create')->name('hair_lengthCreate');
+            Route::post('/createAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\HairLengthController@createAjax')->name('hair_lengthCreateAjax');
+            Route::get('/', 'App\Http\Controllers\Admin\Page\Fields\Directory\HairLengthController@list')->name('hair_lengthList');
+            Route::get('/edit/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\HairLengthController@edit')->name('hair_lengthEdit');
+            Route::post('/editAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\HairLengthController@editAjax')->name('hair_lengthEditAjax');
+            Route::get('/delete/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\HairLengthController@delete')->name('hair_lengthDelete');
+        });
+        Route::group(['prefix' => 'directory_gender'], function () {
+            Route::get('/create/', 'App\Http\Controllers\Admin\Page\Fields\Directory\GenderController@create')->name('genderCreate');
+            Route::post('/createAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\GenderController@createAjax')->name('genderCreateAjax');
+            Route::get('/', 'App\Http\Controllers\Admin\Page\Fields\Directory\GenderController@list')->name('genderList');
+            Route::get('/edit/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\GenderController@edit')->name('genderEdit');
+            Route::post('/editAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\GenderController@editAjax')->name('genderEditAjax');
+            Route::get('/delete/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\GenderController@delete')->name('genderDelete');
+        });
+        Route::group(['prefix' => 'directory_messengers'], function () {
+            Route::get('/create/', 'App\Http\Controllers\Admin\Page\Fields\Directory\MessengersController@create')->name('messengersCreate');
+            Route::post('/createAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\MessengersController@createAjax')->name('messengersCreateAjax');
+            Route::get('/', 'App\Http\Controllers\Admin\Page\Fields\Directory\MessengersController@list')->name('messengersList');
+            Route::get('/edit/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\MessengersController@edit')->name('messengersEdit');
+            Route::post('/editAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\MessengersController@editAjax')->name('messengersEditAjax');
+            Route::get('/delete/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\MessengersController@delete')->name('messengersDelete');
+        });
+
+
+
+
+
+
+
     });
 });

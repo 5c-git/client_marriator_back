@@ -31,13 +31,12 @@ class BankController extends Controller
     {
         $bank = Bank::where('id', '=', $request->id)->first();
         if($bank) {
-            $fields = Fields::get();
             if(!empty($bank->parentFields)) {
                 $bank->parentFields = json_decode($bank->parentFields, true);
             }else{
                 $bank->parentFields = [];
             }
-            return view('admin.directory.bank.bankEdit', compact('bank','fields'));
+            return view('admin.directory.bank.bankEdit', compact('bank'));
         }else{
             return redirect()->back();
         }
@@ -78,8 +77,7 @@ class BankController extends Controller
 
     public function bankCreate()
     {
-        $fields = Fields::get();
-        return view('admin.directory.bank.bankAdd',compact('fields'));
+        return view('admin.directory.bank.bankAdd');
     }
 
     public function bankCreateAjax(Request $request)

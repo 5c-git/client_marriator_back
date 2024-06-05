@@ -19,7 +19,7 @@
            $checkBox = '';
         }
     @endphp
-    <form class="status formCustomSubmit" action="{{route('activitiesEditAjax')}}">
+    <form class="status formCustomSubmit" action="{{route('region_of_residenceEditAjax')}}">
         @csrf
         <input type="hidden" name="id" value="{{$edit->id}}">
 
@@ -37,26 +37,6 @@
             </div>
         </div>
 
-        <div class="form-group row">
-            <label for="img" class="col-sm-2 col-form-label">Image</label>
-            <div class="col-sm-10">
-                <x-adminlte-input-file name="img" id="img" />
-
-                @php
-                    if(!empty($edit->img)){
-                       echo '<img src="'.$edit->img.'" width="300">
-                       <br>
-                       <br>
-                       <a href="'.$edit->img.'" target="_blank">Image element</a>
-                        <br>
-                        <label style="margin-top: 5px;" for="delImg">Del image</label>
-                       <input type="checkbox" id="delImg" name="delImg" value="yes"/>
-                       ';
-                    }
-                @endphp
-            </div>
-        </div>
-
 
         <div class="form-group row">
             <label for="active" class="col-sm-2 col-form-label">Активность</label>
@@ -70,7 +50,7 @@
         <div class="form-group row">
             <div class="col-sm-10">
                 <button type="submit" class="btn btn-success">Сохранить</button>
-                <a href="{{route('activitiesList')}}" style="margin-left: 10px" class="btn btn-secondary btn-md active" role="button" aria-pressed="true">Вернуться</a>
+                <a href="{{route('region_of_residenceList')}}" style="margin-left: 10px" class="btn btn-secondary btn-md active" role="button" aria-pressed="true">Вернуться</a>
             </div>
         </div>
     </form>
