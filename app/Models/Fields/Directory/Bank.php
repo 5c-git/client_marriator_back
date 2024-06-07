@@ -27,13 +27,10 @@ class Bank extends Model implements ModelDirectoryInterface
     public $timestamps = false;
 
     public function getDataDirectory(bool $allFields = false){
-        return false;
-    }
-
-    public function getDirectoryFields($value){
-        if($this->bic == $value){
-            return json_decode($this->fields,true);
+        if(!$allFields) {
+            return $this->uuid;
+        }else{
+            return $this->toArray();
         }
-        return false;
     }
 }

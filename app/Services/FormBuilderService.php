@@ -80,18 +80,10 @@ class FormBuilderService
     {
         $this->fieldsAll = Fields::orderBy('sort', 'asc')->get();
         foreach ($this->fieldsAll as $field) {
-
             if (!empty($field->directory)) {
-
                 $field->type = $this->getTypeDirectory($field->directory);
-
                 if ($valuesDirectory = $this->getDirectory($field->directory, true)) {
                     $field->valuesDirectory = $valuesDirectory;
-                }
-                if ($field->step == ($this->step - 1) && !empty($this->formData[$field->uuid])) {
-                    if ($fieldsFromDirectory = $this->getNextStepFieldsFromDirectory($field->directory, $this->formData[$field->uuid])) {
-                        $this->fieldsThisStep = array_merge($this->fieldsThisStep, $fieldsFromDirectory);
-                    }
                 }
             }
             if ($field->step == $this->step) {
@@ -111,7 +103,7 @@ class FormBuilderService
                 $this->directory[$directory] = $directory::get();
             }
             foreach ($this->directory[$directory] as $directoryFields) {
-                if ($dataDirectoryFromObj = $directoryFields->getDataDirectory()) {
+                if ($dataDirectoryFromObj = $directoryFields->getDataDirectory($allFields)) {
                     $directoryData[] = $dataDirectoryFromObj;
                 }
             }
@@ -126,26 +118,6 @@ class FormBuilderService
         } else {
             return 0;
         }
-    }
-
-    private function getNextStepFieldsFromDirectory($directory, $value): array
-    {
-        $directoryFields = [];
-        if (class_exists($directory)) {
-            if (empty($this->directory[$directory])) {
-                $this->directory[$directory] = $directory::get();
-            }
-            foreach ($this->directory[$directory] as $directoryFieldsObj) {
-                if ($dataDirectoryFromObj = $directoryFieldsObj->getDirectoryFields($value)) {
-                    foreach ($this->fieldsAll as $fields) {
-                        if (in_array($fields->uuid, $dataDirectoryFromObj)) {
-                            $directoryFields[] = $fields;
-                        }
-                    }
-                }
-            }
-        }
-        return $directoryFields;
     }
 
     private function formatData($data): array

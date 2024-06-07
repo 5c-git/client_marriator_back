@@ -5,6 +5,4 @@ interface ModelDirectoryInterface
 {
     public function getDataDirectory(bool $allFields = false);
 
-    public function getDirectoryFields($value);
-
 }

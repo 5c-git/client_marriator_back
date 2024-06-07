@@ -28,8 +28,4 @@ class Citizenship extends Model implements ModelDirectoryInterface
             return $this->toArray();
         }
     }
-
-    public function getDirectoryFields($value){
-        return false;
-    }
 }
