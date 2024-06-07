@@ -14,12 +14,14 @@ class CheckBoxFormatter implements FormaterInterface
         $data['inputType'] = self::$type;
         $data['name'] = $fieldsData->name?:'';
         $data['value'] = (bool)$value;
-        $data['label'] = $fieldsData->label;//?
-        $data['validation'] = 'none';//?
-        $data['heading'] = $fieldsData->heading;//?
+        $data['label'] = $fieldsData->label;
+        $data['validation'] = 'none';
+        $data['heading'] = $fieldsData->heading;
+        $data['dividerTop'] = $fieldsData->dividerTop;
+        $data['dividerBottom'] = $fieldsData->dividerBottom;
+        $data['helperInfo'] = json_decode($fieldsData->helperInfo,true);
 
-        //dividerTop
-        //dividerBottom
+
         //helperInfo
 
 

@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Services\FormBuilderService;
 use App\Services\CreatePdfFileService;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class FormController extends Controller
 {
@@ -53,8 +55,41 @@ class FormController extends Controller
      * )
      */
 
-    public function getForm(Request $request)
+    public function getform(Request $request){
+        if(!empty($request->step)){
+            $step = $request->step;
+        }else{
+            $step = 1;
+        }
+        $user = $request->user();
+        $userData = json_decode($user->data,true);
+        $formData = (new FormBuilderService($step, $userData))->createFormData();
+        $response['formData'] = $formData;
+        $response['step'] = $step;
+        return response()->json($response);
+    }
+
+    public function saveForm(Request $request)
     {
+
+//        if(!empty($request->step)){
+//            $step = $request->step;
+//        }else{
+//            $step = 1;
+//        }
+//        $user = $request->user();
+//        if (!empty($request->currentStep)) {
+//            $currentStep = $request->currentStep;
+//        }else{
+//           //error
+//        }
+//        if (!empty($request->formData)) {
+//            $userData[$currentStep] = $request->formData;
+//            $user->data = json_encode($userData);
+//            $user->save();
+//        }
+
+
         $step = 2;
         $currentStep = 2;
         if (!empty($request->step)) {
@@ -85,8 +120,8 @@ class FormController extends Controller
         echo "<pre>";
         var_dump((new FormBuilderService($step, $userData))->createFormData());
         echo "</pre>";
-
     }
+
 
     /**
      * @OA\Post(
@@ -141,10 +176,54 @@ class FormController extends Controller
                 $response['error'] = $createFileService->error;
             }
         }
-
-
         return response()->json($response);
+    }
 
+
+    /**
+     * @OA\Post(
+     *     path="/api/saveUserImg/",
+     *     operationId="saveUserImg",
+     *     tags={"form"},
+     *     summary="saveUserImg",
+     *     description="saveUserImg Endpoint",
+     *     @OA\RequestBody(
+     *         @OA\JsonContent(),
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                 type="object",
+     *                 required={"file"},
+     *                 @OA\Property(
+     *                  property="file",
+     *                  type="file",
+     *             ),
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *       response="200",
+     *       description="file info",
+     *       @OA\JsonContent()
+     *     ),
+     * )
+     */
+
+    public function saveUserImg(Request $request){
+        $user = $request->user();
+        if($request->hasFile('file')) {
+            $uploadFiles = $request->file('file');
+            $extension = $uploadFiles->getClientOriginalExtension();
+            $filename = Str::random(20) . '.'.$extension;
+            if(!empty($user->img)){
+                Storage::disk('public')->delete($user->img);
+            }
+            $user->img = Storage::disk('public')->putFileAs('/source/userImg/' . $user->id, $uploadFiles, $filename, 'public');
+            $user->save();
+            $response['resFile'] = Storage::url($user->img);
+        }else{
+            $response['error'] = 'ничего не загружено';
+        }
+        return response()->json($response);
     }
 
 }
