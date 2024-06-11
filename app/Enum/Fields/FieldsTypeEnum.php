@@ -22,6 +22,15 @@ enum FieldsTypeEnum: int
     case select = 6;
     case text = 7;
     case directory = 8;
+    case account = 9;
+    case card = 10;
+    case date = 11;
+    case email = 12;
+    case inn = 13;
+    case month = 14;
+    case phone = 15;
+    case sms = 16;
+    case snils = 17;
 
 
     public function typeName(): string
@@ -36,6 +45,15 @@ enum FieldsTypeEnum: int
             self::select => 'Список',
             self::text => 'Текст',
             self::directory => 'Справочник',
+            self::account => 'Лицевой счет',
+            self::card => 'Банковская карта',
+            self::date => 'Дата',
+            self::email => 'Email',
+            self::inn => 'ИНН',
+            self::month => 'Дата до месяца',
+            self::phone => 'Телефон',
+            self::sms => 'SMS',
+            self::snils => 'Снилс',
         };
     }
 
@@ -50,6 +68,15 @@ enum FieldsTypeEnum: int
             self::radio => Connectors\RadioFormatter::class,
             self::select => Connectors\SelectFormatter::class,
             self::text => Connectors\TextFormatter::class,
+            self::account => Connectors\AccountFormatter::class,
+            self::card => Connectors\CardFormatter::class,
+            self::date => Connectors\DateFormatter::class,
+            self::email => Connectors\EmailFormatter::class,
+            self::inn => Connectors\InnFormatter::class,
+            self::month => Connectors\MonthFormatter::class,
+            self::phone => Connectors\PhoneFormatter::class,
+            self::sms => Connectors\SmsFormatter::class,
+            self::snils => Connectors\SnilsFormatter::class,
         };
     }
 
@@ -58,6 +85,15 @@ enum FieldsTypeEnum: int
             self::text,
             self::checkbox,
             self::file,
+            self::account,
+            self::card,
+            self::date,
+            self::email,
+            self::inn,
+            self::month,
+            self::phone,
+            self::sms,
+            self::snils,
             self::directory,
         ];
     }

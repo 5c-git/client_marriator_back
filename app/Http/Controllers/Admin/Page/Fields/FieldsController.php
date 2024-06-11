@@ -69,6 +69,20 @@ class FieldsController extends Controller
         $field->description = $data['description'];
         $field->step = $data['step'];
         $field->directory = $data['directory'];
+        $field->label = $data['label'];
+        $field->heading = $data['heading'];
+        $field->placeholder = $data['placeholder'];
+        if(!empty($data['dividerTop'])) {
+            $field->dividerTop = true;
+        }else{
+            $field->dividerTop = false;
+        }
+        if(!empty($data['dividerBottom'])) {
+            $field->dividerBottom = true;
+        }else{
+            $field->dividerBottom = false;
+        }
+       // 'helperInfo',
 
         if(empty($data['parentFields'])){
             $data['parentFields'] = [];
@@ -121,6 +135,19 @@ class FieldsController extends Controller
         $field->description = $data['description'];
         $field->step = $data['step'];
         $field->directory = $data['directory'];
+        $field->label = $data['label'];
+        $field->heading = $data['heading'];
+        $field->placeholder = $data['placeholder'];
+        if(!empty($data['dividerTop'])) {
+            $field->dividerTop = true;
+        }else{
+            $field->dividerTop = false;
+        }
+        if(!empty($data['dividerBottom'])) {
+            $field->dividerBottom = true;
+        }else{
+            $field->dividerBottom = false;
+        }
 
         if(empty($data['parentFields'])){
             $data['parentFields'] = [];

@@ -69,6 +69,43 @@
         </div>
 
         <div class="form-group row">
+            <label for="label" class="col-sm-2 col-form-label">Ярлык</label>
+            <div class="col-sm-10">
+                <textarea class="form-control" name="label" id="label"></textarea>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="heading" class="col-sm-2 col-form-label">Заголовок</label>
+            <div class="col-sm-10">
+                <textarea class="form-control" name="heading" id="heading"></textarea>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="placeholder" class="col-sm-2 col-form-label">Текст в поле</label>
+            <div class="col-sm-10">
+                <textarea class="form-control" name="placeholder" id="placeholder"></textarea>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="dividerTop" class="col-sm-2 col-form-label">Линия сверху</label>
+            <div class="offset-sm-2 col-sm-10">
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" style="margin-top: -1.5rem" name="dividerTop" value="1" id="dividerTop">
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="dividerBottom" class="col-sm-2 col-form-label">Линия снизу</label>
+            <div class="offset-sm-2 col-sm-10">
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" style="margin-top: -1.5rem" name="dividerBottom" value="1" id="dividerBottom">
+                </div>
+            </div>
+        </div>
+
+
+        <div class="form-group row">
             <label for="select" class="col-sm-2 col-form-label">Справочник</label>
             <div class="col-sm-10">
                 <select class="custom-select" name="directory">

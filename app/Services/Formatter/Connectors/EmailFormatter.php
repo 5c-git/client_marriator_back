@@ -3,30 +3,28 @@ namespace App\Services\Formatter\Connectors;
 
 use App\Services\Formatter\FormaterInterface;
 
-class CheckboxMultipleFormatter implements FormaterInterface
+class EmailFormatter implements FormaterInterface
 {
 
-    public static string $type= 'checkboxMultiple';
+    public static string $type= 'email';
 
     public static function createFormat($fieldsData,$value):array
     {
         $data = [];
         $data['inputType'] = self::$type;
         $data['name'] = $fieldsData->name?:'';
-        $data['value'] = $value?:[];
-        $option = [];
-        foreach ($fieldsData->valuesDirectory as $item) {
-            $option[] = ['value'=>$item->uuid,'label'=>$item->name,'disabled'=>false];
-        }
-        $data['options'] = $option;
+        $data['value'] = $value?:'';
+        $data['label'] = $fieldsData->label?:'';
         $data['validation'] = 'none';
-        if(!empty($fieldsData->heading)){
-        $data['heading'] = $fieldsData->heading;
+        if(!empty($fieldsData->heading)) {
+            $data['heading'] = $fieldsData->heading;
         }
+        $data['placeholder'] = $fieldsData->placeholder?:'';
+
         //$data['error'];
         $data['dividerTop'] = $fieldsData->dividerTop;
         $data['dividerBottom'] = $fieldsData->dividerBottom;
-       // $data['helperInfo'] = json_decode([],true);
+        // $data['helperInfo'] = json_decode([],true);
 
 
         //helperInfo

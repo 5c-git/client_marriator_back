@@ -6,9 +6,36 @@ use App\Services\Formatter\FormaterInterface;
 class TextFormatter implements FormaterInterface
 {
 
-    public static function createFormat()
+    public static string $type= 'text';
+
+    public static function createFormat($fieldsData,$value):array
     {
-        // TODO: Implement createFormat() method.
+        $data = [];
+        $data['inputType'] = self::$type;
+        $data['name'] = $fieldsData->name?:'';
+        $data['value'] = $value?:'';
+        $data['label'] = $fieldsData->label?:'';
+        $data['validation'] = 'none';
+        if(!empty($fieldsData->heading)) {
+            $data['heading'] = $fieldsData->heading;
+        }
+        $data['placeholder'] = $fieldsData->placeholder?:'';
+
+        //$data['error'];
+        $data['dividerTop'] = $fieldsData->dividerTop;
+        $data['dividerBottom'] = $fieldsData->dividerBottom;
+        // $data['helperInfo'] = json_decode([],true);
+
+
+        //helperInfo
+
+
+
+
+        return $data;
+
+
+
     }
 }
 

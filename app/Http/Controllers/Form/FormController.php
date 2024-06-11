@@ -55,13 +55,15 @@ class FormController extends Controller
      * )
      */
 
-    public function getform(Request $request){
+    public function getform(Request $request)
+    {
+        $this->setUser();
         if(!empty($request->step)){
             $step = $request->step;
         }else{
             $step = 1;
         }
-        $user = $request->user();
+        $user = Auth::user();
         $userData = json_decode($user->data,true);
         $formData = (new FormBuilderService($step, $userData))->createFormData();
         $response['formData'] = $formData;
@@ -71,55 +73,27 @@ class FormController extends Controller
 
     public function saveForm(Request $request)
     {
-
-//        if(!empty($request->step)){
-//            $step = $request->step;
-//        }else{
-//            $step = 1;
-//        }
-//        $user = $request->user();
-//        if (!empty($request->currentStep)) {
-//            $currentStep = $request->currentStep;
-//        }else{
-//           //error
-//        }
-//        if (!empty($request->formData)) {
-//            $userData[$currentStep] = $request->formData;
-//            $user->data = json_encode($userData);
-//            $user->save();
-//        }
-
-
-        $step = 2;
-        $currentStep = 2;
-        if (!empty($request->step)) {
+        $this->setUser();
+        $response = [];
+        if(!empty($request->step)){
             $step = $request->step;
+            $user = Auth::user();
+            if (!empty($request->formData)) {
+                $userData = json_decode($user->data, true);
+                $userData[$step] = $request->formData;
+                $user->data = json_encode($userData);
+                $user->save();
+            }
+            $response['status'] = 'success';
+        }else{
+            $response['status'] = 'error';
         }
-        if (!empty($request->currentStep)) {
-            $currentStep = $request->currentStep;
-        }
-        $formData = [];
-        if (!empty($request->formData)) {
-            $formData = $request->formData;
-        }
-        if (empty($request->phone)) {
-            die();
-        }
-        if ($user = User::where('phone', $request->phone)->first()) {
-            $userData = json_decode($user->data, true);
-            $userData[$currentStep] = $formData;
-        } else {
-            $user = new User();
-            $user->phone = $request->phone;
-        }
-        $user->data = json_encode($userData);
-        $user->name = 'Тест';
-        $user->email = 'dfvddfvdv@tt.tt';
-        $user->password = 'dfvddfvdv@tt.tt';
-        $user->save();
-        echo "<pre>";
-        var_dump((new FormBuilderService($step, $userData))->createFormData());
-        echo "</pre>";
+        return response()->json($response);
+    }
+
+    protected function setUser(){
+        $user = User::where('email','ilyaDevmarriator@gmail.com')->first();
+        Auth::login($user);
     }
 
 
@@ -154,6 +128,7 @@ class FormController extends Controller
 
     public function saveFile(Request $request)
     {
+        $this->setUser();
         $uploadFiles = $request->allFiles();
         $response['text1'] = 'под какими ключами прилители файлы (через запятую)  ' . implode(', ', array_keys($uploadFiles));
         $response['fileName'] = [];
@@ -168,7 +143,7 @@ class FormController extends Controller
             foreach ($files as $uploadFile) {
                 $response['fileName'][] = $uploadFile->getClientOriginalName();
             }
-            $userId = 1;
+            $userId = Auth::id();
             $createFileService = new CreatePdfFileService($files,$userId);
             if(!empty($createFileService->mergeFilePath) && empty($createFileService->error)){
                 $response['resFile'] = $createFileService->mergeFilePath;
@@ -209,7 +184,8 @@ class FormController extends Controller
      */
 
     public function saveUserImg(Request $request){
-        $user = $request->user();
+        $this->setUser();
+        $user = Auth::user();
         if($request->hasFile('file')) {
             $uploadFiles = $request->file('file');
             $extension = $uploadFiles->getClientOriginalExtension();

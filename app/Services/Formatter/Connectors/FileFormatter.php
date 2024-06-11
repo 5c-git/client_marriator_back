@@ -6,9 +6,34 @@ use App\Services\Formatter\FormaterInterface;
 class FileFormatter implements FormaterInterface
 {
 
-    public static function createFormat()
+    public static string $type= 'file';
+
+    public static function createFormat($fieldsData,$value):array
     {
-        // TODO: Implement createFormat() method.
+        $data = [];
+        $data['inputType'] = self::$type;
+        $data['name'] = $fieldsData->name?:'';
+        $data['value'] = $value?:'';
+
+        $data['placeholder'] = $fieldsData->placeholder?:'';
+        $data['validation'] = 'none';
+        $data['url'] = $value?:'';
+        $data['heading'] = $fieldsData->heading;
+        //$data['error'];
+        $data['dividerTop'] = $fieldsData->dividerTop;
+        $data['dividerBottom'] = $fieldsData->dividerBottom;
+        //$data['helperInfo'] = json_decode([],true);
+        //$data['drawerInfo'] = json_decode([],true);
+
+
+
+
+
+
+        return $data;
+
+
+
     }
 }
 

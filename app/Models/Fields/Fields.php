@@ -19,7 +19,13 @@ class Fields extends Model
         'directory',
         'active',
         'step',
-        'sort'
+        'sort',
+        'label',
+        'heading',
+        'placeholder',
+        'dividerTop',
+        'dividerBottom',
+        'helperInfo',
     ];
 
     public $timestamps = false;

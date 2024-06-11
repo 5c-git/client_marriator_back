@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::table('fields', function (Blueprint $table) {
             $table->text('label')->nullable();
             $table->text('heading')->nullable();
+            $table->text('placeholder')->nullable();
             $table->boolean('dividerTop')->default(false);
             $table->boolean('dividerBottom')->default(false);
             $table->json('helperInfo')->nullable();
@@ -27,7 +28,12 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('fields', function (Blueprint $table) {
-            $table->dropColumn(['sort']);
+            $table->dropColumn(['label']);
+            $table->dropColumn(['heading']);
+            $table->dropColumn(['placeholder']);
+            $table->dropColumn(['dividerTop']);
+            $table->dropColumn(['dividerBottom']);
+            $table->dropColumn(['helperInfo']);
         });
     }
 };
