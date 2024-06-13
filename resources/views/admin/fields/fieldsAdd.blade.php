@@ -103,6 +103,14 @@
                 </div>
             </div>
         </div>
+        <div class="form-group row">
+            <label for="required" class="col-sm-2 col-form-label">Обязательное поле</label>
+            <div class="offset-sm-2 col-sm-10">
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" style="margin-top: -1.5rem" name="required" value="1" id="required">
+                </div>
+            </div>
+        </div>
 
 
         <div class="form-group row">

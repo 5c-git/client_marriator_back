@@ -82,6 +82,11 @@ class FieldsController extends Controller
         }else{
             $field->dividerBottom = false;
         }
+        if(!empty($data['required'])) {
+            $field->required = true;
+        }else{
+            $field->required = false;
+        }
        // 'helperInfo',
 
         if(empty($data['parentFields'])){
@@ -147,6 +152,11 @@ class FieldsController extends Controller
             $field->dividerBottom = true;
         }else{
             $field->dividerBottom = false;
+        }
+        if(!empty($data['required'])) {
+            $field->required = true;
+        }else{
+            $field->required = false;
         }
 
         if(empty($data['parentFields'])){

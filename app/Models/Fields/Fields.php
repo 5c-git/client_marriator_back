@@ -26,6 +26,7 @@ class Fields extends Model
         'dividerTop',
         'dividerBottom',
         'helperInfo',
+        'required'
     ];
 
     public $timestamps = false;
