@@ -141,14 +141,16 @@
                 <div class="row addItemSelect">
                     <div class="col-sm-9">
                         <x-adminlte-select2 id="parentFields{{$kfield}}" name="parentFields[{{$kfield}}][]" multiple>
-                            @foreach($fields as $fieldOne)
-                                @if(!empty($fieldOne['uuid']))
-                                    @if(in_array($fieldOne['uuid'],$parentField))
-                                        <option selected value="{{$fieldOne['uuid']}}">{{$fieldOne['name']}} [{{$fieldOne['uuid']}}]</option>
-                                    @else
-                                        <option value="{{$fieldOne['uuid']}}">{{$fieldOne['name']}} [{{$fieldOne['uuid']}}]</option>
+                            @foreach($fields as $field)
+                                @foreach($field['value'] as $fieldVal)
+                                    @if(!empty($fieldVal['uuid']))
+                                        @if(in_array($fieldOne['uuid'],$parentField))
+                                            <option selected value="{{$fieldVal['uuid']}}">{{$fieldVal['name']}} [{{$fieldVal['uuid']}}]</option>
+                                        @else
+                                            <option value="{{$fieldVal['uuid']}}">{{$field['name']}}: {{$fieldVal['name']}} [{{$fieldVal['uuid']}}]</option>
+                                        @endif
                                     @endif
-                                @endif
+                                @endforeach
                             @endforeach
                         </x-adminlte-select2>
                     </div>
@@ -160,10 +162,12 @@
                     <div class="row addItemSelect">
                         <div class="col-sm-9">
                             <x-adminlte-select2 id="parentFields{{count($field->parentFields)+1}}" name="parentFields[{{count($field->parentFields)+1}}][]" multiple>
-                                @foreach($fields as $fieldOne)
-                                    @if(!empty($fieldOne['uuid']))
-                                        <option value="{{$fieldOne['uuid']}}">{{$fieldOne['name']}} [{{$fieldOne['uuid']}}]</option>
-                                    @endif
+                                @foreach($fields as $field)
+                                    @foreach($field['value'] as $fieldVal)
+                                        @if(!empty($fieldVal['uuid']))
+                                            <option value="{{$fieldVal['uuid']}}">{{$field['name']}}: {{$fieldVal['name']}} [{{$fieldVal['uuid']}}]</option>
+                                        @endif
+                                    @endforeach
                                 @endforeach
                             </x-adminlte-select2>
                         </div>

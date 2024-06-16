@@ -34,8 +34,8 @@ class FieldsController extends Controller
         $field = Fields::where('id', '=', $request->id)->first();
         $typeEnum = FieldsTypeEnum::fieldType();
         $directoryEnum = FieldsDirectoryEnum::cases();
-        $fields = Fields::where('id', '!=', $request->id)->where('active',true)->get()->toArray();
-
+        $fields['fields']['value'] = Fields::where('id', '!=', $request->id)->where('active',true)->get()->toArray();
+        $fields['fields']['name'] = 'Простые поля';
         if($field) {
             if(!empty($field->parentFields)) {
                 $field->parentFields = json_decode($field->parentFields, true);
@@ -44,7 +44,9 @@ class FieldsController extends Controller
             }
             foreach (FieldsDirectoryEnum::values() as $directory){
                 if($directoryArr=$directory::where('active',true)->get()->toArray()) {
-                    $fields = array_merge($fields, $directoryArr);
+                    $arrData['value'] = $directoryArr;
+                    $arrData['name'] = FieldsDirectoryEnum::from($directory)->directoryName();
+                    $fields = array_merge($fields, [$directory=>$arrData]);
                 }
             }
 
@@ -119,10 +121,14 @@ class FieldsController extends Controller
     {
         $typeEnum = FieldsTypeEnum::fieldType();
         $directoryEnum = FieldsDirectoryEnum::cases();
-        $fields = Fields::where('active',true)->get()->toArray();
+        $fields['fields']['value'] = Fields::where('active',true)->get()->toArray();
+        $fields['fields']['name'] = 'Простые поля';
+
         foreach (FieldsDirectoryEnum::values() as $directory){
             if($directoryArr=$directory::where('active',true)->get()->toArray()) {
-                $fields = array_merge($fields, $directoryArr);
+                $arrData['value'] = $directoryArr;
+                $arrData['name'] = FieldsDirectoryEnum::from($directory)->directoryName();
+                $fields = array_merge($fields, [$directory=>$arrData]);
             }
         }
         return view('admin.fields.fieldsAdd',compact('typeEnum','directoryEnum','fields'));

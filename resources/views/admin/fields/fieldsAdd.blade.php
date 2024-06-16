@@ -133,9 +133,11 @@
                     <div class="col-sm-9">
                     <x-adminlte-select2 id="parentFields" name="parentFields[0][]" multiple>
                         @foreach($fields as $field)
-                            @if(!empty($field['uuid']))
-                                <option value="{{$field['uuid']}}">{{$field['name']}} [{{$field['uuid']}}]</option>
+                            @foreach($field['value'] as $fieldVal)
+                            @if(!empty($fieldVal['uuid']))
+                                <option value="{{$fieldVal['uuid']}}">{{$field['name']}}: {{$fieldVal['name']}} [{{$fieldVal['uuid']}}]</option>
                             @endif
+                            @endforeach
                         @endforeach
                     </x-adminlte-select2>
                     </div>
