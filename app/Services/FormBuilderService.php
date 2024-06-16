@@ -100,7 +100,7 @@ class FormBuilderService
         $directoryData = [];
         if (class_exists($directory)) {
             if (empty($this->directory[$directory])) {
-                $this->directory[$directory] = $directory::get();
+                $this->directory[$directory] = $directory::where('active',true)->get();
             }
             foreach ($this->directory[$directory] as $directoryFields) {
                 if ($dataDirectoryFromObj = $directoryFields->getDataDirectory($allFields)) {
