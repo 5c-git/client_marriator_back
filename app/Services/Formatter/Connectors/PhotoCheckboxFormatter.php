@@ -15,8 +15,10 @@ class PhotoCheckboxFormatter implements FormaterInterface
         $data['name'] = $fieldsData->name?:'';
         $data['value'] = $value?:[];
         $option = [];
-        foreach ($fieldsData->valuesDirectory as $item) {
-            $option[] = ['value'=>$item->uuid,'label'=>$item->name,'disabled'=>false];
+        if(!empty($fieldsData->valuesDirectory)){
+            foreach ($fieldsData->valuesDirectory as $item) {
+                $option[] = ['value'=>$item->uuid,'label'=>$item->name,'disabled'=>false];
+            }
         }
         $data['options'] = $option;
 
