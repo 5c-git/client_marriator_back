@@ -11,6 +11,7 @@ class CardFormatter implements FormaterInterface
     public static function createFormat($fieldsData,$value):array
     {
         $data = [];
+        $data['uuid'] = $fieldsData->uuid;
         $data['inputType'] = self::$type;
         $data['name'] = $fieldsData->name?:'';
         $data['value'] = $value?:'';
@@ -20,6 +21,7 @@ class CardFormatter implements FormaterInterface
         }else{
             $data['validation'] = 'none';
         }
+
         if(!empty($fieldsData->heading)) {
             $data['heading'] = $fieldsData->heading;
         }

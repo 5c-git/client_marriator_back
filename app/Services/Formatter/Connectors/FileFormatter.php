@@ -11,6 +11,7 @@ class FileFormatter implements FormaterInterface
     public static function createFormat($fieldsData,$value):array
     {
         $data = [];
+        $data['uuid'] = $fieldsData->uuid;
         $data['inputType'] = self::$type;
         $data['name'] = $fieldsData->name?:'';
         $data['value'] = $value?:'';
