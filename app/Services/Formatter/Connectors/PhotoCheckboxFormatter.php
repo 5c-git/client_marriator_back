@@ -20,7 +20,11 @@ class PhotoCheckboxFormatter implements FormaterInterface
         }
         $data['options'] = $option;
 
-        $data['validation'] = 'none';
+        if($fieldsData->required){
+            $data['validation'] = 'default';
+        }else{
+            $data['validation'] = 'none';
+        }
         $data['heading'] = $fieldsData->heading;
         //$data['error'];
         $data['dividerTop'] = $fieldsData->dividerTop;

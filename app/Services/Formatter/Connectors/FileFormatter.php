@@ -16,7 +16,11 @@ class FileFormatter implements FormaterInterface
         $data['value'] = $value?:'';
 
         $data['placeholder'] = $fieldsData->placeholder?:'';
-        $data['validation'] = 'none';
+        if($fieldsData->required){
+            $data['validation'] = 'default';
+        }else{
+            $data['validation'] = 'none';
+        }
         $data['url'] = $value?:'';
         $data['heading'] = $fieldsData->heading;
         //$data['error'];

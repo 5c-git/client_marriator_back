@@ -19,7 +19,11 @@ class CheckboxMultipleFormatter implements FormaterInterface
             $option[] = ['value'=>$item->uuid,'label'=>$item->name,'disabled'=>false];
         }
         $data['options'] = $option;
-        $data['validation'] = 'none';
+        if($fieldsData->required){
+            $data['validation'] = 'default';
+        }else{
+            $data['validation'] = 'none';
+        }
         if(!empty($fieldsData->heading)){
         $data['heading'] = $fieldsData->heading;
         }

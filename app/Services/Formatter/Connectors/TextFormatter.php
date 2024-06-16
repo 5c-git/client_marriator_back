@@ -15,7 +15,11 @@ class TextFormatter implements FormaterInterface
         $data['name'] = $fieldsData->name?:'';
         $data['value'] = $value?:'';
         $data['label'] = $fieldsData->label?:'';
-        $data['validation'] = 'none';
+        if($fieldsData->required){
+            $data['validation'] = 'default';
+        }else{
+            $data['validation'] = 'none';
+        }
         if(!empty($fieldsData->heading)) {
             $data['heading'] = $fieldsData->heading;
         }
