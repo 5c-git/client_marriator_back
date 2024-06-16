@@ -141,13 +141,13 @@
                 <div class="row addItemSelect">
                     <div class="col-sm-9">
                         <x-adminlte-select2 id="parentFields{{$kfield}}" name="parentFields[{{$kfield}}][]" multiple>
-                            @foreach($fields as $field)
-                                @foreach($field['value'] as $fieldVal)
+                            @foreach($fields as $fieldOne)
+                                @foreach($fieldOne['value'] as $fieldVal)
                                     @if(!empty($fieldVal['uuid']))
                                         @if(in_array($fieldVal['uuid'],$parentField))
-                                            <option selected value="{{$fieldVal['uuid']}}">{{$fieldVal['name']}} [{{$fieldVal['uuid']}}]</option>
+                                            <option selected value="{{$fieldVal['uuid']}}">{{$fieldOne['name']}}: {{$fieldVal['name']}} [{{$fieldVal['uuid']}}]</option>
                                         @else
-                                            <option value="{{$fieldVal['uuid']}}">{{$field['name']}}: {{$fieldVal['name']}} [{{$fieldVal['uuid']}}]</option>
+                                            <option value="{{$fieldVal['uuid']}}">{{$fieldOne['name']}}: {{$fieldVal['name']}} [{{$fieldVal['uuid']}}]</option>
                                         @endif
                                     @endif
                                 @endforeach
@@ -162,10 +162,10 @@
                     <div class="row addItemSelect">
                         <div class="col-sm-9">
                             <x-adminlte-select2 id="parentFields{{count($field->parentFields)+1}}" name="parentFields[{{count($field->parentFields)+1}}][]" multiple>
-                                @foreach($fields as $field)
-                                    @foreach($field['value'] as $fieldVal)
+                                @foreach($fields as $fieldOne)
+                                    @foreach($fieldOne['value'] as $fieldVal)
                                         @if(!empty($fieldVal['uuid']))
-                                            <option value="{{$fieldVal['uuid']}}">{{$field['name']}}: {{$fieldVal['name']}} [{{$fieldVal['uuid']}}]</option>
+                                            <option value="{{$fieldVal['uuid']}}">{{$fieldOne['name']}}: {{$fieldVal['name']}} [{{$fieldVal['uuid']}}]</option>
                                         @endif
                                     @endforeach
                                 @endforeach
