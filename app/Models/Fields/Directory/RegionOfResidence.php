@@ -10,7 +10,7 @@ class RegionOfResidence extends Model implements ModelDirectoryInterface
 {
     use HasFactory;
 
-    public static $fieldsTypeEnum = FieldsTypeEnum::select->value;
+    public static int $fieldsTypeEnum = FieldsTypeEnum::select->value;
 
     protected $table = 'directory_region_of_residence';
     protected $fillable = [

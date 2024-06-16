@@ -10,7 +10,7 @@ class Activities extends Model implements ModelDirectoryInterface
 {
     use HasFactory;
 
-    public static $fieldsTypeEnum = FieldsTypeEnum::photoCheckbox->value;
+    public static int $fieldsTypeEnum = FieldsTypeEnum::photoCheckbox->value;
 
     protected $table = 'directory_activities';
     protected $fillable = [

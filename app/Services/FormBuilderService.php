@@ -114,7 +114,7 @@ class FormBuilderService
     private function getTypeDirectory($directory): int
     {
         if (class_exists($directory)) {
-            return $directory::fieldsTypeEnum;
+            return $directory::$fieldsTypeEnum;
         } else {
             return 0;
         }

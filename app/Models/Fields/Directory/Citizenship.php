@@ -10,7 +10,7 @@ class Citizenship extends Model implements ModelDirectoryInterface
 {
     use HasFactory;
 
-    public static $fieldsTypeEnum = FieldsTypeEnum::checkbox->value;
+    public static int $fieldsTypeEnum = FieldsTypeEnum::checkbox->value;
 
     protected $table = 'directory_citizenship';
     protected $fillable = [
