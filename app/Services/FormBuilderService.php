@@ -123,7 +123,11 @@ class FormBuilderService
     private function formatData($data): array
     {
         foreach ($data as $field) {
-            $value = $this->formData[$field->uuid];
+            if(!empty($this->formData[$field->uuid])){
+                $value = $this->formData[$field->uuid];
+            }else{
+                $value = '';
+            }
             $this->formatedData[] = FieldsTypeEnum::from($field->type)?->typeClassFormatter()::createFormat($field, $value);
         }
         return $this->formatedData;
