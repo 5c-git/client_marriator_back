@@ -64,7 +64,11 @@ class FormController extends Controller
             $step = 1;
         }
         $user = Auth::user();
-        $userData = json_decode($user->data,true);
+        if(!empty($user->data)) {
+            $userData = json_decode($user->data, true);
+        }else{
+            $userData = [];
+        }
         $formData = (new FormBuilderService($step, $userData))->createFormData();
         $response['formData'] = $formData;
         $response['step'] = $step;
@@ -79,7 +83,11 @@ class FormController extends Controller
             $step = $request->step;
             $user = Auth::user();
             if (!empty($request->formData)) {
-                $userData = json_decode($user->data, true);
+                if(!empty($user->data)) {
+                    $userData = json_decode($user->data, true);
+                }else{
+                    $userData = [];
+                }
                 $userData[$step] = $request->formData;
                 $user->data = json_encode($userData);
                 $user->save();
