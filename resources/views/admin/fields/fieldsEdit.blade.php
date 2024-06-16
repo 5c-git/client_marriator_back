@@ -144,7 +144,7 @@
                             @foreach($fields as $field)
                                 @foreach($field['value'] as $fieldVal)
                                     @if(!empty($fieldVal['uuid']))
-                                        @if(in_array($fieldOne['uuid'],$parentField))
+                                        @if(in_array($fieldVal['uuid'],$parentField))
                                             <option selected value="{{$fieldVal['uuid']}}">{{$fieldVal['name']}} [{{$fieldVal['uuid']}}]</option>
                                         @else
                                             <option value="{{$fieldVal['uuid']}}">{{$field['name']}}: {{$fieldVal['name']}} [{{$fieldVal['uuid']}}]</option>

@@ -68,7 +68,7 @@ enum FieldsDirectoryEnum: string
             self::regionOfResidence => 'Справочник регион проживания',
             self::residence => 'Справочник регионов проживания',
             self::shoeSize => 'Справочник размеров обуви',
-            self::taxStatus => 'Налоговый статус',
+            self::taxStatus => 'Справочник налоговый статус',
             self::viewActivities => 'Справочник виды деятельности',
             self::weight => 'Справочник вес, кг.',
         };
