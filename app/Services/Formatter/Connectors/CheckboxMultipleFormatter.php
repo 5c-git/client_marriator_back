@@ -16,7 +16,7 @@ class CheckboxMultipleFormatter implements FormaterInterface
         $data['value'] = $value?:[];
         $option = [];
         foreach ($fieldsData->valuesDirectory as $item) {
-            $option[] = ['value'=>$item->uuid,'label'=>$item->name,'disabled'=>false];
+            $option[] = ['value'=>$item['uuid'],'label'=>$item['name'],'disabled'=>false];
         }
         $data['options'] = $option;
         if($fieldsData->required){

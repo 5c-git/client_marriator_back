@@ -19,7 +19,8 @@ class SmsFormatter implements FormaterInterface
             $data['validation'] = 'default';
         }else{
             $data['validation'] = 'none';
-        }        if(!empty($fieldsData->heading)) {
+        }
+        if(!empty($fieldsData->heading)) {
             $data['heading'] = $fieldsData->heading;
         }
         $data['placeholder'] = $fieldsData->placeholder?:'';
