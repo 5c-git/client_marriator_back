@@ -84,6 +84,8 @@ class FormBuilderService
                 $field->type = $this->getTypeDirectory($field->directory);
                 if ($valuesDirectory = $this->getDirectory($field->directory, true)) {
                     $field->valuesDirectory = $valuesDirectory;
+                }else{
+                    $field->valuesDirectory = [];
                 }
             }
             if ($field->step == $this->step) {
