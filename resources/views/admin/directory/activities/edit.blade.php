@@ -57,6 +57,72 @@
             </div>
         </div>
 
+        <div class="form-group row">
+            <label for="preview_text" class="col-sm-2 col-form-label">Превью текст</label>
+            <div class="col-sm-10">
+                <textarea type="text" class="form-control" name="preview_text" id="preview_text">{{$edit->preview_text}}</textarea>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="detail_name" class="col-sm-2 col-form-label">Детальное название</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" name="detail_name" id="detail_name" value="{{$edit->detail_name}}">
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="detail_text" class="col-sm-2 col-form-label">Детальный текст</label>
+            <div class="col-sm-10">
+                <textarea type="text" class="form-control" name="detail_text" id="detail_text">{{$edit->detail_text}}</textarea>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="detail_img" class="col-sm-2 col-form-label">Детальная картинка</label>
+            <div class="col-sm-10">
+                <x-adminlte-input-file name="detail_img" id="detail_img" />
+
+                @php
+                    if(!empty($edit->detail_img)){
+                       echo '<img src="'.$edit->detail_img.'" width="300">
+                       <br>
+                       <br>
+                       <a href="'.$edit->detail_img.'" target="_blank">Image element</a>
+                        <br>
+                        <label style="margin-top: 5px;" for="delImg">Del image</label>
+                       <input type="checkbox" id="delImgDetail" name="delImgDetail" value="yes"/>
+                       ';
+                    }
+                @endphp
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="link_text" class="col-sm-2 col-form-label">Текст ссылки</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" name="link_text" id="link_text" value="{{$edit->link_text}}">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="link" class="col-sm-2 col-form-label">Ссылка</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" name="link" id="link" value="{{$edit->link}}">
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="type" class="col-sm-2 col-form-label">Тип ссылки</label>
+            <div class="col-sm-10">
+                <select type="text" class="form-control" name="type" id="type">
+                    <option value="external" {{$edit->type == 'external'?'selected':''}}>Внутренняя</option>
+                    <option value="internal" {{$edit->type == 'internal'?'selected':''}}>Внешняя</option>
+                </select>
+            </div>
+        </div>
+
+
+
 
         <div class="form-group row">
             <label for="active" class="col-sm-2 col-form-label">Активность</label>

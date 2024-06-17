@@ -35,6 +35,9 @@ class ActivitiesController extends Controller
         if(!empty($edit->img)){
             $edit->img = Storage::url($edit->img);
         }
+        if(!empty($edit->detail_img)){
+            $edit->detail_img = Storage::url($edit->detail_img);
+        }
         if($edit) {
             return view('admin.directory.'.$this->view.'.edit', compact('edit'));
         }else{
@@ -51,6 +54,14 @@ class ActivitiesController extends Controller
 
         $editObj->name = $data['name'];
         $editObj->uuid = $data['uuid'];
+        $editObj->preview_text = $data['preview_text'];
+        $editObj->detail_name = $data['detail_name'];
+        $editObj->detail_text = $data['detail_text'];
+        $editObj->link_text = $data['link_text'];
+        $editObj->link = $data['link'];
+        if(!empty($data['type'])) {
+            $editObj->type = $data['type'];
+        }
 
         if($request->file('img')) {
             if(!empty($editObj->img)){
@@ -62,6 +73,18 @@ class ActivitiesController extends Controller
         if(!empty($data['delImg']) && $data['delImg'] == 'yes'){
             Storage::disk('public')->delete($editObj->img);
             $editObj->img = '';
+        }
+
+        if($request->file('detail_img')) {
+            if(!empty($editObj->detail_img)){
+                Storage::disk('public')->delete($editObj->detail_img);
+            }
+            $fileImage = $request->file('detail_img');
+            $editObj->detail_img = Storage::disk('public')->putFileAs('/source/directory/'.$this->view.'/'.$editObj->id.'-imgDetail', $fileImage, $fileImage->getClientOriginalName(),'public');
+        }
+        if(!empty($data['delImgDetail']) && $data['delImgDetail'] == 'yes'){
+            Storage::disk('public')->delete($editObj->detail_img);
+            $editObj->detail_img = '';
         }
 
         if(!empty($data['active'])) {
@@ -93,6 +116,14 @@ class ActivitiesController extends Controller
         $editObj = new $this->objClass();
         $editObj->name = $data['name'];
         $editObj->uuid = $data['uuid'];
+        $editObj->preview_text = $data['preview_text'];
+        $editObj->detail_name = $data['detail_name'];
+        $editObj->detail_text = $data['detail_text'];
+        $editObj->link_text = $data['link_text'];
+        $editObj->link = $data['link'];
+        if(!empty($data['type'])) {
+            $editObj->type = $data['type'];
+        }
 
         if(!empty($data['active'])) {
             $editObj->active = true;
@@ -101,6 +132,11 @@ class ActivitiesController extends Controller
         }
         $editObj->save();
 
+        if($request->file('detail_img')) {
+            $fileImage = $request->file('detail_img');
+            $editObj->detail_img = Storage::disk('public')->putFileAs('/source/directory/'.$this->view.'/'.$editObj->id.'-imgDetail', $fileImage, $fileImage->getClientOriginalName(),'public');
+            $editObj->save();
+        }
         if($request->file('img')) {
             $fileImage = $request->file('img');
             $editObj->img = Storage::disk('public')->putFileAs('/source/directory/'.$this->view.'/'.$editObj->id.'-img', $fileImage, $fileImage->getClientOriginalName(),'public');

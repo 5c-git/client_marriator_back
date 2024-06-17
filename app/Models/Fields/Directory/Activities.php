@@ -18,6 +18,13 @@ class Activities extends Model implements ModelDirectoryInterface
         'name',
         'img',
         'active',
+        'preview_text',
+        'detail_name',
+        'detail_text',
+        'detail_img',
+        'link_text',
+        'link',
+        'type'
     ];
 
     public $timestamps = false;
