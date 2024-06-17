@@ -74,6 +74,17 @@ class FieldsController extends Controller
         $field->label = $data['label'];
         $field->heading = $data['heading'];
         $field->placeholder = $data['placeholder'];
+        $field->drawerInfo_text = $data['drawerInfo_text'];
+
+
+        $field->helperInfo_text = $data['helperInfo_text'];
+        $field->helperInfo_link = $data['helperInfo_link'];
+        $field->helperInfo_link_text = $data['helperInfo_link_text'];
+        if(!empty($data['helperInfo_link_type'])) {
+            $field->helperInfo_link_type = $data['helperInfo_link_type'];
+        }
+
+
         if(!empty($data['dividerTop'])) {
             $field->dividerTop = true;
         }else{
@@ -149,6 +160,14 @@ class FieldsController extends Controller
         $field->label = $data['label'];
         $field->heading = $data['heading'];
         $field->placeholder = $data['placeholder'];
+        $field->drawerInfo_text = $data['drawerInfo_text'];
+
+        $field->helperInfo_text = $data['helperInfo_text'];
+        $field->helperInfo_link = $data['helperInfo_link'];
+        $field->helperInfo_link_text = $data['helperInfo_link_text'];
+        if(!empty($data['helperInfo_link_type'])) {
+            $field->helperInfo_link_type = $data['helperInfo_link_type'];
+        }
         if(!empty($data['dividerTop'])) {
             $field->dividerTop = true;
         }else{

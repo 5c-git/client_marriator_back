@@ -103,6 +103,55 @@
                 </div>
             </div>
         </div>
+
+
+        <div class="form-group row">
+            <label for="helperInfo_text" class="col-sm-2 col-form-label">Вспомогательный блок текст</label>
+            <div class="col-sm-10">
+                <textarea class="form-control" name="helperInfo_text" id="helperInfo_text"></textarea>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="helperInfo_link_text" class="col-sm-2 col-form-label">Вспомогательный блок текст ссылки</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" name="helperInfo_link_text" id="helperInfo_link_text">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="helperInfo_link" class="col-sm-2 col-form-label">Вспомогательный блок ссылка</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" name="helperInfo_link" id="helperInfo_link">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="helperInfo_link_type" class="col-sm-2 col-form-label">Вспомогательный тип ссылки</label>
+            <div class="col-sm-10">
+                <select type="text" class="form-control" name="helperInfo_link_type" id="helperInfo_link_type">
+                    <option value="external">Внутренняя</option>
+                    <option value="internal">Внешняя</option>
+                </select>
+            </div>
+        </div>
+
+
+        <div class="form-group row">
+            <label for="drawerInfo_text" class="col-sm-2 col-form-label">Вспомогательный текст (для типа поля Файл)</label>
+            <div class="col-sm-10">
+                <textarea class="form-control" name="drawerInfo_text" id="drawerInfo_text"></textarea>
+            </div>
+        </div>
+{{--        <div class="form-group row">--}}
+{{--            <label for="drawerInfo_images" class="col-sm-2 col-form-label">Вспомогательные картинки (для типа поля Файл)</label>--}}
+{{--            <div class="col-sm-10">--}}
+{{--                <x-adminlte-input-file name="drawerInfo_images" multiple="multiple" id="drawerInfo_images" />--}}
+{{--            </div>--}}
+{{--        </div>--}}
+
+
+
+
+
+
         <div class="form-group row">
             <label for="required" class="col-sm-2 col-form-label">Обязательное поле</label>
             <div class="offset-sm-2 col-sm-10">

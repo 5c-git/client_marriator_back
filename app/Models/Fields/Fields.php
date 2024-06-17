@@ -26,7 +26,13 @@ class Fields extends Model
         'dividerTop',
         'dividerBottom',
         'helperInfo',
-        'required'
+        'required',
+        'helperInfo_text',
+        'helperInfo_link',
+        'helperInfo_link_text',
+        'helperInfo_link_type',
+        'drawerInfo_text',
+        'drawerInfo_images'
     ];
 
     public $timestamps = false;
