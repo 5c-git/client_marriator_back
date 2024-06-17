@@ -40,10 +40,8 @@ class FormController extends Controller
      *             mediaType="multipart/form-data",
      *             @OA\Schema(
      *                 type="object",
-     *                 required={"step","currentStep"},
+     *                 required={"step"},
      *                 @OA\Property(property="step",type="number"),
-     *                 @OA\Property(property="currentStep",type="number"),
-     *                 @OA\Property(property="formData",type="json")
      *             ),
      *         ),
      *     ),
@@ -74,6 +72,33 @@ class FormController extends Controller
         $response['step'] = $step;
         return response()->json($response);
     }
+
+    /**
+     * @OA\Post(
+     *     path="/api/saveForm/",
+     *     operationId="saveForm",
+     *     tags={"form"},
+     *     summary="saveForm",
+     *     description="saveForm Endpoint",
+     *     @OA\RequestBody(
+     *         @OA\JsonContent(),
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                 type="object",
+     *                 required={"step"},
+     *                 @OA\Property(property="step",type="number"),
+     *                 @OA\Property(property="formData",type="json")
+     *             ),
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *       response="200",
+     *       description="status save",
+     *       @OA\JsonContent()
+     *     ),
+     * )
+     */
 
     public function saveForm(Request $request)
     {
