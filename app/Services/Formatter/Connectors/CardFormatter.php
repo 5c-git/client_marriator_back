@@ -28,8 +28,8 @@ class CardFormatter implements FormaterInterface
         $data['placeholder'] = $fieldsData->placeholder?:'';
 
         //$data['error'];
-        $data['dividerTop'] = $fieldsData->dividerTop;
-        $data['dividerBottom'] = $fieldsData->dividerBottom;
+        $data['dividerTop'] = (bool)$fieldsData->dividerTop;
+        $data['dividerBottom'] = (bool)$fieldsData->dividerBottom;
         // $data['helperInfo'] = json_decode([],true);
 
 

@@ -30,8 +30,8 @@ class PhotoCheckboxFormatter implements FormaterInterface
         }
         $data['heading'] = $fieldsData->heading;
         //$data['error'];
-        $data['dividerTop'] = $fieldsData->dividerTop;
-        $data['dividerBottom'] = $fieldsData->dividerBottom;
+        $data['dividerTop'] = (bool)$fieldsData->dividerTop;
+        $data['dividerBottom'] = (bool)$fieldsData->dividerBottom;
         //$data['helperInfo'] = json_decode([],true);
         //$data['drawerInfo'] = json_decode([],true);
 
