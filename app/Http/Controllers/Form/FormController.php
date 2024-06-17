@@ -205,6 +205,7 @@ class FormController extends Controller
      *                 @OA\Property(
      *                  property="file",
      *                  type="file",
+     *                  ),
      *             ),
      *         ),
      *     ),
