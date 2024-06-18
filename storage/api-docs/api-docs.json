@@ -5,14 +5,45 @@
         "version": "1.0.0"
     },
     "paths": {
-        "/api/getForm": {
-            "post": {
+        "/api/getForm/": {
+            "get": {
                 "tags": [
-                    "getForm"
+                    "form"
                 ],
                 "summary": "getForm",
                 "description": "getForm Endpoint",
                 "operationId": "getForm",
+                "parameters": [
+                    {
+                        "name": "step",
+                        "in": "query",
+                        "description": "step for form",
+                        "required": true,
+                        "schema": {
+                            "type": "number"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "form data",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/saveForm/": {
+            "post": {
+                "tags": [
+                    "form"
+                ],
+                "summary": "saveForm",
+                "description": "saveForm Endpoint",
+                "operationId": "saveForm",
                 "requestBody": {
                     "content": {
                         "multipart/form-data": {
@@ -38,7 +69,90 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "form data",
+                        "description": "status save",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/saveFile/": {
+            "post": {
+                "tags": [
+                    "form"
+                ],
+                "summary": "saveFile",
+                "description": "saveFile Endpoint",
+                "operationId": "saveFile",
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "file[]"
+                                ],
+                                "properties": {
+                                    "file[]": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "file"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        },
+                        "application/json": {
+                            "schema": {}
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "file info",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/saveUserImg/": {
+            "post": {
+                "tags": [
+                    "form"
+                ],
+                "summary": "saveUserImg",
+                "description": "saveUserImg Endpoint",
+                "operationId": "saveUserImg",
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "file"
+                                ],
+                                "properties": {
+                                    "file": {
+                                        "type": "file"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        },
+                        "application/json": {
+                            "schema": {}
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "file info",
                         "content": {
                             "application/json": {
                                 "schema": {}

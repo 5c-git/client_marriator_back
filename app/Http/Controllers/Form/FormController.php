@@ -28,22 +28,20 @@ class FormController extends Controller
     }
 
     /**
-     * @OA\Post(
+     * @OA\Get(
      *     path="/api/getForm/",
      *     operationId="getForm",
      *     tags={"form"},
      *     summary="getForm",
      *     description="getForm Endpoint",
-     *     @OA\RequestBody(
-     *         @OA\JsonContent(),
-     *         @OA\MediaType(
-     *             mediaType="multipart/form-data",
-     *             @OA\Schema(
-     *                 type="object",
-     *                 required={"step"},
-     *                 @OA\Property(property="step",type="number"),
-     *             ),
-     *         ),
+     *     @OA\Parameter(
+     *         name="step",
+     *         in="query",
+     *         description="step for form",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="number",
+     *         )
      *     ),
      *     @OA\Response(
      *       response="200",
