@@ -11,9 +11,9 @@ class EmailFormatter implements FormaterInterface
     public static function createFormat($fieldsData,$value):array
     {
         $data = [];
-        $data['uuid'] = $fieldsData->uuid;
+        //$data['uuid'] = $fieldsData->uuid;
         $data['inputType'] = self::$type;
-        $data['name'] = $fieldsData->name?:'';
+        $data['name'] = $fieldsData->uuid;
         $data['value'] = $value?:'';
         $data['label'] = $fieldsData->label?:'';
         if($fieldsData->required){
@@ -27,8 +27,12 @@ class EmailFormatter implements FormaterInterface
         $data['placeholder'] = $fieldsData->placeholder?:'';
 
         //$data['error'];
-        $data['dividerTop'] = (bool)$fieldsData->dividerTop;
-        $data['dividerBottom'] = (bool)$fieldsData->dividerBottom;
+        if(!empty($fieldsData->dividerTop)) {
+            $data['dividerTop'] = (bool)$fieldsData->dividerTop;
+        }
+        if(!empty($fieldsData->dividerBotto)) {
+            $data['dividerBottom'] = (bool)$fieldsData->dividerBottom;
+        }
         if (!empty($fieldsData->helperInfo_text)){
             $data['helperInfo']['text'] = $fieldsData->helperInfo_text;
         }

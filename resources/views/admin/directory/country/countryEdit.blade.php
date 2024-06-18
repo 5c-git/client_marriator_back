@@ -33,7 +33,7 @@
         <div class="form-group row">
             <label for="uuid" class="col-sm-2 col-form-label">Uuid</label>
             <div class="col-sm-10">
-                <input type="text" class="form-control" name="uuid" value="{{$country->uuid}}" id="uuid">
+                <input type="text" class="form-control" name="uuid" value="{{$country->uuid}}" id="uuid" required>
             </div>
         </div>
 

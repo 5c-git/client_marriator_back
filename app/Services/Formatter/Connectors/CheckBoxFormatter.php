@@ -11,13 +11,15 @@ class CheckBoxFormatter implements FormaterInterface
     public static function createFormat($fieldsData,$value):array
     {
         $data = [];
-        $data['uuid'] = $fieldsData->uuid;
+        //$data['uuid'] = $fieldsData->uuid;
         $data['inputType'] = self::$type;
-        $data['name'] = $fieldsData->name?:'';
+        $data['name'] = $fieldsData->uuid;
         $data['value'] = (bool)$value;
         $data['label'] = $fieldsData->label?:'';
+        $data['placeholder'] = $fieldsData->placeholder?:'';
+
         if($fieldsData->required){
-            $data['validation'] = 'default';
+            $data['validation'] = 'checked';
         }else{
             $data['validation'] = 'none';
         }
@@ -25,8 +27,12 @@ class CheckBoxFormatter implements FormaterInterface
             $data['heading'] = $fieldsData->heading;
         }
         //$data['error'];
-        $data['dividerTop'] = (bool)$fieldsData->dividerTop;
-        $data['dividerBottom'] = (bool)$fieldsData->dividerBottom;
+        if(!empty($fieldsData->dividerTop)) {
+            $data['dividerTop'] = (bool)$fieldsData->dividerTop;
+        }
+        if(!empty($fieldsData->dividerBotto)) {
+            $data['dividerBottom'] = (bool)$fieldsData->dividerBottom;
+        }
         if (!empty($fieldsData->helperInfo_text)){
             $data['helperInfo']['text'] = $fieldsData->helperInfo_text;
         }
