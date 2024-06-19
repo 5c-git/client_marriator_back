@@ -16,7 +16,6 @@ class RadioFormatter implements FormaterInterface
             $data['inputType'] = self::$type;
             $data['name'] = $fieldsData->uuid;
             $data['value'] = $value ?: '';
-            $data['placeholder'] = $fieldsData->placeholder ?: '';
 
             $option = [];
             foreach ($fieldsData->valuesDirectory as $item) {
