@@ -10,6 +10,7 @@ class FormBuilderService
 
     public int $step = 1;
     public array $formData = [];
+    public array $formDataThisStep = [];
 
     public array $directory = [];
     public object $fieldsAll;
@@ -21,6 +22,11 @@ class FormBuilderService
     {
         $this->step = $step > 0 ? $step : 1;
         $this->formData = array_merge(...$formData);
+        if(!empty($formData[$step])) {
+            $this->formDataThisStep = $formData[$step];
+        }else{
+            $this->formDataThisStep = [];
+        }
     }
 
     public function createFormData(): array
@@ -35,12 +41,14 @@ class FormBuilderService
     {
         $oldFieldUuid = [];
         foreach ($this->formData as $kDataForm => $formData) {
-            if (is_array($formData)) {
-                foreach ($formData as $oneData) {
-                    $formVal[$oneData] = $kDataForm;
+            if(!empty($formData)) {
+                if (is_array($formData)) {
+                    foreach ($formData as $oneData) {
+                        $formVal[$oneData] = $kDataForm;
+                    }
+                } else {
+                    $formVal[$formData] = $kDataForm;
                 }
-            } else {
-                $formVal[$formData] = $kDataForm;
             }
         }
         foreach ($this->fieldsOldStep as $oldField) {
@@ -133,6 +141,33 @@ class FormBuilderService
             $this->formatedData[] = FieldsTypeEnum::from($field->type)?->typeClassFormatter()::createFormat($field, $value);
         }
         return $this->formatedData;
+    }
+
+    public function checkStatusForm(bool $getForm = false):string
+    {
+        $statusForm = 'needRequired';
+        if(!empty($this->fieldsThisStep) && !empty($this->formDataThisStep)){
+            if($this->checkRequired()){
+                $statusForm = 'allowedNewStep';
+            }
+
+            if(count($this->formDataThisStep) < count($this->fieldsThisStep) && !$getForm){
+                $statusForm = 'addedNewFields';
+            }
+        }
+        return $statusForm;
+    }
+
+    public function checkRequired(): bool
+    {
+        $required = true;
+        foreach($this->fieldsThisStep as $data){
+            if($data->required && empty($this->fieldsThisStep[$data->uuid])){
+                $required = false;
+                break;
+            }
+        }
+        return $required;
     }
 
 }

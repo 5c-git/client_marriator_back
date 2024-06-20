@@ -65,9 +65,12 @@ class FormController extends Controller
         }else{
             $userData = [];
         }
-        $formData = (new FormBuilderService($step, $userData))->createFormData();
-        $response['formData'] = $formData;
-        $response['step'] = $step;
+        $formDataService = (new FormBuilderService($step, $userData));
+        $response['result']['formData'] = $formDataService->createFormData();
+        $response['result']['step'] = $step;
+        $response['result']['type'] = $formDataService->checkStatusForm(true);
+        $response['status'] = 'success';
+
         return response()->json($response);
     }
 
@@ -115,6 +118,19 @@ class FormController extends Controller
                 $user->data = json_encode($userData);
                 $user->save();
             }
+
+            if(!empty($user->data)){
+                $formData = json_decode($user->data,true);
+            }else{
+                $formData = [];
+            }
+
+            $formDataService = (new FormBuilderService($step, $formData));
+
+            $response['result'] = [
+                'step'=>$step,
+                'type'=>$formDataService->checkStatusForm()
+            ];
             $response['status'] = 'success';
         }else{
             $response['status'] = 'error';
