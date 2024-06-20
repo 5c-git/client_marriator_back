@@ -17,8 +17,7 @@ class PhotoCheckboxFormatter implements FormaterInterface
             $data['inputType'] = self::$type;
             $data['name'] = $fieldsData->uuid;
             $data['value'] = $value ?: [];
-            $data['placeholder'] = $fieldsData->placeholder ?: '';
-
+            $data['disabled'] = false;
             $option = [];
             if (!empty($fieldsData->valuesDirectory)) {
                 foreach ($fieldsData->valuesDirectory as $item) {

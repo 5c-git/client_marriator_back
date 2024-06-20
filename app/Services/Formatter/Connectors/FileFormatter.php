@@ -16,7 +16,7 @@ class FileFormatter implements FormaterInterface
         $data['inputType'] = self::$type;
         $data['name'] = $fieldsData->uuid;
         $data['value'] = $value?:'';
-
+        $data['disabled'] = false;
         $data['placeholder'] = $fieldsData->placeholder?:'';
         if($fieldsData->required){
             $data['validation'] = 'default';

@@ -16,6 +16,7 @@ class DateFormatter implements FormaterInterface
         $data['name'] = $fieldsData->uuid;
         $data['value'] = $value?:'';
         $data['label'] = $fieldsData->label?:'';
+        $data['disabled'] = false;
         if($fieldsData->required){
             $data['validation'] = 'default';
         }else{

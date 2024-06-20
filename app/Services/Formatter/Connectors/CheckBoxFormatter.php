@@ -16,8 +16,7 @@ class CheckBoxFormatter implements FormaterInterface
         $data['name'] = $fieldsData->uuid;
         $data['value'] = (bool)$value;
         $data['label'] = $fieldsData->label?:'';
-        $data['placeholder'] = $fieldsData->placeholder?:'';
-
+        $data['disabled'] = false;
         if($fieldsData->required){
             $data['validation'] = 'checked';
         }else{

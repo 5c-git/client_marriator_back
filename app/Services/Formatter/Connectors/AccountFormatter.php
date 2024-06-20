@@ -15,6 +15,7 @@ class AccountFormatter implements FormaterInterface
         $data['name'] = $fieldsData->uuid;
         $data['value'] = $value?:'';
         $data['label'] = $fieldsData->label?:'';
+        $data['disabled'] = false;
         //$data['uuid'] = $fieldsData->uuid;
 
         if($fieldsData->required){
