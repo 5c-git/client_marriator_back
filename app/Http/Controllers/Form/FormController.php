@@ -55,7 +55,7 @@ class FormController extends Controller
     {
         $this->setUser();
         if(!empty($request->step)){
-            $step = $request->step;
+            $step = (int)$request->step;
         }else{
             $step = 1;
         }
