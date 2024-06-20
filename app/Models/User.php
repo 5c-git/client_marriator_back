@@ -28,7 +28,9 @@ class User extends Authenticatable
         'api_token',
         'phone',
         'data',
-        'img'
+        'img',
+        'confirmRegister',
+        'pin'
     ];
 
     /**
