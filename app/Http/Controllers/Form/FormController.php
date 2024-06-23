@@ -82,7 +82,6 @@ class FormController extends Controller
      *     summary="saveForm",
      *     description="saveForm Endpoint",
      *     @OA\RequestBody(
-     *         @OA\JsonContent(),
      *         @OA\MediaType(
      *             mediaType="application/json",
      *             @OA\Schema(
@@ -151,7 +150,6 @@ class FormController extends Controller
      *     summary="saveFile",
      *     description="saveFile Endpoint",
      *     @OA\RequestBody(
-     *         @OA\JsonContent(),
      *         @OA\MediaType(
      *             mediaType="application/json",
      *             @OA\Schema(
@@ -208,7 +206,6 @@ class FormController extends Controller
      *     summary="saveUserImg",
      *     description="saveUserImg Endpoint",
      *     @OA\RequestBody(
-     *         @OA\JsonContent(),
      *         @OA\MediaType(
      *             mediaType="application/json",
      *             @OA\Schema(
