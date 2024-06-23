@@ -146,7 +146,6 @@ class RegistrationController extends Controller
      *         @OA\MediaType(
      *             mediaType="application/json",
      *             @OA\Schema(
-     *                 type="json",
      *                 required={"pin"},
      *                 @OA\Property(property="pin",type="number"),
      *             ),
