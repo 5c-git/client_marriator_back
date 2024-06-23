@@ -31,7 +31,6 @@ class RegistrationController extends Controller
      *     summary="sendPhone",
      *     description="sendPhone Endpoint",
      *     @OA\RequestBody(
-     *         @OA\JsonContent(),
      *         @OA\MediaType(
      *             mediaType="application/json",
      *             @OA\Schema(
@@ -86,7 +85,6 @@ class RegistrationController extends Controller
      *     summary="checkCode",
      *     description="checkCode Endpoint",
      *     @OA\RequestBody(
-     *         @OA\JsonContent(),
      *         @OA\MediaType(
      *             mediaType="application/json",
      *             @OA\Schema(
@@ -145,7 +143,6 @@ class RegistrationController extends Controller
      *     summary="setUserPin",
      *     description="setUserPin Endpoint",
      *     @OA\RequestBody(
-     *         @OA\JsonContent(),
      *         @OA\MediaType(
      *             mediaType="application/json",
      *             @OA\Schema(
