@@ -35,7 +35,6 @@ class RegistrationController extends Controller
      *         @OA\MediaType(
      *             mediaType="application/json",
      *             @OA\Schema(
-     *                 type="object",
      *                 required={"phone"},
      *                 @OA\Property(property="phone",type="number"),
      *             ),
@@ -91,7 +90,6 @@ class RegistrationController extends Controller
      *         @OA\MediaType(
      *             mediaType="application/json",
      *             @OA\Schema(
-     *                 type="object",
      *                 required={"phone","code"},
      *                 @OA\Property(property="phone",type="number"),
      *                 @OA\Property(property="code",type="number"),
@@ -151,7 +149,7 @@ class RegistrationController extends Controller
      *         @OA\MediaType(
      *             mediaType="application/json",
      *             @OA\Schema(
-     *                 type="object",
+     *                 type="json",
      *                 required={"pin"},
      *                 @OA\Property(property="pin",type="number"),
      *             ),

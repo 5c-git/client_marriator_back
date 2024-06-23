@@ -86,7 +86,6 @@ class FormController extends Controller
      *         @OA\MediaType(
      *             mediaType="application/json",
      *             @OA\Schema(
-     *                 type="object",
      *                 required={"step"},
      *                 @OA\Property(property="step",type="number"),
      *                 @OA\Property(property="formData",type="json")
@@ -156,7 +155,6 @@ class FormController extends Controller
      *         @OA\MediaType(
      *             mediaType="application/json",
      *             @OA\Schema(
-     *                 type="object",
      *                 required={"file[]"},
      *                 @OA\Property(
      *                  property="file[]",
@@ -214,7 +212,6 @@ class FormController extends Controller
      *         @OA\MediaType(
      *             mediaType="application/json",
      *             @OA\Schema(
-     *                 type="object",
      *                 required={"file"},
      *                 @OA\Property(
      *                  property="file",
