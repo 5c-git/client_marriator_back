@@ -20,9 +20,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Passport::ignoreRoutes();
         Passport::hashClientSecrets();
         Passport::tokensExpireIn(now()->addDays(15));
         Passport::refreshTokensExpireIn(now()->addDays(30));
         Passport::personalAccessTokensExpireIn(now()->addMonths(6));
+
+        Passport::tokensCan([
+            'register' => 'Регистрация',
+            'personalArea' => 'Полный доступ',
+        ]);
     }
 }

@@ -68,11 +68,15 @@ class RegistrationController extends Controller
         $smsCodeResult = (new SmsCodeService($request->phone,$request->code))->checkCode();
         if($smsCodeResult['status'] == 'success'){
             $user = User::where('phone',$request->phone)->first();
-
+            if(!$user->confirmRegister) {
+                $token = $user->createToken('UserToken', ['register'])->accessToken;
+            }else{
+                $token = $user->createToken('UserToken', ['personalArea'])->accessToken;
+            }
             //авторизация
 
 
-
+            $response['result']['token'] = $token;
             $response['status'] = 'success';
         }else{
             $response['result']['code'] = $smsCodeResult;
