@@ -84,7 +84,7 @@ class FormController extends Controller
      *     @OA\RequestBody(
      *         @OA\JsonContent(),
      *         @OA\MediaType(
-     *             mediaType="multipart/form-data",
+     *             mediaType="application/json",
      *             @OA\Schema(
      *                 type="object",
      *                 required={"step"},
@@ -154,7 +154,7 @@ class FormController extends Controller
      *     @OA\RequestBody(
      *         @OA\JsonContent(),
      *         @OA\MediaType(
-     *             mediaType="multipart/form-data",
+     *             mediaType="application/json",
      *             @OA\Schema(
      *                 type="object",
      *                 required={"file[]"},
@@ -212,7 +212,7 @@ class FormController extends Controller
      *     @OA\RequestBody(
      *         @OA\JsonContent(),
      *         @OA\MediaType(
-     *             mediaType="multipart/form-data",
+     *             mediaType="application/json",
      *             @OA\Schema(
      *                 type="object",
      *                 required={"file"},

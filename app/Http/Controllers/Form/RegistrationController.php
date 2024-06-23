@@ -23,6 +23,32 @@ class RegistrationController extends Controller
 
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/sendPhone/",
+     *     operationId="sendPhone",
+     *     tags={"register/auth"},
+     *     summary="sendPhone",
+     *     description="sendPhone Endpoint",
+     *     @OA\RequestBody(
+     *         @OA\JsonContent(),
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 type="object",
+     *                 required={"phone"},
+     *                 @OA\Property(property="phone",type="number"),
+     *             ),
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *       response="200",
+     *       description="success",
+     *       @OA\JsonContent()
+     *     ),
+     * )
+     */
+
     public function sendPhone(Request $request){
         if(empty($request->phone)){
             $response['error'] = 'Поле телефон обязательна для заполнения';
@@ -52,6 +78,33 @@ class RegistrationController extends Controller
             return response()->json($response,200);
         }
     }
+
+    /**
+     * @OA\Post(
+     *     path="/api/checkCode/",
+     *     operationId="checkCode",
+     *     tags={"register/auth"},
+     *     summary="checkCode",
+     *     description="checkCode Endpoint",
+     *     @OA\RequestBody(
+     *         @OA\JsonContent(),
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 type="object",
+     *                 required={"phone","code"},
+     *                 @OA\Property(property="phone",type="number"),
+     *                 @OA\Property(property="code",type="number"),
+     *             ),
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *       response="200",
+     *       description="success",
+     *       @OA\JsonContent()
+     *     ),
+     * )
+     */
 
     public function checkCode(Request $request){
         if(empty($request->code)){
@@ -84,6 +137,33 @@ class RegistrationController extends Controller
         }
         return response()->json($response,200);
     }
+
+
+    /**
+     * @OA\Post(
+     *     path="/api/setUserPin/",
+     *     operationId="setUserPin",
+     *     tags={"register/auth"},
+     *     summary="setUserPin",
+     *     description="setUserPin Endpoint",
+     *     @OA\RequestBody(
+     *         @OA\JsonContent(),
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 type="object",
+     *                 required={"pin"},
+     *                 @OA\Property(property="pin",type="number"),
+     *             ),
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *       response="200",
+     *       description="success",
+     *       @OA\JsonContent()
+     *     ),
+     * )
+     */
 
 
     public function setUserPin(Request $request){
