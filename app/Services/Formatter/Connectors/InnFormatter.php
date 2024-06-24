@@ -15,7 +15,7 @@ class InnFormatter implements FormaterInterface
         $data['inputType'] = self::$type;
         $data['name'] = $fieldsData->uuid;
         $data['value'] = $value?:'';
-        $data['label'] = $fieldsData->label?:'';
+        $data['label'] = $fieldsData->name?:'';
         $data['disabled'] = false;
         if($fieldsData->required){
             $data['validation'] = 'default';

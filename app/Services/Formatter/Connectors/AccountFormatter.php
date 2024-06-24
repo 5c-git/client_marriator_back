@@ -14,7 +14,7 @@ class AccountFormatter implements FormaterInterface
         $data['inputType'] = self::$type;
         $data['name'] = $fieldsData->uuid;
         $data['value'] = $value?:'';
-        $data['label'] = $fieldsData->label?:'';
+        $data['label'] = $fieldsData->name?:'';
         $data['disabled'] = false;
         //$data['uuid'] = $fieldsData->uuid;
 

@@ -21,7 +21,9 @@ class FormBuilderService
     public function __construct(int $step, array $formData = [])
     {
         $this->step = $step > 0 ? $step : 1;
-        $this->formData = array_merge(...$formData);
+        if(!empty($formData)) {
+            $this->formData = array_merge(...$formData);
+        }
         if(!empty($formData[$step])) {
             $this->formDataThisStep = $formData[$step];
         }else{
@@ -34,6 +36,12 @@ class FormBuilderService
         $this->getFields();
         $this->filterFields();
         return $this->formatData($this->fieldsThisStep);
+    }
+
+    public function getStepField()
+    {
+        $this->getFields();
+        $this->filterFields();
     }
 
 
@@ -138,7 +146,9 @@ class FormBuilderService
             }else{
                 $value = '';
             }
-            $this->formatedData[] = FieldsTypeEnum::from($field->type)?->typeClassFormatter()::createFormat($field, $value);
+            if($fieldDataFormat = FieldsTypeEnum::from($field->type)?->typeClassFormatter()::createFormat($field, $value)) {
+                $this->formatedData[] = $fieldDataFormat;
+            }
         }
         return $this->formatedData;
     }
@@ -162,7 +172,7 @@ class FormBuilderService
     {
         $required = true;
         foreach($this->fieldsThisStep as $data){
-            if($data->required && empty($this->fieldsThisStep[$data->uuid])){
+            if($data->required && empty($this->formDataThisStep[$data->uuid])){
                 $required = false;
                 break;
             }

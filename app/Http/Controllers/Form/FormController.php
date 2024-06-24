@@ -124,13 +124,14 @@ class FormController extends Controller
             }
 
             $formDataService = (new FormBuilderService($step, $formData));
-
+            $formDataService->getStepField();
             $response['result'] = [
                 'step'=>$step,
                 'type'=>$formDataService->checkStatusForm()
             ];
             $response['status'] = 'success';
         }else{
+            $response['error'] = 'Поле step обязательна для заполнения';
             $response['status'] = 'error';
         }
         return response()->json($response);
