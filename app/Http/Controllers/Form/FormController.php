@@ -53,7 +53,7 @@ class FormController extends Controller
 
     public function getform(Request $request)
     {
-        $this->setUser();
+        //$this->setUser();
         if(!empty($request->step)){
             $step = (int)$request->step;
         }else{
@@ -101,7 +101,7 @@ class FormController extends Controller
 
     public function saveForm(Request $request)
     {
-        $this->setUser();
+        //$this->setUser();
         $response = [];
         if(!empty($request->step)){
             $step = $request->step;
@@ -172,7 +172,7 @@ class FormController extends Controller
 
     public function saveFile(Request $request)
     {
-        $this->setUser();
+       // $this->setUser();
         $uploadFiles = $request->allFiles();
         $response['text1'] = 'под какими ключами прилители файлы (через запятую)  ' . implode(', ', array_keys($uploadFiles));
         $response['fileName'] = [];
@@ -227,7 +227,7 @@ class FormController extends Controller
      */
 
     public function saveUserImg(Request $request){
-        $this->setUser();
+        //$this->setUser();
         $user = Auth::user();
         if($request->hasFile('file')) {
             $uploadFiles = $request->file('file');
@@ -242,6 +242,29 @@ class FormController extends Controller
         }else{
             $response['error'] = 'ничего не загружено';
         }
+        return response()->json($response);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/api/finishRegister/",
+     *     operationId="finishRegister",
+     *     tags={"form"},
+     *     summary="finishRegister",
+     *     description="finishRegister Endpoint",
+     *     @OA\Response(
+     *       response="200",
+     *       description="form data",
+     *       @OA\JsonContent()
+     *     ),
+     * )
+     */
+
+    public function finishRegister(Request $request){
+        $user = Auth::user();
+        $user->finishRegister = true;
+        $user->save();
+        $response['status'] = 'success';
         return response()->json($response);
     }
 

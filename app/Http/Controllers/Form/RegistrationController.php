@@ -58,7 +58,11 @@ class RegistrationController extends Controller
                if($user->confirmRegister) {
                    $response['result']['type'] = 'auth';
                }else{
-                   $response['result']['type'] = 'register';
+                   if($user->finishRegister){
+                       ///?????
+                   }else {
+                       $response['result']['type'] = 'register';
+                   }
                }
            }else{
                $user = new User();
@@ -118,7 +122,11 @@ class RegistrationController extends Controller
         if($smsCodeResult['status'] == 'success'){
             $user = User::where('phone',$request->phone)->first();
             if(!$user->confirmRegister) {
-                $token = $user->createToken('UserToken', ['register'])->accessToken;
+                if(!$user->finishRegister) {
+                    $token = $user->createToken('UserToken', ['register'])->accessToken;
+                }else{
+                    ///???????????
+                }
             }else{
                 $token = $user->createToken('UserToken', ['personalArea'])->accessToken;
             }
