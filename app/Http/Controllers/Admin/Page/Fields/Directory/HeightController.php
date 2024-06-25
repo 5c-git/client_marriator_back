@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Fields\Directory\Height;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class HeightController extends Controller
 {
@@ -70,7 +71,8 @@ class HeightController extends Controller
 
     public function create()
     {
-        return view('admin.directory.'.$this->view.'.add');
+        $uuidDirectoryFields = $this->objClass::$uuid.Str::random(20);
+        return view('admin.directory.'.$this->view.'.add', compact('uuidDirectoryFields'));
     }
 
     public function createAjax(Request $request)

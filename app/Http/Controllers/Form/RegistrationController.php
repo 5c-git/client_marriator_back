@@ -41,8 +41,17 @@ class RegistrationController extends Controller
      *     ),
      *     @OA\Response(
      *       response="200",
-     *       description="success",
-     *       @OA\JsonContent()
+     *       description="send phone start register or auth",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result", value={"status": "success","result":{"type":"auth|register","code":{"status":"exists|success|errorSend","ttl":"120 числовое поле если статус exists","code":"sms код для теста"}}},summary="Успешный запрос"),
+     *       )
+     *     ),
+     *     @OA\Response(
+     *       response="417",
+     *       description="phone is empty",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result", value={"status": "error", "error":"Поле телефон обязательна для заполнения"},summary="Нехватка полей"),
+     *       )
      *     ),
      * )
      */
@@ -100,8 +109,19 @@ class RegistrationController extends Controller
      *     ),
      *     @OA\Response(
      *       response="200",
-     *       description="success",
-     *       @OA\JsonContent()
+     *       description="check sms code success",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result", value={"status": "success","result":{"token":"token",}},summary="Успех"),
+     *           @OA\Examples(example="result error", value={"status": "error","result":{"code":{"status":"success|error|notExists"},}},summary="Ошибка"),
+     *       )
+     *     ),
+     *     @OA\Response(
+     *       response="417",
+     *       description="phone or code is empty",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result code", value={"status": "error", "error":"Поле код обязательна для заполнения"},summary="Ошибка кода"),
+     *           @OA\Examples(example="result phone", value={"status": "error", "error":"Поле телефон обязательна для заполнения"},summary="Ошибка телефона"),
+     *       )
      *     ),
      * )
      */
@@ -161,8 +181,17 @@ class RegistrationController extends Controller
      *     ),
      *     @OA\Response(
      *       response="200",
-     *       description="success",
-     *       @OA\JsonContent()
+     *       description="set pin success",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result", value={"status": "success"},summary="Успех"),
+     *       )
+     *     ),
+     *     @OA\Response(
+     *       response="417",
+     *       description="pin is empty",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result pin", value={"status": "error", "error":"Поле пин код обязательна для заполнения"},summary="Нехватка полей"),
+     *       )
      *     ),
      * )
      */

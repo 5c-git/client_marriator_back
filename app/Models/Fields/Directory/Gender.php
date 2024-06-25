@@ -11,6 +11,7 @@ class Gender extends Model implements ModelDirectoryInterface
     use HasFactory;
 
     public static int $fieldsTypeEnum = FieldsTypeEnum::select->value;
+    public static string $uuid = 'directory_gender';
 
     protected $table = 'directory_gender';
     protected $fillable = [

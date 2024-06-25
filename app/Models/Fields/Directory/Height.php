@@ -11,6 +11,7 @@ class Height extends Model implements ModelDirectoryInterface
     use HasFactory;
 
     public static int $fieldsTypeEnum = FieldsTypeEnum::select->value;
+    public static string $uuid = 'directory_height';
 
     protected $table = 'directory_height';
     protected $fillable = [

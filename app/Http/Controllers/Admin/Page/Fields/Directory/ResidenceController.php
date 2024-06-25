@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Fields\Directory\Residence;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class ResidenceController extends Controller
 {
@@ -70,7 +71,8 @@ class ResidenceController extends Controller
 
     public function create()
     {
-        return view('admin.directory.'.$this->view.'.add');
+        $uuidDirectoryFields = $this->objClass::$uuid.Str::random(20);
+        return view('admin.directory.'.$this->view.'.add', compact('uuidDirectoryFields'));
     }
 
     public function createAjax(Request $request)

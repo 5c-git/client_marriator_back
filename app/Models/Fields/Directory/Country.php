@@ -12,6 +12,7 @@ class Country extends Model implements ModelDirectoryInterface
     use HasFactory;
 
     public static int $fieldsTypeEnum = FieldsTypeEnum::select->value;
+    public static string $uuid = 'directory_country';
 
     protected $table = 'directory_country';
     protected $fillable = [

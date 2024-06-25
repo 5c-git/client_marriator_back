@@ -11,6 +11,7 @@ class Residence extends Model implements ModelDirectoryInterface
     use HasFactory;
 
     public static int $fieldsTypeEnum = FieldsTypeEnum::select->value;
+    public static string $uuid = 'directory_residence';
 
     protected $table = 'directory_residence';
     protected $fillable = [

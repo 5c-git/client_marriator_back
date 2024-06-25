@@ -12,6 +12,7 @@ class Bank extends Model implements ModelDirectoryInterface
     use HasFactory;
 
     public static int $fieldsTypeEnum = FieldsTypeEnum::text->value;
+    public static string $uuid = 'directory_bank';
 
     protected $table = 'directory_bank';
     protected $fillable = [

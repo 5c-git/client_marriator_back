@@ -11,6 +11,7 @@ class HairColor extends Model implements ModelDirectoryInterface
     use HasFactory;
 
     public static int $fieldsTypeEnum = FieldsTypeEnum::select->value;
+    public static string $uuid = 'directory_hair_color';
 
     protected $table = 'directory_hair_color';
     protected $fillable = [

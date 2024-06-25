@@ -7,6 +7,7 @@ use App\Models\Fields\Directory\Bank;
 use App\Models\Fields\Fields;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class BankController extends Controller
 {
@@ -77,7 +78,8 @@ class BankController extends Controller
 
     public function bankCreate()
     {
-        return view('admin.directory.bank.bankAdd');
+        $uuidDirectoryFields = Bank::$uuid.Str::random(20);
+        return view('admin.directory.bank.bankAdd',compact('uuidDirectoryFields'));
     }
 
     public function bankCreateAjax(Request $request)

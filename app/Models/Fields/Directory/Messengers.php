@@ -11,6 +11,7 @@ class Messengers extends Model implements ModelDirectoryInterface
     use HasFactory;
 
     public static int $fieldsTypeEnum = FieldsTypeEnum::select->value;
+    public static string $uuid = 'directory_messengers';
 
     protected $table = 'directory_messengers';
     protected $fillable = [

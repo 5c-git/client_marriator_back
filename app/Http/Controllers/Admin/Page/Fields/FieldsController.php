@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Storage;
 
 use App\Enum\Fields\FieldsTypeEnum;
 use App\Enum\Fields\FieldsDirectoryEnum;
+use Illuminate\Support\Str;
 
 class FieldsController extends Controller
 {
@@ -142,7 +143,9 @@ class FieldsController extends Controller
                 $fields = array_merge($fields, [$directory=>$arrData]);
             }
         }
-        return view('admin.fields.fieldsAdd',compact('typeEnum','directoryEnum','fields'));
+
+        $uuidDirectoryFields = Str::random(20);
+        return view('admin.fields.fieldsAdd',compact('typeEnum','directoryEnum','fields','uuidDirectoryFields'));
     }
 
     public function fieldsCreateAjax(Request $request)

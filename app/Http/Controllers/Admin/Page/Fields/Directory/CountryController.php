@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Fields\Directory\Country;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class CountryController extends Controller
 {
@@ -65,7 +66,8 @@ class CountryController extends Controller
 
     public function countryCreate()
     {
-        return view('admin.directory.country.countryAdd');
+        $uuidDirectoryFields = Country::$uuid.Str::random(20);
+        return view('admin.directory.country.countryAdd',compact('uuidDirectoryFields'));
     }
 
     public function countryCreateAjax(Request $request)

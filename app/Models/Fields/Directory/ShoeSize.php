@@ -11,6 +11,7 @@ class ShoeSize extends Model implements ModelDirectoryInterface
     use HasFactory;
 
     public static int $fieldsTypeEnum = FieldsTypeEnum::select->value;
+    public static string $uuid = 'directory_shoe_size';
 
     protected $table = 'directory_shoe_size';
     protected $fillable = [

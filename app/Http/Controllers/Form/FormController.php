@@ -46,7 +46,9 @@ class FormController extends Controller
      *     @OA\Response(
      *       response="200",
      *       description="form data",
-     *       @OA\JsonContent()
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result", value={"status": "success","result":{"formData":{},"step":1,"type":"needRequired|allowedNewStep|addedNewFields",}},summary="Успех"),
+     *       )
      *     ),
      * )
      */
@@ -93,8 +95,11 @@ class FormController extends Controller
      *     ),
      *     @OA\Response(
      *       response="200",
-     *       description="status save",
-     *       @OA\JsonContent()
+     *       description="save form",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result", value={"status": "success","result":{"step":1,"type":"needRequired|allowedNewStep|addedNewFields",}},summary="Успех"),
+     *           @OA\Examples(example="result error", value={"status": "error", "error":"Поле step обязательна для заполнения"},summary="Нехватка полей"),
+     *       )
      *     ),
      * )
      */
@@ -165,7 +170,10 @@ class FormController extends Controller
      *     @OA\Response(
      *       response="200",
      *       description="file info",
-     *       @OA\JsonContent()
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result", value={"status": "success","resFile":"url file"},summary="Успех"),
+     *           @OA\Examples(example="result error", value={"status": "error", "error":"Текст"},summary="Ошибка формирования файла"),
+     *       )
      *     ),
      * )
      */
@@ -174,8 +182,8 @@ class FormController extends Controller
     {
        // $this->setUser();
         $uploadFiles = $request->allFiles();
-        $response['text1'] = 'под какими ключами прилители файлы (через запятую)  ' . implode(', ', array_keys($uploadFiles));
-        $response['fileName'] = [];
+        //$response['text1'] = 'под какими ключами прилители файлы (через запятую)  ' . implode(', ', array_keys($uploadFiles));
+        //$response['fileName'] = [];
 
         $files = [];
         if(!empty($uploadFiles)) {
@@ -184,15 +192,17 @@ class FormController extends Controller
             }else{
                 $files = current($uploadFiles);
             }
-            foreach ($files as $uploadFile) {
-                $response['fileName'][] = $uploadFile->getClientOriginalName();
-            }
+            //foreach ($files as $uploadFile) {
+            // $response['fileName'][] = $uploadFile->getClientOriginalName();
+            //}
             $userId = Auth::id();
             $createFileService = new CreatePdfFileService($files,$userId);
             if(!empty($createFileService->mergeFilePath) && empty($createFileService->error)){
                 $response['resFile'] = $createFileService->mergeFilePath;
+                $response['status'] = 'success';
             }else{
                 $response['error'] = $createFileService->error;
+                $response['status'] = 'error';
             }
         }
         return response()->json($response);
@@ -220,8 +230,11 @@ class FormController extends Controller
      *     ),
      *     @OA\Response(
      *       response="200",
-     *       description="file info",
-     *       @OA\JsonContent()
+     *       description="file  info",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result", value={"status": "success","resFile":"url file"},summary="Успех"),
+     *           @OA\Examples(example="error", value={"status": "error", "error":"Ничего не загружено"},summary="Нехватка полей"),
+     *       )
      *     ),
      * )
      */
@@ -239,8 +252,10 @@ class FormController extends Controller
             $user->img = Storage::disk('public')->putFileAs('/source/userImg/' . $user->id, $uploadFiles, $filename, 'public');
             $user->save();
             $response['resFile'] = Storage::url($user->img);
+            $response['status'] = 'success';
         }else{
-            $response['error'] = 'ничего не загружено';
+            $response['error'] = 'Ничего не загружено';
+            $response['status'] = 'error';
         }
         return response()->json($response);
     }
@@ -254,8 +269,10 @@ class FormController extends Controller
      *     description="finishRegister Endpoint",
      *     @OA\Response(
      *       response="200",
-     *       description="form data",
-     *       @OA\JsonContent()
+     *       description="finish register",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result", value={"status": "success"},summary="Успех"),
+     *       )
      *     ),
      * )
      */

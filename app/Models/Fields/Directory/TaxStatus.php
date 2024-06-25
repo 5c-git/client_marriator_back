@@ -11,6 +11,7 @@ class TaxStatus extends Model implements ModelDirectoryInterface
     use HasFactory;
 
     public static int $fieldsTypeEnum = FieldsTypeEnum::checkbox->value;
+    public static string $uuid = 'directory_tax_status';
 
     protected $table = 'directory_tax_status';
     protected $fillable = [
