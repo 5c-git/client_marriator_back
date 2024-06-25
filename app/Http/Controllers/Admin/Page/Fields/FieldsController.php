@@ -144,7 +144,7 @@ class FieldsController extends Controller
             }
         }
 
-        $uuidDirectoryFields = Str::random(20);
+        $uuidDirectoryFields = Str::random(30);
         return view('admin.fields.fieldsAdd',compact('typeEnum','directoryEnum','fields','uuidDirectoryFields'));
     }
 

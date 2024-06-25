@@ -78,7 +78,7 @@ class BankController extends Controller
 
     public function bankCreate()
     {
-        $uuidDirectoryFields = Bank::$uuid.Str::random(20);
+        $uuidDirectoryFields = Bank::$uuid.'_'.Str::random(30);
         return view('admin.directory.bank.bankAdd',compact('uuidDirectoryFields'));
     }
 

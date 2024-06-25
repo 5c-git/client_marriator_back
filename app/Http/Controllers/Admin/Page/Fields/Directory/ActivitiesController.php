@@ -107,7 +107,7 @@ class ActivitiesController extends Controller
 
     public function create()
     {
-        $uuidDirectoryFields = $this->objClass::$uuid.Str::random(20);
+        $uuidDirectoryFields = $this->objClass::$uuid.'_'.Str::random(30);
         return view('admin.directory.'.$this->view.'.add', compact('uuidDirectoryFields'));
     }
 

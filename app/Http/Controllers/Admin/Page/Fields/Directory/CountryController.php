@@ -66,7 +66,7 @@ class CountryController extends Controller
 
     public function countryCreate()
     {
-        $uuidDirectoryFields = Country::$uuid.Str::random(20);
+        $uuidDirectoryFields = Country::$uuid.'_'.Str::random(30);
         return view('admin.directory.country.countryAdd',compact('uuidDirectoryFields'));
     }
 
