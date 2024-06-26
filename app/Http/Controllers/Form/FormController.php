@@ -157,7 +157,7 @@ class FormController extends Controller
      *     description="saveFile Endpoint",
      *     @OA\RequestBody(
      *         @OA\MediaType(
-     *             mediaType="application/json",
+     *             mediaType="multipart/form-data",
      *             @OA\Schema(
      *                 required={"file[]"},
      *                 @OA\Property(
@@ -218,7 +218,7 @@ class FormController extends Controller
      *     description="saveUserImg Endpoint",
      *     @OA\RequestBody(
      *         @OA\MediaType(
-     *             mediaType="application/json",
+     *             mediaType="multipart/form-data",
      *             @OA\Schema(
      *                 required={"file"},
      *                 @OA\Property(
