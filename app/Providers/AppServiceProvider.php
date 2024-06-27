@@ -29,6 +29,7 @@ class AppServiceProvider extends ServiceProvider
         Passport::tokensCan([
             'register' => 'Регистрация',
             'personalArea' => 'Полный доступ',
+            'checkPin' => 'Проверка пина',
         ]);
     }
 }

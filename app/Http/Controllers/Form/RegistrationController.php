@@ -112,7 +112,7 @@ class RegistrationController extends Controller
      *       description="check sms code success",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result", value={"status": "success","result":{"token":"token",}},summary="Успех"),
-     *           @OA\Examples(example="result error", value={"status": "error","result":{"code":{"status":"success|error|notExists"},}},summary="Ошибка"),
+     *           @OA\Examples(example="result error", value={"status": "error","result":{"code":{"status":"error|notExists"},}},summary="Ошибка"),
      *       )
      *     ),
      *     @OA\Response(
@@ -148,7 +148,8 @@ class RegistrationController extends Controller
                     ///???????????
                 }
             }else{
-                $token = $user->createToken('UserToken', ['personalArea'])->accessToken;
+                //$token = $user->createToken('UserToken', ['personalArea'])->accessToken;
+                $token = $user->createToken('UserToken', ['checkPin'])->accessToken;
             }
             //авторизация
 

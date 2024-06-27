@@ -29,7 +29,20 @@
                         "description": "form data",
                         "content": {
                             "application/json": {
-                                "schema": {}
+                                "schema": {},
+                                "examples": {
+                                    "result": {
+                                        "summary": "Успех",
+                                        "value": {
+                                            "status": "success",
+                                            "result": {
+                                                "formData": [],
+                                                "step": 1,
+                                                "type": "needRequired|allowedNewStep|addedNewFields"
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -66,10 +79,29 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "status save",
+                        "description": "save form",
                         "content": {
                             "application/json": {
-                                "schema": {}
+                                "schema": {},
+                                "examples": {
+                                    "result": {
+                                        "summary": "Успех",
+                                        "value": {
+                                            "status": "success",
+                                            "result": {
+                                                "step": 1,
+                                                "type": "needRequired|allowedNewStep|addedNewFields"
+                                            }
+                                        }
+                                    },
+                                    "result error": {
+                                        "summary": "Нехватка полей",
+                                        "value": {
+                                            "status": "error",
+                                            "error": "Поле step обязательна для заполнения"
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -86,7 +118,7 @@
                 "operationId": "saveFile",
                 "requestBody": {
                     "content": {
-                        "application/json": {
+                        "multipart/form-data": {
                             "schema": {
                                 "required": [
                                     "file[]"
@@ -109,7 +141,23 @@
                         "description": "file info",
                         "content": {
                             "application/json": {
-                                "schema": {}
+                                "schema": {},
+                                "examples": {
+                                    "result": {
+                                        "summary": "Успех",
+                                        "value": {
+                                            "status": "success",
+                                            "resFile": "url file"
+                                        }
+                                    },
+                                    "result error": {
+                                        "summary": "Ошибка формирования файла",
+                                        "value": {
+                                            "status": "error",
+                                            "error": "Текст"
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -126,7 +174,7 @@
                 "operationId": "saveUserImg",
                 "requestBody": {
                     "content": {
-                        "application/json": {
+                        "multipart/form-data": {
                             "schema": {
                                 "required": [
                                     "file"
@@ -143,10 +191,54 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "file info",
+                        "description": "file  info",
                         "content": {
                             "application/json": {
-                                "schema": {}
+                                "schema": {},
+                                "examples": {
+                                    "result": {
+                                        "summary": "Успех",
+                                        "value": {
+                                            "status": "success",
+                                            "resFile": "url file"
+                                        }
+                                    },
+                                    "error": {
+                                        "summary": "Нехватка полей",
+                                        "value": {
+                                            "status": "error",
+                                            "error": "Ничего не загружено"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/finishRegister/": {
+            "get": {
+                "tags": [
+                    "form"
+                ],
+                "summary": "finishRegister",
+                "description": "finishRegister Endpoint",
+                "operationId": "finishRegister",
+                "responses": {
+                    "200": {
+                        "description": "finish register",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "examples": {
+                                    "result": {
+                                        "summary": "Успех",
+                                        "value": {
+                                            "status": "success"
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -180,10 +272,43 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "success",
+                        "description": "send phone start register or auth",
                         "content": {
                             "application/json": {
-                                "schema": {}
+                                "schema": {},
+                                "examples": {
+                                    "result": {
+                                        "summary": "Успешный запрос",
+                                        "value": {
+                                            "status": "success",
+                                            "result": {
+                                                "type": "auth|register",
+                                                "code": {
+                                                    "status": "exists|success|errorSend",
+                                                    "ttl": "120 числовое поле если статус exists",
+                                                    "code": "sms код для теста"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "417": {
+                        "description": "phone is empty",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "examples": {
+                                    "result": {
+                                        "summary": "Нехватка полей",
+                                        "value": {
+                                            "status": "error",
+                                            "error": "Поле телефон обязательна для заполнения"
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -221,10 +346,56 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "success",
+                        "description": "check sms code success",
                         "content": {
                             "application/json": {
-                                "schema": {}
+                                "schema": {},
+                                "examples": {
+                                    "result": {
+                                        "summary": "Успех",
+                                        "value": {
+                                            "status": "success",
+                                            "result": {
+                                                "token": "token"
+                                            }
+                                        }
+                                    },
+                                    "result error": {
+                                        "summary": "Ошибка",
+                                        "value": {
+                                            "status": "error",
+                                            "result": {
+                                                "code": {
+                                                    "status": "error|notExists"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "417": {
+                        "description": "phone or code is empty",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "examples": {
+                                    "result code": {
+                                        "summary": "Ошибка кода",
+                                        "value": {
+                                            "status": "error",
+                                            "error": "Поле код обязательна для заполнения"
+                                        }
+                                    },
+                                    "result phone": {
+                                        "summary": "Ошибка телефона",
+                                        "value": {
+                                            "status": "error",
+                                            "error": "Поле телефон обязательна для заполнения"
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -258,10 +429,35 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "success",
+                        "description": "set pin success",
                         "content": {
                             "application/json": {
-                                "schema": {}
+                                "schema": {},
+                                "examples": {
+                                    "result": {
+                                        "summary": "Успех",
+                                        "value": {
+                                            "status": "success"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "417": {
+                        "description": "pin is empty",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "examples": {
+                                    "result pin": {
+                                        "summary": "Нехватка полей",
+                                        "value": {
+                                            "status": "error",
+                                            "error": "Поле пин код обязательна для заполнения"
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -278,9 +474,9 @@
                 "scheme": "https",
                 "flows": {
                     "password": {
-                        "authorizationUrl": "http://localhost/oauth/authorize",
-                        "tokenUrl": "http://localhost/oauth/token",
-                        "refreshUrl": "http://localhost/token/refresh",
+                        "authorizationUrl": "http://preprod.marriator-api.fivecorners.ru/oauth/authorize",
+                        "tokenUrl": "http://preprod.marriator-api.fivecorners.ru/oauth/token",
+                        "refreshUrl": "http://preprod.marriator-api.fivecorners.ru/token/refresh",
                         "scopes": []
                     }
                 }

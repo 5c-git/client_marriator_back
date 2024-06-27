@@ -31,7 +31,7 @@ class SmsCodeService
         }else{
             if(SmsService::sendCode($this->phone,$this->code)) {
                 Redis::set($this->phone, $this->code, 'EX', 120);
-                return ['status'=>'success','code'=>$this->code];
+                return ['status'=>'success','code'=>$this->code,'ttl'=>120];
             }else{
                 $this->status = 'error';
                 return ['status'=>'errorSend'];
