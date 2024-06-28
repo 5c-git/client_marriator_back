@@ -138,7 +138,7 @@ class RegistrationController extends Controller
             return response()->json($response,417);
         }
 
-        $smsCodeResult = (new SmsCodeService($request->phone,$request->code))->checkCode();
+        $smsCodeResult = (new SmsCodeService($request->phone,(int)$request->code))->checkCode();
         if($smsCodeResult['status'] == 'success'){
             $user = User::where('phone',$request->phone)->first();
             if(!$user->confirmRegister) {

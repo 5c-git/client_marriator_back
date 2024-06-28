@@ -8,18 +8,20 @@ use App\Services\Register\SmsService;
 class SmsCodeService
 {
 
-    public string $code;
+    public int $code;
     private string $phone;
 
     public int $codeTtl=0;
 
     public string $status = 'success';
 
-    public function __construct(string $phone, string $code = '')
+    public function __construct(string $phone, int $code = 0 )
     {
         $this->phone = $phone;
         if(empty($code)) {
             $this->code = rand(1000, 9999);
+        }else{
+            $this->code = $code;
         }
     }
 
