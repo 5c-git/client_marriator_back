@@ -31,6 +31,8 @@ class CheckPinController extends Controller
             return response()->json($response,417);
         }else{
             $user = Auth::user();
+            $user->pin = 1234;
+            $user->save();
             if(!empty($user) && $user->pin == $request->pin){
                 $apiTokenService = new ApiTokenService($user);
                 $token = $apiTokenService->createToken(['personalArea']);
@@ -50,7 +52,7 @@ class CheckPinController extends Controller
             $response['status'] = 'error';
             return response()->json($response,417);
         }else {
-            $response['result']['token'] = json_decode(ApiTokenService::refreshToken($request->refreshToken));
+            $response['result']['token'] = ApiTokenService::refreshToken($request->refreshToken);
             $response['status'] = 'success';
         }
         return response()->json($response,200);

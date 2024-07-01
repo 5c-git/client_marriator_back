@@ -10,7 +10,6 @@ Route::group(["middleware" => 'throttle:100,10'], function () {
     })->name('login');
     Route::post('/checkCode/', 'App\Http\Controllers\Form\RegistrationController@checkCode')->name('checkCode');
     Route::post('/refreshToken/', 'App\Http\Controllers\PersonalArea\CheckPinController@refreshToken')->name('refreshToken');
-
 });
 
 Route::group(["middleware" => ["auth:api","scope:register"]], function () {

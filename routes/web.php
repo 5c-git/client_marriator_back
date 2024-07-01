@@ -3,6 +3,19 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\CheckPermission;
 
+
+Route::group([
+    'as' => 'passport.',
+    'prefix' => config('passport.path', 'oauth'),
+    'namespace' => '\Laravel\Passport\Http\Controllers',
+], function () {
+    Route::post('/token', [
+        'uses' => 'AccessTokenController@issueToken',
+        'as' => 'token',
+        'middleware' => 'throttle',
+    ]);
+});
+
 Route::group(['prefix' => 'admin'], function () {
 
     Route::get('/login/', function () {

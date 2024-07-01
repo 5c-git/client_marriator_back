@@ -18,6 +18,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'scopes' => CheckScopes::class,
             'scope' => CheckForAnyScope::class,
         ]);
+        $middleware->validateCsrfTokens(except: [
+            '/oauth/token' // <-- exclude this route
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
