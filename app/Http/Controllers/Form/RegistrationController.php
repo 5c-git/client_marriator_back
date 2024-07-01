@@ -77,7 +77,7 @@ class RegistrationController extends Controller
            }else{
                $user = new User();
                $user->phone = $request->phone;
-               $user->email = Str::random(10).'@mariator.ru';
+               $user->email = Str::random(20).'@mariator.ru';
                $user->password = Hash::make(Str::random(20));
                $user->save();
                $response['result']['type'] = 'register';
