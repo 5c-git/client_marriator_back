@@ -13,9 +13,13 @@ use App\Services\FormBuilderService;
 use App\Services\CreatePdfFileService;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use App\Services\OneC\OneCServices;
+use App\Services\ApiTokenService\ApiTokenService;
 
 class FormController extends Controller
 {
+
+
 
     /**
      * Create a new controller instance.
@@ -56,22 +60,27 @@ class FormController extends Controller
     public function getform(Request $request)
     {
         //$this->setUser();
-        if(!empty($request->step)){
-            $step = (int)$request->step;
-        }else{
-            $step = 1;
-        }
         $user = Auth::user();
-        if(!empty($user->data)) {
-            $userData = json_decode($user->data, true);
+        if(!$user->finishRegister) {
+            if (!empty($request->step)) {
+                $step = (int)$request->step;
+            } else {
+                $step = 1;
+            }
+            $user = Auth::user();
+            if (!empty($user->data)) {
+                $userData = json_decode($user->data, true);
+            } else {
+                $userData = [];
+            }
+            $formDataService = (new FormBuilderService($step, $userData));
+            $response['result']['formData'] = $formDataService->createFormData();
+            $response['result']['step'] = $step;
+            $response['result']['type'] = $formDataService->checkStatusForm(true);
+            $response['status'] = 'success';
         }else{
-            $userData = [];
+            $response['status'] = 'error';
         }
-        $formDataService = (new FormBuilderService($step, $userData));
-        $response['result']['formData'] = $formDataService->createFormData();
-        $response['result']['step'] = $step;
-        $response['result']['type'] = $formDataService->checkStatusForm(true);
-        $response['status'] = 'success';
 
         return response()->json($response);
     }
@@ -108,35 +117,39 @@ class FormController extends Controller
     {
         //$this->setUser();
         $response = [];
-        if(!empty($request->step)){
-            $step = $request->step;
-            $user = Auth::user();
-            if (!empty($request->formData)) {
-                if(!empty($user->data)) {
-                    $userData = json_decode($user->data, true);
-                }else{
-                    $userData = [];
+        $user = Auth::user();
+        if(!$user->finishRegister) {
+            if (!empty($request->step)) {
+                $step = $request->step;
+                if (!empty($request->formData)) {
+                    if (!empty($user->data)) {
+                        $userData = json_decode($user->data, true);
+                    } else {
+                        $userData = [];
+                    }
+                    $userData[$step] = $request->formData;
+                    $user->data = json_encode($userData);
+                    $user->save();
                 }
-                $userData[$step] = $request->formData;
-                $user->data = json_encode($userData);
-                $user->save();
-            }
 
-            if(!empty($user->data)){
-                $formData = json_decode($user->data,true);
-            }else{
-                $formData = [];
-            }
+                if (!empty($user->data)) {
+                    $formData = json_decode($user->data, true);
+                } else {
+                    $formData = [];
+                }
 
-            $formDataService = (new FormBuilderService($step, $formData));
-            $formDataService->getStepField();
-            $response['result'] = [
-                'step'=>$step,
-                'type'=>$formDataService->checkStatusForm()
-            ];
-            $response['status'] = 'success';
+                $formDataService = (new FormBuilderService($step, $formData));
+                $formDataService->getStepField();
+                $response['result'] = [
+                    'step' => $step,
+                    'type' => $formDataService->checkStatusForm()
+                ];
+                $response['status'] = 'success';
+            } else {
+                $response['error'] = 'Поле step обязательна для заполнения';
+                $response['status'] = 'error';
+            }
         }else{
-            $response['error'] = 'Поле step обязательна для заполнения';
             $response['status'] = 'error';
         }
         return response()->json($response);
@@ -180,30 +193,31 @@ class FormController extends Controller
 
     public function saveFile(Request $request)
     {
-       // $this->setUser();
-        $uploadFiles = $request->allFiles();
-        //$response['text1'] = 'под какими ключами прилители файлы (через запятую)  ' . implode(', ', array_keys($uploadFiles));
-        //$response['fileName'] = [];
-
-        $files = [];
-        if(!empty($uploadFiles)) {
-            if(!is_array(current($uploadFiles))){
-                $files[] = current($uploadFiles);
-            }else{
-                $files = current($uploadFiles);
+        $user = Auth::user();
+        if(!$user->finishRegister) {
+            $uploadFiles = $request->allFiles();
+            $files = [];
+            if (!empty($uploadFiles)) {
+                if (!is_array(current($uploadFiles))) {
+                    $files[] = current($uploadFiles);
+                } else {
+                    $files = current($uploadFiles);
+                }
+                //foreach ($files as $uploadFile) {
+                // $response['fileName'][] = $uploadFile->getClientOriginalName();
+                //}
+                $userId = Auth::id();
+                $createFileService = new CreatePdfFileService($files, $userId);
+                if (!empty($createFileService->mergeFilePath) && empty($createFileService->error)) {
+                    $response['resFile'] = $createFileService->mergeFilePath;
+                    $response['status'] = 'success';
+                } else {
+                    $response['error'] = $createFileService->error;
+                    $response['status'] = 'error';
+                }
             }
-            //foreach ($files as $uploadFile) {
-            // $response['fileName'][] = $uploadFile->getClientOriginalName();
-            //}
-            $userId = Auth::id();
-            $createFileService = new CreatePdfFileService($files,$userId);
-            if(!empty($createFileService->mergeFilePath) && empty($createFileService->error)){
-                $response['resFile'] = $createFileService->mergeFilePath;
-                $response['status'] = 'success';
-            }else{
-                $response['error'] = $createFileService->error;
-                $response['status'] = 'error';
-            }
+        }else{
+            $response['status'] = 'error';
         }
         return response()->json($response);
     }
@@ -242,19 +256,23 @@ class FormController extends Controller
     public function saveUserImg(Request $request){
         //$this->setUser();
         $user = Auth::user();
-        if($request->hasFile('file')) {
-            $uploadFiles = $request->file('file');
-            $extension = $uploadFiles->getClientOriginalExtension();
-            $filename = Str::random(20) . '.'.$extension;
-            if(!empty($user->img)){
-                Storage::disk('public')->delete($user->img);
+        if(!$user->finishRegister) {
+            if ($request->hasFile('file')) {
+                $uploadFiles = $request->file('file');
+                $extension = $uploadFiles->getClientOriginalExtension();
+                $filename = Str::random(20) . '.' . $extension;
+                if (!empty($user->img)) {
+                    Storage::disk('public')->delete($user->img);
+                }
+                $user->img = Storage::disk('public')->putFileAs('/source/userImg/' . $user->id, $uploadFiles, $filename, 'public');
+                $user->save();
+                $response['resFile'] = Storage::url($user->img);
+                $response['status'] = 'success';
+            } else {
+                $response['error'] = 'Ничего не загружено';
+                $response['status'] = 'error';
             }
-            $user->img = Storage::disk('public')->putFileAs('/source/userImg/' . $user->id, $uploadFiles, $filename, 'public');
-            $user->save();
-            $response['resFile'] = Storage::url($user->img);
-            $response['status'] = 'success';
         }else{
-            $response['error'] = 'Ничего не загружено';
             $response['status'] = 'error';
         }
         return response()->json($response);
@@ -279,9 +297,26 @@ class FormController extends Controller
 
     public function finishRegister(Request $request){
         $user = Auth::user();
-        $user->finishRegister = true;
-        $user->save();
-        $response['status'] = 'success';
+        if(!$user->finishRegister) {
+            $user->finishRegister = true;
+            $user->save();
+
+            $registerResult = (new OneCServices($user))->sendRegister();
+
+            if($registerResult->statusRegister) {
+                $user->confirmRegister = true;
+                $user->save();
+                $apiTokenService = new ApiTokenService($user);
+                $token = $apiTokenService->createToken(['checkPin']);
+
+                $response['result']['token'] = $token;
+                $response['status'] = 'success';
+            }else{
+                $response['status'] = 'error';
+            }
+        }else{
+            $response['status'] = 'error';
+        }
         return response()->json($response);
     }
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\PersonalArea;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\ApiTokenService\ApiTokenService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -31,7 +32,8 @@ class CheckPinController extends Controller
         }else{
             $user = Auth::user();
             if(!empty($user) && $user->pin == $request->pin){
-                $token = $user->createToken('UserToken', ['personalArea'])->accessToken;
+                $apiTokenService = new ApiTokenService($user);
+                $token = $apiTokenService->createToken(['personalArea']);
                 $response['result']['token'] = $token;
                 $response['status'] = 'success';
             }else{
@@ -41,5 +43,17 @@ class CheckPinController extends Controller
             return response()->json($response,200);
         }
     }
-    
+
+    public function refreshToken(Request $request){
+        if(empty($request->refreshToken)){
+            $response['error'] = 'Поле refreshToken обязательна для заполнения';
+            $response['status'] = 'error';
+            return response()->json($response,417);
+        }else {
+            $response['result']['token'] = json_decode(ApiTokenService::refreshToken($request->refreshToken));
+            $response['status'] = 'success';
+        }
+        return response()->json($response,200);
+    }
+
 }

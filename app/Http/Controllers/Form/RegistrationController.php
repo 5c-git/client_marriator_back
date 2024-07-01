@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Form;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\ApiTokenService\ApiTokenService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -141,20 +142,21 @@ class RegistrationController extends Controller
         $smsCodeResult = (new SmsCodeService($request->phone,(int)$request->code))->checkCode();
         if($smsCodeResult['status'] == 'success'){
             $user = User::where('phone',$request->phone)->first();
+            $apiTokenService = new ApiTokenService($user);
             if(!$user->confirmRegister) {
                 if(!$user->finishRegister) {
-                    $token = $user->createToken('UserToken', ['register'])->accessToken;
+                    $token = $apiTokenService->createToken(['register']);
+                    $response['result']['token'] = $token;
                 }else{
                     ///???????????
                 }
             }else{
-                //$token = $user->createToken('UserToken', ['personalArea'])->accessToken;
-                $token = $user->createToken('UserToken', ['checkPin'])->accessToken;
+                $token = $apiTokenService->createToken(['checkPin']);
+                $response['result']['token'] = $token;
             }
             //авторизация
 
 
-            $response['result']['token'] = $token;
             $response['status'] = 'success';
         }else{
             $response['result']['code'] = $smsCodeResult;

@@ -22,9 +22,9 @@ class AppServiceProvider extends ServiceProvider
     {
         Passport::ignoreRoutes();
         Passport::hashClientSecrets();
-        Passport::tokensExpireIn(now()->addDays(15));
+        Passport::tokensExpireIn(now()->addDays(7));
         Passport::refreshTokensExpireIn(now()->addDays(30));
-        Passport::personalAccessTokensExpireIn(now()->addMonths(6));
+        Passport::personalAccessTokensExpireIn(now()->addDays(7));
 
         Passport::tokensCan([
             'register' => 'Регистрация',
