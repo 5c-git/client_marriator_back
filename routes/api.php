@@ -27,7 +27,7 @@ Route::group(["middleware" => ["auth:api","scope:checkPin"]], function () {
 
 
 Route::group(["middleware" => ["auth:api","scope:personalArea"]], function () {
-    Route::get('/personalInfo/', 'App\Http\Controllers\PersonalArea\CheckPinController@checkPin')->name('personalInfo');
+    Route::get('/getUserInfo/', 'App\Http\Controllers\PersonalArea\UserPersonalInfoController@getUserInfo')->name('getUserInfo');
 });
 
 

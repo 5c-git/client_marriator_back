@@ -289,7 +289,7 @@ class FormController extends Controller
      *       response="200",
      *       description="finish register",
      *       @OA\JsonContent(
-     *           @OA\Examples(example="result", value={"status": "success"},summary="Успех"),
+     *           @OA\Examples(example="result", value={"status": "success","result":{"token": {"token_type":"Bearer","expires_in":"числовое значение в секундах время жизни access_token","access_token":"токен доступа","refresh_token":"токен восстановления access_token"},}},summary="Успех"),
      *       )
      *     ),
      * )
