@@ -37,8 +37,9 @@ class ApiTokenService
             'refresh_token' => $refreshToken,
             'client_id' => config('passport.personal_access_client')['id'],
             'client_secret' => config('passport.personal_access_client')['secret'],
-            'scope' => 'checkPin',
+            'scope' => '',
         ]);
+        
         return $response->json();
     }
 

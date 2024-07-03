@@ -14,7 +14,7 @@ class MonthFormatter implements FormaterInterface
         //$data['uuid'] = $fieldsData->uuid;
         $data['inputType'] = self::$type;
         $data['name'] = $fieldsData->uuid;
-        $data['value'] = $value?:'';
+        $data['value'] = $value?:null;
         $data['label'] = $fieldsData->name?:'';
         $data['disabled'] = false;
         if($fieldsData->required){

@@ -235,7 +235,15 @@
                                     "result": {
                                         "summary": "Успех",
                                         "value": {
-                                            "status": "success"
+                                            "status": "success",
+                                            "result": {
+                                                "token": {
+                                                    "token_type": "Bearer",
+                                                    "expires_in": "числовое значение в секундах время жизни access_token",
+                                                    "access_token": "токен доступа",
+                                                    "refresh_token": "токен восстановления access_token"
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -356,7 +364,12 @@
                                         "value": {
                                             "status": "success",
                                             "result": {
-                                                "token": "token"
+                                                "token": {
+                                                    "token_type": "Bearer",
+                                                    "expires_in": "числовое значение в секундах время жизни access_token",
+                                                    "access_token": "токен доступа",
+                                                    "refresh_token": "токен восстановления access_token"
+                                                }
                                             }
                                         }
                                     },
@@ -455,6 +468,197 @@
                                         "value": {
                                             "status": "error",
                                             "error": "Поле пин код обязательна для заполнения"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/checkPin/": {
+            "post": {
+                "tags": [
+                    "Personal area"
+                ],
+                "summary": "checkPin",
+                "description": "checkPin Endpoint",
+                "operationId": "checkPin",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "pin"
+                                ],
+                                "properties": {
+                                    "pin": {
+                                        "type": "number"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "check pin code",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "examples": {
+                                    "result": {
+                                        "summary": "Успех",
+                                        "value": {
+                                            "status": "success",
+                                            "result": {
+                                                "token": {
+                                                    "token_type": "Bearer",
+                                                    "expires_in": "числовое значение в секундах время жизни access_token",
+                                                    "access_token": "токен доступа",
+                                                    "refresh_token": "токен восстановления access_token"
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "result check pin error": {
+                                        "summary": "Неверный пин",
+                                        "value": {
+                                            "status": "error"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "417": {
+                        "description": "pin is empty",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "examples": {
+                                    "result pin": {
+                                        "summary": "Ошибка кода",
+                                        "value": {
+                                            "status": "error",
+                                            "error": "Поле пин обязательна для заполнения"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/refreshToken/": {
+            "post": {
+                "tags": [
+                    "Personal area"
+                ],
+                "summary": "refreshToken",
+                "description": "refreshToken Endpoint",
+                "operationId": "refreshToken",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "refreshToken"
+                                ],
+                                "properties": {
+                                    "refreshToken": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "refresh token success",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "examples": {
+                                    "success refresh token": {
+                                        "summary": "Успешное востановление",
+                                        "value": {
+                                            "status": "success",
+                                            "result": {
+                                                "token": {
+                                                    "token_type": "Bearer",
+                                                    "expires_in": "числовое значение в секундах время жизни access_token",
+                                                    "access_token": "токен доступа",
+                                                    "refresh_token": "токен восстановления access_token"
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "error refresh token": {
+                                        "summary": "Неуспешное востановление",
+                                        "value": {
+                                            "status": "success",
+                                            "result": {
+                                                "token": {
+                                                    "error": "invalid_request",
+                                                    "error_description": "The refresh token is invalid.",
+                                                    "hint": "Token is not linked to client",
+                                                    "message": "The refresh token is invalid."
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "417": {
+                        "description": "refreshToken is empty",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "examples": {
+                                    "result refreshToken": {
+                                        "summary": "Ошибка токена",
+                                        "value": {
+                                            "status": "error",
+                                            "error": "Поле refreshToken обязательна для заполнения"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/getUserInfo/": {
+            "get": {
+                "tags": [
+                    "Personal area"
+                ],
+                "summary": "getForm",
+                "description": "getUserInfo Endpoint",
+                "operationId": "getUserInfo",
+                "responses": {
+                    "200": {
+                        "description": "uset info",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "examples": {
+                                    "result": {
+                                        "summary": "Успех",
+                                        "value": {
+                                            "status": "success",
+                                            "result": {
+                                                "userData": []
+                                            }
                                         }
                                     }
                                 }

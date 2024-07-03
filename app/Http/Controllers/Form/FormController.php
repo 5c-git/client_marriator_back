@@ -209,7 +209,7 @@ class FormController extends Controller
                 $userId = Auth::id();
                 $createFileService = new CreatePdfFileService($files, $userId);
                 if (!empty($createFileService->mergeFilePath) && empty($createFileService->error)) {
-                    $response['resFile'] = $createFileService->mergeFilePath;
+                    $response['resFile'] = config('app.url').$createFileService->mergeFilePath;
                     $response['status'] = 'success';
                 } else {
                     $response['error'] = $createFileService->error;
@@ -266,7 +266,7 @@ class FormController extends Controller
                 }
                 $user->img = Storage::disk('public')->putFileAs('/source/userImg/' . $user->id, $uploadFiles, $filename, 'public');
                 $user->save();
-                $response['resFile'] = Storage::url($user->img);
+                $response['resFile'] = config('app.url').Storage::url($user->img);
                 $response['status'] = 'success';
             } else {
                 $response['error'] = 'Ничего не загружено';

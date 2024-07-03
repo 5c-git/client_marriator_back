@@ -23,7 +23,7 @@ class FileFormatter implements FormaterInterface
         }else{
             $data['validation'] = 'none';
         }
-        $data['url'] = $value?:'';
+        $data['url'] = config('app.url').'/api/saveFile/';
         if(!empty($fieldsData->heading)) {
             $data['heading'] = $fieldsData->heading;
         }
@@ -54,7 +54,7 @@ class FileFormatter implements FormaterInterface
                     if (empty($data['drawerInfo']['images'])) {
                         $data['drawerInfo']['images'] = [];
                     }
-                    $data['drawerInfo']['images'][] = Storage::url($fileImg);
+                    $data['drawerInfo']['images'][] = config('app.url').Storage::url($fileImg);
                 }
             }
         }

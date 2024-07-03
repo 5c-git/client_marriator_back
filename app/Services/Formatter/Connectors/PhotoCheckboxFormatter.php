@@ -25,7 +25,7 @@ class PhotoCheckboxFormatter implements FormaterInterface
                     $dataArr['label'] = $item['name'];
                     $dataArr['disabled'] = false;
                     if (!empty($item['img'])) {
-                        $dataArr['img'] = Storage::url($item['img']);
+                        $dataArr['img'] = config('app.url').Storage::url($item['img']);
                     }
                     if (!empty($item['preview_text'])) {
                         $dataArr['text'] = $item['preview_text'];
@@ -42,7 +42,7 @@ class PhotoCheckboxFormatter implements FormaterInterface
                             $dataArr['details']['details'] = $item['detail_text'];
                         }
                         if (!empty($item['detail_img'])) {
-                            $dataArr['details']['img'] = Storage::url($item['detail_img']);
+                            $dataArr['details']['img'] = config('app.url').Storage::url($item['detail_img']);
                         }
                         if (
                             !empty($item['link_text']) ||
