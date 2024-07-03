@@ -52,12 +52,13 @@ class ApiTokenService
             $token_id = $token_header_array['jti'];
 
             $user = DB::table('oauth_access_tokens')->where('id', $token_id)->first();
-            echo "<pre>";
-            var_dump($user);
-            echo "</pre>";
+            if(!empty($user) && !empty($user->user_id)){
+                $user = User::find($user->user_id);
+                $dataToken = (new self($user))->createToken(['checkPin']);
+            }
         }
 
-        return $response->json();
+        return $dataToken;
     }
 
 }
