@@ -23,7 +23,7 @@ class PhotoFormatter implements FormaterInterface
         }else{
             $data['validation'] = 'none';
         }
-        $data['url'] = config('app.url').'/api/saveFile/';
+        $data['url'] = config('app.url').'/api/saveUserImg/';
         if(!empty($fieldsData->heading)) {
             $data['heading'] = $fieldsData->heading;
         }
