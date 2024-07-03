@@ -39,7 +39,23 @@ class ApiTokenService
             'client_secret' => config('passport.personal_access_client')['secret'],
             'scope' => '',
         ]);
-        
+
+        $dataToken = $response->json();
+
+        if(!empty($dataToken) && !empty($dataToken['access_token'])){
+            $token = $dataToken['access_token'];
+            $token_parts = explode('.', $token);
+            $token_header = $token_parts[1];
+            $token_header_json = base64_decode($token_header);
+            $token_header_array = json_decode($token_header_json, true);
+            $token_id = $token_header_array['jti'];
+
+            $user = DB::table('oauth_access_tokens')->where('id', $token_id)->first();
+            echo "<pre>";
+            var_dump($user);
+            echo "</pre>";
+        }
+
         return $response->json();
     }
 
