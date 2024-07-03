@@ -234,6 +234,17 @@
             </div>
         </div>
 
+        <div class="form-group row">
+            <label for="select" class="col-sm-2 col-form-label">Секция в личном кабинете</label>
+            <div class="col-sm-10">
+                <select class="custom-select" name="section" required>
+                    @foreach($sectionEnum as $section)
+                        <option value="{{$section->value}}" {{$field->section == $section->value?'selected="selected"':''}}>{{$section->typeName()}}</option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
+
 
 
         <div class="form-group row">

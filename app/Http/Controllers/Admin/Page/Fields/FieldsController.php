@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Storage;
 
 use App\Enum\Fields\FieldsTypeEnum;
 use App\Enum\Fields\FieldsDirectoryEnum;
+use App\Enum\Fields\PersonalInfoSectionEnum;
 use Illuminate\Support\Str;
 
 class FieldsController extends Controller
@@ -35,6 +36,7 @@ class FieldsController extends Controller
         $field = Fields::where('id', '=', $request->id)->first();
         $typeEnum = FieldsTypeEnum::fieldType();
         $directoryEnum = FieldsDirectoryEnum::cases();
+        $sectionEnum = PersonalInfoSectionEnum::cases();
         $fields['fields']['value'] = Fields::where('id', '!=', $request->id)->where('active',true)->get()->toArray();
         $fields['fields']['name'] = 'Простые поля';
         if($field) {
@@ -51,7 +53,7 @@ class FieldsController extends Controller
                 }
             }
 
-            return view('admin.fields.fieldsEdit', compact('field','typeEnum','directoryEnum','fields'));
+            return view('admin.fields.fieldsEdit', compact('field','typeEnum','directoryEnum','fields','sectionEnum'));
         }else{
             return redirect()->back();
         }
@@ -68,6 +70,7 @@ class FieldsController extends Controller
         $field->name = $data['name'];
         $field->uuid = $data['uuid'];
         $field->type = $data['type'];
+        $field->section = $data['section'];
         $field->sort = $data['sort'];
         $field->description = $data['description'];
         $field->step = $data['step'];
@@ -131,6 +134,7 @@ class FieldsController extends Controller
 
     public function fieldsCreate()
     {
+        $sectionEnum = PersonalInfoSectionEnum::cases();
         $typeEnum = FieldsTypeEnum::fieldType();
         $directoryEnum = FieldsDirectoryEnum::cases();
         $fields['fields']['value'] = Fields::where('active',true)->get()->toArray();
@@ -145,7 +149,7 @@ class FieldsController extends Controller
         }
 
         $uuidDirectoryFields = Str::random(30);
-        return view('admin.fields.fieldsAdd',compact('typeEnum','directoryEnum','fields','uuidDirectoryFields'));
+        return view('admin.fields.fieldsAdd',compact('typeEnum','directoryEnum','fields','uuidDirectoryFields','sectionEnum'));
     }
 
     public function fieldsCreateAjax(Request $request)

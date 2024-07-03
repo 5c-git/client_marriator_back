@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Enum\Fields;
+use App\Models\Fields\Directory\Documentation;
 use ArchTech\Enums\InvokableCases;
 use ArchTech\Enums\Names;
 use ArchTech\Enums\Values;
@@ -49,6 +50,7 @@ enum FieldsDirectoryEnum: string
     case taxStatus = TaxStatus::class;
     case viewActivities = ViewActivities::class;
     case weight = Weight::class;
+    case documentation = Documentation::class;
 
     public function directoryName(): string
     {
@@ -71,6 +73,7 @@ enum FieldsDirectoryEnum: string
             self::taxStatus => 'Справочник налоговый статус',
             self::viewActivities => 'Справочник виды деятельности',
             self::weight => 'Справочник вес, кг.',
+            self::documentation => 'Справочник документов',
         };
     }
 

@@ -414,6 +414,10 @@ return [
                         [
                             'text' => 'Мессенджеры',
                             'url' => 'admin/directory_messengers/',
+                        ],
+                        [
+                            'text' => 'Документы',
+                            'url' => 'admin/directory_documentation/',
                         ]
                     ],
                 ],

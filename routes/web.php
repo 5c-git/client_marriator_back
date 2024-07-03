@@ -189,6 +189,14 @@ Route::group(['prefix' => 'admin'], function () {
             Route::post('/editAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\MessengersController@editAjax')->name('messengersEditAjax');
             Route::get('/delete/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\MessengersController@delete')->name('messengersDelete');
         });
+        Route::group(['prefix' => 'directory_documentation'], function () {
+            Route::get('/create/', 'App\Http\Controllers\Admin\Page\Fields\Directory\DocumentationController@create')->name('documentationCreate');
+            Route::post('/createAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\DocumentationController@createAjax')->name('documentationCreateAjax');
+            Route::get('/', 'App\Http\Controllers\Admin\Page\Fields\Directory\DocumentationController@list')->name('documentationList');
+            Route::get('/edit/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\DocumentationController@edit')->name('documentationEdit');
+            Route::post('/editAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\DocumentationController@editAjax')->name('documentationEditAjax');
+            Route::get('/delete/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\DocumentationController@delete')->name('documentationDelete');
+        });
 
 
 
