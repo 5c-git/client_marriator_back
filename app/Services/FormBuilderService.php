@@ -104,6 +104,9 @@ class FormBuilderService
                     $field->valuesDirectory = [];
                 }
             }
+            if($field->type == FieldsTypeEnum::directory->value && empty($field->valuesDirectory)){
+                continue;
+            }
             if ($field->step == $this->step) {
                 $this->fieldsThisStep[] = $field;
             } elseif ($field->step <= $this->step) {
@@ -175,6 +178,7 @@ class FormBuilderService
     {
         $required = true;
         foreach($this->fieldsThisStep as $data){
+            if($data->type != FieldsTypeEnum::directory->value || ($data->type == FieldsTypeEnum::directory->value && !empty($data->directory) && !empty($data->valuesDirectory)) )
             if($data->required && empty($this->formDataThisStep[$data->uuid])){
                 $required = false;
                 break;

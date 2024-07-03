@@ -21,7 +21,7 @@ class ApiTokenService
     }
 
     public function createToken(array $scopes = []){
-        $this->delUserTokens();
+       // $this->delUserTokens();
         return $this->getBearerTokenByUser($this->user,config('passport.personal_access_client')['id'],$scopes,false);
     }
 
