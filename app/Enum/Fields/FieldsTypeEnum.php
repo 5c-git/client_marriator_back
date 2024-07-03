@@ -61,9 +61,6 @@ enum FieldsTypeEnum: int
 
     public function typeClassFormatter(): string
     {
-        echo "<pre>";
-        var_dump($this);
-        echo "</pre>";
         return match($this)
         {
             self::checkbox => Connectors\CheckBoxFormatter::class,
