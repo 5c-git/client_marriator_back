@@ -146,8 +146,10 @@ class FormBuilderService
             }else{
                 $value = '';
             }
-            if($fieldDataFormat = FieldsTypeEnum::from($field->type)?->typeClassFormatter()::createFormat($field, $value)) {
-                $this->formatedData[] = $fieldDataFormat;
+            if ($field->type != FieldsTypeEnum::directory) {
+                if ($fieldDataFormat = FieldsTypeEnum::from($field->type)?->typeClassFormatter()::createFormat($field, $value)) {
+                    $this->formatedData[] = $fieldDataFormat;
+                }
             }
         }
         return $this->formatedData;
