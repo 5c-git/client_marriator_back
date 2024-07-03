@@ -98,6 +98,7 @@ enum FieldsTypeEnum: int
             self::sms,
             self::snils,
             self::directory,
+            self::photo
         ];
     }
 
