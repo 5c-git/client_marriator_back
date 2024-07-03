@@ -31,6 +31,7 @@ enum FieldsTypeEnum: int
     case phone = 15;
     case sms = 16;
     case snils = 17;
+    case photo = 18;
 
 
     public function typeName(): string
@@ -54,6 +55,7 @@ enum FieldsTypeEnum: int
             self::phone => 'Телефон',
             self::sms => 'SMS',
             self::snils => 'Снилс',
+            self::photo => 'Фото',
         };
     }
 
@@ -77,6 +79,7 @@ enum FieldsTypeEnum: int
             self::phone => Connectors\PhoneFormatter::class,
             self::sms => Connectors\SmsFormatter::class,
             self::snils => Connectors\SnilsFormatter::class,
+            self::photo => Connectors\PhotoFormatter::class,
         };
     }
 
