@@ -418,6 +418,10 @@ return [
                         [
                             'text' => 'Документы',
                             'url' => 'admin/directory_documentation/',
+                        ],
+                        [
+                            'text' => 'Организации',
+                            'url' => 'admin/directory_organization/',
                         ]
                     ],
                 ],

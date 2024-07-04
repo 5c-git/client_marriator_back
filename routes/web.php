@@ -197,6 +197,14 @@ Route::group(['prefix' => 'admin'], function () {
             Route::post('/editAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\DocumentationController@editAjax')->name('documentationEditAjax');
             Route::get('/delete/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\DocumentationController@delete')->name('documentationDelete');
         });
+        Route::group(['prefix' => 'directory_organization'], function () {
+            Route::get('/create/', 'App\Http\Controllers\Admin\Page\Fields\Directory\OrganizationController@create')->name('organizationCreate');
+            Route::post('/createAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\OrganizationController@createAjax')->name('organizationCreateAjax');
+            Route::get('/', 'App\Http\Controllers\Admin\Page\Fields\Directory\OrganizationController@list')->name('organizationList');
+            Route::get('/edit/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\OrganizationController@edit')->name('organizationEdit');
+            Route::post('/editAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\OrganizationController@editAjax')->name('organizationEditAjax');
+            Route::get('/delete/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\OrganizationController@delete')->name('organizationDelete');
+        });
 
 
 
