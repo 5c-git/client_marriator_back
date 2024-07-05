@@ -18,7 +18,12 @@ Route::group(["middleware" => ["auth:api","scope:register"]], function () {
     Route::post('/saveUserImg/', 'App\Http\Controllers\Form\FormController@saveUserImg')->name('saveUserImg');
     Route::post('/saveFile/', 'App\Http\Controllers\Form\FormController@saveFile')->name('saveFile');
     Route::post('/finishRegister/', 'App\Http\Controllers\Form\FormController@finishRegister')->name('finishRegister');
+});
+
+Route::group(["middleware" => ["auth:api","scope:register,restorePin"]], function () {
     Route::post('/setUserPin/', 'App\Http\Controllers\Form\RegistrationController@setUserPin')->name('setUserPin');
+    Route::post('/startRestorePin/', 'App\Http\Controllers\Form\RegistrationController@startRestorePin')->name('startRestorePin');
+    Route::post('/checkCodeRestore/', 'App\Http\Controllers\Form\RegistrationController@checkCodeRestore')->name('checkCodeRestore');
 });
 
 Route::group(["middleware" => ["auth:api","scope:checkPin"]], function () {

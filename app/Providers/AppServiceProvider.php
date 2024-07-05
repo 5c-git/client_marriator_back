@@ -30,6 +30,7 @@ class AppServiceProvider extends ServiceProvider
             'register' => 'Регистрация',
             'personalArea' => 'Полный доступ',
             'checkPin' => 'Проверка пина',
+            'restorePin' => 'Восстановление пина',
         ]);
     }
 }

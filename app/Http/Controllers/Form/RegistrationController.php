@@ -44,14 +44,15 @@ class RegistrationController extends Controller
      *       response="200",
      *       description="send phone start register or auth",
      *       @OA\JsonContent(
-     *           @OA\Examples(example="result", value={"status": "success","result":{"type":"auth|register","code":{"status":"exists|success|errorSend","ttl":"120 числовое поле если статус exists","code":"sms код для теста"}}},summary="Успешный запрос"),
+     *           @OA\Examples(example="result", value={"status": "success","result":{"type":"auth|register","code":{"status":"exists|success","ttl":"120 числовое поле если статус exists","code":"sms код для теста"}}},summary="Успешный запрос"),
      *       )
      *     ),
      *     @OA\Response(
      *       response="417",
-     *       description="phone is empty",
+     *       description="phone is empty or error code",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result", value={"status": "error", "error":"Поле телефон обязательна для заполнения"},summary="Нехватка полей"),
+     *           @OA\Examples(example="error result", value={"status": "error","result":{"type":"auth|register","code":{"status":"errorSend"}}},summary="Успешный запрос"),
      *       )
      *     ),
      * )
@@ -212,6 +213,106 @@ class RegistrationController extends Controller
         $response['status'] = 'success';
         return response()->json($response,200);
     }
+
+    /**
+     * @OA\Post(
+     *     path="/api/startRestorePin/",
+     *     operationId="startRestorePin",
+     *     tags={"Personal area"},
+     *     summary="startRestorePin",
+     *     description="startRestorePin Endpoint",
+     *     @OA\Response(
+     *       response="200",
+     *       description="send phone start register or auth",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result", value={"status": "success","result":{"code":{"status":"exists|success","ttl":"120 числовое поле если статус exists","code":"sms код для теста"},"token": {"token_type":"Bearer","expires_in":"числовое значение в секундах время жизни access_token","access_token":"токен доступа","refresh_token":"токен восстановления access_token"}}},summary="Успешный запрос"),
+     *       )
+     *     ),
+     * )
+     */
+
+    public function startRestorePin(Request $request){
+        $user = Auth::user();
+        $smsCodeService = new SmsCodeService($user->phone);
+        $response['result']['code'] = $smsCodeService->createCode();
+        $response['status'] = $smsCodeService->status;
+
+        if($response['status'] == 'success') {
+            $apiTokenService = new ApiTokenService($user);
+            $token = $apiTokenService->createToken(['restorePin']);
+            $response['result']['token'] = $token;
+        }
+        return response()->json($response,200);
+    }
+
+
+    /**
+     * @OA\Post(
+     *     path="/api/checkCodeRestore/",
+     *     operationId="checkCodeRestore",
+     *     tags={"Personal area"},
+     *     summary="checkCodeRestore",
+     *     description="checkCodeRestore Endpoint",
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 required={"code"},
+     *                 @OA\Property(property="code",type="number"),
+     *             ),
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *       response="200",
+     *       description="check sms code success",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result", value={"status": "success","result":{"token": {"token_type":"Bearer","expires_in":"числовое значение в секундах время жизни access_token","access_token":"токен доступа","refresh_token":"токен восстановления access_token"},}},summary="Успех"),
+     *           @OA\Examples(example="result error", value={"status": "error","result":{"code":{"status":"error|notExists"},}},summary="Ошибка"),
+     *       )
+     *     ),
+     *     @OA\Response(
+     *       response="417",
+     *       description="phone or code is empty",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result code", value={"status": "error", "error":"Поле код обязательна для заполнения"},summary="Ошибка кода"),
+     *       )
+     *     ),
+     * )
+     */
+
+    public function checkCodeRestore(Request $request){
+        if(empty($request->code)){
+            $response['error'] = 'Поле код обязательна для заполнения';
+            $response['status'] = 'error';
+            return response()->json($response,417);
+        }
+        $user = Auth::user();
+
+        $smsCodeResult = (new SmsCodeService($user->phone,(int)$request->code))->checkCode();
+        if($smsCodeResult['status'] == 'success'){
+            $apiTokenService = new ApiTokenService($user);
+            if(!$user->confirmRegister) {
+                if(!$user->finishRegister) {
+                    $token = $apiTokenService->createToken(['register']);
+                    $response['result']['token'] = $token;
+                }else{
+                    ///???????????
+                }
+            }else{
+                $token = $apiTokenService->createToken(['checkPin']);
+                $response['result']['token'] = $token;
+            }
+
+
+            $response['status'] = 'success';
+        }else{
+            $response['result']['code'] = $smsCodeResult;
+            $response['status'] = 'error';
+        }
+        return response()->json($response,200);
+    }
+
+
 
 
 
