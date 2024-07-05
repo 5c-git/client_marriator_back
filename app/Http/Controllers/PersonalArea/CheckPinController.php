@@ -65,7 +65,7 @@ class CheckPinController extends Controller
             return response()->json($response,417);
         }else{
             $user = Auth::user();
-            if(!empty($user) && $user->confirmRegister && $user->pin == $request->pin){
+            if(!empty($user) && $user->confirmRegister && !empty($user->pin) && $user->pin == $request->pin){
                 $apiTokenService = new ApiTokenService($user);
                 $token = $apiTokenService->createToken(['personalArea']);
                 $response['result']['token'] = $token;
