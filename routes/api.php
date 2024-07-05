@@ -20,7 +20,7 @@ Route::group(["middleware" => ["auth:api","scope:register"]], function () {
     Route::post('/finishRegister/', 'App\Http\Controllers\Form\FormController@finishRegister')->name('finishRegister');
 });
 
-Route::group(["middleware" => ["auth:api","scope:register,restorePin"]], function () {
+Route::group(["middleware" => ["auth:api","scope:register,restorePin,checkPin,personalArea"]], function () {
     Route::post('/setUserPin/', 'App\Http\Controllers\Form\RegistrationController@setUserPin')->name('setUserPin');
     Route::post('/startRestorePin/', 'App\Http\Controllers\Form\RegistrationController@startRestorePin')->name('startRestorePin');
     Route::post('/checkCodeRestore/', 'App\Http\Controllers\Form\RegistrationController@checkCodeRestore')->name('checkCodeRestore');
