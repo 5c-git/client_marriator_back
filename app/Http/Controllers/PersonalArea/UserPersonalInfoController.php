@@ -5,11 +5,15 @@ namespace App\Http\Controllers\PersonalArea;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Services\ApiTokenService\ApiTokenService;
+use App\Services\FormBuilderService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use App\Services\Register\SmsCodeService;
+use App\Enum\Fields\PersonalInfoSectionEnum;
+
 
 class UserPersonalInfoController extends Controller
 {
@@ -23,40 +27,6 @@ class UserPersonalInfoController extends Controller
     {
 
     }
-
-    /**
-     * @OA\Post(
-     *     path="/api/getUserInfo/",
-     *     operationId="getUserInfo",
-     *     tags={"Personal area"},
-     *     summary="getUserInfo",
-     *     description="getUserInfo Endpoint",
-     *     @OA\RequestBody(
-     *         @OA\MediaType(
-     *             mediaType="application/json",
-     *             @OA\Schema(
-     *                 required={"pin"},
-     *                 @OA\Property(property="pin",type="number"),
-     *             ),
-     *         ),
-     *     ),
-     *     @OA\Response(
-     *       response="200",
-     *       description="check pin code",
-     *       @OA\JsonContent(
-     *           @OA\Examples(example="result", value={"status": "success","result":{"token": {"token_type":"Bearer","expires_in":"числовое значение в секундах время жизни access_token","access_token":"токен доступа","refresh_token":"токен восстановления access_token"},}},summary="Успех"),
-     *           @OA\Examples(example="result check pin error", value={"status": "error"},summary="Неверный пин"),
-     *       )
-     *     ),
-     *     @OA\Response(
-     *       response="417",
-     *       description="pin is empty",
-     *       @OA\JsonContent(
-     *           @OA\Examples(example="result pin", value={"status": "error", "error":"Поле пин обязательна для заполнения"},summary="Ошибка кода"),
-     *       )
-     *     ),
-     * )
-     */
 
     /**
      * @OA\Get(
@@ -75,10 +45,59 @@ class UserPersonalInfoController extends Controller
      * )
      */
 
-    public function getUserInfo(Request $request){
+    public function getUserInfo(Request $request)
+    {
         $user = Auth::user();
-        $response['result']['userData']=$user->toArray();
+        $response['result']['userData'] = $user->toArray();
         $response['status'] = 'success';
-        return response()->json($response,200);
+        return response()->json($response, 200);
     }
+
+    public function getUserFields(Request $request)
+    {
+        $user = Auth::user();
+
+        $formDataService = (new FormBuilderService(10, $user->data));
+        $response['result']['formData'] = $formDataService->createPersonalUserFormData();
+        $response['result']['type'] = $formDataService->checkStatusForm(true);
+
+        foreach (PersonalInfoSectionEnum::options() as $k => $option) {
+            $response['result']['section'][] = [
+                'name' => PersonalInfoSectionEnum::from($option)->typeName(),
+                'value' => $option
+            ];
+        }
+        $response['status'] = 'success';
+        return response()->json($response);
+    }
+
+    public function saveUserFields(Request $request)
+    {
+
+    }
+
+    public function saveUserImg(Request $request)
+    {
+        $user = Auth::user();
+        if ($request->hasFile('file')) {
+            $uploadFiles = $request->file('file');
+            $extension = $uploadFiles->getClientOriginalExtension();
+            $filename = Str::random(20) . '.' . $extension;
+            if (!empty($user->img)) {
+                Storage::disk('public')->delete($user->img);
+            }
+            $user->img = Storage::disk('public')->putFileAs('/source/userImg/' . $user->id, $uploadFiles, $filename, 'public');
+            $user->save();
+            $response['resFile'] = config('app.url') . Storage::url($user->img);
+            $response['status'] = 'success';
+        } else {
+            $response['error'] = 'Ничего не загружено';
+            $response['status'] = 'error';
+        }
+
+        return response()->json($response);
+    }
+
+
+
 }

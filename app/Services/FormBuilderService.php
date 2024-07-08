@@ -21,14 +21,18 @@ class FormBuilderService
     public function __construct(int $step, array $formData = [])
     {
         $this->step = $step > 0 ? $step : 1;
-        if(!empty($formData)) {
+        if(!empty($formData) && (!empty($formData[0]) || !empty($formData[1]) || !empty($formData[2]) || !empty($formData[3]))) {
             $this->formData = array_merge(...$formData);
-        }
-        if(!empty($formData[$step])) {
-            $this->formDataThisStep = $formData[$step];
+            if(!empty($formData[$step])) {
+                $this->formDataThisStep = $formData[$step];
+            }else{
+                $this->formDataThisStep = [];
+            }
         }else{
-            $this->formDataThisStep = [];
+            $this->formData = $formData;
+            $this->formDataThisStep = $formData;
         }
+
     }
 
     public function createFormData(): array
@@ -36,6 +40,13 @@ class FormBuilderService
         $this->getFields();
         $this->filterFields();
         return $this->formatData($this->fieldsThisStep);
+    }
+
+    public function createPersonalUserFormData():array
+    {
+        $this->getAllFields();
+        $this->filterFields();
+        return $this->formatData($this->fieldsThisStep,true);
     }
 
     public function getStepField()
@@ -116,6 +127,27 @@ class FormBuilderService
         }
     }
 
+    private function getAllFields(): void
+    {
+        $this->fieldsAll = Fields::orderBy('sort', 'asc')->get();
+        foreach ($this->fieldsAll as $field) {
+            if (!empty($field->directory)) {
+                $field->type = $this->getTypeDirectory($field->directory);
+                if ($valuesDirectory = $this->getDirectory($field->directory, true)) {
+                    $field->valuesDirectory = $valuesDirectory;
+                }else{
+                    $field->valuesDirectory = [];
+                }
+            }
+            if($field->type == FieldsTypeEnum::directory->value && empty($field->valuesDirectory)){
+                continue;
+            }
+
+            $this->fieldsThisStep[] = $field;
+            $this->fieldsOldStep[] = $field;
+        }
+    }
+
     private function getDirectory($directory, bool $allFields = false): array
     {
         $directoryData = [];
@@ -141,7 +173,7 @@ class FormBuilderService
         }
     }
 
-    private function formatData($data): array
+    private function formatData($data,$personal = false): array
     {
         foreach ($data as $field) {
             if(!empty($this->formData[$field->uuid])){
@@ -152,7 +184,11 @@ class FormBuilderService
 
             if ($field->type != FieldsTypeEnum::directory->value) {
                 if ($fieldDataFormat = FieldsTypeEnum::from($field->type)?->typeClassFormatter()::createFormat($field, $value)) {
-                    $this->formatedData[] = $fieldDataFormat;
+                    if($personal) {
+                        $this->formatedData[$field->section][] = $fieldDataFormat;
+                    }else{
+                        $this->formatedData[] = $fieldDataFormat;
+                    }
                 }
             }
         }
