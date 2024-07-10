@@ -80,6 +80,7 @@
                         </div>
                     </div>
 
+                        @if(!empty($field->moreData) && is_array($field->moreData))
                         @foreach($field->moreData as $moreData)
                     <div class="row addItem">
                         <div class="col-sm-6">
@@ -91,8 +92,9 @@
                             <textarea type="text" class="form-control" name="moreData[{{$field->uuid}}][value][]" placeholder="Значение">{{$moreData['value']}}</textarea>
                         </div>
                     </div>
-                            @endforeach
                     </br>
+                            @endforeach
+                        @endif
                     <button class="btn btn-primary addItemButton">Add brand</button>
                     </div>
                 @endforeach
