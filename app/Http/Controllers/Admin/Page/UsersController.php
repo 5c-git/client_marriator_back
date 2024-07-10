@@ -102,7 +102,7 @@ class UsersController extends Controller
                 if(!empty($moreData)){
                     foreach ($moreData["name"] as $k=>$moreDataName){
                         if(!empty($moreDataName) && !empty($moreData["value"][$k])){
-                            $expansionDataOne = ['name'=>$moreDataName,'value'=>$moreData["value"][$k]];
+                            $expansionDataOne[] = ['name'=>$moreDataName,'value'=>$moreData["value"][$k]];
                         }
                     }
                     if(!empty($expansionDataOne)) {
