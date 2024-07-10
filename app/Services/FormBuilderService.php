@@ -261,10 +261,10 @@ class FormBuilderService
                 }else{
                     $field->value = $this->formDataThisStep[$field->uuid];
                 }
-                if(in_array($field->uuid,$moreData)){
+                if(!empty($moreData[$field->uuid])){
                     $field->moreData = $moreData[$field->uuid];
                 }
-                if(in_array($field->uuid,$errorData)){
+                if(!empty($errorData[$field->uuid])){
                     $field->errorData = $errorData[$field->uuid];
                 }
                 $userFields[] = $field;
