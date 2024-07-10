@@ -56,6 +56,13 @@ class UsersController extends Controller
             $user->errorData = [];
         }
 
+        echo "<pre>";
+        var_dump($user->errorData);
+        echo "</pre>";
+        echo "<pre>";
+        var_dump($user->expansionData);
+        echo "</pre>";
+
         $fields = (new FormBuilderService(10, $user->data))->getUserField($user->expansionData,$user->errorData);
 
 
@@ -78,10 +85,32 @@ class UsersController extends Controller
     public function userEditAjax(Request $request)
     {
         $data = $request->all();
-        echo "<pre>";
-        var_dump($data);
-        echo "</pre>";
-        die();
+
+        $errorData = [];
+        if(!empty($data['error'])){
+            foreach ($data['error'] as $uuidError=>$error){
+                if(!empty($error)){
+                    $errorData[$uuidError] = $error;
+                }
+            }
+        }
+
+        $expansionData = [];
+        if(!empty($data['moreData'])){
+            foreach ($data['moreData'] as $uuidMoreData=>$moreData){
+                $expansionDataOne = [];
+                if(!empty($moreData)){
+                    foreach ($moreData["name"] as $k=>$moreDataName){
+                        if(!empty($moreDataName) && !empty($moreData["value"][$k])){
+                            $expansionDataOne = ['name'=>$moreDataName,'value'=>$moreData["value"][$k]];
+                        }
+                    }
+                    if(!empty($expansionDataOne)) {
+                        $expansionData[$uuidMoreData] = $moreData;
+                    }
+                }
+            }
+        }
 
 
 
@@ -89,7 +118,8 @@ class UsersController extends Controller
         if($data["password"] == $data["confirmPassword"] && !empty($data["password"])) {
             $user->password = Hash::make($data['password']);
         }
-
+        $user->expansionData = json_encode($expansionData);
+        $user->errorData = json_encode($errorData);
 
         $user->name = $data['name'];
         $user->email = $data['email'];
