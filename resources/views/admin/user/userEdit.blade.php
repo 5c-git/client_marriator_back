@@ -76,20 +76,22 @@
                     <div class="form-group row">
                         <label for="error" class="col-sm-2 col-form-label">Сообщение об ошибке</label>
                         <div class="col-sm-10">
-                            <textarea class="form-control" id="error" name="error[{{$field->uuid}}]" placeholder="Текст ошибки"></textarea>
+                            <textarea class="form-control" id="error" name="error[{{$field->uuid}}]" placeholder="Текст ошибки">{{$field->errorData}}</textarea>
                         </div>
                     </div>
 
+                        @foreach($field->moreData as $moreData)
                     <div class="row addItem">
                         <div class="col-sm-6">
                             <div class="search-block">
-                                <textarea class="form-input" type="text" name="moreData[{{$field->uuid}}][name][]" placeholder="Название поля"></textarea>
+                                <textarea class="form-input" type="text" name="moreData[{{$field->uuid}}][name][]" placeholder="Название поля">{{$moreData['name']}}</textarea>
                             </div>
                         </div>
                         <div class="col-sm-6">
-                            <textarea type="text" class="form-control" name="moreData[{{$field->uuid}}][value][]" placeholder="Значение"></textarea>
+                            <textarea type="text" class="form-control" name="moreData[{{$field->uuid}}][value][]" placeholder="Значение">{{$moreData['value']}}</textarea>
                         </div>
                     </div>
+                            @endforeach
                     </br>
                     <button class="btn btn-primary addItemButton">Add brand</button>
                     </div>

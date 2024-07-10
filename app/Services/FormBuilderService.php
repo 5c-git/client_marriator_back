@@ -265,7 +265,7 @@ class FormBuilderService
                     $field->moreData = $moreData[$field->uuid];
                 }
                 if(in_array($field->uuid,$errorData)){
-                    $field->moreData = $errorData[$field->uuid];
+                    $field->errorData = $errorData[$field->uuid];
                 }
                 $userFields[] = $field;
             }
