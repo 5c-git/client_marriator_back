@@ -61,8 +61,9 @@
 
         <div class="form-group row">
             <label for="select" class="col-sm-2 col-form-label">Поля пользователя</label>
-            <div class="col-sm-10 addItemBlock">
+            <div class="col-sm-10">
                 @foreach($fields as $k=>$field)
+                    <div class="addItemBlock">
                     <div class="row">
                         <p class="col-sm-3">
                            Название поля - {{$field->name}}
@@ -91,6 +92,7 @@
                     </div>
                     </br>
                     <button class="btn btn-primary addItemButton">Add brand</button>
+                    </div>
                 @endforeach
             </div>
         </div>
