@@ -61,7 +61,7 @@
 
         <div class="form-group row">
             <label for="select" class="col-sm-2 col-form-label">Поля пользователя</label>
-            <div class="col-sm-10">
+            <div class="col-sm-10 addItemBlock">
                 @foreach($fields as $k=>$field)
                     <div class="row">
                         <p class="col-sm-3">

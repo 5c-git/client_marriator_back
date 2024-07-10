@@ -158,7 +158,7 @@ $(document).ready(function () {
 
     $(document).on('click', '.addItemButton', function (e) {
         e.preventDefault();
-        var block = $(this).parents('.form-group').find('.addItem:last');
+        var block = $(this).parents('.addItemBlock').find('.addItem:last');
         block.after('<br>' + block[0].outerHTML);
     })
 
