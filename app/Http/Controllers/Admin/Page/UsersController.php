@@ -38,7 +38,7 @@ class UsersController extends Controller
         if(!empty($user->data)){
             $user->data = json_decode($user->data,true);
             if(!empty($user->data[1])){
-                $user->data = json_encode(array_merge(...json_decode($user->data,true)));
+                $user->data = json_encode(array_merge(...$user->data));
                 $user->save();
                 $user->data = json_decode($user->data,true);
             }
