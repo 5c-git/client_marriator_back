@@ -106,7 +106,7 @@ class UsersController extends Controller
                         }
                     }
                     if(!empty($expansionDataOne)) {
-                        $expansionData[$uuidMoreData] = $moreData;
+                        $expansionData[$uuidMoreData] = $expansionDataOne;
                     }
                 }
             }
