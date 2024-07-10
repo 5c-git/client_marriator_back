@@ -78,6 +78,13 @@ class UsersController extends Controller
     public function userEditAjax(Request $request)
     {
         $data = $request->all();
+        echo "<pre>";
+        var_dump($data);
+        echo "</pre>";
+        die();
+
+
+
         $user = User::where('id','=',$data["id"])->first();
         if($data["password"] == $data["confirmPassword"] && !empty($data["password"])) {
             $user->password = Hash::make($data['password']);
