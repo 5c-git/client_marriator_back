@@ -73,20 +73,20 @@
                     </div>
 
                     <div class="form-group row">
-                        <label for="inputPassword" class="col-sm-2 col-form-label">Сообщение об ошибке</label>
+                        <label for="error" class="col-sm-2 col-form-label">Сообщение об ошибке</label>
                         <div class="col-sm-10">
-                            <input type="password" class="form-control" id="inputPassword" name="error[{{$field->uuid}}]" placeholder="Password">
+                            <textarea class="form-control" id="error" name="error[{{$field->uuid}}]" placeholder="Текст ошибки"></textarea>
                         </div>
                     </div>
 
                     <div class="row addItem">
                         <div class="col-sm-6">
                             <div class="search-block">
-                                <textarea class="form-input" type="text" name="moreData[{{$field->uuid}}][name]" ></textarea>
+                                <textarea class="form-input" type="text" name="moreData[{{$field->uuid}}][name]" placeholder="Название поля"></textarea>
                             </div>
                         </div>
                         <div class="col-sm-6">
-                            <textarea type="text" class="form-control" name="moreData[{{$field->uuid}}][value]" placeholder="sort"></textarea>
+                            <textarea type="text" class="form-control" name="moreData[{{$field->uuid}}][value]" placeholder="Значение"></textarea>
                         </div>
                     </div>
                     </br>
