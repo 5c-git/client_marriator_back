@@ -9,6 +9,8 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Services\FormBuilderService;
+
 
 class UsersController extends Controller
 {
@@ -33,7 +35,31 @@ class UsersController extends Controller
     public function userEdit(Request $request)
     {
         $user = User::where('id','=',$request->id)->first();
-        return view('admin.user.userEdit',compact('user'));
+        if(!empty($user->data)){
+            $user->data = json_decode($user->data,true);
+            if(!empty($user->data[1])){
+                $user->data = json_encode(array_merge(...json_decode($user->data,true)));
+                $user->save();
+                $user->data = json_decode($user->data,true);
+            }
+        }else{
+            $user->data = [];
+        }
+        if(!empty($user->expansionData)){
+            $user->expansionData = json_decode($user->expansionData,true);
+        }else{
+            $user->expansionData = [];
+        }
+        if(!empty($user->errorData)){
+            $user->errorData = json_decode($user->errorData,true);
+        }else{
+            $user->errorData = [];
+        }
+
+        $fields = (new FormBuilderService(10, $user->data))->getUserField($user->expansionData,$user->errorData);
+
+
+        return view('admin.user.userEdit',compact('user','fields'));
     }
 
     public function usersCreate(Request $request)

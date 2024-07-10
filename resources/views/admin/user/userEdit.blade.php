@@ -26,7 +26,7 @@
     @endphp
     <br>
     <h4>User ID - {{ $user->id }}</h4>
-    <h4>User permission - {{ $user->roles()->first()->name }}</h4>
+    <h4>User permission - {{ $user->roles()->first()?->name }}</h4>
     <form class="userEdit">
         @csrf
         <input type="hidden" name="id" value="{{ $user->id }}">
@@ -54,6 +54,61 @@
                 <input type="password" class="form-control" id="inputPasswordConfirm" name="confirmPassword" placeholder="Confirm Password">
             </div>
         </div>
+
+
+
+
+
+        <div class="form-group row">
+            <label for="select" class="col-sm-2 col-form-label">Поля пользователя</label>
+            <div class="col-sm-10">
+                @foreach($fields as $k=>$field)
+                    <div class="row">
+                        <p class="col-sm-3">
+                           Название поля - {{$field->name}}
+                        </p>
+                        <p class="col-sm-9">
+                           Значение - {{$field->value}}
+                        </p>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="inputPassword" class="col-sm-2 col-form-label">Сообщение об ошибке</label>
+                        <div class="col-sm-10">
+                            <input type="password" class="form-control" id="inputPassword" name="error[{{$field->uuid}}]" placeholder="Password">
+                        </div>
+                    </div>
+
+                    <div class="row addItem">
+                        <div class="col-sm-6">
+                            <div class="search-block">
+                                <textarea class="form-input" type="text" name="moreData[{{$field->uuid}}][name]" ></textarea>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <textarea type="text" class="form-control" name="moreData[{{$field->uuid}}][value]" placeholder="sort"></textarea>
+                        </div>
+                    </div>
+                    </br>
+                    <button class="btn btn-primary addItemButton">Add brand</button>
+                @endforeach
+            </div>
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         <div class="form-group row">
                 <label class="col-form-label col-sm-2 pt-0">Admin</label>
                 <div class="col-sm-10">

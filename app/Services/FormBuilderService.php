@@ -223,4 +223,54 @@ class FormBuilderService
         return $required;
     }
 
+    public function getUserField(array $moreData,array $errorData): array
+    {
+        $this->fieldsAll = Fields::orderBy('sort', 'asc')->get();
+        $userFields = [];
+        foreach ($this->fieldsAll as $field) {
+            if (!empty($field->directory)) {
+                $field->type = $this->getTypeDirectory($field->directory);
+                if ($valuesDirectory = $this->getDirectory($field->directory, true)) {
+                    $field->valuesDirectory = $valuesDirectory;
+                }else{
+                    $field->valuesDirectory = [];
+                }
+            }
+            if($field->type == FieldsTypeEnum::directory->value && empty($field->valuesDirectory)){
+                continue;
+            }
+
+            if(isset($this->formDataThisStep[$field->uuid])){
+                if(!empty($field->valuesDirectory)){
+                    foreach ($field->valuesDirectory as $valueDerictory){
+                        $field->value = '';
+                        if(is_array($this->formDataThisStep[$field->uuid])){
+                            if(in_array($valueDerictory['uuid'],$this->formDataThisStep[$field->uuid])){
+                               if(empty($field->value)) {
+                                   $field->value = $valueDerictory['name'];
+                               }else{
+                                   $field->value .= ', '.$valueDerictory['name'];
+                               }
+                            }
+                        }else{
+                            if($valueDerictory['uuid'] == $this->formDataThisStep[$field->uuid]) {
+                                $field->value = $valueDerictory['name'];
+                            }
+                        }
+                    }
+                }else{
+                    $field->value = $this->formDataThisStep[$field->uuid];
+                }
+                if(in_array($field->uuid,$moreData)){
+                    $field->moreData = $moreData[$field->uuid];
+                }
+                if(in_array($field->uuid,$errorData)){
+                    $field->moreData = $errorData[$field->uuid];
+                }
+                $userFields[] = $field;
+            }
+        }
+        return $userFields;
+    }
+
 }

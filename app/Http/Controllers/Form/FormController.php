@@ -305,6 +305,7 @@ class FormController extends Controller
 
             if($registerResult->statusRegister) {
                 $user->confirmRegister = true;
+                $user->data = json_encode(array_merge(...json_decode($user->data,true)));
                 $user->save();
                 $apiTokenService = new ApiTokenService($user);
                 $token = $apiTokenService->createToken(['checkPin']);

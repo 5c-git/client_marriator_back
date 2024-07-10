@@ -31,7 +31,9 @@ class User extends Authenticatable
         'img',
         'confirmRegister',
         'pin',
-        'finishRegister'
+        'finishRegister',
+        'expansionData',
+        'errorData'
     ];
 
     /**
