@@ -51,7 +51,7 @@ class FormController extends Controller
      *       response="200",
      *       description="form data",
      *       @OA\JsonContent(
-     *           @OA\Examples(example="result", value={"status": "success","result":{"formData":{},"step":1,"type":"needRequired|allowedNewStep|addedNewFields",}},summary="Успех"),
+     *           @OA\Examples(example="result", value={"status": "success","result":{"formData":{},"step":1,"type":"needRequired|allowedNewStep",}},summary="Успех"),
      *       )
      *     ),
      * )

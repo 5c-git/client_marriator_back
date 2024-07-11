@@ -30,7 +30,7 @@ class UserPersonalInfoController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/getUserInfo/",
+     *     path="/api/personal/getUserInfo/",
      *     operationId="getUserInfo",
      *     tags={"Personal area"},
      *     summary="getForm",
@@ -48,10 +48,28 @@ class UserPersonalInfoController extends Controller
     public function getUserInfo(Request $request)
     {
         $user = Auth::user();
+        $user->img = config('app.url').Storage::url($user->img);
         $response['result']['userData'] = $user->toArray();
         $response['status'] = 'success';
         return response()->json($response, 200);
     }
+
+    /**
+     * @OA\Get(
+     *     path="/api/personal/getUserFields/",
+     *     operationId="getUserInfo",
+     *     tags={"Personal area"},
+     *     summary="getForm",
+     *     description="getForm",
+     *     @OA\Response(
+     *       response="200",
+     *       description="form data",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result", value={"status": "success","result":{"formData":{},"type":"needRequired|allowedNewStep",}},summary="Успех"),
+     *       )
+     *     ),
+     * )
+     */
 
     public function getUserFields(Request $request)
     {
@@ -82,10 +100,66 @@ class UserPersonalInfoController extends Controller
         return response()->json($response);
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/personal/saveUserFields/",
+     *     operationId="saveUserFields",
+     *     tags={"Personal area"},
+     *     summary="saveUserFields",
+     *     description="saveUserFields Endpoint",
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 required={"formData"},
+     *                 @OA\Property(property="formData",type="json")
+     *             ),
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *       response="200",
+     *       description="save form",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result", value={"status": "success","result":{"type":"needRequired|allowedNewStep|addedNewFields",}},summary="Успех"),
+     *       )
+     *     ),
+     * )
+     */
+
     public function saveUserFields(Request $request)
     {
 
     }
+
+    /**
+     * @OA\Post(
+     *     path="/api/personal/saveUserImg/",
+     *     operationId="saveUserImg",
+     *     tags={"Personal area"},
+     *     summary="saveUserImg",
+     *     description="saveUserImg Endpoint",
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                 required={"file"},
+     *                 @OA\Property(
+     *                  property="file",
+     *                  type="file",
+     *                  ),
+     *             ),
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *       response="200",
+     *       description="file  info",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result", value={"status": "success","resFile":"url file"},summary="Успех"),
+     *           @OA\Examples(example="error", value={"status": "error", "error":"Ничего не загружено"},summary="Нехватка полей"),
+     *       )
+     *     ),
+     * )
+     */
 
     public function saveUserImg(Request $request)
     {
