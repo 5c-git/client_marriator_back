@@ -57,7 +57,7 @@ class UserPersonalInfoController extends Controller
     /**
      * @OA\Get(
      *     path="/api/personal/getUserFields/",
-     *     operationId="getUserInfo",
+     *     operationId="getUserFields",
      *     tags={"Personal area"},
      *     summary="getForm",
      *     description="getForm",
