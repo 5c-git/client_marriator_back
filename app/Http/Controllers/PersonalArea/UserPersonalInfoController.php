@@ -134,10 +134,10 @@ class UserPersonalInfoController extends Controller
     /**
      * @OA\Post(
      *     path="/api/personal/saveUserImg/",
-     *     operationId="saveUserImg",
+     *     operationId="saveUserImgPersonal",
      *     tags={"Personal area"},
-     *     summary="saveUserImg",
-     *     description="saveUserImg Endpoint",
+     *     summary="saveUserImgPersonal",
+     *     description="saveUserImgPersonal Endpoint",
      *     @OA\RequestBody(
      *         @OA\MediaType(
      *             mediaType="multipart/form-data",
