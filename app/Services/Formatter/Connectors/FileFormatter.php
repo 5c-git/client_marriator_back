@@ -59,7 +59,12 @@ class FileFormatter implements FormaterInterface
             }
         }
         //$data['drawerInfo'] = json_decode([],true);
-
+        if(!empty($fieldsData->moreData)){
+            $data['moreData'] = $fieldsData->moreData;
+        }
+        if(!empty($fieldsData->errorData)){
+            $data['errorData'] = $fieldsData->errorData;
+        }
 
 
 

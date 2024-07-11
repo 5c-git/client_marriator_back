@@ -46,8 +46,14 @@ class CardFormatter implements FormaterInterface
             $data['helperInfo']['link']['type'] = $fieldsData->helperInfo_link_type;
         }
 
+        if(!empty($fieldsData->moreData)){
+            $data['moreData'] = $fieldsData->moreData;
+        }
+        if(!empty($fieldsData->errorData)){
+            $data['errorData'] = $fieldsData->errorData;
+        }
 
-        //helperInfo
+
 
 
 

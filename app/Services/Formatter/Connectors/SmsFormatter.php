@@ -46,7 +46,12 @@ class SmsFormatter implements FormaterInterface
         }
 
 
-
+        if(!empty($fieldsData->moreData)){
+            $data['moreData'] = $fieldsData->moreData;
+        }
+        if(!empty($fieldsData->errorData)){
+            $data['errorData'] = $fieldsData->errorData;
+        }
 
 
         return $data;

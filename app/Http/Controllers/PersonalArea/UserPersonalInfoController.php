@@ -58,6 +58,17 @@ class UserPersonalInfoController extends Controller
         $user = Auth::user();
 
         $formDataService = (new FormBuilderService(10, json_decode($user->data,true)));
+        if(!empty($user->expansionData)){
+            $user->expansionData = json_decode($user->expansionData,true);
+        }else{
+            $user->expansionData = [];
+        }
+        if(!empty($user->errorData)){
+            $user->errorData = json_decode($user->errorData,true);
+        }else{
+            $user->errorData = [];
+        }
+        $formDataService->setDataUser($user->expansionData,$user->errorData);
         $response['result']['formData'] = $formDataService->createPersonalUserFormData();
         $response['result']['type'] = $formDataService->checkStatusForm(true);
 

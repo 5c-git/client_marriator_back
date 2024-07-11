@@ -56,12 +56,6 @@ class UsersController extends Controller
             $user->errorData = [];
         }
 
-        echo "<pre>";
-        var_dump($user->errorData);
-        echo "</pre>";
-        echo "<pre>";
-        var_dump($user->expansionData);
-        echo "</pre>";
 
         $fields = (new FormBuilderService(10, $user->data))->getUserField($user->expansionData,$user->errorData);
 
