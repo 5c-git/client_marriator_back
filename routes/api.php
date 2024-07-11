@@ -34,7 +34,8 @@ Route::group(["middleware" => ["auth:api","scope:personalArea"]], function () {
     Route::group(['prefix' => 'personal'], function () {
     Route::get('/getUserInfo/', 'App\Http\Controllers\PersonalArea\UserPersonalInfoController@getUserInfo')->name('getUserInfo');
     Route::get('/getUserFields/', 'App\Http\Controllers\PersonalArea\UserPersonalInfoController@getUserFields')->name('getUserFields');
-    Route::post('/saveUserImg/', 'App\Http\Controllers\PersonalArea\UserPersonalInfoController@saveUserImg')->name('saveUserImg');
+    Route::post('/saveUserImg/', 'App\Http\Controllers\PersonalArea\UserPersonalInfoController@saveUserImg')->name('saveUserImgPersonal');
+    Route::post('/saveUserFields/', 'App\Http\Controllers\PersonalArea\UserPersonalInfoController@saveUserFields')->name('saveUserFields');
     });
 });
 
