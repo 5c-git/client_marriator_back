@@ -39,7 +39,13 @@
         <div class="form-group row">
             <label for="email" class="col-sm-2 col-form-label">Email</label>
             <div class="col-sm-10">
-                <input type="tel" class="form-control" name="email" id="email" required value="{{ $user->email }}" placeholder="{{ $user->email }}">
+                <input type="email" class="form-control" name="email" id="email" required value="{{ $user->email }}" placeholder="{{ $user->email }}">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="phone" class="col-sm-2 col-form-label">Phone</label>
+            <div class="col-sm-10">
+                <input type="tel" class="form-control" name="phone" id="phone" value="{{ $user->phone }}" placeholder="{{ $user->phone }}">
             </div>
         </div>
         <div class="form-group row">

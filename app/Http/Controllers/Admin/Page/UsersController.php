@@ -117,6 +117,7 @@ class UsersController extends Controller
 
         $user->name = $data['name'];
         $user->email = $data['email'];
+        $user->phone = $data['phone'];
 
 
         if(!empty($data['permission'])) {
@@ -143,7 +144,9 @@ class UsersController extends Controller
 
         $user['name'] = $data['name'];
         $user['email'] = $data['email'];
-        $user['email_verified_at'] = Carbon::now();
+        $user->phone = $data['phone'];
+
+        //$user['email_verified_at'] = Carbon::now();
 
         $user = User::create($user);
 

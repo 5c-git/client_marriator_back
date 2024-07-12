@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Services\ApiTokenService\ApiTokenService;
 use App\Services\FormBuilderService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use App\Services\Register\SmsCodeService;
 use App\Enum\Fields\PersonalInfoSectionEnum;
+use App\Services\Register\EmailVerifiedService;
 
 
 class UserPersonalInfoController extends Controller
@@ -120,7 +122,14 @@ class UserPersonalInfoController extends Controller
      *       response="200",
      *       description="save form",
      *       @OA\JsonContent(
-     *           @OA\Examples(example="result", value={"status": "success","result":{"type":"needRequired|allowedNewStep|addedNewFields",}},summary="Успех"),
+     *           @OA\Examples(example="result", value={"status": "success"},summary="Успех"),
+     *       )
+     *     ),
+     *     @OA\Response(
+     *       response="417",
+     *       description="formData is empty",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result formData", value={"status": "error", "error":"Ничего не загружено"},summary="Ошибка formData"),
      *       )
      *     ),
      * )
@@ -128,7 +137,26 @@ class UserPersonalInfoController extends Controller
 
     public function saveUserFields(Request $request)
     {
-
+        $user = Auth::user();
+        if (!empty($request->formData)) {
+            $userError = json_decode($user->errorData,true);
+           $userData = json_decode($user->data,true);
+           foreach ($request->formData as $k=>$oneField){
+               if((!isset($userData[$k]) && !empty($userError[$k]) && !empty($oneField)) || (!empty($userData[$k]) && !empty($userError[$k]) && $userData[$k] != $oneField)) {
+                   unset($userError[$k]);
+               }
+               $userData[$k] = $oneField;
+           }
+           $user->data = json_encode($userData);
+           $user->errorData = json_encode($userError);
+           $user->save();
+           $response['status'] = 'success';
+        }else{
+            $response['error'] = 'Ничего не загружено';
+            $response['status'] = 'error';
+            return response()->json($response,417);
+        }
+        return response()->json($response);
     }
 
     /**
@@ -155,6 +183,12 @@ class UserPersonalInfoController extends Controller
      *       description="file  info",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result", value={"status": "success","resFile":"url file"},summary="Успех"),
+     *       )
+     *     ),
+     *     @OA\Response(
+     *       response="417",
+     *       description="file is empty",
+     *       @OA\JsonContent(
      *           @OA\Examples(example="error", value={"status": "error", "error":"Ничего не загружено"},summary="Нехватка полей"),
      *       )
      *     ),
@@ -178,9 +212,115 @@ class UserPersonalInfoController extends Controller
         } else {
             $response['error'] = 'Ничего не загружено';
             $response['status'] = 'error';
+            return response()->json($response,417);
         }
 
         return response()->json($response);
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/api/personal/setUserEmail/",
+     *     operationId="setUserEmail",
+     *     tags={"Personal area"},
+     *     summary="setUserEmail",
+     *     description="setUserEmail Endpoint",
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 required={"email"},
+     *                 @OA\Property(property="email",type="string"),
+     *             ),
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *       response="200",
+     *       description="send email for verified",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result", value={"status": "success","result":{"code":{"status":"exists|success","ttl":"120 числовое поле если статус exists","code":"sms код для теста"}}},summary="Успешный запрос"),
+     *       )
+     *     ),
+     *     @OA\Response(
+     *       response="417",
+     *       description="email is empty",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result", value={"status": "error", "error":"Email отсутствует"},summary="Нехватка полей"),
+     *       )
+     *     ),
+     * )
+     */
+
+    public function setUserEmail(Request $request){
+        $user = Auth::user();
+        if (!empty($request->email)) {
+            $user->email = $request->email;
+            $emailCodeService = new EmailVerifiedService($request->email);
+            $response['result']['code'] = $emailCodeService->createCode();
+            $response['status'] = $emailCodeService->status;
+            if($emailCodeService->status == 'success'){
+                $user->save();
+            }
+            return response()->json($response,200);
+        }else {
+            $response['error'] = 'Email отсутствует';
+            $response['status'] = 'error';
+            return response()->json($response,417);
+        }
+        return response()->json($response);
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/api/personal/checkEmailCode/",
+     *     operationId="checkEmailCode",
+     *     tags={"Personal area"},
+     *     summary="checkEmailCode",
+     *     description="checkEmailCode Endpoint",
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 required={"code"},
+     *                 @OA\Property(property="code",type="number"),
+     *             ),
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *       response="200",
+     *       description="check email code success",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result", value={"status": "success"},summary="Успех"),
+     *           @OA\Examples(example="result error", value={"status": "error","result":{"code":{"status":"error|notExists"},}},summary="Ошибка"),
+     *       )
+     *     ),
+     *     @OA\Response(
+     *       response="417",
+     *       description="Code is empty",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result code", value={"status": "error", "error":"Поле код обязательна для заполнения"},summary="Ошибка кода"),
+     *       )
+     *     ),
+     * )
+     */
+
+    public function checkEmailCode(){
+        if(empty($request->code)){
+            $response['error'] = 'Поле код обязательна для заполнения';
+            $response['status'] = 'error';
+            return response()->json($response,417);
+        }
+        $user = Auth::user();
+        $emailCodeResult = (new EmailVerifiedService($user->email,(int)$request->code))->checkCode();
+        if($emailCodeResult['status'] == 'success'){
+            $user->email_verified_at = Carbon::now();
+            $user->save();
+            $response['status'] = 'success';
+        }else{
+            $response['result']['code'] = $emailCodeResult;
+            $response['status'] = 'error';
+        }
+        return response()->json($response,200);
     }
 
 
