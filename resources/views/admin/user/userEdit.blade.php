@@ -116,6 +116,7 @@
                         </br>
                     <button class="btn btn-primary addItemButton">Добавить </button>
                     </div>
+                    <hr class="my-3">
                 @endforeach
             </div>
         </div>
