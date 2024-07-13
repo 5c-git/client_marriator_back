@@ -85,10 +85,10 @@
                             <textarea class="form-control" id="error" name="error[{{$field->uuid}}]" placeholder="Текст ошибки">{{$field->errorData}}</textarea>
                         </div>
                     </div>
-
                         @if(!empty($field->moreData) && is_array($field->moreData))
-                        @foreach($field->moreData as $moreData)
-                    <div class="row addItem">
+                            @foreach($field->moreData as $moreData)
+                    <div class="row form-group addItem">
+                        <label for="error" class="col-sm-2 col-form-label">Поля дополнительной информации</label>
                         <div class="col-sm-6">
                             <div class="search-block">
                                 <textarea class="form-input" type="text" name="moreData[{{$field->uuid}}][name][]" placeholder="Название поля">{{$moreData['name']}}</textarea>
@@ -101,7 +101,20 @@
                     </br>
                             @endforeach
                         @endif
-                    <button class="btn btn-primary addItemButton">Add brand</button>
+                        <div class="row form-group addItem">
+                            <label for="error" class="col-sm-2 col-form-label">Поля дополнительной информации</label>
+
+                            <div class="col-sm-6">
+                                <div class="search-block">
+                                    <textarea class="form-input" type="text" name="moreData[{{$field->uuid}}][name][]" placeholder="Название поля"></textarea>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <textarea type="text" class="form-control" name="moreData[{{$field->uuid}}][value][]" placeholder="Значение"></textarea>
+                            </div>
+                        </div>
+                        </br>
+                    <button class="btn btn-primary addItemButton">Добавить </button>
                     </div>
                 @endforeach
             </div>
