@@ -71,12 +71,12 @@
                 @foreach($fields as $k=>$field)
                     <div class="addItemBlock">
                     <div class="row">
-                        <p class="col-sm-3">
-                           Название поля - {{$field->name}}
-                        </p>
-                        <p class="col-sm-9">
+                        <label for="error" class="col-sm-4 col-form-label">
+                        Название поля - {{$field->name}}
+                        </label>
+                        <label for="error" class="col-sm-8 col-form-label">
                            Значение - {{$field->value}}
-                        </p>
+                        </label>
                     </div>
 
                     <div class="form-group row">
