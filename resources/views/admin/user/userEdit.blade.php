@@ -89,12 +89,12 @@
                             @foreach($field->moreData as $moreData)
                     <div class="row form-group addItem">
                         <label for="error" class="col-sm-2 col-form-label">Поля дополнительной информации</label>
-                        <div class="col-sm-6">
+                        <div class="col-sm-5">
                             <div class="search-block">
                                 <textarea class="form-input" type="text" name="moreData[{{$field->uuid}}][name][]" placeholder="Название поля">{{$moreData['name']}}</textarea>
                             </div>
                         </div>
-                        <div class="col-sm-6">
+                        <div class="col-sm-5">
                             <textarea type="text" class="form-control" name="moreData[{{$field->uuid}}][value][]" placeholder="Значение">{{$moreData['value']}}</textarea>
                         </div>
                     </div>
@@ -104,12 +104,12 @@
                         <div class="row form-group addItem">
                             <label for="error" class="col-sm-2 col-form-label">Поля дополнительной информации</label>
 
-                            <div class="col-sm-6">
+                            <div class="col-sm-5">
                                 <div class="search-block">
                                     <textarea class="form-input" type="text" name="moreData[{{$field->uuid}}][name][]" placeholder="Название поля"></textarea>
                                 </div>
                             </div>
-                            <div class="col-sm-6">
+                            <div class="col-sm-5">
                                 <textarea type="text" class="form-control" name="moreData[{{$field->uuid}}][value][]" placeholder="Значение"></textarea>
                             </div>
                         </div>
