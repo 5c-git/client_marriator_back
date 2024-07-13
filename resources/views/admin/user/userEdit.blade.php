@@ -91,7 +91,7 @@
                         <label for="error" class="col-sm-2 col-form-label">Поля дополнительной информации</label>
                         <div class="col-sm-5">
                             <div class="search-block">
-                                <textarea class="form-input" type="text" name="moreData[{{$field->uuid}}][name][]" placeholder="Название поля">{{$moreData['name']}}</textarea>
+                                <textarea class="form-control" type="text" name="moreData[{{$field->uuid}}][name][]" placeholder="Название поля">{{$moreData['name']}}</textarea>
                             </div>
                         </div>
                         <div class="col-sm-5">
@@ -106,7 +106,7 @@
 
                             <div class="col-sm-5">
                                 <div class="search-block">
-                                    <textarea class="form-input" type="text" name="moreData[{{$field->uuid}}][name][]" placeholder="Название поля"></textarea>
+                                    <textarea class="form-control" type="text" name="moreData[{{$field->uuid}}][name][]" placeholder="Название поля"></textarea>
                                 </div>
                             </div>
                             <div class="col-sm-5">
