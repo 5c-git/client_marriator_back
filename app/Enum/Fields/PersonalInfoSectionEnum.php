@@ -13,18 +13,26 @@ enum PersonalInfoSectionEnum: int
     use Names;
     use Values;
 
-    case registration = 1;
-    case personal = 2;
-    case pay = 3;
+    case personal = 1;
+    case activities = 2;
+    case certificates = 3;
+    case pay = 4;
+    case searchRadius = 5;
+    case property = 6;
+    case documents = 7;
 
 
     public function typeName(): string
     {
         return match($this)
         {
-            self::registration => 'Регистрационные данные',
             self::personal => 'Персональные данные',
-            self::pay => 'Платежные данные',
+            self::activities => 'Виды деятельности',
+            self::certificates => 'Допуски, справки, удостоверения',
+            self::pay => 'Платежные документы',
+            self::searchRadius => 'Радиус поиска работы',
+            self::property => 'Имущество',
+            self::documents => 'Документы иностранного гражданина',
         };
     }
 
@@ -32,9 +40,13 @@ enum PersonalInfoSectionEnum: int
     {
         return match($this)
         {
-            self::registration => 1,
-            self::personal => 2,
-            self::pay => 3,
+            self::personal => 1,
+            self::activities => 2,
+            self::certificates => 3,
+            self::pay => 4,
+            self::searchRadius => 5,
+            self::property => 6,
+            self::documents => 7,
         };
     }
 

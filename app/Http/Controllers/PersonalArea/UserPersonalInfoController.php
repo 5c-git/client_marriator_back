@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\PersonalArea;
 
 use App\Http\Controllers\Controller;
+use App\Models\Fields\Fields;
 use App\Models\User;
 use App\Services\ApiTokenService\ApiTokenService;
 use App\Services\FormBuilderService;
@@ -50,7 +51,7 @@ class UserPersonalInfoController extends Controller
     public function getUserInfo(Request $request)
     {
         $user = Auth::user();
-        $user->img = config('app.url').Storage::url($user->img);
+        $user->img = config('app.url') . Storage::url($user->img);
         $response['result']['userData'] = $user->toArray();
         $response['status'] = 'success';
         return response()->json($response, 200);
@@ -67,7 +68,7 @@ class UserPersonalInfoController extends Controller
      *       response="200",
      *       description="form data",
      *       @OA\JsonContent(
-     *           @OA\Examples(example="result", value={"status": "success","result":{"formData":{},"type":"needRequired|allowedNewStep",}},summary="Успех"),
+     *           @OA\Examples(example="result", value={"status": "success","result":{"formData":{},"section":{},"type":"needRequired|allowedNewStep",}},summary="Успех"),
      *       )
      *     ),
      * )
@@ -77,27 +78,52 @@ class UserPersonalInfoController extends Controller
     {
         $user = Auth::user();
 
-        $formDataService = (new FormBuilderService(10, json_decode($user->data,true)));
-        if(!empty($user->expansionData)){
-            $user->expansionData = json_decode($user->expansionData,true);
-        }else{
+        $formDataService = (new FormBuilderService(10, json_decode($user->data, true)));
+        if (!empty($user->expansionData)) {
+            $user->expansionData = json_decode($user->expansionData, true);
+        } else {
             $user->expansionData = [];
         }
-        if(!empty($user->errorData)){
-            $user->errorData = json_decode($user->errorData,true);
-        }else{
+        if (!empty($user->errorData)) {
+            $user->errorData = json_decode($user->errorData, true);
+        } else {
             $user->errorData = [];
         }
-        $formDataService->setDataUser($user->expansionData,$user->errorData);
+        $formDataService->setDataUser($user->expansionData, $user->errorData);
         $response['result']['formData'] = $formDataService->createPersonalUserFormData();
         $response['result']['type'] = $formDataService->checkStatusForm(true);
 
-        foreach (PersonalInfoSectionEnum::options() as $k => $option) {
-            $response['result']['section'][] = [
-                'name' => PersonalInfoSectionEnum::from($option)->typeName(),
-                'value' => $option
-            ];
+        $response['result']['section'] = FormBuilderService::getUserMenu($user->errorData);
+        $response['status'] = 'success';
+        return response()->json($response);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/api/personal/getUserPersonalMenu/",
+     *     operationId="getUserPersonalMenu",
+     *     tags={"Personal area"},
+     *     summary="getUserPersonalMenu",
+     *     description="getUserPersonalMenu",
+     *     @OA\Response(
+     *       response="200",
+     *       description="menu data",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result", value={"status": "success","result":{"section":{}}},summary="Успех"),
+     *       )
+     *     ),
+     * )
+     */
+
+    public function getUserPersonalMenu(Request $request)
+    {
+        $user = Auth::user();
+        if (!empty($user->errorData)) {
+            $userError = json_decode($user->errorData, true);
+        } else {
+            $userError = [];
         }
+        $response['result']['section'] = FormBuilderService::getUserMenu($userError);
         $response['status'] = 'success';
         return response()->json($response);
     }
@@ -139,22 +165,22 @@ class UserPersonalInfoController extends Controller
     {
         $user = Auth::user();
         if (!empty($request->formData)) {
-            $userError = json_decode($user->errorData,true);
-           $userData = json_decode($user->data,true);
-           foreach ($request->formData as $k=>$oneField){
-               if((!isset($userData[$k]) && !empty($userError[$k]) && !empty($oneField)) || (!empty($userData[$k]) && !empty($userError[$k]) && $userData[$k] != $oneField)) {
-                   unset($userError[$k]);
-               }
-               $userData[$k] = $oneField;
-           }
-           $user->data = json_encode($userData);
-           $user->errorData = json_encode($userError);
-           $user->save();
-           $response['status'] = 'success';
-        }else{
+            $userError = json_decode($user->errorData, true);
+            $userData = json_decode($user->data, true);
+            foreach ($request->formData as $k => $oneField) {
+                if ((!isset($userData[$k]) && !empty($userError[$k]) && !empty($oneField)) || (!empty($userData[$k]) && !empty($userError[$k]) && $userData[$k] != $oneField)) {
+                    unset($userError[$k]);
+                }
+                $userData[$k] = $oneField;
+            }
+            $user->data = json_encode($userData);
+            $user->errorData = json_encode($userError);
+            $user->save();
+            $response['status'] = 'success';
+        } else {
             $response['error'] = 'Ничего не загружено';
             $response['status'] = 'error';
-            return response()->json($response,417);
+            return response()->json($response, 417);
         }
         return response()->json($response);
     }
@@ -212,7 +238,7 @@ class UserPersonalInfoController extends Controller
         } else {
             $response['error'] = 'Ничего не загружено';
             $response['status'] = 'error';
-            return response()->json($response,417);
+            return response()->json($response, 417);
         }
 
         return response()->json($response);
@@ -251,21 +277,22 @@ class UserPersonalInfoController extends Controller
      * )
      */
 
-    public function setUserEmail(Request $request){
+    public function setUserEmail(Request $request)
+    {
         $user = Auth::user();
         if (!empty($request->email)) {
             $user->email = $request->email;
             $emailCodeService = new EmailVerifiedService($request->email);
             $response['result']['code'] = $emailCodeService->createCode();
             $response['status'] = $emailCodeService->status;
-            if($emailCodeService->status == 'success'){
+            if ($emailCodeService->status == 'success') {
                 $user->save();
             }
-            return response()->json($response,200);
-        }else {
+            return response()->json($response, 200);
+        } else {
             $response['error'] = 'Email отсутствует';
             $response['status'] = 'error';
-            return response()->json($response,417);
+            return response()->json($response, 417);
         }
         return response()->json($response);
     }
@@ -304,25 +331,25 @@ class UserPersonalInfoController extends Controller
      * )
      */
 
-    public function checkEmailCode(){
-        if(empty($request->code)){
+    public function checkEmailCode()
+    {
+        if (empty($request->code)) {
             $response['error'] = 'Поле код обязательна для заполнения';
             $response['status'] = 'error';
-            return response()->json($response,417);
+            return response()->json($response, 417);
         }
         $user = Auth::user();
-        $emailCodeResult = (new EmailVerifiedService($user->email,(int)$request->code))->checkCode();
-        if($emailCodeResult['status'] == 'success'){
+        $emailCodeResult = (new EmailVerifiedService($user->email, (int)$request->code))->checkCode();
+        if ($emailCodeResult['status'] == 'success') {
             $user->email_verified_at = Carbon::now();
             $user->save();
             $response['status'] = 'success';
-        }else{
+        } else {
             $response['result']['code'] = $emailCodeResult;
             $response['status'] = 'error';
         }
-        return response()->json($response,200);
+        return response()->json($response, 200);
     }
-
 
 
 }

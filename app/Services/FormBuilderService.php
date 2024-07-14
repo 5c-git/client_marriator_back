@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enum\Fields\PersonalInfoSectionEnum;
 use App\Models\Fields\Fields;
 use App\Enum\Fields\FieldsTypeEnum;
 
@@ -284,6 +285,37 @@ class FormBuilderService
             }
         }
         return $userFields;
+    }
+
+    public static function getUserMenu(array $userError = []):array
+    {
+        $sectionDots = [];
+        $menuSection = [];
+        if (!empty($userError)) {
+            $fieldsUuid = [];
+            foreach ($userError as $uuid => $errorFieldData) {
+                $fieldsUuid[] = $uuid;
+            }
+            if (!empty($fieldsUuid)) {
+                $fieldSections = Fields::whereIn('uuid', $fieldsUuid)->where('section', '>', 0)->selectRaw('section')->get();
+                foreach ($fieldSections as $fieldSection) {
+                    $sectionDots[] = $fieldSection->section;
+                }
+            }
+        }
+        foreach (PersonalInfoSectionEnum::options() as $k => $option) {
+            $dataSection = [
+                'name' => PersonalInfoSectionEnum::from($option)->typeName(),
+                'value' => $option
+            ];
+            if(in_array($option,$sectionDots)){
+                $dataSection['notification'] = true;
+            }else{
+                $dataSection['notification'] = false;
+            }
+            $menuSection[] = $dataSection;
+        }
+        return $menuSection;
     }
 
 }

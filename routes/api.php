@@ -12,7 +12,7 @@ Route::group(["middleware" => 'throttle:100,10'], function () {
     Route::post('/refreshToken/', 'App\Http\Controllers\PersonalArea\CheckPinController@refreshToken')->name('refreshToken');
 });
 
-Route::group(["middleware" => ["auth:api","scope:register"]], function () {
+Route::group(["middleware" => ["auth:api", "scope:register"]], function () {
     Route::get('/getForm/', 'App\Http\Controllers\Form\FormController@getForm')->name('getForm');
     Route::post('/saveForm/', 'App\Http\Controllers\Form\FormController@saveForm')->name('saveForm');
     Route::post('/saveUserImg/', 'App\Http\Controllers\Form\FormController@saveUserImg')->name('saveUserImg');
@@ -20,22 +20,25 @@ Route::group(["middleware" => ["auth:api","scope:register"]], function () {
     Route::post('/finishRegister/', 'App\Http\Controllers\Form\FormController@finishRegister')->name('finishRegister');
 });
 
-Route::group(["middleware" => ["auth:api","scope:register,restorePin,checkPin,personalArea"]], function () {
+Route::group(["middleware" => ["auth:api", "scope:register,restorePin,checkPin,personalArea"]], function () {
     Route::post('/setUserPin/', 'App\Http\Controllers\Form\RegistrationController@setUserPin')->name('setUserPin');
     Route::post('/startRestorePin/', 'App\Http\Controllers\Form\RegistrationController@startRestorePin')->name('startRestorePin');
     Route::post('/checkCodeRestore/', 'App\Http\Controllers\Form\RegistrationController@checkCodeRestore')->name('checkCodeRestore');
 });
 
-Route::group(["middleware" => ["auth:api","scope:checkPin"]], function () {
+Route::group(["middleware" => ["auth:api", "scope:checkPin"]], function () {
     Route::post('/checkPin/', 'App\Http\Controllers\PersonalArea\CheckPinController@checkPin')->name('checkPin');
 });
 
-Route::group(["middleware" => ["auth:api","scope:personalArea"]], function () {
+Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
     Route::group(['prefix' => 'personal'], function () {
-    Route::get('/getUserInfo/', 'App\Http\Controllers\PersonalArea\UserPersonalInfoController@getUserInfo')->name('getUserInfo');
-    Route::get('/getUserFields/', 'App\Http\Controllers\PersonalArea\UserPersonalInfoController@getUserFields')->name('getUserFields');
-    Route::post('/saveUserImg/', 'App\Http\Controllers\PersonalArea\UserPersonalInfoController@saveUserImg')->name('saveUserImgPersonal');
-    Route::post('/saveUserFields/', 'App\Http\Controllers\PersonalArea\UserPersonalInfoController@saveUserFields')->name('saveUserFields');
+        Route::get('/getUserInfo/', 'App\Http\Controllers\PersonalArea\UserPersonalInfoController@getUserInfo')->name('getUserInfo');
+        Route::get('/getUserFields/', 'App\Http\Controllers\PersonalArea\UserPersonalInfoController@getUserFields')->name('getUserFields');
+        Route::post('/saveUserImg/', 'App\Http\Controllers\PersonalArea\UserPersonalInfoController@saveUserImg')->name('saveUserImgPersonal');
+        Route::post('/saveUserFields/', 'App\Http\Controllers\PersonalArea\UserPersonalInfoController@saveUserFields')->name('saveUserFields');
+        Route::get('/getUserPersonalMenu/', 'App\Http\Controllers\PersonalArea\UserPersonalInfoController@getUserPersonalMenu')->name('getUserPersonalMenu');
+        Route::post('/setUserEmail/', 'App\Http\Controllers\PersonalArea\UserPersonalInfoController@setUserEmail')->name('setUserEmail');
+        Route::post('/checkEmailCode/', 'App\Http\Controllers\PersonalArea\UserPersonalInfoController@checkEmailCode')->name('checkEmailCode');
     });
 });
 
