@@ -121,10 +121,23 @@
             </div>
         </div>
 
+
+
+
+        <div class="form-group row">
+            <label for="active" class="col-sm-2 col-form-label">Активность</label>
+            <div class="offset-sm-2 col-sm-10">
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" style="margin-top: -1.5rem" name="active" value="1" {{$checkBox}}  id="active">
+                </div>
+            </div>
+        </div>
+
+
         <div class="form-group row">
             <label for="select" class="col-sm-2 col-form-label">Привязка полей</label>
             <div class="col-sm-10">
-                @foreach($field->parentFields as $kfield=>$parentField)
+                @foreach($edit->parentFields as $kfield=>$parentField)
                     <div class="row addItemSelect">
                         <div class="col-sm-9">
                             <x-adminlte-select2 id="parentFields{{$kfield}}" name="parentFields[{{$kfield}}][]" multiple>
@@ -148,7 +161,7 @@
                 @endforeach
                 <div class="row addItemSelect">
                     <div class="col-sm-9">
-                        <x-adminlte-select2 id="parentFields{{count($field->parentFields)+1}}" name="parentFields[{{count($field->parentFields)+1}}][]" multiple>
+                        <x-adminlte-select2 id="parentFields{{count($edit->parentFields)+1}}" name="parentFields[{{count($edit->parentFields)+1}}][]" multiple>
                             @foreach($fields as $fieldOne)
                                 @foreach($fieldOne['value'] as $fieldVal)
                                     @if(!empty($fieldVal['uuid']))
@@ -163,18 +176,6 @@
                     </div>
                 </div>
                 <button class="btn btn-primary addItemButtonSelect">Добавить привязку</button>
-            </div>
-        </div>
-
-
-
-
-        <div class="form-group row">
-            <label for="active" class="col-sm-2 col-form-label">Активность</label>
-            <div class="offset-sm-2 col-sm-10">
-                <div class="form-check">
-                    <input type="checkbox" class="form-check-input" style="margin-top: -1.5rem" name="active" value="1" {{$checkBox}}  id="active">
-                </div>
             </div>
         </div>
 

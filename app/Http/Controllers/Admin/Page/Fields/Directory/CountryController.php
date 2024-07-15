@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Admin\Page\Fields\Directory;
 
+use App\Enum\Fields\FieldsDirectoryEnum;
 use App\Http\Controllers\Controller;
 use App\Models\Fields\Directory\Country;
+use App\Models\Fields\Fields;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -31,7 +33,23 @@ class CountryController extends Controller
     {
         $country = Country::where('id', '=', $request->id)->first();
         if($country) {
-            return view('admin.directory.country.countryEdit', compact('country'));
+
+            $fields['fields']['value'] = Fields::where('active',true)->get()->toArray();
+            $fields['fields']['name'] = 'Простые поля';
+            if(!empty($country->parentFields)) {
+                $country->parentFields = json_decode($country->parentFields, true);
+            }else{
+                $country->parentFields = [];
+            }
+            foreach (FieldsDirectoryEnum::values() as $directory){
+                if($directoryArr=$directory::where('active',true)->get()->toArray()) {
+                    $arrData['value'] = $directoryArr;
+                    $arrData['name'] = FieldsDirectoryEnum::from($directory)->directoryName();
+                    $fields = array_merge($fields, [$directory=>$arrData]);
+                }
+            }
+
+            return view('admin.directory.country.countryEdit', compact('country','fields'));
         }else{
             return redirect()->back();
         }
@@ -52,6 +70,11 @@ class CountryController extends Controller
         }else{
             $country->active = false;
         }
+        if(!empty($data['parentFields'])) {
+            $country->parentFields = json_encode($data['parentFields']);
+        }else{
+            $country->parentFields = json_encode([]);
+        }
 
         $country->save();
 
@@ -66,8 +89,18 @@ class CountryController extends Controller
 
     public function countryCreate()
     {
+        $fields['fields']['value'] = Fields::where('active',true)->get()->toArray();
+        $fields['fields']['name'] = 'Простые поля';
+
+        foreach (FieldsDirectoryEnum::values() as $directory){
+            if($directoryArr=$directory::where('active',true)->get()->toArray()) {
+                $arrData['value'] = $directoryArr;
+                $arrData['name'] = FieldsDirectoryEnum::from($directory)->directoryName();
+                $fields = array_merge($fields, [$directory=>$arrData]);
+            }
+        }
         $uuidDirectoryFields = Country::$uuid.'_'.Str::random(30);
-        return view('admin.directory.country.countryAdd',compact('uuidDirectoryFields'));
+        return view('admin.directory.country.countryAdd',compact('uuidDirectoryFields','fields'));
     }
 
     public function countryCreateAjax(Request $request)
@@ -82,6 +115,11 @@ class CountryController extends Controller
             $country->active = true;
         }else{
             $country->active = false;
+        }
+        if(!empty($data['parentFields'])) {
+            $country->parentFields = json_encode($data['parentFields']);
+        }else{
+            $country->parentFields = json_encode([]);
         }
 
         $country->save();

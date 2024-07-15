@@ -25,12 +25,13 @@ class Activities extends Model implements ModelDirectoryInterface
         'detail_img',
         'link_text',
         'link',
-        'type'
+        'type',
+        'parentFields'
     ];
 
     public $timestamps = false;
 
-    public function getDataDirectory(bool $allFields = false){
+    public function getDataDirectory(bool $allFields = false,array $userData = []){
         if(!$allFields) {
             return $this->uuid;
         }else{

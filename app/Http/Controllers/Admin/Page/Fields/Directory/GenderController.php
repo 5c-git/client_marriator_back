@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Admin\Page\Fields\Directory;
 
+use App\Enum\Fields\FieldsDirectoryEnum;
 use App\Http\Controllers\Controller;
 use App\Models\Fields\Directory\Gender;
+use App\Models\Fields\Fields;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -34,7 +36,23 @@ class GenderController extends Controller
     {
         $edit = $this->objClass::where('id', '=', $request->id)->first();
         if($edit) {
-            return view('admin.directory.'.$this->view.'.edit', compact('edit'));
+
+            $fields['fields']['value'] = Fields::where('active',true)->get()->toArray();
+            $fields['fields']['name'] = 'Простые поля';
+            if(!empty($edit->parentFields)) {
+                $edit->parentFields = json_decode($edit->parentFields, true);
+            }else{
+                $edit->parentFields = [];
+            }
+            foreach (FieldsDirectoryEnum::values() as $directory){
+                if($directoryArr=$directory::where('active',true)->get()->toArray()) {
+                    $arrData['value'] = $directoryArr;
+                    $arrData['name'] = FieldsDirectoryEnum::from($directory)->directoryName();
+                    $fields = array_merge($fields, [$directory=>$arrData]);
+                }
+            }
+
+            return view('admin.directory.'.$this->view.'.edit', compact('edit','fields'));
         }else{
             return redirect()->back();
         }
@@ -50,7 +68,11 @@ class GenderController extends Controller
         $editObj->name = $data['name'];
         $editObj->uuid = $data['uuid'];
 
-
+        if(!empty($data['parentFields'])) {
+            $editObj->parentFields = json_encode($data['parentFields']);
+        }else{
+            $editObj->parentFields = json_encode([]);
+        }
 
         if(!empty($data['active'])) {
             $editObj->active = true;
@@ -71,8 +93,18 @@ class GenderController extends Controller
 
     public function create()
     {
+        $fields['fields']['value'] = Fields::where('active',true)->get()->toArray();
+        $fields['fields']['name'] = 'Простые поля';
+
+        foreach (FieldsDirectoryEnum::values() as $directory){
+            if($directoryArr=$directory::where('active',true)->get()->toArray()) {
+                $arrData['value'] = $directoryArr;
+                $arrData['name'] = FieldsDirectoryEnum::from($directory)->directoryName();
+                $fields = array_merge($fields, [$directory=>$arrData]);
+            }
+        }
         $uuidDirectoryFields = $this->objClass::$uuid.'_'.Str::random(30);
-        return view('admin.directory.'.$this->view.'.add', compact('uuidDirectoryFields'));
+        return view('admin.directory.'.$this->view.'.add', compact('uuidDirectoryFields','fields'));
     }
 
     public function createAjax(Request $request)
@@ -87,6 +119,11 @@ class GenderController extends Controller
             $editObj->active = true;
         }else{
             $editObj->active = false;
+        }
+        if(!empty($data['parentFields'])) {
+            $editObj->parentFields = json_encode($data['parentFields']);
+        }else{
+            $editObj->parentFields = json_encode([]);
         }
 
         $editObj->save();

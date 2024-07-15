@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Page\Fields\Directory;
 
+use App\Enum\Fields\FieldsDirectoryEnum;
 use App\Http\Controllers\Controller;
 use App\Models\Fields\Directory\Bank;
 use App\Models\Fields\Fields;
@@ -32,12 +33,21 @@ class BankController extends Controller
     {
         $bank = Bank::where('id', '=', $request->id)->first();
         if($bank) {
+            $fields['fields']['value'] = Fields::where('active',true)->get()->toArray();
+            $fields['fields']['name'] = 'Простые поля';
             if(!empty($bank->parentFields)) {
                 $bank->parentFields = json_decode($bank->parentFields, true);
             }else{
                 $bank->parentFields = [];
             }
-            return view('admin.directory.bank.bankEdit', compact('bank'));
+            foreach (FieldsDirectoryEnum::values() as $directory){
+                if($directoryArr=$directory::where('active',true)->get()->toArray()) {
+                    $arrData['value'] = $directoryArr;
+                    $arrData['name'] = FieldsDirectoryEnum::from($directory)->directoryName();
+                    $fields = array_merge($fields, [$directory=>$arrData]);
+                }
+            }
+            return view('admin.directory.bank.bankEdit', compact('bank','fields'));
         }else{
             return redirect()->back();
         }
@@ -54,10 +64,11 @@ class BankController extends Controller
         $bank->uuid = $data['uuid'];
         $bank->bic = $data['bic'];
         $bank->description = $data['description'];
-        if(empty($data['parentFields'])){
-            $data['parentFields'] = [];
+        if(!empty($data['parentFields'])) {
+            $bank->parentFields = json_encode($data['parentFields']);
+        }else{
+            $bank->parentFields = json_encode([]);
         }
-        $bank->parentFields = json_encode($data['parentFields']);
 
         if(!empty($data['active'])) {
             $bank->active = true;
@@ -78,8 +89,18 @@ class BankController extends Controller
 
     public function bankCreate()
     {
+        $fields['fields']['value'] = Fields::where('active',true)->get()->toArray();
+        $fields['fields']['name'] = 'Простые поля';
+
+        foreach (FieldsDirectoryEnum::values() as $directory){
+            if($directoryArr=$directory::where('active',true)->get()->toArray()) {
+                $arrData['value'] = $directoryArr;
+                $arrData['name'] = FieldsDirectoryEnum::from($directory)->directoryName();
+                $fields = array_merge($fields, [$directory=>$arrData]);
+            }
+        }
         $uuidDirectoryFields = Bank::$uuid.'_'.Str::random(30);
-        return view('admin.directory.bank.bankAdd',compact('uuidDirectoryFields'));
+        return view('admin.directory.bank.bankAdd',compact('uuidDirectoryFields','fields'));
     }
 
     public function bankCreateAjax(Request $request)
@@ -91,10 +112,11 @@ class BankController extends Controller
         $bank->uuid = $data['uuid'];
         $bank->bic = $data['bic'];
         $bank->description = $data['description'];
-        if(empty($data['parentFields'])){
-            $data['parentFields'] = [];
+        if(!empty($data['parentFields'])) {
+            $bank->parentFields = json_encode($data['parentFields']);
+        }else{
+            $bank->parentFields = json_encode([]);
         }
-        $bank->parentFields = json_encode($data['parentFields']);
 
         if(!empty($data['active'])) {
             $bank->active = true;

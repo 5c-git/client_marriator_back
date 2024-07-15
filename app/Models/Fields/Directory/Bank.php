@@ -27,7 +27,7 @@ class Bank extends Model implements ModelDirectoryInterface
 
     public $timestamps = false;
 
-    public function getDataDirectory(bool $allFields = false){
+    public function getDataDirectory(bool $allFields = false,array $userData = []){
         if(!$allFields) {
             return $this->uuid;
         }else{
