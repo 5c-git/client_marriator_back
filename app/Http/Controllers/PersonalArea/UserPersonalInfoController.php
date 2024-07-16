@@ -331,7 +331,7 @@ class UserPersonalInfoController extends Controller
      * )
      */
 
-    public function checkEmailCode()
+    public function checkEmailCode(Request $request)
     {
         if (empty($request->code)) {
             $response['error'] = 'Поле код обязательна для заполнения';
@@ -349,6 +349,114 @@ class UserPersonalInfoController extends Controller
             $response['status'] = 'error';
         }
         return response()->json($response, 200);
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/api/personal/changeUserPhone/",
+     *     operationId="changeUserPhone",
+     *     tags={"Personal area"},
+     *     summary="changeUserPhone",
+     *     description="changeUserPhone Endpoint",
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 required={"phone"},
+     *                 @OA\Property(property="phone",type="number"),
+     *             ),
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *       response="200",
+     *       description="start change phone",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result", value={"status": "success","result":{"code":{"status":"exists|success","ttl":"120 числовое поле если статус exists","code":"sms код для теста"}}},summary="Успешный запрос"),
+     *        )
+     *     ),
+     *     @OA\Response(
+     *       response="417",
+     *       description="phone is empty",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result phone", value={"status": "error", "error":"Поле телефон обязательна для заполнения"},summary="Ошибка кода"),
+     *       )
+     *     ),
+     * )
+     */
+
+    public function changeUserPhone(Request $request){
+        if (empty($request->phone)) {
+            $response['error'] = 'Поле телефон обязательна для заполнения';
+            $response['status'] = 'error';
+            return response()->json($response, 417);
+        }
+        $smsCodeService = new SmsCodeService($request->phone);
+        $response['result']['code'] = $smsCodeService->createCode();
+        $response['status'] = $smsCodeService->status;
+
+        return response()->json($response,200);
+    }
+
+
+    /**
+     * @OA\Post(
+     *     path="/api/personal/confirmChangeUserPhone/",
+     *     operationId="confirmChangeUserPhone",
+     *     tags={"Personal area"},
+     *     summary="confirmChangeUserPhone",
+     *     description="confirmChangeUserPhone Endpoint",
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 required={"phone","code"},
+     *                 @OA\Property(property="phone",type="number"),
+     *                 @OA\Property(property="code",type="number"),
+     *             ),
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *       response="200",
+     *       description="confirm or error change phone",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result", value={"status": "success"},summary="Успешный запрос"),
+     *           @OA\Examples(example="result error", value={"status": "error","result":{"code":{"status":"error|notExists"},}},summary="Ошибка"),
+     *        )
+     *     ),
+     *     @OA\Response(
+     *       response="417",
+     *       description="Code or phone is empty",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result phone", value={"status": "error", "error":"Поле телефон обязательна для заполнения"},summary="Ошибка кода"),
+     *           @OA\Examples(example="result code", value={"status": "error", "error":"Поле код обязательна для заполнения"},summary="Ошибка кода"),
+     *       )
+     *     ),
+     * )
+     */
+
+    public function confirmChangeUserPhone(Request $request){
+        if (empty($request->phone)) {
+            $response['error'] = 'Поле телефон обязательна для заполнения';
+            $response['status'] = 'error';
+            return response()->json($response, 417);
+        }
+        if (empty($request->code)) {
+            $response['error'] = 'Поле код обязательна для заполнения';
+            $response['status'] = 'error';
+            return response()->json($response, 417);
+        }
+        $smsCodeResult = (new SmsCodeService($request->phone,(int)$request->code))->checkCode();
+        if($smsCodeResult['status'] == 'success'){
+            $user = Auth::user();
+            $user->phone = $request->phone;
+            $user->save();
+            $response['status'] = $smsCodeResult['status'];
+        }else{
+            $response['result']['code'] = $smsCodeResult;
+            $response['status'] = 'error';
+        }
+        return response()->json($response,200);
+
     }
 
 
