@@ -31,7 +31,25 @@ class Activities extends Model implements ModelDirectoryInterface
 
     public $timestamps = false;
 
-    public function getDataDirectory(bool $allFields = false,array $userData = []){
+    public function getDataDirectory(bool $allFields = false,array $filterData = []){
+        $unset = false;
+        $parentFields = json_decode($this->parentFields, true);
+        if(!empty($parentFields)) {
+            foreach ($parentFields as $parentField) {
+                $unset = false;
+                foreach ($parentField as $oneField) {
+                    if (!in_array($oneField, $filterData)) {
+                        $unset = true;
+                    }
+                }
+                if (!$unset) {
+                    break;
+                }
+            }
+        }
+        if ($unset) {
+            return [];
+        }
         if(!$allFields) {
             return $this->uuid;
         }else{

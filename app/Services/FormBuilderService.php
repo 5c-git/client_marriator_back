@@ -14,6 +14,7 @@ class FormBuilderService
     public array $formDataThisStep = [];
 
     public array $directory = [];
+    public array $filterArr = [];
     public object $fieldsAll;
     public array $fieldsThisStep = [];
     public array $fieldsOldStep = [];
@@ -45,6 +46,7 @@ class FormBuilderService
 
     public function createFormData(): array
     {
+        $this->getFilterArr();
         $this->getFields();
         $this->filterFields();
         return $this->formatData($this->fieldsThisStep);
@@ -52,6 +54,7 @@ class FormBuilderService
 
     public function createPersonalUserFormData():array
     {
+        $this->getFilterArr();
         $this->getAllFields();
         $this->filterFields();
         return $this->formatData($this->fieldsThisStep,true);
@@ -111,6 +114,23 @@ class FormBuilderService
         }
     }
 
+    private function getFilterArr(){
+        $formVal = [];
+        foreach ($this->formData as $kDataForm => $formData) {
+            if(!empty($formData)) {
+                if (is_array($formData)) {
+                    foreach ($formData as $oneData) {
+                        $formVal[$oneData] = $kDataForm;
+                    }
+                } else {
+                    $formVal[$formData] = $kDataForm;
+                }
+                $formVal[$kDataForm] = $formData;
+            }
+        }
+        $this->filterArr = $formVal;
+    }
+
     private function getFields(): void
     {
         $this->fieldsAll = Fields::orderBy('sort', 'asc')->get();
@@ -164,7 +184,7 @@ class FormBuilderService
                 $this->directory[$directory] = $directory::where('active',true)->get();
             }
             foreach ($this->directory[$directory] as $directoryFields) {
-                if ($dataDirectoryFromObj = $directoryFields->getDataDirectory($allFields,$this->formData)) {
+                if ($dataDirectoryFromObj = $directoryFields->getDataDirectory($allFields,$this->filterArr)) {
                     $directoryData[] = $dataDirectoryFromObj;
                 }
             }
