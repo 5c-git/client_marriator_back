@@ -38,7 +38,7 @@ class Activities extends Model implements ModelDirectoryInterface
             foreach ($parentFields as $parentField) {
                 $unset = false;
                 foreach ($parentField as $oneField) {
-                    if (!in_array($oneField, $filterData)) {
+                    if (!in_array($oneField, $filterData,true)) {
                         $unset = true;
                     }
                 }

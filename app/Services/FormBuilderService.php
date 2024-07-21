@@ -62,6 +62,7 @@ class FormBuilderService
 
     public function getStepField()
     {
+        $this->getFilterArr();
         $this->getFields();
         $this->filterFields();
     }
@@ -70,36 +71,14 @@ class FormBuilderService
     private function filterFields(): void
     {
         $oldFieldUuid = [];
-        foreach ($this->formData as $kDataForm => $formData) {
-            if(!empty($formData)) {
-                if (is_array($formData)) {
-                    foreach ($formData as $oneData) {
-                        $formVal[$oneData] = $kDataForm;
-                    }
-                } else {
-                    $formVal[$formData] = $kDataForm;
-                }
-            }
-        }
-        foreach ($this->fieldsOldStep as $oldField) {
-            if (!empty($this->formData[$oldField->uuid]) || !empty($formVal[$oldField->uuid])) {
-                $oldFieldUuid[] = $oldField->uuid;
-            }
-            if (!empty($oldField->directory)) {
-                foreach ($this->getDirectory($oldField->directory) as $directoryUuid) {
-                    if (!empty($this->formData[$directoryUuid]) || !empty($formVal[$directoryUuid])) {
-                        $oldFieldUuid[$oldField->uuid] = $directoryUuid;
-                    }
-                }
-            }
-        }
+
         foreach ($this->fieldsThisStep as $k => $newFields) {
             $unset = false;
             $parentFields = json_decode($newFields->parentFields, true);
             foreach ($parentFields as $parentField) {
                 $unset = false;
                 foreach ($parentField as $oneField) {
-                    if (!in_array($oneField, $oldFieldUuid)) {
+                    if (!in_array($oneField, $this->filterArr,true)) {
                         $unset = true;
                     }
                 }
@@ -120,7 +99,9 @@ class FormBuilderService
             if(!empty($formData)) {
                 if (is_array($formData)) {
                     foreach ($formData as $oneData) {
-                        $formVal[$oneData] = $kDataForm;
+                        if(!empty($oneData)) {
+                            $formVal[$oneData] = $kDataForm;
+                        }
                     }
                 } else {
                     $formVal[$formData] = $kDataForm;
@@ -136,6 +117,7 @@ class FormBuilderService
         $this->fieldsAll = Fields::orderBy('sort', 'asc')->get();
         foreach ($this->fieldsAll as $field) {
             if (!empty($field->directory)) {
+                $field->oldType = $field->type;
                 $field->type = $this->getTypeDirectory($field->directory);
                 if ($valuesDirectory = $this->getDirectory($field->directory, true)) {
                     $field->valuesDirectory = $valuesDirectory;
@@ -143,7 +125,7 @@ class FormBuilderService
                     $field->valuesDirectory = [];
                 }
             }
-            if($field->type == FieldsTypeEnum::directory->value && empty($field->valuesDirectory)){
+            if($field->oldType == FieldsTypeEnum::directory->value && empty($field->valuesDirectory)){
                 continue;
             }
             if ($field->step == $this->step) {
@@ -160,6 +142,7 @@ class FormBuilderService
         $this->fieldsAll = Fields::orderBy('sort', 'asc')->get();
         foreach ($this->fieldsAll as $field) {
             if (!empty($field->directory)) {
+                $field->oldType = $field->type;
                 $field->type = $this->getTypeDirectory($field->directory);
                 if ($valuesDirectory = $this->getDirectory($field->directory, true)) {
                     $field->valuesDirectory = $valuesDirectory;
@@ -167,7 +150,7 @@ class FormBuilderService
                     $field->valuesDirectory = [];
                 }
             }
-            if($field->type == FieldsTypeEnum::directory->value && empty($field->valuesDirectory)){
+            if($field->oldType == FieldsTypeEnum::directory->value && empty($field->valuesDirectory)){
                 continue;
             }
 
@@ -248,10 +231,11 @@ class FormBuilderService
     {
         $required = true;
         foreach($this->fieldsThisStep as $data){
-            if($data->type != FieldsTypeEnum::directory->value || ($data->type == FieldsTypeEnum::directory->value && !empty($data->directory) && !empty($data->valuesDirectory)) )
-            if($data->required && empty($this->formDataThisStep[$data->uuid])){
-                $required = false;
-                break;
+            if((empty($field->oldType) && $data->type != FieldsTypeEnum::directory->value) || ($data->oldType == FieldsTypeEnum::directory->value && !empty($data->directory) && !empty($data->valuesDirectory)) ) {
+                if ($data->required && empty($this->formDataThisStep[$data->uuid])) {
+                    $required = false;
+                    break;
+                }
             }
         }
         return $required;
@@ -263,6 +247,7 @@ class FormBuilderService
         $userFields = [];
         foreach ($this->fieldsAll as $field) {
             if (!empty($field->directory)) {
+                $field->oldType = $field->type;
                 $field->type = $this->getTypeDirectory($field->directory);
                 if ($valuesDirectory = $this->getDirectory($field->directory, true)) {
                     $field->valuesDirectory = $valuesDirectory;
@@ -270,7 +255,7 @@ class FormBuilderService
                     $field->valuesDirectory = [];
                 }
             }
-            if($field->type == FieldsTypeEnum::directory->value && empty($field->valuesDirectory)){
+            if($field->oldType == FieldsTypeEnum::directory->value && empty($field->valuesDirectory)){
                 continue;
             }
 
