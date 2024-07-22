@@ -165,9 +165,9 @@ class UserPersonalInfoController extends Controller
      *             mediaType="application/json",
      *             @OA\Schema(
      *                 required={"formData","section"},
-     *                 @OA\Property(property="formData",type="json")
-     *                 @OA\Property(property="section",type="string")
-     *                 @OA\Property(property="dataId",type="string")
+     *                 @OA\Property(property="formData",type="json"),
+     *                 @OA\Property(property="section",type="string"),
+     *                 @OA\Property(property="dataId",type="string"),
      *             ),
      *         ),
      *     ),
