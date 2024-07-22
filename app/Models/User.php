@@ -33,7 +33,9 @@ class User extends Authenticatable
         'pin',
         'finishRegister',
         'expansionData',
-        'errorData'
+        'errorData',
+        'estateData',
+        'requisitesData'
     ];
 
     /**

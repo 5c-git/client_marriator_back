@@ -121,6 +121,17 @@ class FieldsController extends Controller
             $field->active = false;
         }
 
+        if(!empty($data['estate'])) {
+            $field->estate = true;
+        }else{
+            $field->estate = false;
+        }
+        if(!empty($data['requisites'])) {
+            $field->requisites = true;
+        }else{
+            $field->requisites = false;
+        }
+
         $field->save();
 
 
@@ -203,6 +214,17 @@ class FieldsController extends Controller
             $field->active = true;
         }else{
             $field->active = false;
+        }
+
+        if(!empty($data['estate'])) {
+            $field->estate = true;
+        }else{
+            $field->estate = false;
+        }
+        if(!empty($data['requisites'])) {
+            $field->requisites = true;
+        }else{
+            $field->requisites = false;
         }
 
         $field->save();

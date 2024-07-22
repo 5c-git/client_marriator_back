@@ -33,7 +33,9 @@ class Fields extends Model
         'helperInfo_link_type',
         'drawerInfo_text',
         'drawerInfo_images',
-        'section'
+        'section',
+        'estate',
+        'requisites'
     ];
 
     public $timestamps = false;

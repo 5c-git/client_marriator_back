@@ -64,7 +64,7 @@
             </div>
         </div>
         <div class="form-group row">
-            <label for="step" class="col-sm-2 col-form-label">Шаг</label>
+            <label for="step" class="col-sm-2 col-form-label">Шаг в регистрации</label>
             <div class="col-sm-10">
                 <input type="number" class="form-control" name="step" id="step" value="{{$field->step}}">
             </div>
@@ -242,6 +242,24 @@
                         <option value="{{$section->value}}" {{$field->section == $section->value?'selected="selected"':''}}>{{$section->typeName()}}</option>
                     @endforeach
                 </select>
+            </div>
+        </div>
+
+
+        <div class="form-group row">
+            <label for="estate" class="col-sm-2 col-form-label">Поле для вкладки имущество</label>
+            <div class="offset-sm-2 col-sm-10">
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" style="margin-top: -1.5rem" name="estate" value="1" {{$field->estate == 1?'checked':''}} id="estate">
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="requisites" class="col-sm-2 col-form-label">Поле для вкладки реквизиты</label>
+            <div class="offset-sm-2 col-sm-10">
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" style="margin-top: -1.5rem" name="requisites" value="1" {{$field->requisites == 1?'checked':''}} id="requisites">
+                </div>
             </div>
         </div>
 

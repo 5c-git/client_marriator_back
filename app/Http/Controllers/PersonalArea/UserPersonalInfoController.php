@@ -64,6 +64,15 @@ class UserPersonalInfoController extends Controller
      *     tags={"Personal area"},
      *     summary="getForm",
      *     description="getForm",
+     *     @OA\Parameter(
+     *         name="section",
+     *         in="query",
+     *         description="section for form",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="number",
+     *         )
+     *     ),
      *     @OA\Response(
      *       response="200",
      *       description="form data",
@@ -78,6 +87,12 @@ class UserPersonalInfoController extends Controller
     {
         $user = Auth::user();
 
+        if (empty($request->section)) {
+            $response['error'] = 'Поле секция обязательна для заполнения';
+            $response['status'] = 'error';
+            return response()->json($response, 417);
+        }
+
         $formDataService = (new FormBuilderService(10, json_decode($user->data, true)));
         if (!empty($user->expansionData)) {
             $user->expansionData = json_decode($user->expansionData, true);
@@ -89,8 +104,18 @@ class UserPersonalInfoController extends Controller
         } else {
             $user->errorData = [];
         }
-        $formDataService->setDataUser($user->expansionData, $user->errorData);
-        $response['result']['formData'] = $formDataService->createPersonalUserFormData();
+        if (!empty($user->estateData)) {
+            $user->estateData = json_decode($user->estateData, true);
+        } else {
+            $user->estateData = [];
+        }
+        if (!empty($user->requisitesData)) {
+            $user->requisitesData = json_decode($user->requisitesData, true);
+        } else {
+            $user->requisitesData = [];
+        }
+        $formDataService->setDataUser($user->expansionData, $user->errorData, $user->estateData, $user->requisitesData);
+        $response['result']['formData'] = $formDataService->createPersonalUserFormData($request->section);
         $response['result']['type'] = $formDataService->checkStatusForm(true);
 
         $response['result']['section'] = FormBuilderService::getUserMenu($user->errorData);
@@ -139,8 +164,10 @@ class UserPersonalInfoController extends Controller
      *         @OA\MediaType(
      *             mediaType="application/json",
      *             @OA\Schema(
-     *                 required={"formData"},
+     *                 required={"formData","section"},
      *                 @OA\Property(property="formData",type="json")
+     *                 @OA\Property(property="section",type="string")
+     *                 @OA\Property(property="dataId",type="string")
      *             ),
      *         ),
      *     ),
@@ -153,9 +180,10 @@ class UserPersonalInfoController extends Controller
      *     ),
      *     @OA\Response(
      *       response="417",
-     *       description="formData is empty",
+     *       description="formData or section is empty",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result formData", value={"status": "error", "error":"Ничего не загружено"},summary="Ошибка formData"),
+     *           @OA\Examples(example="result section", value={"status": "error", "error":"Поле раздел обязательна для заполнения"},summary="Ошибка section"),
      *       )
      *     ),
      * )
@@ -164,18 +192,41 @@ class UserPersonalInfoController extends Controller
     public function saveUserFields(Request $request)
     {
         $user = Auth::user();
+
+        if (empty($request->section)) {
+            $response['error'] = 'Поле раздел обязательна для заполнения';
+            $response['status'] = 'error';
+            return response()->json($response, 417);
+        }
+
         if (!empty($request->formData)) {
-            $userError = json_decode($user->errorData, true);
-            $userData = json_decode($user->data, true);
-            foreach ($request->formData as $k => $oneField) {
-                if ((!isset($userData[$k]) && !empty($userError[$k]) && !empty($oneField)) || (!empty($userData[$k]) && !empty($userError[$k]) && $userData[$k] != $oneField)) {
-                    unset($userError[$k]);
+            if ($userField = PersonalInfoSectionEnum::from($request->section)->getField()) {
+                $userFieldData = [];
+                if (!empty($user->$userField)) {
+                    $userFieldData = json_decode($user->$userField, true);
+                    if(!empty($request->dataId)){
+                        $userFieldData[$request->dataId] = $request->formData;
+                    }else{
+                        $userFieldData[] = $request->formData;
+                    }
+                } else {
+                    $userFieldData[] = $request->formData;
                 }
-                $userData[$k] = $oneField;
+                $user->$userField = json_encode($userFieldData);
+                $user->save();
+            } else {
+                $userError = json_decode($user->errorData, true);
+                $userData = json_decode($user->data, true);
+                foreach ($request->formData as $k => $oneField) {
+                    if ((!isset($userData[$k]) && !empty($userError[$k]) && !empty($oneField)) || (!empty($userData[$k]) && !empty($userError[$k]) && $userData[$k] != $oneField)) {
+                        unset($userError[$k]);
+                    }
+                    $userData[$k] = $oneField;
+                }
+                $user->data = json_encode($userData);
+                $user->errorData = json_encode($userError);
+                $user->save();
             }
-            $user->data = json_encode($userData);
-            $user->errorData = json_encode($userError);
-            $user->save();
             $response['status'] = 'success';
         } else {
             $response['error'] = 'Ничего не загружено';
@@ -384,7 +435,8 @@ class UserPersonalInfoController extends Controller
      * )
      */
 
-    public function changeUserPhone(Request $request){
+    public function changeUserPhone(Request $request)
+    {
         if (empty($request->phone)) {
             $response['error'] = 'Поле телефон обязательна для заполнения';
             $response['status'] = 'error';
@@ -394,7 +446,7 @@ class UserPersonalInfoController extends Controller
         $response['result']['code'] = $smsCodeService->createCode();
         $response['status'] = $smsCodeService->status;
 
-        return response()->json($response,200);
+        return response()->json($response, 200);
     }
 
 
@@ -434,7 +486,8 @@ class UserPersonalInfoController extends Controller
      * )
      */
 
-    public function confirmChangeUserPhone(Request $request){
+    public function confirmChangeUserPhone(Request $request)
+    {
         if (empty($request->phone)) {
             $response['error'] = 'Поле телефон обязательна для заполнения';
             $response['status'] = 'error';
@@ -445,17 +498,28 @@ class UserPersonalInfoController extends Controller
             $response['status'] = 'error';
             return response()->json($response, 417);
         }
-        $smsCodeResult = (new SmsCodeService($request->phone,(int)$request->code))->checkCode();
-        if($smsCodeResult['status'] == 'success'){
+        $smsCodeResult = (new SmsCodeService($request->phone, (int)$request->code))->checkCode();
+        if ($smsCodeResult['status'] == 'success') {
             $user = Auth::user();
             $user->phone = $request->phone;
             $user->save();
             $response['status'] = $smsCodeResult['status'];
-        }else{
+        } else {
             $response['result']['code'] = $smsCodeResult;
             $response['status'] = 'error';
         }
-        return response()->json($response,200);
+        return response()->json($response, 200);
+
+    }
+
+    public function saveUserCustomField(Request $request)
+    {
+        if (empty($request->section)) {
+            $response['error'] = 'Поле секция обязательна для заполнения';
+            $response['status'] = 'error';
+            return response()->json($response, 417);
+        }
+
 
     }
 

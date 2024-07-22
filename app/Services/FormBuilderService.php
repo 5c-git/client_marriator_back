@@ -21,6 +21,8 @@ class FormBuilderService
     public array $formatedData = [];
     public array $moreData = [];
     public array $errorData = [];
+    public array $estateData = [];
+    public array $requisitesData = [];
 
     public function __construct(int $step, array $formData = [])
     {
@@ -39,9 +41,11 @@ class FormBuilderService
 
     }
 
-    public function setDataUser(array $moreData,array $errorData){
+    public function setDataUser(array $moreData,array $errorData,array $estateData,array $requisitesData){
         $this->errorData = $errorData;
-        $this->moreData = $errorData;
+        $this->moreData = $moreData;
+        $this->estateData = $estateData;
+        $this->requisitesData = $requisitesData;
     }
 
     public function createFormData(): array
@@ -52,12 +56,12 @@ class FormBuilderService
         return $this->formatData($this->fieldsThisStep);
     }
 
-    public function createPersonalUserFormData():array
+    public function createPersonalUserFormData($section):array
     {
         $this->getFilterArr();
-        $this->getAllFields();
+        $this->getAllFields($section);
         $this->filterFields();
-        return $this->formatData($this->fieldsThisStep,true);
+        return $this->formatData($this->fieldsThisStep,true,$section);
     }
 
     public function getStepField()
@@ -70,8 +74,6 @@ class FormBuilderService
 
     private function filterFields(): void
     {
-        $oldFieldUuid = [];
-
         foreach ($this->fieldsThisStep as $k => $newFields) {
             $unset = false;
             $parentFields = json_decode($newFields->parentFields, true);
@@ -114,7 +116,7 @@ class FormBuilderService
 
     private function getFields(): void
     {
-        $this->fieldsAll = Fields::orderBy('sort', 'asc')->get();
+        $this->fieldsAll = Fields::where('active',true)->whereNotNull('step')->orderBy('sort', 'asc')->get();
         foreach ($this->fieldsAll as $field) {
             if (!empty($field->directory)) {
                 $field->oldType = $field->type;
@@ -137,9 +139,13 @@ class FormBuilderService
         }
     }
 
-    private function getAllFields(): void
+    private function getAllFields($section): void
     {
-        $this->fieldsAll = Fields::orderBy('sort', 'asc')->get();
+        $query = Fields::where('active',true);
+        if(PersonalInfoSectionEnum::from($section)){
+            $query = PersonalInfoSectionEnum::from($section)->filter($query);
+        }
+        $this->fieldsAll = $query->whereNotNull('step')->orderBy('sort', 'asc')->get();
         foreach ($this->fieldsAll as $field) {
             if (!empty($field->directory)) {
                 $field->oldType = $field->type;
@@ -184,27 +190,49 @@ class FormBuilderService
         }
     }
 
-    private function formatData($data,$personal = false): array
+    private function formatData($data,$personal = false,$section = false): array
     {
-        foreach ($data as $field) {
-            if(!empty($this->formData[$field->uuid])){
-                $value = $this->formData[$field->uuid];
-            }else{
-                $value = '';
+        if (!empty($section) && $nameField=PersonalInfoSectionEnum::from($section)->getField()) {
+            foreach ($this->$nameField as $k => $customField) {
+                foreach ($data as $field) {
+                    if(!empty($this->moreData[$field->uuid])){
+                        $field->moreData = $this->moreData[$field->uuid];
+                    }
+                    if(!empty($this->errorData[$field->uuid])){
+                        $field->errorData = $this->errorData[$field->uuid];
+                    }
+                    if ($field->type != FieldsTypeEnum::directory->value) {
+                        if (!empty($customField[$field->uuid])) {
+                            $value = $customField[$field->uuid];
+                        } else {
+                            $value = '';
+                        }
+                        if ($fieldDataFormat = FieldsTypeEnum::from($field->type)?->typeClassFormatter()::createFormat($field, $value)) {
+                            $this->formatedData[$k][] = $fieldDataFormat;
+                        }
+                    }
+                }
             }
-            if(!empty($this->moreData[$field->uuid])){
-                $field->moreData = $this->moreData[$field->uuid];
-            }
-            if(!empty($this->errorData[$field->uuid])){
-                $field->errorData = $this->errorData[$field->uuid];
-            }
-
-            if ($field->type != FieldsTypeEnum::directory->value) {
-                if ($fieldDataFormat = FieldsTypeEnum::from($field->type)?->typeClassFormatter()::createFormat($field, $value)) {
-                    if($personal) {
-                        $this->formatedData[$field->section][] = $fieldDataFormat;
-                    }else{
-                        $this->formatedData[] = $fieldDataFormat;
+        }else{
+            foreach ($data as $field) {
+                if(!empty($this->formData[$field->uuid])){
+                    $value = $this->formData[$field->uuid];
+                }else{
+                    $value = '';
+                }
+                if(!empty($this->moreData[$field->uuid])){
+                    $field->moreData = $this->moreData[$field->uuid];
+                }
+                if(!empty($this->errorData[$field->uuid])){
+                    $field->errorData = $this->errorData[$field->uuid];
+                }
+                if ($field->type != FieldsTypeEnum::directory->value) {
+                    if ($fieldDataFormat = FieldsTypeEnum::from($field->type)?->typeClassFormatter()::createFormat($field, $value)) {
+                        if ($personal) {
+                            $this->formatedData[$field->section][] = $fieldDataFormat;
+                        } else {
+                            $this->formatedData[] = $fieldDataFormat;
+                        }
                     }
                 }
             }
@@ -243,7 +271,7 @@ class FormBuilderService
 
     public function getUserField(array $moreData,array $errorData): array
     {
-        $this->fieldsAll = Fields::orderBy('sort', 'asc')->get();
+        $this->fieldsAll = Fields::where('active',true)->whereNotNull('step')->orderBy('sort', 'asc')->get();
         $userFields = [];
         foreach ($this->fieldsAll as $field) {
             if (!empty($field->directory)) {
@@ -302,7 +330,7 @@ class FormBuilderService
                 $fieldsUuid[] = $uuid;
             }
             if (!empty($fieldsUuid)) {
-                $fieldSections = Fields::whereIn('uuid', $fieldsUuid)->where('section', '>', 0)->selectRaw('section')->get();
+                $fieldSections = Fields::where('active',true)->whereIn('uuid', $fieldsUuid)->where('section', '>', 0)->selectRaw('section')->get();
                 foreach ($fieldSections as $fieldSection) {
                     $sectionDots[] = $fieldSection->section;
                 }
@@ -311,6 +339,7 @@ class FormBuilderService
         foreach (PersonalInfoSectionEnum::options() as $k => $option) {
             $dataSection = [
                 'name' => PersonalInfoSectionEnum::from($option)->typeName(),
+                'type' => PersonalInfoSectionEnum::from($option)->getType(),
                 'value' => $option
             ];
             if(in_array($option,$sectionDots)){
@@ -322,5 +351,33 @@ class FormBuilderService
         }
         return $menuSection;
     }
+
+//    public static function formatDataStatic($data,$personal = false): array
+//    {
+//        foreach ($data as $field) {
+//            if(!empty($this->formData[$field->uuid])){
+//                $value = $this->formData[$field->uuid];
+//            }else{
+//                $value = '';
+//            }
+//            if(!empty($this->moreData[$field->uuid])){
+//                $field->moreData = $this->moreData[$field->uuid];
+//            }
+//            if(!empty($this->errorData[$field->uuid])){
+//                $field->errorData = $this->errorData[$field->uuid];
+//            }
+//
+//            if ($field->type != FieldsTypeEnum::directory->value) {
+//                if ($fieldDataFormat = FieldsTypeEnum::from($field->type)?->typeClassFormatter()::createFormat($field, $value)) {
+//                    if($personal) {
+//                        $this->formatedData[$field->section][] = $fieldDataFormat;
+//                    }else{
+//                        $this->formatedData[] = $fieldDataFormat;
+//                    }
+//                }
+//            }
+//        }
+//        return $this->formatedData;
+//    }
 
 }
