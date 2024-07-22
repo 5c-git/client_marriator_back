@@ -80,6 +80,13 @@ class UserPersonalInfoController extends Controller
      *           @OA\Examples(example="result", value={"status": "success","result":{"formData":{},"section":{},"type":"needRequired|allowedNewStep",}},summary="Успех"),
      *       )
      *     ),
+     *     @OA\Response(
+     *       response="417",
+     *       description="section is empty",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result section", value={"status": "error", "error":"Поле раздел обязательна для заполнения"},summary="Ошибка section"),
+     *       )
+     *     ),
      * )
      */
 
@@ -511,17 +518,5 @@ class UserPersonalInfoController extends Controller
         return response()->json($response, 200);
 
     }
-
-    public function saveUserCustomField(Request $request)
-    {
-        if (empty($request->section)) {
-            $response['error'] = 'Поле секция обязательна для заполнения';
-            $response['status'] = 'error';
-            return response()->json($response, 417);
-        }
-
-
-    }
-
 
 }
