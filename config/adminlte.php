@@ -422,6 +422,10 @@ return [
                         [
                             'text' => 'Организации',
                             'url' => 'admin/directory_organization/',
+                        ],
+                        [
+                            'text' => 'Возраст',
+                            'url' => 'admin/directory_age/',
                         ]
                     ],
                 ],

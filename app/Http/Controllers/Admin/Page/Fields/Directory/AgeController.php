@@ -4,16 +4,15 @@ namespace App\Http\Controllers\Admin\Page\Fields\Directory;
 
 use App\Enum\Fields\FieldsDirectoryEnum;
 use App\Http\Controllers\Controller;
-use App\Models\Fields\Directory\Activities;
+use App\Models\Fields\Directory\Age;
 use App\Models\Fields\Fields;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
-class ActivitiesController extends Controller
+class AgeController extends Controller
 {
 
-    private string $view = 'activities';
+    private string $view = 'age';
     private string $objClass;
 
     /**
@@ -23,7 +22,7 @@ class ActivitiesController extends Controller
      */
     public function __construct()
     {
-        $this->objClass = Activities::class;
+        $this->objClass = Age::class;
     }
 
     public function list(Request $request)
@@ -35,13 +34,8 @@ class ActivitiesController extends Controller
     public function edit(Request $request)
     {
         $edit = $this->objClass::where('id', '=', $request->id)->first();
-        if(!empty($edit->img)){
-            $edit->img = Storage::url($edit->img);
-        }
-        if(!empty($edit->detail_img)){
-            $edit->detail_img = Storage::url($edit->detail_img);
-        }
         if($edit) {
+
             $fields['fields']['value'] = Fields::where('active',true)->get()->toArray();
             $fields['fields']['name'] = 'Простые поля';
             if(!empty($edit->parentFields)) {
@@ -72,42 +66,11 @@ class ActivitiesController extends Controller
 
         $editObj->name = $data['name'];
         $editObj->uuid = $data['uuid'];
-        $editObj->preview_text = $data['preview_text'];
-        $editObj->detail_name = $data['detail_name'];
-        $editObj->detail_text = $data['detail_text'];
-        $editObj->link_text = $data['link_text'];
-        $editObj->link = $data['link'];
-        if(!empty($data['type'])) {
-            $editObj->type = $data['type'];
-        }
+
         if(!empty($data['parentFields'])) {
             $editObj->parentFields = json_encode($data['parentFields']);
         }else{
             $editObj->parentFields = json_encode([]);
-        }
-
-        if($request->file('img')) {
-            if(!empty($editObj->img)){
-                Storage::disk('public')->delete($editObj->img);
-            }
-            $fileImage = $request->file('img');
-            $editObj->img = Storage::disk('public')->putFileAs('/source/directory/'.$this->view.'/'.$editObj->id.'-img', $fileImage, $fileImage->getClientOriginalName(),'public');
-        }
-        if(!empty($data['delImg']) && $data['delImg'] == 'yes'){
-            Storage::disk('public')->delete($editObj->img);
-            $editObj->img = '';
-        }
-
-        if($request->file('detail_img')) {
-            if(!empty($editObj->detail_img)){
-                Storage::disk('public')->delete($editObj->detail_img);
-            }
-            $fileImage = $request->file('detail_img');
-            $editObj->detail_img = Storage::disk('public')->putFileAs('/source/directory/'.$this->view.'/'.$editObj->id.'-imgDetail', $fileImage, $fileImage->getClientOriginalName(),'public');
-        }
-        if(!empty($data['delImgDetail']) && $data['delImgDetail'] == 'yes'){
-            Storage::disk('public')->delete($editObj->detail_img);
-            $editObj->detail_img = '';
         }
 
         if(!empty($data['active'])) {
@@ -150,20 +113,11 @@ class ActivitiesController extends Controller
         $editObj = new $this->objClass();
         $editObj->name = $data['name'];
         $editObj->uuid = $data['uuid'];
-        $editObj->preview_text = $data['preview_text'];
-        $editObj->detail_name = $data['detail_name'];
-        $editObj->detail_text = $data['detail_text'];
-        $editObj->link_text = $data['link_text'];
-        $editObj->link = $data['link'];
-        if(!empty($data['type'])) {
-            $editObj->type = $data['type'];
-        }
         if(!empty($data['parentFields'])) {
             $editObj->parentFields = json_encode($data['parentFields']);
         }else{
             $editObj->parentFields = json_encode([]);
         }
-
         if(!empty($data['active'])) {
             $editObj->active = true;
         }else{
@@ -171,17 +125,6 @@ class ActivitiesController extends Controller
         }
 
         $editObj->save();
-
-        if($request->file('detail_img')) {
-            $fileImage = $request->file('detail_img');
-            $editObj->detail_img = Storage::disk('public')->putFileAs('/source/directory/'.$this->view.'/'.$editObj->id.'-imgDetail', $fileImage, $fileImage->getClientOriginalName(),'public');
-            $editObj->save();
-        }
-        if($request->file('img')) {
-            $fileImage = $request->file('img');
-            $editObj->img = Storage::disk('public')->putFileAs('/source/directory/'.$this->view.'/'.$editObj->id.'-img', $fileImage, $fileImage->getClientOriginalName(),'public');
-            $editObj->save();
-        }
 
         $response['status'] = 'success';
         $response['url'] = '/admin/directory_'.$this->view.'/edit/' . $editObj->id;

@@ -205,6 +205,14 @@ Route::group(['prefix' => 'admin'], function () {
             Route::post('/editAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\OrganizationController@editAjax')->name('organizationEditAjax');
             Route::get('/delete/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\OrganizationController@delete')->name('organizationDelete');
         });
+        Route::group(['prefix' => 'directory_age'], function () {
+            Route::get('/create/', 'App\Http\Controllers\Admin\Page\Fields\Directory\AgeController@create')->name('ageCreate');
+            Route::post('/createAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\AgeController@createAjax')->name('ageCreateAjax');
+            Route::get('/', 'App\Http\Controllers\Admin\Page\Fields\Directory\AgeController@list')->name('ageList');
+            Route::get('/edit/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\AgeController@edit')->name('ageEdit');
+            Route::post('/editAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\AgeController@editAjax')->name('ageEditAjax');
+            Route::get('/delete/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\AgeController@delete')->name('ageDelete');
+        });
 
 
 

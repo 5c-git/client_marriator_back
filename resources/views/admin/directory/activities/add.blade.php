@@ -86,31 +86,6 @@
         </div>
 
         <div class="form-group row">
-            <label for="select" class="col-sm-2 col-form-label">Привязка полей</label>
-            <div class="col-sm-10">
-                <div class="row addItemSelect">
-                    <div class="col-sm-9">
-                        <x-adminlte-select2 id="parentFields" name="parentFields[0][]" multiple>
-                            @foreach($fields as $field)
-                                @foreach($field['value'] as $fieldVal)
-                                    @if(!empty($fieldVal['uuid']))
-                                        <option value="{{$fieldVal['uuid']}}">{{$field['name']}}: {{$fieldVal['name']}} [{{$fieldVal['uuid']}}]</option>
-                                    @endif
-                                @endforeach
-                            @endforeach
-                        </x-adminlte-select2>
-                    </div>
-                    <div class="col-sm-3">
-                        <a class="removeItemButtonSelect btn btn-danger">Удалить элемент</a>
-                    </div>
-                </div>
-                <button class="btn btn-primary addItemButtonSelect">Добавить привязку</button>
-            </div>
-        </div>
-
-
-
-        <div class="form-group row">
             <label for="active" class="col-sm-2 col-form-label">Активность</label>
             <div class="offset-sm-2 col-sm-10">
                 <div class="form-check">

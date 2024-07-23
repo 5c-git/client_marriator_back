@@ -111,17 +111,8 @@ class UserPersonalInfoController extends Controller
         } else {
             $user->errorData = [];
         }
-        if (!empty($user->estateData)) {
-            $user->estateData = json_decode($user->estateData, true);
-        } else {
-            $user->estateData = [];
-        }
-        if (!empty($user->requisitesData)) {
-            $user->requisitesData = json_decode($user->requisitesData, true);
-        } else {
-            $user->requisitesData = [];
-        }
-        $formDataService->setDataUser($user->expansionData, $user->errorData, $user->estateData, $user->requisitesData);
+
+        $formDataService->setDataUser($user->expansionData, $user->errorData);
         $response['result']['formData'] = $formDataService->createPersonalUserFormData($request->section);
         $response['result']['type'] = $formDataService->checkStatusForm(true);
 
@@ -171,10 +162,8 @@ class UserPersonalInfoController extends Controller
      *         @OA\MediaType(
      *             mediaType="application/json",
      *             @OA\Schema(
-     *                 required={"formData","section"},
+     *                 required={"formData"},
      *                 @OA\Property(property="formData",type="json"),
-     *                 @OA\Property(property="section",type="string"),
-     *                 @OA\Property(property="dataId",type="string"),
      *             ),
      *         ),
      *     ),
@@ -187,10 +176,9 @@ class UserPersonalInfoController extends Controller
      *     ),
      *     @OA\Response(
      *       response="417",
-     *       description="formData or section is empty",
+     *       description="formData is empty",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result formData", value={"status": "error", "error":"Ничего не загружено"},summary="Ошибка formData"),
-     *           @OA\Examples(example="result section", value={"status": "error", "error":"Поле раздел обязательна для заполнения"},summary="Ошибка section"),
      *       )
      *     ),
      * )
@@ -199,41 +187,19 @@ class UserPersonalInfoController extends Controller
     public function saveUserFields(Request $request)
     {
         $user = Auth::user();
-
-        if (empty($request->section)) {
-            $response['error'] = 'Поле раздел обязательна для заполнения';
-            $response['status'] = 'error';
-            return response()->json($response, 417);
-        }
-
         if (!empty($request->formData)) {
-            if ($userField = PersonalInfoSectionEnum::from($request->section)->getField()) {
-                $userFieldData = [];
-                if (!empty($user->$userField)) {
-                    $userFieldData = json_decode($user->$userField, true);
-                    if(!empty($request->dataId)){
-                        $userFieldData[$request->dataId] = $request->formData;
-                    }else{
-                        $userFieldData[] = $request->formData;
-                    }
-                } else {
-                    $userFieldData[] = $request->formData;
+            $userError = json_decode($user->errorData, true);
+            $userData = json_decode($user->data, true);
+            foreach ($request->formData as $k => $oneField) {
+                if ((!isset($userData[$k]) && !empty($userError[$k]) && !empty($oneField)) || (!empty($userData[$k]) && !empty($userError[$k]) && $userData[$k] != $oneField)) {
+                    unset($userError[$k]);
                 }
-                $user->$userField = json_encode($userFieldData);
-                $user->save();
-            } else {
-                $userError = json_decode($user->errorData, true);
-                $userData = json_decode($user->data, true);
-                foreach ($request->formData as $k => $oneField) {
-                    if ((!isset($userData[$k]) && !empty($userError[$k]) && !empty($oneField)) || (!empty($userData[$k]) && !empty($userError[$k]) && $userData[$k] != $oneField)) {
-                        unset($userError[$k]);
-                    }
-                    $userData[$k] = $oneField;
-                }
-                $user->data = json_encode($userData);
-                $user->errorData = json_encode($userError);
-                $user->save();
+                $userData[$k] = $oneField;
             }
+            $user->data = json_encode($userData);
+            $user->errorData = json_encode($userError);
+            $user->save();
+
             $response['status'] = 'success';
         } else {
             $response['error'] = 'Ничего не загружено';
@@ -516,7 +482,73 @@ class UserPersonalInfoController extends Controller
             $response['status'] = 'error';
         }
         return response()->json($response, 200);
+    }
 
+    public function getRequisitesData(Request $request){
+        $user = Auth::user();
+        if(!empty($user->requisitesData)){
+            $requisitesData = json_decode($user->requisitesData,true);
+        }else{
+            $requisitesData = [];
+        }
+        $response['result'] = $requisitesData;
+        $response['status'] = 'success';
+        return response()->json($response, 200);
+    }
+
+    public function getEstateData(Request $request){
+        $user = Auth::user();
+        if(!empty($user->estateData)){
+            $estateData = json_decode($user->estateData,true);
+        }else{
+            $estateData = [];
+        }
+        $response['result'] = $estateData;
+        $response['status'] = 'success';
+        return response()->json($response, 200);
+    }
+
+    public function saveRequisitesData(Request $request){
+        $user = Auth::user();
+        if (empty($request->data)) {
+            $response['error'] = 'Поле дата обязательна для заполнения';
+            $response['status'] = 'error';
+            return response()->json($response, 417);
+        }
+        if(!empty($user->requisitesData)){
+            $requisitesData = json_decode($user->requisitesData,true);
+        }else{
+            $requisitesData = [];
+        }
+        if (!empty($request->dataId)) {
+            $requisitesData[$request->dataId] = $request->data;
+        }else{
+            $requisitesData[] = $request->data;
+        }
+        $user->requisitesData = json_encode($requisitesData);
+        $response['status'] = 'success';
+        return response()->json($response, 200);
+    }
+    public function saveEstateData(Request $request){
+        $user = Auth::user();
+        if (empty($request->data)) {
+            $response['error'] = 'Поле дата обязательна для заполнения';
+            $response['status'] = 'error';
+            return response()->json($response, 417);
+        }
+        if(!empty($user->estateData)){
+            $estateData = json_decode($user->estateData,true);
+        }else{
+            $estateData = [];
+        }
+        if (!empty($request->dataId)) {
+            $estateData[$request->dataId] = $request->data;
+        }else{
+            $estateData[] = $request->data;
+        }
+        $user->estateData = json_encode($estateData);
+        $response['status'] = 'success';
+        return response()->json($response, 200);
     }
 
 }

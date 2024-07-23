@@ -6,26 +6,18 @@ use App\Enum\Fields\FieldsTypeEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ViewActivities extends Model implements ModelDirectoryInterface
+class Age extends Model implements ModelDirectoryInterface
 {
     use HasFactory;
 
-    public static int $fieldsTypeEnum = FieldsTypeEnum::photoCheckbox->value;
-    public static string $uuid = 'directory_view_activities';
+    public static int $fieldsTypeEnum = FieldsTypeEnum::select->value;
+    public static string $uuid = 'directory_age';
 
-    protected $table = 'directory_view_activities';
+    protected $table = 'directory_age';
     protected $fillable = [
         'uuid',
         'name',
-        'img',
         'active',
-        'preview_text',
-        'detail_name',
-        'detail_text',
-        'detail_img',
-        'link_text',
-        'link',
-        'type',
         'parentFields'
     ];
 
