@@ -309,7 +309,6 @@ class FormBuilderService
         foreach (PersonalInfoSectionEnum::options() as $k => $option) {
             $dataSection = [
                 'name' => PersonalInfoSectionEnum::from($option)->typeName(),
-                'type' => PersonalInfoSectionEnum::from($option)->getType(),
                 'value' => $option
             ];
             if(in_array($option,$sectionDots)){

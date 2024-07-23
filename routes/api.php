@@ -42,6 +42,12 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
 
         Route::post('/changeUserPhone/', 'App\Http\Controllers\PersonalArea\UserPersonalInfoController@changeUserPhone')->name('changeUserPhone');
         Route::post('/confirmChangeUserPhone/', 'App\Http\Controllers\PersonalArea\UserPersonalInfoController@confirmChangeUserPhone')->name('confirmChangeUserPhone');
+
+        Route::get('/getRequisitesData/', 'App\Http\Controllers\PersonalArea\UserPersonalInfoController@getRequisitesData')->name('getRequisitesData');
+        Route::get('/getEstateData/', 'App\Http\Controllers\PersonalArea\UserPersonalInfoController@getEstateData')->name('getEstateData');
+
+        Route::post('/saveRequisitesData/', 'App\Http\Controllers\PersonalArea\UserPersonalInfoController@saveRequisitesData')->name('saveRequisitesData');
+        Route::post('/saveEstateData/', 'App\Http\Controllers\PersonalArea\UserPersonalInfoController@saveEstateData')->name('saveEstateData');
     });
 });
 

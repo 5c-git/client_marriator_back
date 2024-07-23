@@ -484,6 +484,22 @@ class UserPersonalInfoController extends Controller
         return response()->json($response, 200);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/personal/getRequisitesData/",
+     *     operationId="getRequisitesData",
+     *     tags={"Personal area"},
+     *     summary="getRequisitesData",
+     *     description="getRequisitesData",
+     *     @OA\Response(
+     *       response="200",
+     *       description="Requisites data",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result", value={"status": "success","result":{}},summary="Успех"),
+     *       )
+     *     ),
+     * )
+     */
     public function getRequisitesData(Request $request){
         $user = Auth::user();
         if(!empty($user->requisitesData)){
@@ -496,6 +512,23 @@ class UserPersonalInfoController extends Controller
         return response()->json($response, 200);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/personal/getEstateData/",
+     *     operationId="getEstateData",
+     *     tags={"Personal area"},
+     *     summary="getEstateData",
+     *     description="getEstateData",
+     *     @OA\Response(
+     *       response="200",
+     *       description="Estate data",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result", value={"status": "success","result":{}},summary="Успех"),
+     *       )
+     *     ),
+     * )
+     */
+
     public function getEstateData(Request $request){
         $user = Auth::user();
         if(!empty($user->estateData)){
@@ -507,6 +540,40 @@ class UserPersonalInfoController extends Controller
         $response['status'] = 'success';
         return response()->json($response, 200);
     }
+
+    /**
+     * @OA\Post(
+     *     path="/api/personal/saveRequisitesData/",
+     *     operationId="saveRequisitesData",
+     *     tags={"Personal area"},
+     *     summary="saveRequisitesData",
+     *     description="saveRequisitesData Endpoint",
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 required={"data"},
+     *                 @OA\Property(property="data",type="json"),
+     *                 @OA\Property(property="dataId",type="number"),
+     *             ),
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *       response="200",
+     *       description="save requisites",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result", value={"status": "success"},summary="Успешный запрос"),
+     *        )
+     *     ),
+     *     @OA\Response(
+     *       response="417",
+     *       description="data is empty",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result data", value={"status": "error", "error":"Поле дата обязательна для заполнения"},summary="Ошибка данных"),
+     *       )
+     *     ),
+     * )
+     */
 
     public function saveRequisitesData(Request $request){
         $user = Auth::user();
@@ -529,6 +596,40 @@ class UserPersonalInfoController extends Controller
         $response['status'] = 'success';
         return response()->json($response, 200);
     }
+
+    /**
+     * @OA\Post(
+     *     path="/api/personal/saveEstateData/",
+     *     operationId="saveEstateData",
+     *     tags={"Personal area"},
+     *     summary="saveEstateData",
+     *     description="saveEstateData Endpoint",
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 required={"data"},
+     *                 @OA\Property(property="data",type="json"),
+     *                 @OA\Property(property="dataId",type="number"),
+     *             ),
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *       response="200",
+     *       description="save requisites",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result", value={"status": "success"},summary="Успешный запрос"),
+     *        )
+     *     ),
+     *     @OA\Response(
+     *       response="417",
+     *       description="data is empty",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result data", value={"status": "error", "error":"Поле дата обязательна для заполнения"},summary="Ошибка данных"),
+     *       )
+     *     ),
+     * )
+     */
     public function saveEstateData(Request $request){
         $user = Auth::user();
         if (empty($request->data)) {
