@@ -48,19 +48,13 @@ class PhotoCheckboxFormatter implements FormaterInterface
                             $dataArr['details']['img'] = config('app.url').Storage::url($item['detail_img']);
                         }
                         if (
-                            !empty($item['link_text']) ||
-                            !empty($item['link']) ||
+                            !empty($item['link_text']) &&
+                            !empty($item['link']) &&
                             !empty($item['type'])
                         ) {
-                            if (!empty($item['link_text'])) {
-                                $dataArr['details']['link']['text'] = $item['link_text'];
-                            }
-                            if (!empty($item['link'])) {
-                                $dataArr['details']['link']['path'] = $item['link'];
-                            }
-                            if (!empty($item['type'])) {
-                                $dataArr['details']['link']['type'] = $item['type'];
-                            }
+                            $dataArr['details']['link']['text'] = $item['link_text'];
+                            $dataArr['details']['link']['path'] = $item['link'];
+                            $dataArr['details']['link']['type'] = $item['type'];
                         }
 
                     }
