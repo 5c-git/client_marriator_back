@@ -12,7 +12,7 @@ class PhotoCheckboxFormatter implements FormaterInterface
     public static function createFormat($fieldsData,$value):array
     {
         $data = [];
-        if(!is_array($value)){
+        if(!empty($value) && !is_array($value)){
             $value = [$value];
         }
         if(!empty($fieldsData->valuesDirectory)) {
