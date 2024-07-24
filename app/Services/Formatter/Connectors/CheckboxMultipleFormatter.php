@@ -11,6 +11,9 @@ class CheckboxMultipleFormatter implements FormaterInterface
     public static function createFormat($fieldsData,$value):array
     {
         $data = [];
+        if(!is_array($value)){
+            $value = [$value];
+        }
         if(!empty($fieldsData->valuesDirectory)) {
             //$data['uuid'] = $fieldsData->uuid;
             $data['inputType'] = self::$type;
