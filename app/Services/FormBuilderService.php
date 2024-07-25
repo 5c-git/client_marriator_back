@@ -259,8 +259,8 @@ class FormBuilderService
 
             if(isset($this->formDataThisStep[$field->uuid])){
                 if(!empty($field->valuesDirectory)){
+                    $field->value = '';
                     foreach ($field->valuesDirectory as $valueDerictory){
-                        $field->value = '';
                         if(is_array($this->formDataThisStep[$field->uuid])){
                             if(in_array($valueDerictory['uuid'],$this->formDataThisStep[$field->uuid])){
                                 if(empty($field->value)) {
