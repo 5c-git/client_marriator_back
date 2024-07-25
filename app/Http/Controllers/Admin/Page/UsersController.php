@@ -37,6 +37,10 @@ class UsersController extends Controller
         $user = User::where('id','=',$request->id)->first();
         if(!empty($user->data)){
             $user->data = json_decode($user->data,true);
+            echo "<pre>";
+            var_dump($user->data);
+            echo "</pre>";
+            die();
             if(!empty($user->data[1])){
                 $user->data = json_encode(array_merge(...$user->data));
                 $user->save();
