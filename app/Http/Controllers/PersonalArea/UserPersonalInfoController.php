@@ -500,11 +500,12 @@ class UserPersonalInfoController extends Controller
      *     ),
      * )
      */
-    public function getRequisitesData(Request $request){
+    public function getRequisitesData(Request $request)
+    {
         $user = Auth::user();
-        if(!empty($user->requisitesData)){
-            $requisitesData = json_decode($user->requisitesData,true);
-        }else{
+        if (!empty($user->requisitesData)) {
+            $requisitesData = json_decode($user->requisitesData, true);
+        } else {
             $requisitesData = [];
         }
         $response['result'] = $requisitesData;
@@ -529,11 +530,12 @@ class UserPersonalInfoController extends Controller
      * )
      */
 
-    public function getEstateData(Request $request){
+    public function getEstateData(Request $request)
+    {
         $user = Auth::user();
-        if(!empty($user->estateData)){
-            $estateData = json_decode($user->estateData,true);
-        }else{
+        if (!empty($user->estateData)) {
+            $estateData = json_decode($user->estateData, true);
+        } else {
             $estateData = [];
         }
         $response['result'] = $estateData;
@@ -575,21 +577,22 @@ class UserPersonalInfoController extends Controller
      * )
      */
 
-    public function saveRequisitesData(Request $request){
+    public function saveRequisitesData(Request $request)
+    {
         $user = Auth::user();
         if (empty($request->data)) {
             $response['error'] = 'Поле дата обязательна для заполнения';
             $response['status'] = 'error';
             return response()->json($response, 417);
         }
-        if(!empty($user->requisitesData)){
-            $requisitesData = json_decode($user->requisitesData,true);
-        }else{
+        if (!empty($user->requisitesData)) {
+            $requisitesData = json_decode($user->requisitesData, true);
+        } else {
             $requisitesData = [];
         }
         if (!empty($request->dataId)) {
             $requisitesData[$request->dataId] = $request->data;
-        }else{
+        } else {
             $requisitesData[] = $request->data;
         }
         $user->requisitesData = json_encode($requisitesData);
@@ -630,26 +633,86 @@ class UserPersonalInfoController extends Controller
      *     ),
      * )
      */
-    public function saveEstateData(Request $request){
+    public function saveEstateData(Request $request)
+    {
         $user = Auth::user();
         if (empty($request->data)) {
             $response['error'] = 'Поле дата обязательна для заполнения';
             $response['status'] = 'error';
             return response()->json($response, 417);
         }
-        if(!empty($user->estateData)){
-            $estateData = json_decode($user->estateData,true);
-        }else{
+        if (!empty($user->estateData)) {
+            $estateData = json_decode($user->estateData, true);
+        } else {
             $estateData = [];
         }
         if (!empty($request->dataId)) {
             $estateData[$request->dataId] = $request->data;
-        }else{
+        } else {
             $estateData[] = $request->data;
         }
         $user->estateData = json_encode($estateData);
         $response['status'] = 'success';
         return response()->json($response, 200);
+    }
+
+    public function getformActivities(Request $request)
+    {
+        $user = Auth::user();
+        if($request->step<=3 || empty($request->step)) {
+            if (!empty($request->step)) {
+                $step = (int)$request->step;
+            } else {
+                $step = 1;
+            }
+            if (!empty($user->data)) {
+                $userData = json_decode($user->data, true);
+            } else {
+                $userData = [];
+            }
+            $formDataService = (new FormBuilderService($step, $userData));
+            $response['result']['formData'] = $formDataService->createFormData();
+            $response['result']['step'] = $step;
+            $response['result']['type'] = $formDataService->checkStatusForm(true);
+            $response['status'] = 'success';
+        }else{
+            $response['error'] = 'Поле step не может быть больше 3';
+            $response['status'] = 'error';
+            return response()->json($response, 417);
+        }
+
+        return response()->json($response);
+    }
+
+    public function saveUserFieldsActivities(Request $request)
+    {
+        $user = Auth::user();
+        if (!empty($request->formData) && $request->step) {
+            $userError = json_decode($user->errorData, true);
+            $userData = json_decode($user->data, true);
+            foreach ($request->formData as $k => $oneField) {
+                if ((!isset($userData[$k]) && !empty($userError[$k]) && !empty($oneField)) || (!empty($userData[$k]) && !empty($userError[$k]) && $userData[$k] != $oneField)) {
+                    unset($userError[$k]);
+                }
+                $userData[$k] = $oneField;
+            }
+            $user->data = json_encode($userData);
+            $user->errorData = json_encode($userError);
+            $user->save();
+
+            $formDataService = (new FormBuilderService($request->step, $userData));
+            $formDataService->getStepField();
+            $response['result'] = [
+                'step' => $request->step,
+                'type' => $formDataService->checkStatusForm()
+            ];
+            $response['status'] = 'success';
+        } else {
+            $response['error'] = 'Ничего не загружено';
+            $response['status'] = 'error';
+            return response()->json($response, 417);
+        }
+        return response()->json($response);
     }
 
 }

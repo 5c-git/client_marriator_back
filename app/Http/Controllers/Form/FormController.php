@@ -59,7 +59,6 @@ class FormController extends Controller
 
     public function getform(Request $request)
     {
-        //$this->setUser();
         $user = Auth::user();
         if(!$user->finishRegister) {
             if (!empty($request->step)) {
