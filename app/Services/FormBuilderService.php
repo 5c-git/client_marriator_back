@@ -25,12 +25,23 @@ class FormBuilderService
     public function __construct(int $step, array $formData = [])
     {
         $this->step = $step > 0 ? $step : 1;
-        if(!empty($formData) && (!empty($formData[0]) || !empty($formData[1]) || !empty($formData[2]) || !empty($formData[3]))) {
-            $this->formData = array_merge(...$formData);
-            if(!empty($formData[$step])) {
-                $this->formDataThisStep = $formData[$step];
-            }else{
-                $this->formDataThisStep = [];
+        if(!empty($formData) && (!empty($formData[0]) || !empty($formData[1]) || !empty($formData[2]) || !empty($formData[3]) || !empty($formData[4]) || !empty($formData[5]) || !empty($formData[6])  || !empty($formData[7])  || !empty($formData[8]))) {
+            try {
+                $this->formData = array_merge(...$formData);
+                if(!empty($formData[$step])) {
+                    $this->formDataThisStep = $formData[$step];
+                }else{
+                    $this->formDataThisStep = [];
+                }
+            }catch (\Throwable $e){
+                foreach ($formData as $k=>$data){
+                    if(in_array($k,[1,2,3,4,5,6,7,8])){
+                        $formData = array_merge($formData,$data);
+                        unset($formData[$k]);
+                    }
+                }
+                $this->formData = $formData;
+                $this->formDataThisStep = $formData;
             }
         }else{
             $this->formData = $formData;
