@@ -221,16 +221,29 @@ class FormBuilderService
         return $this->formatedData;
     }
 
-    public function checkStatusForm(bool $getForm = false):string
+    public function checkStatusForm(bool $getForm = false,$formData = []):string
     {
-        $statusForm = 'needRequired';
-        if(!empty($this->fieldsThisStep) && !empty($this->formDataThisStep)){
-            if($this->checkRequired()){
-                $statusForm = 'allowedNewStep';
-            }
+        if(empty($formData)) {
+            $statusForm = 'needRequired';
+            if (!empty($this->fieldsThisStep) && !empty($this->formDataThisStep)) {
+                if ($this->checkRequired()) {
+                    $statusForm = 'allowedNewStep';
+                }
 
-            if(count($this->formDataThisStep) < count($this->fieldsThisStep) && !$getForm){
-                $statusForm = 'addedNewFields';
+                if (count($this->formDataThisStep) < count($this->fieldsThisStep) && !$getForm) {
+                    $statusForm = 'addedNewFields';
+                }
+            }
+        }else{
+            $statusForm = 'needRequired';
+            if (!empty($this->fieldsThisStep) && !empty($formData)) {
+                if ($this->checkRequired()) {
+                    $statusForm = 'allowedNewStep';
+                }
+
+                if (count($formData) < count($this->fieldsThisStep) && !$getForm) {
+                    $statusForm = 'addedNewFields';
+                }
             }
         }
         return $statusForm;

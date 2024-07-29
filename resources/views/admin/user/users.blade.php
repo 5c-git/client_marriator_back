@@ -5,7 +5,7 @@
 @section('content_header')
     <div class="row">
         <div class="col-sm-10">
-            <h1>Users</h1>
+            <h1>Пользователи</h1>
         </div>
         <div class="col-sm-2">
             <a href="{{route('usersCreate')}}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Create</a>
@@ -18,8 +18,8 @@
         $heads = [
             'ID',
             'Email',
-            'Name',
-            'Permission',
+            'Имя',
+            'Права',
             ['label' => 'Actions', 'no-export' => true, 'width' => 5],
         ];
 

@@ -656,6 +656,39 @@ class UserPersonalInfoController extends Controller
         return response()->json($response, 200);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/personal/getformActivities/",
+     *     operationId="getformActivities",
+     *     tags={"Personal area"},
+     *     summary="getformActivities",
+     *     description="getformActivities",
+     *     @OA\Parameter(
+     *         name="step",
+     *         in="query",
+     *         description="step",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="number",
+     *         )
+     *     ),
+     *     @OA\Response(
+     *       response="200",
+     *       description="form data Activities",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result", value={"status": "success","result":{"formData":{},"step":{},"type":"needRequired|allowedNewStep",}},summary="Успех"),
+     *       )
+     *     ),
+     *     @OA\Response(
+     *       response="417",
+     *       description="step error",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result section", value={"status": "error", "error":"Поле step не может быть больше 3"},summary="Ошибка section"),
+     *       )
+     *     ),
+     * )
+     */
+
     public function getformActivities(Request $request)
     {
         $user = Auth::user();
@@ -684,6 +717,40 @@ class UserPersonalInfoController extends Controller
         return response()->json($response);
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/personal/saveUserFieldsActivities/",
+     *     operationId="saveUserFieldsActivities",
+     *     tags={"Personal area"},
+     *     summary="saveUserFieldsActivities",
+     *     description="saveUserFieldsActivities Endpoint",
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 required={"formData","step"},
+     *                 @OA\Property(property="formData",type="json"),
+     *                 @OA\Property(property="step",type="number"),
+     *             ),
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *       response="200",
+     *       description="save form",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result", value={"status": "success","result":{"step": 1,"type":"needRequired|allowedNewStep|addedNewFields"}},summary="Успех"),
+     *       )
+     *     ),
+     *     @OA\Response(
+     *       response="417",
+     *       description="formData is empty",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result formData", value={"status": "error", "error":"Ничего не загружено"},summary="Ошибка formData"),
+     *       )
+     *     ),
+     * )
+     */
+
     public function saveUserFieldsActivities(Request $request)
     {
         $user = Auth::user();
@@ -704,7 +771,7 @@ class UserPersonalInfoController extends Controller
             $formDataService->getStepField();
             $response['result'] = [
                 'step' => $request->step,
-                'type' => $formDataService->checkStatusForm()
+                'type' => $formDataService->checkStatusForm(false,$request->formData)
             ];
             $response['status'] = 'success';
         } else {

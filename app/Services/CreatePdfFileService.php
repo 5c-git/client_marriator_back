@@ -9,22 +9,43 @@ use setasign\Fpdi\Fpdi;
 use Dompdf\Dompdf;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
+use App\Models\Fields\Fields;
+
 
 class CreatePdfFileService
 {
     public array $files;
     public int $userId;
+    public string $userPhone;
+    public string $fieldUuid;
+    public string $fieldName;
     public string $mergeFilePath;
     public array $filesTmp = [];
     public array $filesOriginalName = [];
     public string $error = '';
 
-    public function __construct(array $files, $userId)
+    public function __construct(array $files, $userId,$userPhone,$fieldUuid)
     {
         $this->files = $files;
         $this->userId = $userId;
-        $this->setSettings();
-        $this->createOneFile();
+        $this->userId = $userPhone;
+        $this->userId = $fieldUuid;
+        if($this->checkUuid()) {
+            $this->setSettings();
+            $this->createOneFile();
+        }
+    }
+
+    private function checkUuid():bool
+    {
+       $field = Fields::where('uuid',$this->fieldUuid)->first();
+       if($field){
+           $this->fieldName = $field->name;
+           return true;
+       }else{
+           $this->error = 'Поле не найдено';
+           return false;
+       }
     }
 
     private function setSettings(): void
@@ -127,8 +148,8 @@ class CreatePdfFileService
 
     private function saveFile(string $content): ?string
     {
-        $filename = Str::random(20) . '.pdf';
-        Storage::disk('public')->put('source/pdf/' . $this->userId . '/' . $filename, $content);
+        $filename = '['.$this->userPhone.']'.'['.$this->fieldName.']' . '.pdf';
+        Storage::disk('public')->put('source/pdf/' . $this->userId . '/'.Str::random(10).'/' . $filename, $content);
         return Storage::url('source/pdf/' . $this->userId . '/' . $filename);
     }
 

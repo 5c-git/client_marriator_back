@@ -426,6 +426,10 @@ return [
                         [
                             'text' => 'Возраст',
                             'url' => 'admin/directory_age/',
+                        ],
+                        [
+                            'text' => 'Статус мед книжки',
+                            'url' => 'admin/directory_medical_book/',
                         ]
                     ],
                 ],

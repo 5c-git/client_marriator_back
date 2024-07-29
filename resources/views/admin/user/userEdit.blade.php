@@ -25,13 +25,14 @@
         }
     @endphp
     <br>
-    <h4>User ID - {{ $user->id }}</h4>
-    <h4>User permission - {{ $user->roles()->first()?->name }}</h4>
+    <h4>Идентификатор пользователя - {{ $user->id }}</h4>
+    <h4>Телефон пользователя - {{ $user->id }}</h4>
+    <h4>Права пользователя - {{ $user->roles()->first()?->name ?:'user' }}</h4>
     <form class="userEdit">
         @csrf
         <input type="hidden" name="id" value="{{ $user->id }}">
         <div class="form-group row">
-            <label for="name" class="col-sm-2 col-form-label">Name</label>
+            <label for="name" class="col-sm-2 col-form-label">Имя</label>
             <div class="col-sm-10">
                 <input type="text" class="form-control" name="name" id="name" value="{{ $user->name }}" placeholder="{{ $user->name }}">
             </div>
@@ -43,19 +44,19 @@
             </div>
         </div>
         <div class="form-group row">
-            <label for="phone" class="col-sm-2 col-form-label">Phone</label>
+            <label for="phone" class="col-sm-2 col-form-label">Телефон</label>
             <div class="col-sm-10">
                 <input type="tel" class="form-control" name="phone" id="phone" value="{{ $user->phone }}" placeholder="{{ $user->phone }}">
             </div>
         </div>
         <div class="form-group row">
-            <label for="inputPassword" class="col-sm-2 col-form-label">Password</label>
+            <label for="inputPassword" class="col-sm-2 col-form-label">Пароль</label>
             <div class="col-sm-10">
                 <input type="password" class="form-control" id="inputPassword" name="password" placeholder="Password">
             </div>
         </div>
         <div class="form-group row">
-            <label for="inputPasswordConfirm" class="col-sm-2 col-form-label">Confirm Password</label>
+            <label for="inputPasswordConfirm" class="col-sm-2 col-form-label">Подтверждение пароля</label>
             <div class="col-sm-10">
                 <input type="password" class="form-control" id="inputPasswordConfirm" name="confirmPassword" placeholder="Confirm Password">
             </div>
@@ -78,6 +79,7 @@
                            Значение - {{$field->value}}
                         </label>
                     </div>
+                        <p>uuid - {{$field->uuid}}</p>
 
                     <div class="form-group row">
                         <label for="error" class="col-sm-2 col-form-label">Сообщение об ошибке</label>

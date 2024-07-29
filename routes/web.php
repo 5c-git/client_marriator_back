@@ -214,6 +214,15 @@ Route::group(['prefix' => 'admin'], function () {
             Route::get('/delete/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\AgeController@delete')->name('ageDelete');
         });
 
+        Route::group(['prefix' => 'directory_medical_book'], function () {
+            Route::get('/create/', 'App\Http\Controllers\Admin\Page\Fields\Directory\MedicalBookController@create')->name('medical_bookCreate');
+            Route::post('/createAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\MedicalBookController@createAjax')->name('medical_bookCreateAjax');
+            Route::get('/', 'App\Http\Controllers\Admin\Page\Fields\Directory\MedicalBookController@list')->name('medical_bookList');
+            Route::get('/edit/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\MedicalBookController@edit')->name('medical_bookEdit');
+            Route::post('/editAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\MedicalBookController@editAjax')->name('medical_bookEditAjax');
+            Route::get('/delete/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\MedicalBookController@delete')->name('medical_bookDelete');
+        });
+
 
 
 

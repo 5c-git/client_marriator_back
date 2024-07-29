@@ -171,11 +171,14 @@ class FormController extends Controller
      *         @OA\MediaType(
      *             mediaType="multipart/form-data",
      *             @OA\Schema(
-     *                 required={"file[]"},
+     *                 required={"file[]","fieldUuid"},
      *                 @OA\Property(
      *                  property="file[]",
      *                  type="array",
      *                  @OA\Items(type="file")),
+     *                 @OA\Property(
+     *                  property="fieldUuid",
+     *                  type="string"),
      *             ),
      *         ),
      *     ),
@@ -193,7 +196,7 @@ class FormController extends Controller
     public function saveFile(Request $request)
     {
         $user = Auth::user();
-        if(!$user->finishRegister) {
+        if(!$user->finishRegister && $request->fieldUuid) {
             $uploadFiles = $request->allFiles();
             $files = [];
             if (!empty($uploadFiles)) {
@@ -202,11 +205,8 @@ class FormController extends Controller
                 } else {
                     $files = current($uploadFiles);
                 }
-                //foreach ($files as $uploadFile) {
-                // $response['fileName'][] = $uploadFile->getClientOriginalName();
-                //}
                 $userId = Auth::id();
-                $createFileService = new CreatePdfFileService($files, $userId);
+                $createFileService = new CreatePdfFileService($files, $userId,$user->phone,$request->fieldUuid);
                 if (!empty($createFileService->mergeFilePath) && empty($createFileService->error)) {
                     $response['resFile'] = config('app.url').$createFileService->mergeFilePath;
                     $response['status'] = 'success';
@@ -214,6 +214,8 @@ class FormController extends Controller
                     $response['error'] = $createFileService->error;
                     $response['status'] = 'error';
                 }
+            }else{
+                $response['status'] = 'error';
             }
         }else{
             $response['status'] = 'error';
