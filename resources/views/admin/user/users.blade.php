@@ -17,7 +17,7 @@
     @php
         $heads = [
             'ID',
-            'Email',
+            'Телефон',
             'Имя',
             'Права',
             ['label' => 'Actions', 'no-export' => true, 'width' => 5],
@@ -41,7 +41,7 @@ if(!empty($user->email_verified_at)){
         $email_verified_at = 'No';
 }
 
-           $usersData[] = [$user->id ,$user->email ,$user->name,  $permission , '<nobr>'.$btnEdit.$btnDelete.'</nobr>'];
+           $usersData[] = [$user->id ,$user->phone ,$user->name,  $permission , '<nobr>'.$btnEdit.$btnDelete.'</nobr>'];
         }
 
         $config = [

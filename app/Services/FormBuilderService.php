@@ -265,7 +265,7 @@ class FormBuilderService
 
     public function getUserField(array $moreData,array $errorData): array
     {
-        $this->fieldsAll = Fields::orderBy('sort', 'asc')->whereNotNull('step')->get();
+        $this->fieldsAll = Fields::orderBy('step', 'asc')->orderBy('sort', 'asc')->whereNotNull('step')->get();
         $userFields = [];
         foreach ($this->fieldsAll as $field) {
             if (!empty($field->directory)) {
