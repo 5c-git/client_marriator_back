@@ -35,11 +35,9 @@ class CheckBoxFormatter implements FormaterInterface
         if (!empty($fieldsData->helperInfo_text)){
             $data['helperInfo']['text'] = $fieldsData->helperInfo_text;
         }
-        if (!empty($fieldsData->helperInfo_link)){
+        if (!empty($fieldsData->helperInfo_link) && !empty($fieldsData->helperInfo_link_text)){
             $data['helperInfo']['link']['path'] = $fieldsData->helperInfo_link;
-            if(!empty($fieldsData->helperInfo_link_text)){
-                $data['helperInfo']['link']['text'] = $fieldsData->helperInfo_link_text;
-            }
+            $data['helperInfo']['link']['text'] = $fieldsData->helperInfo_link_text;
             $data['helperInfo']['link']['type'] = $fieldsData->helperInfo_link_type;
         }
 
