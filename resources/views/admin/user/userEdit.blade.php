@@ -80,6 +80,9 @@
                         </label>
                     </div>
                         <p>uuid - {{$field->uuid}}</p>
+                        @if(!empty($field->screen))
+                            <p>поясняющий скрин - {{$field->screen}}</p>
+                        @endif
 
                     <div class="form-group row">
                         <label for="error" class="col-sm-2 col-form-label">Сообщение об ошибке</label>
