@@ -263,6 +263,13 @@
 {{--            </div>--}}
 {{--        </div>--}}
 
+        <div class="form-group row">
+            <label for="screen" class="col-sm-2 col-form-label">Вспомогательный скриншот</label>
+            <div class="col-sm-10">
+                <textarea class="form-control" name="screen" id="screen">{{$field->screen}}</textarea>
+            </div>
+        </div>
+
 
 
         <div class="form-group row">

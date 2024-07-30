@@ -35,7 +35,8 @@ class Fields extends Model
         'drawerInfo_images',
         'section',
         'estate',
-        'requisites'
+        'requisites',
+        'screen'
     ];
 
     public $timestamps = false;
