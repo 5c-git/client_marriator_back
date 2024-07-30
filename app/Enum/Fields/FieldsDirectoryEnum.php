@@ -3,6 +3,7 @@
 namespace App\Enum\Fields;
 use App\Models\Fields\Directory\Age;
 use App\Models\Fields\Directory\Documentation;
+use App\Models\Fields\Directory\MedicalBook;
 use App\Models\Fields\Directory\Organization;
 use ArchTech\Enums\InvokableCases;
 use ArchTech\Enums\Names;
@@ -55,6 +56,7 @@ enum FieldsDirectoryEnum: string
     case documentation = Documentation::class;
     case organization = Organization::class;
     case age = Age::class;
+    case medicalBook = MedicalBook::class;
 
     public function directoryName(): string
     {
@@ -79,7 +81,8 @@ enum FieldsDirectoryEnum: string
             self::weight => 'Справочник вес, кг.',
             self::documentation => 'Справочник документов',
             self::organization => 'Справочник организаций',
-            self::age => 'Справочник возраст'
+            self::age => 'Справочник возраст',
+            self::medicalBook => 'Справочник мед книжка'
         };
     }
 
