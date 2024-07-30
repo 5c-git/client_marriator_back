@@ -73,7 +73,7 @@
                     <div class="addItemBlock">
                     <div class="row">
                         <label for="error" class="col-sm-4 col-form-label">
-                        Название поля - {{$field->name}}
+                        Название поля - {{$field->heading?:$field->name}}
                         </label>
                         <label for="error" class="col-sm-8 col-form-label">
                            Значение - {{$field->value}}
