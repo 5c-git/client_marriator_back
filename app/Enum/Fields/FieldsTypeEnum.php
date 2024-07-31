@@ -32,6 +32,8 @@ enum FieldsTypeEnum: int
     case sms = 16;
     case snils = 17;
     case photo = 18;
+    case autocomplete = 19;
+    case selectMultiple = 20;
 
 
     public function typeName(): string
@@ -56,6 +58,8 @@ enum FieldsTypeEnum: int
             self::sms => 'SMS',
             self::snils => 'Снилс',
             self::photo => 'Фото',
+            self::autocomplete => 'Селект с поиском',
+            self::selectMultiple => 'Множественный селект',
         };
     }
 
@@ -80,6 +84,8 @@ enum FieldsTypeEnum: int
             self::sms => Connectors\SmsFormatter::class,
             self::snils => Connectors\SnilsFormatter::class,
             self::photo => Connectors\PhotoFormatter::class,
+            self::autocomplete => Connectors\AutocompleteFormatter::class,
+            self::selectMultiple => Connectors\SelectMultipleFormatter::class,
         };
     }
 
