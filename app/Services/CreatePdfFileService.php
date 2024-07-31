@@ -28,8 +28,8 @@ class CreatePdfFileService
     {
         $this->files = $files;
         $this->userId = $userId;
-        $this->userId = $userPhone;
-        $this->userId = $fieldUuid;
+        $this->userPhone = $userPhone;
+        $this->fieldUuid = $fieldUuid;
         if($this->checkUuid()) {
             $this->setSettings();
             $this->createOneFile();

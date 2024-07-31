@@ -22,9 +22,10 @@ class CheckboxMultipleFormatter implements FormaterInterface
             $data['disabled'] = false;
             $option = [];
             foreach ($fieldsData->valuesDirectory as $item) {
-                $option[] = ['value' => $item['uuid'], 'label' => $item['name'], 'disabled' => false];
+                $option[$item['name']] = ['value' => $item['uuid'], 'label' => $item['name'], 'disabled' => false];
             }
-            $data['options'] = $option;
+            ksort($option);
+            $data['options'] = array_values($option);
             if ($fieldsData->required) {
                 $data['validation'] = 'default';
             } else {
