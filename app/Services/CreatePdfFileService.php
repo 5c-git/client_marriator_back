@@ -149,8 +149,9 @@ class CreatePdfFileService
     private function saveFile(string $content): ?string
     {
         $filename = '['.$this->userPhone.']'.'['.$this->fieldName.']' . '.pdf';
-        Storage::disk('public')->put('source/pdf/' . $this->userId . '/'.Str::random(10).'/' . $filename, $content);
-        return Storage::url('source/pdf/' . $this->userId . '/' . $filename);
+        $linkRund = Str::random(10);
+        Storage::disk('public')->put('source/pdf/' . $this->userId . '/'.$linkRund.'/' . $filename, $content);
+        return Storage::url('source/pdf/' . $this->userId . '/'.$linkRund.'/' . $filename);
     }
 
 
