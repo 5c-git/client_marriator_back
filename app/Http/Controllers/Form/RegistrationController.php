@@ -70,7 +70,7 @@ class RegistrationController extends Controller
                    $response['result']['type'] = 'auth';
                }else{
                    if($user->finishRegister){
-                       ///?????
+                       $response['result']['type'] = 'register';
                    }else {
                        $response['result']['type'] = 'register';
                    }

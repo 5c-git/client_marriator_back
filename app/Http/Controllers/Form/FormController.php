@@ -299,12 +299,9 @@ class FormController extends Controller
     public function finishRegister(Request $request){
         $user = Auth::user();
         if(!$user->finishRegister) {
-            $user->finishRegister = true;
-            $user->save();
-
             $registerResult = (new OneCServices($user))->sendRegister();
-
             if($registerResult->statusRegister) {
+                $user->finishRegister = true;
                 $user->confirmRegister = true;
                 $user->data = json_encode(array_merge(...json_decode($user->data,true)));
                 $user->save();
