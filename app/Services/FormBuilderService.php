@@ -109,7 +109,15 @@ class FormBuilderService
                 if (is_array($formData)) {
                     foreach ($formData as $oneData) {
                         if(!empty($oneData)) {
-                            $formVal[$oneData] = $kDataForm;
+                            if(is_array($oneData)){
+                                foreach ($oneData as $oneDataNew){
+                                    if(!empty($oneDataNew)){
+                                        $formVal[$oneDataNew] = $kDataForm;
+                                    }
+                                }
+                            }else {
+                                $formVal[$oneData] = $kDataForm;
+                            }
                         }
                     }
                 } else {
