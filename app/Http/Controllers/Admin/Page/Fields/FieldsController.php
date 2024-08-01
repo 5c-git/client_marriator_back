@@ -42,6 +42,7 @@ class FieldsController extends Controller
         if($field) {
             if(!empty($field->parentFields)) {
                 $field->parentFields = json_decode($field->parentFields, true);
+                $field->parentFields = array_values($field->parentFields);
             }else{
                 $field->parentFields = [];
             }
