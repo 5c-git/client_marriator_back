@@ -13,6 +13,7 @@ Route::group(["middleware" => 'throttle:100,10'], function () {
 });
 
 Route::group(["middleware" => ["auth:api", "scope:register"]], function () {
+    Route::get('/getUserInfo/', 'App\Http\Controllers\Form\FormController@getUserInfo')->name('getUserInfoInReg');
     Route::get('/getForm/', 'App\Http\Controllers\Form\FormController@getForm')->name('getForm');
     Route::post('/saveForm/', 'App\Http\Controllers\Form\FormController@saveForm')->name('saveForm');
     Route::post('/saveUserImg/', 'App\Http\Controllers\Form\FormController@saveUserImg')->name('saveUserImg');

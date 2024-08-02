@@ -33,6 +33,33 @@ class FormController extends Controller
 
     /**
      * @OA\Get(
+     *     path="/api/getUserInfo/",
+     *     operationId="getUserInfo_in_reg",
+     *     tags={"form"},
+     *     summary="getForm",
+     *     description="getUserInfo Endpoint",
+     *     @OA\Response(
+     *       response="200",
+     *       description="uset info",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result", value={"status": "success","result":{"userData":{},}},summary="Успех"),
+     *       )
+     *     ),
+     * )
+     */
+
+    public function getUserInfo(Request $request)
+    {
+        $user = Auth::user();
+        $user->img = config('app.url') . Storage::url($user->img);
+        $response['result']['userData'] = $user->toArray();
+        $response['status'] = 'success';
+        return response()->json($response, 200);
+    }
+
+
+    /**
+     * @OA\Get(
      *     path="/api/getForm/",
      *     operationId="getForm",
      *     tags={"form"},
