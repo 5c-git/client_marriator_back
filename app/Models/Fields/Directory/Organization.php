@@ -10,7 +10,7 @@ class Organization extends Model implements ModelDirectoryInterface
 {
     use HasFactory;
 
-    public static int $fieldsTypeEnum = FieldsTypeEnum::select->value;
+    public static int $fieldsTypeEnum = FieldsTypeEnum::selectMultiple->value;
     public static string $uuid = 'directory_organization';
 
     protected $table = 'directory_organization';
