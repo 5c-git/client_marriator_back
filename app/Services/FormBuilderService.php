@@ -121,7 +121,7 @@ class FormBuilderService
                         }
                     }
                 } else {
-                    $formVal[$formData] = $kDataForm;
+                    //$formVal[$formData] = $kDataForm;
                 }
                 $formVal[$kDataForm] = $formData;
             }
