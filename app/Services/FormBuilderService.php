@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Enum\Fields\PersonalInfoSectionEnum;
 use App\Models\Fields\Fields;
 use App\Enum\Fields\FieldsTypeEnum;
+use Illuminate\Support\Str;
 
 class FormBuilderService
 {
@@ -112,18 +113,18 @@ class FormBuilderService
                             if(is_array($oneData)){
                                 foreach ($oneData as $oneDataNew){
                                     if(!empty($oneDataNew)){
-                                        $formVal[$oneDataNew] = $kDataForm;
+                                        $formVal[$oneDataNew.Str::random(10)] = $kDataForm;
                                     }
                                 }
                             }else {
-                                $formVal[$oneData] = $kDataForm;
+                                $formVal[$oneData.Str::random(10)] = $kDataForm;
                             }
                         }
                     }
                 } else {
-                    //$formVal[$formData] = $kDataForm;
+                    $formVal[$formData.Str::random(10)] = $kDataForm;
                 }
-                $formVal[$kDataForm] = $formData;
+                $formVal[$kDataForm.Str::random(10)] = $formData;
             }
         }
         $this->filterArr = $formVal;
