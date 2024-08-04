@@ -35,7 +35,7 @@ class UsersController extends Controller
     public function userEdit(Request $request)
     {
         $user = User::where('id','=',$request->id)->first();
-        if(!empty($user->data)){
+        if(!empty($user->data) && $user->confirmRegister){
             $user->data = json_decode($user->data,true);
             if(!empty($user->data[1])){
                 $user->data = json_encode(array_merge(...$user->data));
