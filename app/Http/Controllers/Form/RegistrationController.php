@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Form;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Services\ApiTokenService\ApiTokenService;
+use App\Services\Register\EmailVerifiedService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -312,6 +314,116 @@ class RegistrationController extends Controller
             $response['status'] = 'error';
         }
         return response()->json($response,200);
+    }
+
+
+    /**
+     * @OA\Post(
+     *     path="/api/setUserEmail/",
+     *     operationId="setUserEmail",
+     *     tags={"register/auth"},
+     *     summary="setUserEmail",
+     *     description="setUserEmail Endpoint",
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 required={"email"},
+     *                 @OA\Property(property="email",type="string"),
+     *             ),
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *       response="200",
+     *       description="send email for verified",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result", value={"status": "success","result":{"code":{"status":"exists|success","ttl":"120 числовое поле если статус exists","code":"sms код для теста"}}},summary="Успешный запрос"),
+     *       )
+     *     ),
+     *     @OA\Response(
+     *       response="417",
+     *       description="email is empty",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result", value={"status": "error", "error":"Email отсутствует"},summary="Нехватка полей"),
+     *       )
+     *     ),
+     * )
+     */
+
+    public function setUserEmail(Request $request)
+    {
+        $user = Auth::user();
+        if (!empty($request->email)) {
+            $user->email = $request->email;
+            $emailCodeService = new EmailVerifiedService($request->email);
+            $response['result']['code'] = $emailCodeService->createCode();
+            $response['status'] = $emailCodeService->status;
+            if ($emailCodeService->status == 'success') {
+                $user->email_verified_at = '';
+                $user->save();
+            }
+            return response()->json($response, 200);
+        } else {
+            $response['error'] = 'Email отсутствует';
+            $response['status'] = 'error';
+            return response()->json($response, 417);
+        }
+        return response()->json($response);
+    }
+
+
+    /**
+     * @OA\Post(
+     *     path="/api/checkEmailCode/",
+     *     operationId="checkEmailCode",
+     *     tags={"register/auth"},
+     *     summary="checkEmailCode",
+     *     description="checkEmailCode Endpoint",
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 required={"code"},
+     *                 @OA\Property(property="code",type="number"),
+     *             ),
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *       response="200",
+     *       description="check email code success",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result", value={"status": "success"},summary="Успех"),
+     *           @OA\Examples(example="result error", value={"status": "error","result":{"code":{"status":"error|notExists"},}},summary="Ошибка"),
+     *       )
+     *     ),
+     *     @OA\Response(
+     *       response="417",
+     *       description="Code is empty",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result code", value={"status": "error", "error":"Поле код обязательна для заполнения"},summary="Ошибка кода"),
+     *       )
+     *     ),
+     * )
+     */
+
+    public function checkEmailCode(Request $request)
+    {
+        if (empty($request->code)) {
+            $response['error'] = 'Поле код обязательна для заполнения';
+            $response['status'] = 'error';
+            return response()->json($response, 417);
+        }
+        $user = Auth::user();
+        $emailCodeResult = (new EmailVerifiedService($user->email, (int)$request->code))->checkCode();
+        if ($emailCodeResult['status'] == 'success') {
+            $user->email_verified_at = Carbon::now();
+            $user->save();
+            $response['status'] = 'success';
+        } else {
+            $response['result']['code'] = $emailCodeResult;
+            $response['status'] = 'error';
+        }
+        return response()->json($response, 200);
     }
 
 

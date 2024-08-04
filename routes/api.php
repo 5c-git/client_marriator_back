@@ -19,6 +19,10 @@ Route::group(["middleware" => ["auth:api", "scope:register"]], function () {
     Route::post('/saveUserImg/', 'App\Http\Controllers\Form\FormController@saveUserImg')->name('saveUserImg');
     Route::post('/saveFile/', 'App\Http\Controllers\Form\FormController@saveFile')->name('saveFile');
     Route::post('/finishRegister/', 'App\Http\Controllers\Form\FormController@finishRegister')->name('finishRegister');
+
+    Route::post('/setUserEmail/', 'App\Http\Controllers\Form\RegistrationController@setUserEmail')->name('setUserEmail_reg');
+    Route::post('/checkEmailCode/', 'App\Http\Controllers\Form\RegistrationController@checkEmailCode')->name('checkEmailCode_reg');
+
 });
 
 Route::group(["middleware" => ["auth:api", "scope:register,restorePin,checkPin,personalArea"]], function () {
