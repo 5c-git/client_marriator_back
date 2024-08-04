@@ -320,7 +320,7 @@ class RegistrationController extends Controller
     /**
      * @OA\Post(
      *     path="/api/setUserEmail/",
-     *     operationId="setUserEmail",
+     *     operationId="setUserEmail_reg",
      *     tags={"register/auth"},
      *     summary="setUserEmail",
      *     description="setUserEmail Endpoint",
@@ -375,7 +375,7 @@ class RegistrationController extends Controller
     /**
      * @OA\Post(
      *     path="/api/checkEmailCode/",
-     *     operationId="checkEmailCode",
+     *     operationId="checkEmailCode_reg",
      *     tags={"register/auth"},
      *     summary="checkEmailCode",
      *     description="checkEmailCode Endpoint",
