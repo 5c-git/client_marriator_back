@@ -17,7 +17,7 @@
     @php
         $heads = [
         'ID',
-        'Name',
+        'Description',
         'Step',
         'Uuid',
         'active',
@@ -32,7 +32,7 @@
         $btnDelete = '<a href="'.route('fieldsDelete',$field->id).'"><button class="btn btn-xs btn-default text-danger mx-1 shadow" title="Delete">
                 <i class="fa fa-lg fa-fw fa-trash"></i>
             </button></a>';
-        $btnName = '<a href="'.route('fieldsEdit',$field->id).'">'.$field->name.'</a>';
+        $btnName = '<a href="'.route('fieldsEdit',$field->id).'">'.$field->description.'</a>';
 
         $fieldData[] = [$field->id , $btnName, $field->step,$field->uuid,$field->active, '<nobr>'.$btnEdit.$btnDelete.'</nobr>'];
         }
