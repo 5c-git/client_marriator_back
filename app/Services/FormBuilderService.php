@@ -113,12 +113,13 @@ class FormBuilderService
                             if(is_array($oneData)){
                                 foreach ($oneData as $oneDataNew){
                                     if(!empty($oneDataNew)){
-                                        $formVal[$oneDataNew.Str::random(10)] = $kDataForm;
+                                        $formVal[$oneDataNew.$kDataForm.Str::random(10)] = $oneDataNew;
                                     }
                                 }
                             }else {
                                 $formVal[$oneData.Str::random(10)] = $kDataForm;
                             }
+                            $formVal[$kDataForm.Str::random(10)] = $oneData;
                         }
                     }
                 } else {
