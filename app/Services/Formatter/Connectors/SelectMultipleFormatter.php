@@ -55,7 +55,7 @@ class SelectMultipleFormatter implements FormaterInterface
                 $data['moreData'] = $fieldsData->moreData;
             }
             if(!empty($fieldsData->errorData)){
-                $data['errorData'] = $fieldsData->errorData;
+                $data['error']= $fieldsData->errorData;
             }
         }
 
