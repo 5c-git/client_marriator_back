@@ -133,7 +133,7 @@ class FormBuilderService
 
     private function getFields(): void
     {
-        $this->fieldsAll = Fields::orderBy('sort', 'asc')->whereNotNull('step')->get();
+        $this->fieldsAll = Fields::orderBy('sort', 'asc')->where('active',true)->whereNotNull('step')->get();
         foreach ($this->fieldsAll as $field) {
             if (!empty($field->directory)) {
                 $field->oldType = $field->type;
@@ -158,7 +158,7 @@ class FormBuilderService
 
     private function getAllFields($section): void
     {
-        $this->fieldsAll = Fields::orderBy('sort', 'asc')->where('section',$section)->whereNotNull('step')->get();
+        $this->fieldsAll = Fields::orderBy('sort', 'asc')->where('active',true)->where('section',$section)->whereNotNull('step')->get();
         foreach ($this->fieldsAll as $field) {
             if (!empty($field->directory)) {
                 $field->oldType = $field->type;
@@ -271,7 +271,7 @@ class FormBuilderService
 
     public function getUserField(array $moreData,array $errorData): array
     {
-        $this->fieldsAll = Fields::orderBy('step', 'asc')->orderBy('sort', 'asc')->whereNotNull('step')->get();
+        $this->fieldsAll = Fields::orderBy('step', 'asc')->where('active',true)->whereNotNull('step')->orderBy('sort', 'asc')->get();
         $userFields = [];
         foreach ($this->fieldsAll as $field) {
             if (!empty($field->directory)) {

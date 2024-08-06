@@ -11,7 +11,7 @@ class Bank extends Model implements ModelDirectoryInterface
 {
     use HasFactory;
 
-    public static int $fieldsTypeEnum = FieldsTypeEnum::select->value;
+    public static int $fieldsTypeEnum = FieldsTypeEnum::autocomplete->value;
     public static string $uuid = 'directory_bank';
 
     protected $table = 'directory_bank';
