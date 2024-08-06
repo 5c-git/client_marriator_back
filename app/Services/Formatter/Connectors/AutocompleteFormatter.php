@@ -11,14 +11,12 @@ class AutocompleteFormatter implements FormaterInterface
     public static function createFormat($fieldsData,$value):array
     {
         $data = [];
-        if(!empty($value) && !is_array($value)){
-            $value = [$value];
-        }
+
         if(!empty($fieldsData->valuesDirectory)) {
             //$data['uuid'] = $fieldsData->uuid;
             $data['inputType'] = self::$type;
             $data['name'] = $fieldsData->uuid;
-            $data['value'] = $value ?: [];
+            $data['value'] = $value ?: '';
             $data['placeholder'] = $fieldsData->placeholder?:'';
             $data['disabled'] = false;
             $option = [];
