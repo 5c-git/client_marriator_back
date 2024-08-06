@@ -220,11 +220,7 @@ class FormBuilderService
 
             if ($field->type != FieldsTypeEnum::directory->value) {
                 if ($fieldDataFormat = FieldsTypeEnum::from($field->type)?->typeClassFormatter()::createFormat($field, $value)) {
-                    if($personal) {
-                        $this->formatedData[$field->section][] = $fieldDataFormat;
-                    }else{
-                        $this->formatedData[] = $fieldDataFormat;
-                    }
+                    $this->formatedData[] = $fieldDataFormat;
                 }
             }
         }
