@@ -50,9 +50,12 @@ class FormController extends Controller
 
     public function getUserInfo(Request $request)
     {
+        $userData = [];
         $user = Auth::user();
         $user->img = config('app.url') . Storage::url($user->img);
-        $response['result']['userData'] = $user->toArray();
+        $userData['email'] = $user->email;
+        $userData['img'] = $user->img;
+        $response['result']['userData'] = $userData;
         $response['status'] = 'success';
         return response()->json($response, 200);
     }
