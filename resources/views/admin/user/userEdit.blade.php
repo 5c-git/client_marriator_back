@@ -76,7 +76,11 @@
                         Название поля - {{$field->heading?:$field->name}}
                         </label>
                         <label for="error" class="col-sm-8 col-form-label">
+                            @if(strripos($field->value, 'http') === false)
                            Значение - {{$field->value}}
+                            @else
+                                <a target="_blank" href="{{$field->value}}">{{$field->value}}</a>
+                            @endif
                         </label>
                     </div>
                         <p>uuid - {{$field->uuid}}</p>
