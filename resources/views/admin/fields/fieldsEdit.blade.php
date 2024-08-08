@@ -136,7 +136,7 @@
             <div class="col-sm-10">
                 <select type="text" class="form-control" name="helperInfo_link_type" id="helperInfo_link_type">
                     <option value="external" {{$field->helperInfo_link_type == 'external'?'selected':''}}>Внутренняя</option>
-                    <option value="internal" {{$field->helperInfo_link_type == 'external'?'selected':''}}>Внешняя</option>
+                    <option value="internal" {{$field->helperInfo_link_type == 'internal'?'selected':''}}>Внешняя</option>
                 </select>
             </div>
         </div>
