@@ -359,7 +359,7 @@ class RegistrationController extends Controller
             $response['result']['code'] = $emailCodeService->createCode();
             $response['status'] = $emailCodeService->status;
             if ($emailCodeService->status == 'success') {
-                $user->email_verified_at = '';
+                $user->email_verified_at = null;
                 $user->save();
             }
             return response()->json($response, 200);
