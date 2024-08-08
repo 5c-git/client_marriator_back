@@ -235,8 +235,6 @@ class RegistrationController extends Controller
 
     public function startRestorePin(Request $request){
         $user = Auth::user();
-        $user->pin = '';
-        $user->save();
         $smsCodeService = new SmsCodeService($user->phone);
         $response['result']['code'] = $smsCodeService->createCode();
         $response['status'] = $smsCodeService->status;
@@ -294,6 +292,8 @@ class RegistrationController extends Controller
 
         $smsCodeResult = (new SmsCodeService($user->phone,(int)$request->code))->checkCode();
         if($smsCodeResult['status'] == 'success'){
+            $user->pin = '';
+            $user->save();
             $apiTokenService = new ApiTokenService($user);
             if(!$user->confirmRegister) {
                 if(!$user->finishRegister) {
