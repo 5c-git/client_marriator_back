@@ -292,7 +292,7 @@ class RegistrationController extends Controller
 
         $smsCodeResult = (new SmsCodeService($user->phone,(int)$request->code))->checkCode();
         if($smsCodeResult['status'] == 'success'){
-            $user->pin = '';
+            $user->pin = null;
             $user->save();
             $apiTokenService = new ApiTokenService($user);
             if(!$user->confirmRegister) {
