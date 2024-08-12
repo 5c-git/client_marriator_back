@@ -311,7 +311,7 @@ class UserPersonalInfoController extends Controller
     public function setUserEmail(Request $request)
     {
         $user = Auth::user();
-        if (!empty($request->email)) {
+        if (!empty($request->email) && User::where('email',$request->email)->doesntExist()) {
             $user->email = $request->email;
             $emailCodeService = new EmailVerifiedService($request->email);
             $response['result']['code'] = $emailCodeService->createCode();
@@ -321,7 +321,7 @@ class UserPersonalInfoController extends Controller
             }
             return response()->json($response, 200);
         } else {
-            $response['error'] = 'Email отсутствует';
+            $response['error'] = 'Email отсутствует или присвоен другому пользователю';
             $response['status'] = 'error';
             return response()->json($response, 417);
         }
