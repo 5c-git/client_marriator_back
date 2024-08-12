@@ -52,6 +52,11 @@ class UserPersonalInfoController extends Controller
     {
         $user = Auth::user();
         $user->img = config('app.url') . Storage::url($user->img);
+        if(strripos($user->email, 'mariator.ru') === false) {
+
+        }else{
+            $user->email = '';
+        }
         $response['result']['userData'] = $user->toArray();
         $response['status'] = 'success';
         return response()->json($response, 200);

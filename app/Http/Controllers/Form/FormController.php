@@ -53,7 +53,11 @@ class FormController extends Controller
         $userData = [];
         $user = Auth::user();
         $user->img = config('app.url') . Storage::url($user->img);
-        $userData['email'] = $user->email;
+        if(strripos($user->email, 'mariator.ru') === false) {
+            $userData['email'] = $user->email;
+        }else{
+            $userData['email'] = '';
+        }
         $userData['img'] = $user->img;
         $response['result']['userData'] = $userData;
         $response['status'] = 'success';
