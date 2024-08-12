@@ -135,8 +135,8 @@
             <label for="helperInfo_link_type" class="col-sm-2 col-form-label">Вспомогательный тип ссылки</label>
             <div class="col-sm-10">
                 <select type="text" class="form-control" name="helperInfo_link_type" id="helperInfo_link_type">
-                    <option value="external" {{$field->helperInfo_link_type == 'external'?'selected':''}}>Внутренняя</option>
-                    <option value="internal" {{$field->helperInfo_link_type == 'internal'?'selected':''}}>Внешняя</option>
+                    <option value="internal" {{$field->helperInfo_link_type == 'internal'?'selected':''}}>Внутренняя</option>
+                    <option value="external" {{$field->helperInfo_link_type == 'external'?'selected':''}}>Внешняя</option>
                 </select>
             </div>
         </div>
