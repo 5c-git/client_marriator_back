@@ -353,7 +353,7 @@ class RegistrationController extends Controller
     public function setUserEmail(Request $request)
     {
         $user = Auth::user();
-        if (!empty($request->email) && User::where('email',$request->email)->doesntExist()) {
+        if (!empty($request->email) && (User::where('email',$request->email)->doesntExist() || $user->email == $request->email)) {
             $user->email = $request->email;
             $emailCodeService = new EmailVerifiedService($request->email);
             $response['result']['code'] = $emailCodeService->createCode();
