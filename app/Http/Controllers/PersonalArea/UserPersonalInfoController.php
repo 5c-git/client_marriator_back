@@ -118,6 +118,12 @@ class UserPersonalInfoController extends Controller
         } else {
             $user->errorData = [];
         }
+        if(!is_array($user->errorData)){
+            $user->errorData = json_encode([]);
+            $user->save();
+            $user->errorData = [];
+        }
+
 
         $formDataService->setDataUser($user->expansionData, $user->errorData);
         $response['result']['formData'] = $formDataService->createPersonalUserFormData($request->section);
@@ -204,6 +210,9 @@ class UserPersonalInfoController extends Controller
                 $userData[$k] = $oneField;
             }
             $user->data = json_encode($userData);
+            if(empty($userError) || !is_array($userData)){
+                $userData = [];
+            }
             $user->errorData = json_encode($userError);
             $user->save();
 
