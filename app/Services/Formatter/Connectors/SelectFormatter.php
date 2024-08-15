@@ -15,7 +15,7 @@ class SelectFormatter implements FormaterInterface
             //$data['uuid'] = $fieldsData->uuid;
             $data['inputType'] = self::$type;
             $data['name'] = $fieldsData->uuid;
-            $data['value'] = $value ?: '';
+            $data['value'] = (string)$value ?: '';
             $data['disabled'] = false;
             $option = [];
             foreach ($fieldsData->valuesDirectory as $item) {
