@@ -28,6 +28,7 @@
     <h4>Идентификатор пользователя - {{ $user->id }}</h4>
     <h4>Телефон пользователя - {{ $user->id }}</h4>
     <h4>Права пользователя - {{ $user->roles()->first()?->name ?:'user' }}</h4>
+    <h4>Пин - {{ $user->pin }}</h4>
     <form class="userEdit">
         @csrf
         <input type="hidden" name="id" value="{{ $user->id }}">
