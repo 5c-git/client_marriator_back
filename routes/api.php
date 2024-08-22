@@ -54,6 +54,8 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
 
         Route::post('/saveRequisitesData/', 'App\Http\Controllers\PersonalArea\UserPersonalInfoController@saveRequisitesData')->name('saveRequisitesData');
         Route::post('/saveEstateData/', 'App\Http\Controllers\PersonalArea\UserPersonalInfoController@saveEstateData')->name('saveEstateData');
+        Route::post('/deleteRequisite/', 'App\Http\Controllers\PersonalArea\UserPersonalInfoController@deleteRequisite')->name('deleteRequisite');
+        Route::post('/deleteEstate/', 'App\Http\Controllers\PersonalArea\UserPersonalInfoController@deleteEstate')->name('deleteEstate');
 
         Route::get('/getformActivities/', 'App\Http\Controllers\PersonalArea\UserPersonalInfoController@getformActivities')->name('getformActivities');
         Route::post('/saveUserFieldsActivities/', 'App\Http\Controllers\PersonalArea\UserPersonalInfoController@saveUserFieldsActivities')->name('saveUserFieldsActivities');
