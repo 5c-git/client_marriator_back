@@ -612,6 +612,7 @@ class UserPersonalInfoController extends Controller
             $requisitesData[] = $request->data;
         }
         $user->requisitesData = json_encode($requisitesData);
+        $user->save();
         $response['status'] = 'success';
         return response()->json($response, 200);
     }
@@ -668,6 +669,7 @@ class UserPersonalInfoController extends Controller
             $estateData[] = $request->data;
         }
         $user->estateData = json_encode($estateData);
+        $user->save();
         $response['status'] = 'success';
         return response()->json($response, 200);
     }
