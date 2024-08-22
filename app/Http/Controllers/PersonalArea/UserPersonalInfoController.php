@@ -800,4 +800,108 @@ class UserPersonalInfoController extends Controller
         return response()->json($response);
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/personal/deleteEstate/",
+     *     operationId="deleteEstate",
+     *     tags={"Personal area"},
+     *     summary="deleteEstate",
+     *     description="deleteEstate Endpoint",
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 required={"data"},
+     *                 @OA\Property(property="data",type="json"),
+     *             ),
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *       response="200",
+     *       description="delete requisites",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result", value={"status": "success"},summary="Успешный запрос"),
+     *        )
+     *     ),
+     *     @OA\Response(
+     *       response="417",
+     *       description="dataId is empty",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result data", value={"status": "error", "error":"Поле номер имущества обязательна для заполнения"},summary="Ошибка данных"),
+     *       )
+     *     ),
+     * )
+     */
+
+    public function deleteEstate(Request $request){
+        $user = Auth::user();
+        if (empty($request->dataId)) {
+            $response['error'] = 'Поле номер имущества обязательна для заполнения';
+            $response['status'] = 'error';
+            return response()->json($response, 417);
+        }
+        if (!empty($user->estateData)) {
+            $estateData = json_decode($user->estateData, true);
+            unset($estateData[$request->dataId]);
+        } else {
+            $estateData = [];
+        }
+        $user->estateData = json_encode($estateData);
+        $user->save();
+        $response['status'] = 'success';
+        return response()->json($response, 200);
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/api/personal/deleteRequisite/",
+     *     operationId="deleteRequisite",
+     *     tags={"Personal area"},
+     *     summary="deleteRequisite",
+     *     description="deleteRequisite Endpoint",
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 required={"data"},
+     *                 @OA\Property(property="data",type="json"),
+     *             ),
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *       response="200",
+     *       description="delete requisites",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result", value={"status": "success"},summary="Успешный запрос"),
+     *        )
+     *     ),
+     *     @OA\Response(
+     *       response="417",
+     *       description="dataId is empty",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result data", value={"status": "error", "error":"Поле номер реквизитов обязательна для заполнения"},summary="Ошибка данных"),
+     *       )
+     *     ),
+     * )
+     */
+
+    public function deleteRequisite(Request $request){
+        $user = Auth::user();
+        if (empty($request->dataId)) {
+            $response['error'] = 'Поле номер реквизитов обязательна для заполнения';
+            $response['status'] = 'error';
+            return response()->json($response, 417);
+        }
+        if (!empty($user->requisitesData)) {
+            $requisitesData = json_decode($user->requisitesData, true);
+            unset($requisitesData[$request->dataId]);
+        } else {
+            $requisitesData = [];
+        }
+        $user->requisitesData = json_encode($requisitesData);
+        $user->save();
+        $response['status'] = 'success';
+        return response()->json($response, 200);
+    }
+
 }
