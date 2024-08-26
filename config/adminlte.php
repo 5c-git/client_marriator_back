@@ -299,6 +299,11 @@ return [
             'url'  => 'admin/users/',
             'icon' => 'fas fa-fw fa-user',
         ],
+        [
+            'text' => 'Выгрузка Справочников',
+            'url'  => 'admin/importDirectory/',
+            'icon' => 'fas fa-fw fa-upload',
+        ],
         // Navbar items:
 //        [
 //            'type' => 'navbar-search',

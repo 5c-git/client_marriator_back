@@ -16,6 +16,7 @@ use Illuminate\Support\Str;
 use App\Services\Register\SmsCodeService;
 use App\Enum\Fields\PersonalInfoSectionEnum;
 use App\Services\Register\EmailVerifiedService;
+use App\Models\Fields\Directory\Bank;
 
 
 class UserPersonalInfoController extends Controller
@@ -48,7 +49,7 @@ class UserPersonalInfoController extends Controller
      * )
      */
 
-    public function getUserInfo(Request $request)
+    public function getUserInfo(Request $request): \Illuminate\Http\JsonResponse
     {
         $user = Auth::user();
         if($user->img) {
@@ -97,7 +98,7 @@ class UserPersonalInfoController extends Controller
      * )
      */
 
-    public function getUserFields(Request $request)
+    public function getUserFields(Request $request): \Illuminate\Http\JsonResponse
     {
         $user = Auth::user();
 
@@ -151,7 +152,7 @@ class UserPersonalInfoController extends Controller
      * )
      */
 
-    public function getUserPersonalMenu(Request $request)
+    public function getUserPersonalMenu(Request $request): \Illuminate\Http\JsonResponse
     {
         $user = Auth::user();
         if (!empty($user->errorData)) {
@@ -197,7 +198,7 @@ class UserPersonalInfoController extends Controller
      * )
      */
 
-    public function saveUserFields(Request $request)
+    public function saveUserFields(Request $request): \Illuminate\Http\JsonResponse
     {
         $user = Auth::user();
         if (!empty($request->formData)) {
@@ -261,7 +262,7 @@ class UserPersonalInfoController extends Controller
      * )
      */
 
-    public function saveUserImg(Request $request)
+    public function saveUserImg(Request $request): \Illuminate\Http\JsonResponse
     {
         $user = Auth::user();
         if ($request->hasFile('file')) {
@@ -317,7 +318,7 @@ class UserPersonalInfoController extends Controller
      * )
      */
 
-    public function setUserEmail(Request $request)
+    public function setUserEmail(Request $request): \Illuminate\Http\JsonResponse
     {
         $user = Auth::user();
         if (!empty($request->email) && (User::where('email',$request->email)->doesntExist() || $user->email == $request->email)) {
@@ -371,7 +372,7 @@ class UserPersonalInfoController extends Controller
      * )
      */
 
-    public function checkEmailCode(Request $request)
+    public function checkEmailCode(Request $request): \Illuminate\Http\JsonResponse
     {
         if (empty($request->code)) {
             $response['error'] = 'Поле код обязательна для заполнения';
@@ -424,7 +425,7 @@ class UserPersonalInfoController extends Controller
      * )
      */
 
-    public function changeUserPhone(Request $request)
+    public function changeUserPhone(Request $request): \Illuminate\Http\JsonResponse
     {
         if (empty($request->phone)) {
             $response['error'] = 'Поле телефон обязательна для заполнения';
@@ -475,7 +476,7 @@ class UserPersonalInfoController extends Controller
      * )
      */
 
-    public function confirmChangeUserPhone(Request $request)
+    public function confirmChangeUserPhone(Request $request): \Illuminate\Http\JsonResponse
     {
         if (empty($request->phone)) {
             $response['error'] = 'Поле телефон обязательна для заполнения';
@@ -516,7 +517,7 @@ class UserPersonalInfoController extends Controller
      *     ),
      * )
      */
-    public function getRequisitesData(Request $request)
+    public function getRequisitesData(Request $request): \Illuminate\Http\JsonResponse
     {
         $user = Auth::user();
         if (!empty($user->requisitesData)) {
@@ -546,7 +547,7 @@ class UserPersonalInfoController extends Controller
      * )
      */
 
-    public function getEstateData(Request $request)
+    public function getEstateData(Request $request): \Illuminate\Http\JsonResponse
     {
         $user = Auth::user();
         if (!empty($user->estateData)) {
@@ -593,7 +594,7 @@ class UserPersonalInfoController extends Controller
      * )
      */
 
-    public function saveRequisitesData(Request $request)
+    public function saveRequisitesData(Request $request): \Illuminate\Http\JsonResponse
     {
         $user = Auth::user();
         if (empty($request->data)) {
@@ -650,7 +651,7 @@ class UserPersonalInfoController extends Controller
      *     ),
      * )
      */
-    public function saveEstateData(Request $request)
+    public function saveEstateData(Request $request): \Illuminate\Http\JsonResponse
     {
         $user = Auth::user();
         if (empty($request->data)) {
@@ -707,7 +708,7 @@ class UserPersonalInfoController extends Controller
      * )
      */
 
-    public function getformActivities(Request $request)
+    public function getFormActivities(Request $request): \Illuminate\Http\JsonResponse
     {
         $user = Auth::user();
         if($request->step<=3 || empty($request->step)) {
@@ -769,7 +770,7 @@ class UserPersonalInfoController extends Controller
      * )
      */
 
-    public function saveUserFieldsActivities(Request $request)
+    public function saveUserFieldsActivities(Request $request): \Illuminate\Http\JsonResponse
     {
         $user = Auth::user();
         if (!empty($request->formData) && $request->step) {
@@ -833,7 +834,8 @@ class UserPersonalInfoController extends Controller
      * )
      */
 
-    public function deleteEstate(Request $request){
+    public function deleteEstate(Request $request): \Illuminate\Http\JsonResponse
+    {
         $user = Auth::user();
         if (empty($request->dataId)) {
             $response['error'] = 'Поле номер имущества обязательна для заполнения';
@@ -885,7 +887,8 @@ class UserPersonalInfoController extends Controller
      * )
      */
 
-    public function deleteRequisite(Request $request){
+    public function deleteRequisite(Request $request): \Illuminate\Http\JsonResponse
+    {
         $user = Auth::user();
         if (empty($request->dataId)) {
             $response['error'] = 'Поле номер реквизитов обязательна для заполнения';
@@ -903,5 +906,101 @@ class UserPersonalInfoController extends Controller
         $response['status'] = 'success';
         return response()->json($response, 200);
     }
+
+    /**
+     * @OA\Get(
+     *     path="/api/personal/getBic/",
+     *     operationId="getBic",
+     *     tags={"Personal area"},
+     *     summary="getBic",
+     *     description="getBic Endpoint",
+     *     @OA\Response(
+     *       response="200",
+     *       description="get bic",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result", value={"status": "success","result": {"bankData": {"value": "значение uuid","label": "название","disabled": "false",},}},summary="Успешный запрос"),
+     *       )
+     *     ),
+     * )
+     */
+
+    public function getBic(): \Illuminate\Http\JsonResponse
+    {
+        $banks = Bank::where('active',true)->get();
+        $response['result']['bankData'] = [];
+        foreach ($banks as $bank) {
+            $response['result']['bankData'][] = ['value' => $bank->uuid, 'label' => $bank->name, 'disabled' => false];
+        }
+        $response['status'] = 'success';
+        return response()->json($response, 200);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/api/personal/getMapField/",
+     *     operationId="getMapField",
+     *     tags={"Personal area"},
+     *     summary="getMapField",
+     *     description="getMapField Endpoint",
+     *     @OA\Response(
+     *       response="200",
+     *       description="get Map Field",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result", value={"status": "success", "result": {"mapAddress": "string map address","mapRadius": "string map radius"}},summary="Успешный запрос"),
+     *       )
+     *     ),
+     * )
+     */
+
+    public function getMapField(): \Illuminate\Http\JsonResponse
+    {
+        $user = Auth::user();
+        $response['result']['mapAddress'] = $user->mapAddress;
+        $response['result']['mapRadius'] = $user->mapRadius;
+        $response['status'] = 'success';
+        return response()->json($response, 200);
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/api/personal/setMapField/",
+     *     operationId="setMapField",
+     *     tags={"Personal area"},
+     *     summary="setMapField",
+     *     description="setMapField Endpoint",
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(property="mapAddress",type="string"),
+     *                 @OA\Property(property="mapRadius",type="string"),
+     *             ),
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *       response="200",
+     *       description="setMapField",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result", value={"status": "success", "result": {"mapAddress": "string map address","mapRadius": "string map radius"}},summary="Успешный запрос"),
+     *        )
+     *     ),
+     * )
+     */
+    public function setMapField(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $user = Auth::user();
+        if(!empty($request->mapAddress)){
+            $user->mapAddress = $request->mapAddress;
+        }
+        if(!empty($request->mapRadius)){
+            $user->mapRadius = $request->mapRadius;
+        }
+        $response['result']['mapAddress'] = $user->mapAddress;
+        $response['result']['mapRadius'] = $user->mapRadius;
+        $response['status'] = 'success';
+        return response()->json($response, 200);
+    }
+
+
 
 }

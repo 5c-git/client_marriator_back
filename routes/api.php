@@ -57,8 +57,13 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
         Route::post('/deleteRequisite/', 'App\Http\Controllers\PersonalArea\UserPersonalInfoController@deleteRequisite')->name('deleteRequisite');
         Route::post('/deleteEstate/', 'App\Http\Controllers\PersonalArea\UserPersonalInfoController@deleteEstate')->name('deleteEstate');
 
-        Route::get('/getformActivities/', 'App\Http\Controllers\PersonalArea\UserPersonalInfoController@getformActivities')->name('getformActivities');
+        Route::get('/getFormActivities/', 'App\Http\Controllers\PersonalArea\UserPersonalInfoController@getFormActivities')->name('getFormActivities');
         Route::post('/saveUserFieldsActivities/', 'App\Http\Controllers\PersonalArea\UserPersonalInfoController@saveUserFieldsActivities')->name('saveUserFieldsActivities');
+
+        Route::get('/getBic/', 'App\Http\Controllers\PersonalArea\UserPersonalInfoController@getBic')->name('getBic');
+
+        Route::get('/getMapField/', 'App\Http\Controllers\PersonalArea\UserPersonalInfoController@getMapField')->name('getMapField');
+        Route::post('/setMapField/', 'App\Http\Controllers\PersonalArea\UserPersonalInfoController@setMapField')->name('setMapField');
     });
 });
 

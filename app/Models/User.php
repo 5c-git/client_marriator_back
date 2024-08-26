@@ -35,7 +35,9 @@ class User extends Authenticatable
         'expansionData',
         'errorData',
         'estateData',
-        'requisitesData'
+        'requisitesData',
+        'mapAddress',
+        'mapRadius'
     ];
 
     /**

@@ -223,6 +223,11 @@ Route::group(['prefix' => 'admin'], function () {
             Route::get('/delete/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\MedicalBookController@delete')->name('medical_bookDelete');
         });
 
+        Route::group(['prefix' => 'importDirectory'], function () {
+            Route::get('/', 'App\Http\Controllers\Admin\Import\ImportController@index')->name('index');
+            Route::post('/import', 'App\Http\Controllers\Admin\Import\ImportController@import')->name('import');
+        });
+
 
 
 
