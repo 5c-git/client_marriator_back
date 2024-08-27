@@ -523,9 +523,11 @@ class UserPersonalInfoController extends Controller
         $user = Auth::user();
         $responseData = [];
         if (!empty($user->requisitesData)) {
+            $i = 0;
             $requisitesData = json_decode($user->requisitesData, true);
             foreach ($requisitesData as $k=>$requisitesDataOne){
-                $responseData[$k] = $requisitesDataOne;
+                $responseData[$i] = $requisitesDataOne;
+                $i++;
             }
         }
         $response['result'] = $responseData;
@@ -556,8 +558,10 @@ class UserPersonalInfoController extends Controller
         $responseData = [];
         if (!empty($user->estateData)) {
             $estateData = json_decode($user->estateData, true);
+            $i = 0;
             foreach ($estateData as $k=>$estateDataOne){
-                $responseData[$k] = $estateDataOne;
+                $responseData[$i] = $estateDataOne;
+                $i++;
             }
         }
         $response['result'] = $responseData;
