@@ -520,12 +520,16 @@ class UserPersonalInfoController extends Controller
     public function getRequisitesData(Request $request): \Illuminate\Http\JsonResponse
     {
         $user = Auth::user();
+        $responseData = [];
         if (!empty($user->requisitesData)) {
             $requisitesData = json_decode($user->requisitesData, true);
-        } else {
-            $requisitesData = [];
+            $i=0;
+            foreach ($requisitesData as $requisitesDataOne){
+                $responseData[$i] = $requisitesDataOne;
+                $i++;
+            }
         }
-        $response['result'] = $requisitesData;
+        $response['result'] = $responseData;
         $response['status'] = 'success';
         return response()->json($response, 200);
     }
@@ -550,12 +554,16 @@ class UserPersonalInfoController extends Controller
     public function getEstateData(Request $request): \Illuminate\Http\JsonResponse
     {
         $user = Auth::user();
+        $responseData = [];
         if (!empty($user->estateData)) {
             $estateData = json_decode($user->estateData, true);
-        } else {
-            $estateData = [];
+            $i=0;
+            foreach ($estateData as $estateDataOne){
+                $responseData[$i] = $estateDataOne;
+                $i++;
+            }
         }
-        $response['result'] = $estateData;
+        $response['result'] = $responseData;
         $response['status'] = 'success';
         return response()->json($response, 200);
     }
