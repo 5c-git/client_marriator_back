@@ -37,11 +37,11 @@ class UserPersonalInfoController extends Controller
      *     path="/api/personal/getUserInfo/",
      *     operationId="getUserInfo",
      *     tags={"Personal area"},
-     *     summary="Получить данные из “Моего профиля” пользователя",
+     *     summary="Получить данные из профиля пользователя",
      *     description="Метод получения данных из профиля пользователя",
      *     @OA\Response(
      *       response="200",
-     *       description="Данные из “Моего профиля” успешно получены",
+     *       description="Данные из профиля успешно получены",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result", value={"status": "success","result":{"userData":{},}},summary="Успех"),
      *       )
@@ -75,7 +75,7 @@ class UserPersonalInfoController extends Controller
      *     @OA\Parameter(
      *         name="section",
      *         in="query",
-     *         description="Раздел "Мой профиль": номер подраздела"",
+     *         description="Раздел 'Мой профиль': номер подраздела"",
      *         required=true,
      *         @OA\Schema(
      *             type="number",
@@ -140,8 +140,8 @@ class UserPersonalInfoController extends Controller
      *     path="/api/personal/getUserPersonalMenu/",
      *     operationId="getUserPersonalMenu",
      *     tags={"Personal area"},
-     *     summary="Получить список подразделов раздела "Мой профиль"",
-     *     description="Метод получения списка подразделов "Моего профиля"",
+     *     summary="Получить список подразделов раздела 'Мой профиль'",
+     *     description="Метод получения списка подразделов 'Моего профиля'",
      *     @OA\Response(
      *       response="200",
      *       description="Данные успешно получены",
@@ -399,7 +399,7 @@ class UserPersonalInfoController extends Controller
      *     operationId="changeUserPhone",
      *     tags={"Personal area"},
      *     summary="Сохранить номер телефона в профиле пользователя",
-     *     description="Метод сохранения номера телефона в "Моем профиле"",
+     *     description="Метод сохранения номера телефона в профиле пользователя",
      *     @OA\RequestBody(
      *         @OA\MediaType(
      *             mediaType="application/json",
@@ -689,8 +689,8 @@ class UserPersonalInfoController extends Controller
      *     path="/api/personal/getformActivities/",
      *     operationId="getformActivities",
      *     tags={"Personal area"},
-     *     summary="Получить данные из раздела "Виды деятельности" в профиле пользователя",
-     *     description="Метод получения данных из раздела "Виды деятельности"",
+     *     summary="Получить данные из раздела 'Виды деятельности' в профиле пользователя",
+     *     description="Метод получения данных из раздела 'Виды деятельности'",
      *     @OA\Parameter(
      *         name="step",
      *         in="query",
@@ -702,7 +702,7 @@ class UserPersonalInfoController extends Controller
      *     ),
      *     @OA\Response(
      *       response="200",
-     *       description="Данные из раздела "Виды деятельности" успешно получены",
+     *       description="Данные из раздела 'Виды деятельности' успешно получены",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result", value={"status": "success","result":{"formData":{},"step":{},"type":"needRequired|allowedNewStep",}},summary="Успех"),
      *       )
@@ -750,8 +750,8 @@ class UserPersonalInfoController extends Controller
      *     path="/api/personal/saveUserFieldsActivities/",
      *     operationId="saveUserFieldsActivities",
      *     tags={"Personal area"},
-     *     summary="Сохранить данные в разделе "Виды деятельности"",
-     *     description="Метод сохранения/ изменения данных в разделе "Виды деятельности"",
+     *     summary="Сохранить данные в разделе 'Виды деятельности'",
+     *     description="Метод сохранения/ изменения данных в разделе 'Виды деятельности'",
      *     @OA\RequestBody(
      *         @OA\MediaType(
      *             mediaType="application/json",
@@ -919,8 +919,8 @@ class UserPersonalInfoController extends Controller
      *     path="/api/personal/getBic/",
      *     operationId="getBic",
      *     tags={"Personal area"},
-     *     summary="Получить данные банковского бика пользователя",
-     *     description="Метод получения бика пользователя",
+     *     summary="Получить данные банковского БИКа пользователя",
+     *     description="Метод получения БИКа пользователя",
      *     @OA\Response(
      *       response="200",
      *       description="Бик получен",
