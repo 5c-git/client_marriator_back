@@ -524,10 +524,8 @@ class UserPersonalInfoController extends Controller
         $responseData = [];
         if (!empty($user->requisitesData)) {
             $requisitesData = json_decode($user->requisitesData, true);
-            $i=0;
-            foreach ($requisitesData as $requisitesDataOne){
-                $responseData[$i] = $requisitesDataOne;
-                $i++;
+            foreach ($requisitesData as $k=>$requisitesDataOne){
+                $responseData[$k] = $requisitesDataOne;
             }
         }
         $response['result'] = $responseData;
@@ -558,10 +556,8 @@ class UserPersonalInfoController extends Controller
         $responseData = [];
         if (!empty($user->estateData)) {
             $estateData = json_decode($user->estateData, true);
-            $i=0;
-            foreach ($estateData as $estateDataOne){
-                $responseData[$i] = $estateDataOne;
-                $i++;
+            foreach ($estateData as $k=>$estateDataOne){
+                $responseData[$k] = $estateDataOne;
             }
         }
         $response['result'] = $responseData;
