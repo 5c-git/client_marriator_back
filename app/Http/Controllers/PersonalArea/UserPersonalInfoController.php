@@ -75,7 +75,7 @@ class UserPersonalInfoController extends Controller
      *     @OA\Parameter(
      *         name="section",
      *         in="query",
-     *         description="Раздел 'Мой профиль': номер подраздела"",
+     *         description="Раздел 'Мой профиль': номер подраздела",
      *         required=true,
      *         @OA\Schema(
      *             type="number",
