@@ -37,11 +37,11 @@ class UserPersonalInfoController extends Controller
      *     path="/api/personal/getUserInfo/",
      *     operationId="getUserInfo",
      *     tags={"Personal area"},
-     *     summary="getForm",
-     *     description="getUserInfo Endpoint",
+     *     summary="Получить данные из “Моего профиля” пользователя",
+     *     description="Метод получения данных из профиля пользователя",
      *     @OA\Response(
      *       response="200",
-     *       description="uset info",
+     *       description="Данные из “Моего профиля” успешно получены",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result", value={"status": "success","result":{"userData":{},}},summary="Успех"),
      *       )
@@ -49,7 +49,7 @@ class UserPersonalInfoController extends Controller
      * )
      */
 
-    public function getUserInfo(Request $request): \Illuminate\Http\JsonResponse
+    public function getUserInfo(Request $request)
     {
         $user = Auth::user();
         if($user->img) {
@@ -70,12 +70,12 @@ class UserPersonalInfoController extends Controller
      *     path="/api/personal/getUserFields/",
      *     operationId="getUserFields",
      *     tags={"Personal area"},
-     *     summary="getForm",
-     *     description="getForm",
+     *     summary="Получить данные из подразделов профиля пользователя",
+     *     description="Метод получения данных из подразделов профиля пользователя",
      *     @OA\Parameter(
      *         name="section",
      *         in="query",
-     *         description="section for form",
+     *         description="Раздел "Мой профиль": номер подраздела"",
      *         required=true,
      *         @OA\Schema(
      *             type="number",
@@ -83,14 +83,14 @@ class UserPersonalInfoController extends Controller
      *     ),
      *     @OA\Response(
      *       response="200",
-     *       description="form data",
+     *       description="Данные успешно получены",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result", value={"status": "success","result":{"formData":{},"section":{},"type":"needRequired|allowedNewStep",}},summary="Успех"),
      *       )
      *     ),
      *     @OA\Response(
      *       response="417",
-     *       description="section is empty",
+     *       description="Неуспешный запрос",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result section", value={"status": "error", "error":"Поле раздел обязательна для заполнения"},summary="Ошибка section"),
      *       )
@@ -98,7 +98,7 @@ class UserPersonalInfoController extends Controller
      * )
      */
 
-    public function getUserFields(Request $request): \Illuminate\Http\JsonResponse
+    public function getUserFields(Request $request)
     {
         $user = Auth::user();
 
@@ -140,11 +140,11 @@ class UserPersonalInfoController extends Controller
      *     path="/api/personal/getUserPersonalMenu/",
      *     operationId="getUserPersonalMenu",
      *     tags={"Personal area"},
-     *     summary="getUserPersonalMenu",
-     *     description="getUserPersonalMenu",
+     *     summary="Получить список подразделов раздела "Мой профиль"",
+     *     description="Метод получения списка подразделов "Моего профиля"",
      *     @OA\Response(
      *       response="200",
-     *       description="menu data",
+     *       description="Данные успешно получены",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result", value={"status": "success","result":{"section":{}}},summary="Успех"),
      *       )
@@ -152,7 +152,7 @@ class UserPersonalInfoController extends Controller
      * )
      */
 
-    public function getUserPersonalMenu(Request $request): \Illuminate\Http\JsonResponse
+    public function getUserPersonalMenu(Request $request)
     {
         $user = Auth::user();
         if (!empty($user->errorData)) {
@@ -170,8 +170,8 @@ class UserPersonalInfoController extends Controller
      *     path="/api/personal/saveUserFields/",
      *     operationId="saveUserFields",
      *     tags={"Personal area"},
-     *     summary="saveUserFields",
-     *     description="saveUserFields Endpoint",
+     *     summary="Сохранить данные в профиль пользователя",
+     *     description="Метод добавления данных в профиль пользователя",
      *     @OA\RequestBody(
      *         @OA\MediaType(
      *             mediaType="application/json",
@@ -183,14 +183,14 @@ class UserPersonalInfoController extends Controller
      *     ),
      *     @OA\Response(
      *       response="200",
-     *       description="save form",
+     *       description="Сохранить форму",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result", value={"status": "success"},summary="Успех"),
      *       )
      *     ),
      *     @OA\Response(
      *       response="417",
-     *       description="formData is empty",
+     *       description="FormData пуст",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result formData", value={"status": "error", "error":"Ничего не загружено"},summary="Ошибка formData"),
      *       )
@@ -198,7 +198,7 @@ class UserPersonalInfoController extends Controller
      * )
      */
 
-    public function saveUserFields(Request $request): \Illuminate\Http\JsonResponse
+    public function saveUserFields(Request $request)
     {
         $user = Auth::user();
         if (!empty($request->formData)) {
@@ -231,8 +231,8 @@ class UserPersonalInfoController extends Controller
      *     path="/api/personal/saveUserImg/",
      *     operationId="saveUserImgPersonal",
      *     tags={"Personal area"},
-     *     summary="saveUserImgPersonal",
-     *     description="saveUserImgPersonal Endpoint",
+     *     summary="Сохранить фото в профиле пользователя",
+     *     description="Метод сохранения фото в профиле пользователя",
      *     @OA\RequestBody(
      *         @OA\MediaType(
      *             mediaType="multipart/form-data",
@@ -241,20 +241,21 @@ class UserPersonalInfoController extends Controller
      *                 @OA\Property(
      *                  property="file",
      *                  type="file",
+	                    description="Файл в формате jpg, png, pdf не более 6MB",
      *                  ),
      *             ),
      *         ),
      *     ),
      *     @OA\Response(
      *       response="200",
-     *       description="file  info",
+     *       description="Файл успешно загружен",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result", value={"status": "success","resFile":"url file"},summary="Успех"),
      *       )
      *     ),
      *     @OA\Response(
      *       response="417",
-     *       description="file is empty",
+     *       description="Неуспешный запрос",
      *       @OA\JsonContent(
      *           @OA\Examples(example="error", value={"status": "error", "error":"Ничего не загружено"},summary="Нехватка полей"),
      *       )
@@ -262,7 +263,7 @@ class UserPersonalInfoController extends Controller
      * )
      */
 
-    public function saveUserImg(Request $request): \Illuminate\Http\JsonResponse
+    public function saveUserImg(Request $request)
     {
         $user = Auth::user();
         if ($request->hasFile('file')) {
@@ -290,8 +291,8 @@ class UserPersonalInfoController extends Controller
      *     path="/api/personal/setUserEmail/",
      *     operationId="setUserEmail",
      *     tags={"Personal area"},
-     *     summary="setUserEmail",
-     *     description="setUserEmail Endpoint",
+     *     summary="Поменять email в профиле пользователя",
+     *     description="Метод сохранения email в профиле пользователя",
      *     @OA\RequestBody(
      *         @OA\MediaType(
      *             mediaType="application/json",
@@ -303,14 +304,14 @@ class UserPersonalInfoController extends Controller
      *     ),
      *     @OA\Response(
      *       response="200",
-     *       description="send email for verified",
+     *       description="Еmail отправлен, получен код для подтверждения",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result", value={"status": "success","result":{"code":{"status":"exists|success","ttl":"120 числовое поле если статус exists","code":"sms код для теста"}}},summary="Успешный запрос"),
      *       )
      *     ),
      *     @OA\Response(
      *       response="417",
-     *       description="email is empty",
+     *       description="Еmail не указан",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result", value={"status": "error", "error":"Email отсутствует"},summary="Нехватка полей"),
      *       )
@@ -318,7 +319,7 @@ class UserPersonalInfoController extends Controller
      * )
      */
 
-    public function setUserEmail(Request $request): \Illuminate\Http\JsonResponse
+    public function setUserEmail(Request $request)
     {
         $user = Auth::user();
         if (!empty($request->email) && (User::where('email',$request->email)->doesntExist() || $user->email == $request->email)) {
@@ -343,8 +344,8 @@ class UserPersonalInfoController extends Controller
      *     path="/api/personal/checkEmailCode/",
      *     operationId="checkEmailCode",
      *     tags={"Personal area"},
-     *     summary="checkEmailCode",
-     *     description="checkEmailCode Endpoint",
+     *     summary="Отправить код для подтверждения email",
+     *     description="Метод отправки кода для подтверждения email",
      *     @OA\RequestBody(
      *         @OA\MediaType(
      *             mediaType="application/json",
@@ -356,7 +357,7 @@ class UserPersonalInfoController extends Controller
      *     ),
      *     @OA\Response(
      *       response="200",
-     *       description="check email code success",
+     *       description="Код успешно отправлен",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result", value={"status": "success"},summary="Успех"),
      *           @OA\Examples(example="result error", value={"status": "error","result":{"code":{"status":"error|notExists"},}},summary="Ошибка"),
@@ -364,7 +365,7 @@ class UserPersonalInfoController extends Controller
      *     ),
      *     @OA\Response(
      *       response="417",
-     *       description="Code is empty",
+     *       description="Код не указан",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result code", value={"status": "error", "error":"Поле код обязательна для заполнения"},summary="Ошибка кода"),
      *       )
@@ -372,7 +373,7 @@ class UserPersonalInfoController extends Controller
      * )
      */
 
-    public function checkEmailCode(Request $request): \Illuminate\Http\JsonResponse
+    public function checkEmailCode(Request $request)
     {
         if (empty($request->code)) {
             $response['error'] = 'Поле код обязательна для заполнения';
@@ -397,8 +398,8 @@ class UserPersonalInfoController extends Controller
      *     path="/api/personal/changeUserPhone/",
      *     operationId="changeUserPhone",
      *     tags={"Personal area"},
-     *     summary="changeUserPhone",
-     *     description="changeUserPhone Endpoint",
+     *     summary="Сохранить номер телефона в профиле пользователя",
+     *     description="Метод сохранения номера телефона в "Моем профиле"",
      *     @OA\RequestBody(
      *         @OA\MediaType(
      *             mediaType="application/json",
@@ -410,14 +411,14 @@ class UserPersonalInfoController extends Controller
      *     ),
      *     @OA\Response(
      *       response="200",
-     *       description="start change phone",
+     *       description="Номер телефона успешно отправлен",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result", value={"status": "success","result":{"code":{"status":"exists|success","ttl":"120 числовое поле если статус exists","code":"sms код для теста"}}},summary="Успешный запрос"),
      *        )
      *     ),
      *     @OA\Response(
      *       response="417",
-     *       description="phone is empty",
+     *       description="Номер телефона не указан",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result phone", value={"status": "error", "error":"Поле телефон обязательна для заполнения"},summary="Ошибка кода"),
      *       )
@@ -425,7 +426,7 @@ class UserPersonalInfoController extends Controller
      * )
      */
 
-    public function changeUserPhone(Request $request): \Illuminate\Http\JsonResponse
+    public function changeUserPhone(Request $request)
     {
         if (empty($request->phone)) {
             $response['error'] = 'Поле телефон обязательна для заполнения';
@@ -445,8 +446,8 @@ class UserPersonalInfoController extends Controller
      *     path="/api/personal/confirmChangeUserPhone/",
      *     operationId="confirmChangeUserPhone",
      *     tags={"Personal area"},
-     *     summary="confirmChangeUserPhone",
-     *     description="confirmChangeUserPhone Endpoint",
+     *     summary="Подтвердить номер телефона в профиле пользователя",
+     *     description="Метод подтверждения номера телефона в профиле пользователя",
      *     @OA\RequestBody(
      *         @OA\MediaType(
      *             mediaType="application/json",
@@ -459,7 +460,7 @@ class UserPersonalInfoController extends Controller
      *     ),
      *     @OA\Response(
      *       response="200",
-     *       description="confirm or error change phone",
+     *       description="Подтверждение или ошибка смены телефона",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result", value={"status": "success"},summary="Успешный запрос"),
      *           @OA\Examples(example="result error", value={"status": "error","result":{"code":{"status":"error|notExists"},}},summary="Ошибка"),
@@ -467,7 +468,7 @@ class UserPersonalInfoController extends Controller
      *     ),
      *     @OA\Response(
      *       response="417",
-     *       description="Code or phone is empty",
+     *       description="Код не заполнено",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result phone", value={"status": "error", "error":"Поле телефон обязательна для заполнения"},summary="Ошибка кода"),
      *           @OA\Examples(example="result code", value={"status": "error", "error":"Поле код обязательна для заполнения"},summary="Ошибка кода"),
@@ -476,7 +477,7 @@ class UserPersonalInfoController extends Controller
      * )
      */
 
-    public function confirmChangeUserPhone(Request $request): \Illuminate\Http\JsonResponse
+    public function confirmChangeUserPhone(Request $request)
     {
         if (empty($request->phone)) {
             $response['error'] = 'Поле телефон обязательна для заполнения';
@@ -506,18 +507,18 @@ class UserPersonalInfoController extends Controller
      *     path="/api/personal/getRequisitesData/",
      *     operationId="getRequisitesData",
      *     tags={"Personal area"},
-     *     summary="getRequisitesData",
-     *     description="getRequisitesData",
+     *     summary="Получить банковские реквизиты пользователя",
+     *     description="Метод получения реквизитов пользователя",
      *     @OA\Response(
      *       response="200",
-     *       description="Requisites data",
+     *       description="Реквизиты пользователя",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result", value={"status": "success","result":{}},summary="Успех"),
      *       )
      *     ),
      * )
      */
-    public function getRequisitesData(Request $request): \Illuminate\Http\JsonResponse
+    public function getRequisitesData(Request $request)
     {
         $user = Auth::user();
         if (!empty($user->requisitesData)) {
@@ -535,11 +536,11 @@ class UserPersonalInfoController extends Controller
      *     path="/api/personal/getEstateData/",
      *     operationId="getEstateData",
      *     tags={"Personal area"},
-     *     summary="getEstateData",
-     *     description="getEstateData",
+     *     summary="Получить данные об имуществе пользователя",
+     *     description="Метод получения данных об имуществе пользователя",
      *     @OA\Response(
      *       response="200",
-     *       description="Estate data",
+     *       description="Получены данные имущества пользователя",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result", value={"status": "success","result":{}},summary="Успех"),
      *       )
@@ -547,7 +548,7 @@ class UserPersonalInfoController extends Controller
      * )
      */
 
-    public function getEstateData(Request $request): \Illuminate\Http\JsonResponse
+    public function getEstateData(Request $request)
     {
         $user = Auth::user();
         if (!empty($user->estateData)) {
@@ -565,8 +566,8 @@ class UserPersonalInfoController extends Controller
      *     path="/api/personal/saveRequisitesData/",
      *     operationId="saveRequisitesData",
      *     tags={"Personal area"},
-     *     summary="saveRequisitesData",
-     *     description="saveRequisitesData Endpoint",
+     *     summary="Сохранить банковские реквизиты пользователя",
+     *     description="Метод добавления банковских реквизитов пользователя",
      *     @OA\RequestBody(
      *         @OA\MediaType(
      *             mediaType="application/json",
@@ -579,14 +580,14 @@ class UserPersonalInfoController extends Controller
      *     ),
      *     @OA\Response(
      *       response="200",
-     *       description="save requisites",
+     *       description="Реквизиты сохранены",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result", value={"status": "success"},summary="Успешный запрос"),
      *        )
      *     ),
      *     @OA\Response(
      *       response="417",
-     *       description="data is empty",
+     *       description="Ошибка данных",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result data", value={"status": "error", "error":"Поле дата обязательна для заполнения"},summary="Ошибка данных"),
      *       )
@@ -594,7 +595,7 @@ class UserPersonalInfoController extends Controller
      * )
      */
 
-    public function saveRequisitesData(Request $request): \Illuminate\Http\JsonResponse
+    public function saveRequisitesData(Request $request)
     {
         $user = Auth::user();
         if (empty($request->data)) {
@@ -623,8 +624,8 @@ class UserPersonalInfoController extends Controller
      *     path="/api/personal/saveEstateData/",
      *     operationId="saveEstateData",
      *     tags={"Personal area"},
-     *     summary="saveEstateData",
-     *     description="saveEstateData Endpoint",
+     *     summary="Сохранить имущество пользователя",
+     *     description="Метод сохранения имущества пользователя",
      *     @OA\RequestBody(
      *         @OA\MediaType(
      *             mediaType="application/json",
@@ -637,21 +638,21 @@ class UserPersonalInfoController extends Controller
      *     ),
      *     @OA\Response(
      *       response="200",
-     *       description="save requisites",
+     *       description="Имущество сохранено",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result", value={"status": "success"},summary="Успешный запрос"),
      *        )
      *     ),
      *     @OA\Response(
      *       response="417",
-     *       description="data is empty",
+     *       description="Ошибка данных",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result data", value={"status": "error", "error":"Поле дата обязательна для заполнения"},summary="Ошибка данных"),
      *       )
      *     ),
      * )
      */
-    public function saveEstateData(Request $request): \Illuminate\Http\JsonResponse
+    public function saveEstateData(Request $request)
     {
         $user = Auth::user();
         if (empty($request->data)) {
@@ -680,12 +681,12 @@ class UserPersonalInfoController extends Controller
      *     path="/api/personal/getformActivities/",
      *     operationId="getformActivities",
      *     tags={"Personal area"},
-     *     summary="getformActivities",
-     *     description="getformActivities",
+     *     summary="Получить данные из раздела "Виды деятельности" в профиле пользователя",
+     *     description="Метод получения данных из раздела "Виды деятельности"",
      *     @OA\Parameter(
      *         name="step",
      *         in="query",
-     *         description="step",
+     *         description="шаг 1-3",
      *         required=true,
      *         @OA\Schema(
      *             type="number",
@@ -693,14 +694,14 @@ class UserPersonalInfoController extends Controller
      *     ),
      *     @OA\Response(
      *       response="200",
-     *       description="form data Activities",
+     *       description="Данные из раздела "Виды деятельности" успешно получены",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result", value={"status": "success","result":{"formData":{},"step":{},"type":"needRequired|allowedNewStep",}},summary="Успех"),
      *       )
      *     ),
      *     @OA\Response(
      *       response="417",
-     *       description="step error",
+     *       description="Поле step не может быть больше 3",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result section", value={"status": "error", "error":"Поле step не может быть больше 3"},summary="Ошибка section"),
      *       )
@@ -708,7 +709,7 @@ class UserPersonalInfoController extends Controller
      * )
      */
 
-    public function getFormActivities(Request $request): \Illuminate\Http\JsonResponse
+    public function getformActivities(Request $request)
     {
         $user = Auth::user();
         if($request->step<=3 || empty($request->step)) {
@@ -741,8 +742,8 @@ class UserPersonalInfoController extends Controller
      *     path="/api/personal/saveUserFieldsActivities/",
      *     operationId="saveUserFieldsActivities",
      *     tags={"Personal area"},
-     *     summary="saveUserFieldsActivities",
-     *     description="saveUserFieldsActivities Endpoint",
+     *     summary="Сохранить данные в разделе "Виды деятельности"",
+     *     description="Метод сохранения/ изменения данных в разделе "Виды деятельности"",
      *     @OA\RequestBody(
      *         @OA\MediaType(
      *             mediaType="application/json",
@@ -755,14 +756,14 @@ class UserPersonalInfoController extends Controller
      *     ),
      *     @OA\Response(
      *       response="200",
-     *       description="save form",
+     *       description="Данные сохранены",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result", value={"status": "success","result":{"step": 1,"type":"needRequired|allowedNewStep|addedNewFields"}},summary="Успех"),
      *       )
      *     ),
      *     @OA\Response(
      *       response="417",
-     *       description="formData is empty",
+     *       description="Ничего не загружено",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result formData", value={"status": "error", "error":"Ничего не загружено"},summary="Ошибка formData"),
      *       )
@@ -770,7 +771,7 @@ class UserPersonalInfoController extends Controller
      * )
      */
 
-    public function saveUserFieldsActivities(Request $request): \Illuminate\Http\JsonResponse
+    public function saveUserFieldsActivities(Request $request)
     {
         $user = Auth::user();
         if (!empty($request->formData) && $request->step) {
@@ -806,8 +807,8 @@ class UserPersonalInfoController extends Controller
      *     path="/api/personal/deleteEstate/",
      *     operationId="deleteEstate",
      *     tags={"Personal area"},
-     *     summary="deleteEstate",
-     *     description="deleteEstate Endpoint",
+     *     summary="Удалить имущество пользователя",
+     *     description="Метод удаления имущества",
      *     @OA\RequestBody(
      *         @OA\MediaType(
      *             mediaType="application/json",
@@ -819,14 +820,14 @@ class UserPersonalInfoController extends Controller
      *     ),
      *     @OA\Response(
      *       response="200",
-     *       description="delete requisites",
+     *       description="Данные об имуществе удалены",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result", value={"status": "success"},summary="Успешный запрос"),
      *        )
      *     ),
      *     @OA\Response(
      *       response="417",
-     *       description="dataId is empty",
+     *       description="Ошибка данных",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result data", value={"status": "error", "error":"Поле номер имущества обязательна для заполнения"},summary="Ошибка данных"),
      *       )
@@ -834,8 +835,7 @@ class UserPersonalInfoController extends Controller
      * )
      */
 
-    public function deleteEstate(Request $request): \Illuminate\Http\JsonResponse
-    {
+    public function deleteEstate(Request $request){
         $user = Auth::user();
         if (empty($request->dataId)) {
             $response['error'] = 'Поле номер имущества обязательна для заполнения';
@@ -859,8 +859,8 @@ class UserPersonalInfoController extends Controller
      *     path="/api/personal/deleteRequisite/",
      *     operationId="deleteRequisite",
      *     tags={"Personal area"},
-     *     summary="deleteRequisite",
-     *     description="deleteRequisite Endpoint",
+     *     summary="Удалить банковские реквизиты пользователя",
+     *     description="Метод удаления банковских реквизитов",
      *     @OA\RequestBody(
      *         @OA\MediaType(
      *             mediaType="application/json",
@@ -872,14 +872,14 @@ class UserPersonalInfoController extends Controller
      *     ),
      *     @OA\Response(
      *       response="200",
-     *       description="delete requisites",
+     *       description="Банковские реквизиты удалены",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result", value={"status": "success"},summary="Успешный запрос"),
      *        )
      *     ),
      *     @OA\Response(
      *       response="417",
-     *       description="dataId is empty",
+     *       description="Ошибка данных",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result data", value={"status": "error", "error":"Поле номер реквизитов обязательна для заполнения"},summary="Ошибка данных"),
      *       )
@@ -887,8 +887,7 @@ class UserPersonalInfoController extends Controller
      * )
      */
 
-    public function deleteRequisite(Request $request): \Illuminate\Http\JsonResponse
-    {
+    public function deleteRequisite(Request $request){
         $user = Auth::user();
         if (empty($request->dataId)) {
             $response['error'] = 'Поле номер реквизитов обязательна для заполнения';
@@ -912,11 +911,11 @@ class UserPersonalInfoController extends Controller
      *     path="/api/personal/getBic/",
      *     operationId="getBic",
      *     tags={"Personal area"},
-     *     summary="getBic",
-     *     description="getBic Endpoint",
+     *     summary="Получить данные банковского бика пользователя",
+     *     description="Метод получения бика пользователя",
      *     @OA\Response(
      *       response="200",
-     *       description="get bic",
+     *       description="Бик получен",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result", value={"status": "success","result": {"bankData": {"value": "значение uuid","label": "название","disabled": "false",},}},summary="Успешный запрос"),
      *       )
@@ -940,11 +939,11 @@ class UserPersonalInfoController extends Controller
      *     path="/api/personal/getMapField/",
      *     operationId="getMapField",
      *     tags={"Personal area"},
-     *     summary="getMapField",
-     *     description="getMapField Endpoint",
+     *     summary="Получить адрес и радиус поиска работы пользователя",
+     *     description="Метод получения адреса и радиус поиска работы",
      *     @OA\Response(
      *       response="200",
-     *       description="get Map Field",
+     *       description="Успешный запрос",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result", value={"status": "success", "result": {"mapAddress": "string map address","mapRadius": "string map radius"}},summary="Успешный запрос"),
      *       )
@@ -966,8 +965,8 @@ class UserPersonalInfoController extends Controller
      *     path="/api/personal/setMapField/",
      *     operationId="setMapField",
      *     tags={"Personal area"},
-     *     summary="setMapField",
-     *     description="setMapField Endpoint",
+     *     summary="Отправить данные адреса и радиуса поиска работы",
+     *     description="Метод добавления данных адреса и радиуса поиска работы",
      *     @OA\RequestBody(
      *         @OA\MediaType(
      *             mediaType="application/json",
@@ -979,7 +978,7 @@ class UserPersonalInfoController extends Controller
      *     ),
      *     @OA\Response(
      *       response="200",
-     *       description="setMapField",
+     *       description="Данные добавлены",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result", value={"status": "success", "result": {"mapAddress": "string map address","mapRadius": "string map radius"}},summary="Успешный запрос"),
      *        )

@@ -31,8 +31,8 @@ class RegistrationController extends Controller
      *     path="/api/sendPhone/",
      *     operationId="sendPhone",
      *     tags={"register/auth"},
-     *     summary="sendPhone",
-     *     description="sendPhone Endpoint",
+     *     summary="Отправить номер телефона для регистрации или авторизации",
+     *     description="Метод отправления номера телефона для регистрации или авторизации",
      *     @OA\RequestBody(
      *         @OA\MediaType(
      *             mediaType="application/json",
@@ -44,14 +44,14 @@ class RegistrationController extends Controller
      *     ),
      *     @OA\Response(
      *       response="200",
-     *       description="send phone start register or auth",
+     *       description="Номер телефона успешно отправлен",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result", value={"status": "success","result":{"type":"auth|register","code":{"status":"exists|success","ttl":"120 числовое поле если статус exists","code":"sms код для теста"}}},summary="Успешный запрос"),
      *       )
      *     ),
      *     @OA\Response(
      *       response="417",
-     *       description="phone is empty or error code",
+     *       description="Неуспешный запрос",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result", value={"status": "error", "error":"Поле телефон обязательна для заполнения"},summary="Нехватка полей"),
      *           @OA\Examples(example="error result", value={"status": "error","result":{"type":"auth|register","code":{"status":"errorSend"}}},summary="Успешный запрос"),
@@ -99,8 +99,8 @@ class RegistrationController extends Controller
      *     path="/api/checkCode/",
      *     operationId="checkCode",
      *     tags={"register/auth"},
-     *     summary="checkCode",
-     *     description="checkCode Endpoint",
+     *     summary="Отправить код подтверждения номера телефона",
+     *     description="Метод отправки кода подтверждения номера телефона",
      *     @OA\RequestBody(
      *         @OA\MediaType(
      *             mediaType="application/json",
@@ -113,7 +113,7 @@ class RegistrationController extends Controller
      *     ),
      *     @OA\Response(
      *       response="200",
-     *       description="check sms code success",
+     *       description="Код подтверждения отправлен",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result", value={"status": "success","result":{"token": {"token_type":"Bearer","expires_in":"числовое значение в секундах время жизни access_token","access_token":"токен доступа","refresh_token":"токен восстановления access_token"},}},summary="Успех"),
      *           @OA\Examples(example="result error", value={"status": "error","result":{"code":{"status":"error|notExists"},}},summary="Ошибка"),
@@ -121,7 +121,7 @@ class RegistrationController extends Controller
      *     ),
      *     @OA\Response(
      *       response="417",
-     *       description="phone or code is empty",
+     *       description="Ошибка в номере телефона или в коде подтверждения",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result code", value={"status": "error", "error":"Поле код обязательна для заполнения"},summary="Ошибка кода"),
      *           @OA\Examples(example="result phone", value={"status": "error", "error":"Поле телефон обязательна для заполнения"},summary="Ошибка телефона"),
@@ -174,27 +174,27 @@ class RegistrationController extends Controller
      *     path="/api/setUserPin/",
      *     operationId="setUserPin",
      *     tags={"register/auth"},
-     *     summary="setUserPin",
-     *     description="setUserPin Endpoint",
+     *     summary="Установить пин-код",
+     *     description="Метод установки пин-кода",
      *     @OA\RequestBody(
      *         @OA\MediaType(
      *             mediaType="application/json",
      *             @OA\Schema(
      *                 required={"pin"},
-     *                 @OA\Property(property="pin",type="number"),
+     *                 @OA\Property(property="pin",type="number", description="pin - 4 цифры"),
      *             ),
      *         ),
      *     ),
      *     @OA\Response(
      *       response="200",
-     *       description="set pin success",
+     *       description="Пин-код успешно установлен",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result", value={"status": "success"},summary="Успех"),
      *       )
      *     ),
      *     @OA\Response(
      *       response="417",
-     *       description="pin is empty",
+     *       description="Ошибка или отсутствие пин-кода",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result pin", value={"status": "error", "error":"Поле пин код обязательна для заполнения"},summary="Нехватка полей"),
      *       )
@@ -221,11 +221,11 @@ class RegistrationController extends Controller
      *     path="/api/startRestorePin/",
      *     operationId="startRestorePin",
      *     tags={"Personal area"},
-     *     summary="startRestorePin",
-     *     description="startRestorePin Endpoint",
+     *     summary="Восстановить пин-код",
+     *     description="Метод восстановения пин-кода",
      *     @OA\Response(
      *       response="200",
-     *       description="send phone start register or auth",
+     *       description="Успешно получены код подтверждения номера телефона и токен доступа",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result", value={"status": "success","result":{"code":{"status":"exists|success","ttl":"120 числовое поле если статус exists","code":"sms код для теста"},"token": {"token_type":"Bearer","expires_in":"числовое значение в секундах время жизни access_token","access_token":"токен доступа","refresh_token":"токен восстановления access_token"}}},summary="Успешный запрос"),
      *       )
@@ -253,8 +253,8 @@ class RegistrationController extends Controller
      *     path="/api/checkCodeRestore/",
      *     operationId="checkCodeRestore",
      *     tags={"Personal area"},
-     *     summary="checkCodeRestore",
-     *     description="checkCodeRestore Endpoint",
+     *     summary="Отправить код подтверждения при восстановлении пин-кода",
+     *     description="Метод отправки смс-код при восстановлении пин-кода",
      *     @OA\RequestBody(
      *         @OA\MediaType(
      *             mediaType="application/json",
@@ -266,7 +266,7 @@ class RegistrationController extends Controller
      *     ),
      *     @OA\Response(
      *       response="200",
-     *       description="check sms code success",
+     *       description="sms-код успешно отправлен",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result", value={"status": "success","result":{"token": {"token_type":"Bearer","expires_in":"числовое значение в секундах время жизни access_token","access_token":"токен доступа","refresh_token":"токен восстановления access_token"},}},summary="Успех"),
      *           @OA\Examples(example="result error", value={"status": "error","result":{"code":{"status":"error|notExists"},}},summary="Ошибка"),
@@ -274,7 +274,7 @@ class RegistrationController extends Controller
      *     ),
      *     @OA\Response(
      *       response="417",
-     *       description="phone or code is empty",
+     *       description="Номер телефона или код не указан",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result code", value={"status": "error", "error":"Поле код обязательна для заполнения"},summary="Ошибка кода"),
      *       )
@@ -322,8 +322,8 @@ class RegistrationController extends Controller
      *     path="/api/setUserEmail/",
      *     operationId="setUserEmail_reg",
      *     tags={"register/auth"},
-     *     summary="setUserEmail",
-     *     description="setUserEmail Endpoint",
+     *     summary="Поменять email пользователя",
+     *     description="Метод изменения email пользователя",
      *     @OA\RequestBody(
      *         @OA\MediaType(
      *             mediaType="application/json",
@@ -335,14 +335,14 @@ class RegistrationController extends Controller
      *     ),
      *     @OA\Response(
      *       response="200",
-     *       description="send email for verified",
+     *       description="Успешно получен код для подтверждения email",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result", value={"status": "success","result":{"code":{"status":"exists|success","ttl":"120 числовое поле если статус exists","code":"sms код для теста"}}},summary="Успешный запрос"),
      *       )
      *     ),
      *     @OA\Response(
      *       response="417",
-     *       description="email is empty",
+     *       description="Неуспешный запрос",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result", value={"status": "error", "error":"Email отсутствует"},summary="Нехватка полей"),
      *       )
@@ -377,8 +377,8 @@ class RegistrationController extends Controller
      *     path="/api/checkEmailCode/",
      *     operationId="checkEmailCode_reg",
      *     tags={"register/auth"},
-     *     summary="checkEmailCode",
-     *     description="checkEmailCode Endpoint",
+     *     summary="Подтвердить изменение email",
+     *     description="Метод подтверждения смены email",
      *     @OA\RequestBody(
      *         @OA\MediaType(
      *             mediaType="application/json",
@@ -390,7 +390,7 @@ class RegistrationController extends Controller
      *     ),
      *     @OA\Response(
      *       response="200",
-     *       description="check email code success",
+     *       description="Код подтверждения изменения email отправлен",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result", value={"status": "success"},summary="Успех"),
      *           @OA\Examples(example="result error", value={"status": "error","result":{"code":{"status":"error|notExists"},}},summary="Ошибка"),
@@ -398,7 +398,7 @@ class RegistrationController extends Controller
      *     ),
      *     @OA\Response(
      *       response="417",
-     *       description="Code is empty",
+     *       description="Код не указан",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result code", value={"status": "error", "error":"Поле код обязательна для заполнения"},summary="Ошибка кода"),
      *       )

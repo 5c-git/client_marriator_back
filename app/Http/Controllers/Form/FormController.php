@@ -36,11 +36,11 @@ class FormController extends Controller
      *     path="/api/getUserInfo/",
      *     operationId="getUserInfo_in_reg",
      *     tags={"form"},
-     *     summary="getForm",
-     *     description="getUserInfo Endpoint",
+     *     summary="Получить данные фото и email пользователя",
+     *     description="Метод получения фото и email пользователя при регистрации",
      *     @OA\Response(
      *       response="200",
-     *       description="uset info",
+     *       description="Успешный запрос",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result", value={"status": "success","result":{"userData":{},}},summary="Успех"),
      *       )
@@ -72,12 +72,12 @@ class FormController extends Controller
      *     path="/api/getForm/",
      *     operationId="getForm",
      *     tags={"form"},
-     *     summary="getForm",
-     *     description="getForm Endpoint",
+     *     summary="Получить данные из формы регистрации",
+     *     description="Метод получения данных из формы регистрации на определенном этапе",
      *     @OA\Parameter(
      *         name="step",
      *         in="query",
-     *         description="step for form",
+     *         description="Номер шага регистрации",
      *         required=true,
      *         @OA\Schema(
      *             type="number",
@@ -85,7 +85,7 @@ class FormController extends Controller
      *     ),
      *     @OA\Response(
      *       response="200",
-     *       description="form data",
+     *       description="Данные с выбранного шага регистрации успешно получены",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result", value={"status": "success","result":{"formData":{},"step":1,"type":"needRequired|allowedNewStep",}},summary="Успех"),
      *       )
@@ -125,8 +125,8 @@ class FormController extends Controller
      *     path="/api/saveForm/",
      *     operationId="saveForm",
      *     tags={"form"},
-     *     summary="saveForm",
-     *     description="saveForm Endpoint",
+     *     summary="Сохранить данные в форме регистрации",
+     *     description="Метод сохранения данных на определенном этапе регистрации",
      *     @OA\RequestBody(
      *         @OA\MediaType(
      *             mediaType="application/json",
@@ -139,7 +139,7 @@ class FormController extends Controller
      *     ),
      *     @OA\Response(
      *       response="200",
-     *       description="save form",
+     *       description="Успешный запрос",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result", value={"status": "success","result":{"step":1,"type":"needRequired|allowedNewStep|addedNewFields",}},summary="Успех"),
      *           @OA\Examples(example="result error", value={"status": "error", "error":"Поле step обязательна для заполнения"},summary="Нехватка полей"),
@@ -201,8 +201,8 @@ class FormController extends Controller
      *     path="/api/saveFile/",
      *     operationId="saveFile",
      *     tags={"form"},
-     *     summary="saveFile",
-     *     description="saveFile Endpoint",
+     *     summary="Загрузить файл",
+     *     description="Метод сохранения файла",
      *     @OA\RequestBody(
      *         @OA\MediaType(
      *             mediaType="multipart/form-data",
@@ -211,16 +211,18 @@ class FormController extends Controller
      *                 @OA\Property(
      *                  property="file[]",
      *                  type="array",
+	                    description="Файл в формате jpg, png, pdf не более 6MB",
      *                  @OA\Items(type="file")),
      *                 @OA\Property(
      *                  property="fieldUuid",
-     *                  type="string"),
+     *                  type="string",
+	                    description="Uuid поля, в которое загружается файл"),
      *             ),
      *         ),
      *     ),
      *     @OA\Response(
      *       response="200",
-     *       description="file info",
+     *       description="Успешный запрос",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result", value={"status": "success","resFile":"url file"},summary="Успех"),
      *           @OA\Examples(example="result error", value={"status": "error", "error":"Текст"},summary="Ошибка формирования файла"),
@@ -265,8 +267,8 @@ class FormController extends Controller
      *     path="/api/saveUserImg/",
      *     operationId="saveUserImg",
      *     tags={"form"},
-     *     summary="saveUserImg",
-     *     description="saveUserImg Endpoint",
+     *     summary="Сохранить личное фото пользователя",
+     *     description="Метод сохранения личного фото",
      *     @OA\RequestBody(
      *         @OA\MediaType(
      *             mediaType="multipart/form-data",
@@ -275,13 +277,14 @@ class FormController extends Controller
      *                 @OA\Property(
      *                  property="file",
      *                  type="file",
+	                    description="Файл в формате jpg, png, pdf не более 6MB",
      *                  ),
      *             ),
      *         ),
      *     ),
      *     @OA\Response(
      *       response="200",
-     *       description="file  info",
+     *       description="Успешный запрос",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result", value={"status": "success","resFile":"url file"},summary="Успех"),
      *           @OA\Examples(example="error", value={"status": "error", "error":"Ничего не загружено"},summary="Нехватка полей"),
@@ -320,11 +323,11 @@ class FormController extends Controller
      *     path="/api/finishRegister/",
      *     operationId="finishRegister",
      *     tags={"form"},
-     *     summary="finishRegister",
-     *     description="finishRegister Endpoint",
+     *     summary="Завершить регистрацию",
+     *     description="Метод завершения регистрации",
      *     @OA\Response(
      *       response="200",
-     *       description="finish register",
+     *       description="Регистрация завершена",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result", value={"status": "success","result":{"token": {"token_type":"Bearer","expires_in":"числовое значение в секундах время жизни access_token","access_token":"токен доступа","refresh_token":"токен восстановления access_token"},}},summary="Успех"),
      *       )

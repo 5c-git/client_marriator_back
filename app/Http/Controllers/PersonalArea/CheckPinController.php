@@ -29,8 +29,8 @@ class CheckPinController extends Controller
      *     path="/api/checkPin/",
      *     operationId="checkPin",
      *     tags={"Personal area"},
-     *     summary="checkPin",
-     *     description="checkPin Endpoint",
+     *     summary="Отправить пин-код",
+     *     description="Метод отправки пин-кода",
      *     @OA\RequestBody(
      *         @OA\MediaType(
      *             mediaType="application/json",
@@ -42,7 +42,7 @@ class CheckPinController extends Controller
      *     ),
      *     @OA\Response(
      *       response="200",
-     *       description="check pin code",
+     *       description="Пин-код отправлен",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result", value={"status": "success","result":{"token": {"token_type":"Bearer","expires_in":"числовое значение в секундах время жизни access_token","access_token":"токен доступа","refresh_token":"токен восстановления access_token"},}},summary="Успех"),
      *           @OA\Examples(example="result check pin error", value={"status": "error"},summary="Неверный пин"),
@@ -50,7 +50,7 @@ class CheckPinController extends Controller
      *     ),
      *     @OA\Response(
      *       response="417",
-     *       description="pin is empty",
+     *       description="Пустой пин-код",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result pin", value={"status": "error", "error":"Поле пин обязательна для заполнения"},summary="Ошибка кода"),
      *       )
@@ -83,8 +83,8 @@ class CheckPinController extends Controller
      *     path="/api/refreshToken/",
      *     operationId="refreshToken",
      *     tags={"Personal area"},
-     *     summary="refreshToken",
-     *     description="refreshToken Endpoint",
+     *     summary="Восстановить access_token",
+     *     description=" Метод отправки refreshTokenа для восстановления access_tokenа",
      *     @OA\RequestBody(
      *         @OA\MediaType(
      *             mediaType="application/json",
@@ -96,7 +96,7 @@ class CheckPinController extends Controller
      *     ),
      *     @OA\Response(
      *       response="200",
-     *       description="refresh token success",
+     *       description="Успешный запрос",
      *       @OA\JsonContent(
      *           @OA\Examples(example="success refresh token", value={"status": "success","result":{"token": {"token_type":"Bearer","expires_in":"числовое значение в секундах время жизни access_token","access_token":"токен доступа","refresh_token":"токен восстановления access_token"},}},summary="Успешное востановление"),
      *           @OA\Examples(example="error refresh token", value={"status": "success","result":{"token": {"error":"invalid_request","error_description":"The refresh token is invalid.","hint":"Token is not linked to client","message":"The refresh token is invalid."},}},summary="Неуспешное востановление"),
@@ -104,7 +104,7 @@ class CheckPinController extends Controller
      *     ),
      *     @OA\Response(
      *       response="417",
-     *       description="refreshToken is empty",
+     *       description=" Поле refreshToken не заполнено",
      *       @OA\JsonContent(
      *           @OA\Examples(example="result refreshToken", value={"status": "error", "error":"Поле refreshToken обязательна для заполнения"},summary="Ошибка токена"),
      *       )
