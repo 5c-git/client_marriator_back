@@ -226,6 +226,7 @@ Route::group(['prefix' => 'admin'], function () {
         Route::group(['prefix' => 'importDirectory'], function () {
             Route::get('/', 'App\Http\Controllers\Admin\Import\ImportController@index')->name('index');
             Route::post('/import', 'App\Http\Controllers\Admin\Import\ImportController@import')->name('import');
+            Route::post('/importSave', 'App\Http\Controllers\Admin\Import\ImportController@importSave')->name('importSave');
         });
 
 

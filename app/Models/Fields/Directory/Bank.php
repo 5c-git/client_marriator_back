@@ -52,4 +52,18 @@ class Bank extends Model implements ModelDirectoryInterface
             return $this->toArray();
         }
     }
+
+    public static function upsertFromImport(array $data): void
+    {
+        foreach (array_chunk($data,1000) as $dataChunk) {
+            $dataForUpsert = [];
+            foreach ($dataChunk as $item) {
+                $name = $item['name'];
+                $code = $item['code'];
+
+                $dataForUpsert[] = ['uuid' => $item['id'], 'name' => $name,'bic'=>$code];
+            }
+            self::upsert($dataForUpsert, ['uuid'], ['name','bic']);
+        }
+    }
 }

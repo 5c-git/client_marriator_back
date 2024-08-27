@@ -214,54 +214,119 @@ $(document).ready(function () {
             }
         })
         $('.linkJs').val('');
+        $('.typeJs').val('');
+        $('.jsDataImportBody').html('');
+        $('.jsDataImport').hide();
+        $('.loaderForJs').show();
+        $('.importSaveFormDirectory').hide();
 
         $.ajax({
             url: '/admin/importDirectory/import',
             type: "POST",
             data: data,
+            async: true,
             processData: false,
             contentType: false,
             success: function (data) {
 
-                $('.jsDataImport').show();
-                $('.importSaveFormDirectory').show();
-                var iter = 1;
-                $('.jsDataImportBody').html('');
-                for (var key in data.table) {
-                    var valNew = '';
-                    if(data.table[key] && data.table[key].new && data.table[key].new.id && (data.table[key].new.name || data.table[key].new.code)){
-                        valNew = '                    Uuid - '+data.table[key].new.id+'\n' +
-                            '                    <br>\n';
-                        if(data.table[key].new.name) {
-                            valNew = valNew +  '                    Name - ' + data.table[key].new.name + '\n'
+                if(data.status == 'success') {
+                    $('.jsDataImport').show();
+                    $('.importSaveFormDirectory').show();
+                    var iter = 1;
+                    for (var key in data.table) {
+                        var valNew = '';
+                        if (data.table[key] && data.table[key].new && data.table[key].new.id && (data.table[key].new.name || data.table[key].new.code)) {
+                            valNew = '                    Uuid - ' + data.table[key].new.id + '\n' +
+                                '                    <br>\n';
+                            if (data.table[key].new.name) {
+                                valNew = valNew + '                    Name - ' + data.table[key].new.name + '\n'
+                            }
+                            if (!data.table[key].new.name && data.table[key].new.code) {
+                                valNew = valNew + '                    Name - ' + data.table[key].new.code + '\n'
+                            }
                         }
-                        if(data.table[key].new.code) {
-                            valNew = valNew +  '                    Name - ' + data.table[key].new.code + '\n'
+                        ;
+                        var valOld = '';
+                        if (data.table[key] && data.table[key].old && data.table[key].old.id && data.table[key].old.name) {
+                            valOld = '                    Uuid - ' + data.table[key].old.id + '\n' +
+                                '                    <br>\n' +
+                                '                    Name - ' + data.table[key].old.name + '\n'
                         }
-                    };
-                    var valOld = '';
-                    if(data.table[key] && data.table[key].old && data.table[key].old.id && data.table[key].old.name){
-                        valOld = '                    Uuid - '+data.table[key].old.id+'\n' +
-                            '                    <br>\n' +
-                            '                    Name - '+data.table[key].old.name+'\n'
-                    };
-                    console.log(valNew);
+                        ;
 
-                    $('.jsDataImportBody').append('<tr>\n' +
-                        '                <th scope="row">'+iter+'</th>\n' +
-                        '                <td>\n' +
-                        valNew +
-                        '                </td>\n' +
-                        '                <td>\n' +
-                        valOld +
-                        '                </td>\n' +
-                        '\n' +
-                        '            </tr>')
-                    console.log(key, ':', data.table[key]);
-                    iter++;
+
+                        $('.jsDataImportBody').append('<tr>\n' +
+                            '                <th scope="row">' + iter + '</th>\n' +
+                            '                <td>\n' +
+                            valNew +
+                            '                </td>\n' +
+                            '                <td>\n' +
+                            valOld +
+                            '                </td>\n' +
+                            '\n' +
+                            '            </tr>')
+
+                        iter++;
+                    }
+                    $('.linkJs').val(data.link);
+                    $('.typeJs').val(data.type);
+                    $('.loaderForJs').hide();
+                }else{
+                    location.reload();
                 }
-                $('.linkJs').val(data.link);
-                //console.log(data.table);
+            }
+        });
+    })
+
+
+    $('.importSaveFormDirectory').submit(function (e) {
+        e.preventDefault();
+        var data = new FormData();
+
+        var form_data = $(this).serializeArray();
+        $.each(form_data, function (key, input) {
+            data.append(input.name, input.value);
+        });
+
+        $(this).find('input[type="file"]').each(function (index, item) {
+            if ($(item)[0].files[0]) {
+                data.append($(item).attr('name'), $(item)[0].files[0]);
+            }
+        })
+
+        $.ajax({
+            url: '/admin/importDirectory/importSave',
+            type: "POST",
+            data: data,
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                if (data.status == 'success') {
+                    $(document).Toasts('create', {
+                        title: 'Success',
+                        body: 'Success data save',
+                        autohide: true,
+                        delay: 2000,
+                        class: 'bg-success',
+                    })
+                } else {
+                    $(document).Toasts('create', {
+                        title: 'Error',
+                        body: 'Error data save',
+                        autohide: true,
+                        delay: 4000,
+                        class: 'bg-danger',
+                    })
+                }
+            },
+            error: function (request, status, error) {
+                $(document).Toasts('create', {
+                    title: 'Error',
+                    body: 'Error data save',
+                    autohide: true,
+                    delay: 4000,
+                    class: 'bg-danger',
+                })
             }
         });
     })

@@ -7,6 +7,67 @@
 @stop
 
 @section('content')
+    <style>
+        .loader,
+        .loader:before,
+        .loader:after {
+            background: #65abf8;
+            -webkit-animation: load1 1s infinite ease-in-out;
+            animation: load1 1s infinite ease-in-out;
+            width: 1em;
+            height: 4em;
+        }
+        .loader {
+            color: #65abf8;
+            text-indent: -9999em;
+            margin: 88px auto;
+            position: relative;
+            font-size: 11px;
+            -webkit-transform: translateZ(0);
+            -ms-transform: translateZ(0);
+            transform: translateZ(0);
+            -webkit-animation-delay: -0.16s;
+            animation-delay: -0.16s;
+        }
+        .loader:before,
+        .loader:after {
+            position: absolute;
+            top: 0;
+            content: '';
+        }
+        .loader:before {
+            left: -1.5em;
+            -webkit-animation-delay: -0.32s;
+            animation-delay: -0.32s;
+        }
+        .loader:after {
+            left: 1.5em;
+        }
+        @-webkit-keyframes load1 {
+            0%,
+            80%,
+            100% {
+                box-shadow: 0 0;
+                height: 4em;
+            }
+            40% {
+                box-shadow: 0 -2em;
+                height: 5em;
+            }
+        }
+        @keyframes load1 {
+            0%,
+            80%,
+            100% {
+                box-shadow: 0 0;
+                height: 4em;
+            }
+            40% {
+                box-shadow: 0 -2em;
+                height: 5em;
+            }
+        }
+    </style>
     <div class="container-fluid">
 
         <form class="importFormDirectory">
@@ -39,6 +100,7 @@
         <br>
         <br>
         <br>
+        <div class="loader loaderForJs" style="display: none">loading</div>
         <table class="table jsDataImport" style="display: none">
             <thead>
             <tr>
@@ -50,20 +112,6 @@
             </thead>
 
             <tbody class="jsDataImportBody">
-            <tr>
-                <th scope="row">1</th>
-                <td>
-                    Uuid - ffff
-                    <br>
-                    Name - ffff2
-                </td>
-                <td>
-                    Uuid - ffff
-                    <br>
-                    Name - ffff2
-                </td>
-
-            </tr>
 
             </tbody>
         </table>
@@ -71,6 +119,7 @@
         <form class="importSaveFormDirectory" style="display:none;">
         @csrf
             <input type="hidden" name="link" class="linkJs">
+            <input type="hidden" name="type" class="typeJs">
             <button type="submit" class="btn btn-success">Save</button>
         </form>
         <br>

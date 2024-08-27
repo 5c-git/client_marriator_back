@@ -47,11 +47,34 @@ class ImportController extends Controller
             foreach ($directoryValue as $item){
                 $restImportTable[$item['uuid']]['old'] = ['id'=>$item['uuid'],'name'=>$item['name']];
             }
-            $response['link'] = Storage::url($link);
+            $response['link'] = $link;
+            $response['type'] = $request->importType;
             $response['table'] = $restImportTable;
+            $response['status'] = 'success';
 
             return response()->json($response, 200);
+        }else{
+            return response()->json(['status'=>'error'], 200);
         }
+    }
+
+    public function importSave(Request $request){
+        if(!empty($request->link) && FieldsDirectoryEnum::from($request->type)){
+            $fileImport = Storage::disk('public')->get($request->link);
+            if(!empty($fileImport)) {
+                $directoryValueNew = json_decode($fileImport, true);
+                $dataForImport = [];
+                if (!empty($directoryValueNew['items'])) {
+                    $dataForImport = $this->getItemStruct($directoryValueNew['items']);
+                    if(!empty($dataForImport)){
+                        $directory = FieldsDirectoryEnum::from($request->type)->value;
+                        $directory::upsertFromImport($dataForImport);
+                        return response()->json(['status'=>'success'], 200);
+                    }
+                }
+            }
+        }
+        return response()->json(['status'=>'error'], 200);
     }
 
     public function getItemStruct($data){

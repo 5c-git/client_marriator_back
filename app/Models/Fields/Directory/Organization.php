@@ -48,4 +48,19 @@ class Organization extends Model implements ModelDirectoryInterface
             return $this->toArray();
         }
     }
+
+    public static function upsertFromImport(array $data): void
+    {
+        foreach (array_chunk($data,1000) as $dataChunk) {
+            $dataForUpsert = [];
+            foreach ($dataChunk as $item) {
+                $name = $item['name'];
+                if (empty($name)) {
+                    $name = $item['code'];
+                }
+                $dataForUpsert[] = ['uuid' => $item['id'], 'name' => $name];
+            }
+            self::upsert($dataForUpsert, ['uuid'], ['name']);
+        }
+    }
 }
