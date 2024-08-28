@@ -19,7 +19,7 @@ class EmailVerifiedService
     {
         $this->email = $email;
         if(empty($code)) {
-            $this->code = rand(1000, 9999);
+            $this->code = 1111;//rand(1000, 9999);
         }else{
             $this->code = $code;
         }
