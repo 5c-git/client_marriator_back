@@ -74,7 +74,7 @@ enum FieldsDirectoryEnum: string
             self::messengers => 'Справочник мессенджеры',
             self::offerSearch => 'Справочник территории поиска предложений',
             self::regionOfResidence => 'Справочник регион проживания',
-            self::residence => 'Справочник регионов проживания',
+            self::residence => 'Разрешение на проживание на территории РФ',
             self::shoeSize => 'Справочник размеров обуви',
             self::taxStatus => 'Справочник налоговый статус',
             self::viewActivities => 'Справочник виды деятельности',

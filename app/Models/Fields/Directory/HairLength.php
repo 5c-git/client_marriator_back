@@ -59,9 +59,9 @@ class HairLength extends Model implements ModelDirectoryInterface
                 if (empty($name)) {
                     $name = $item['code'];
                 }
-                $dataForUpsert[] = ['uuid' => $item['id'], 'name' => $name];
+                $dataForUpsert[] = ['uuid' => $item['id'], 'name' => $name,'active'=>true];
             }
-            self::upsert($dataForUpsert, ['uuid'], ['name']);
+            self::upsert($dataForUpsert, ['uuid'], ['name','active']);
         }
     }
 }
