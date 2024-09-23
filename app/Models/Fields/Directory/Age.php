@@ -60,6 +60,7 @@ class Age extends Model implements ModelDirectoryInterface
                 }
                 $dataForUpsert[] = ['uuid' => $item['id'], 'name' => $name,'active'=>true];
             }
+            self::truncate();
             self::upsert($dataForUpsert, ['uuid'], ['name','active']);
         }
     }

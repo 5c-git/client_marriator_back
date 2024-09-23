@@ -10,21 +10,28 @@ use Dompdf\Dompdf;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
 use App\Models\User;
+use App\Services\OneC\OneCServicesClient;
 
 class OneCServices
 {
 
     private User $user;
-    public bool $statusRegister;
+    public bool $status;
+    public OneCServicesClient $oneCServicesClient;
 
     public function __construct(User $user)
     {
         $this->user = $user;
+        $this->oneCServicesClient = new OneCServicesClient($user);
     }
 
     public function sendRegister(){
-        //$this->user;
-        $this->statusRegister = true;
+        $this->status = $this->oneCServicesClient->sendRegister();
+        return $this;
+    }
+
+    public function updateUserData(array $updateField){
+        $this->status = $this->oneCServicesClient->sendUpdateUserData($updateField);
         return $this;
     }
 

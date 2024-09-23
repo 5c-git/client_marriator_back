@@ -22,6 +22,7 @@ class FormBuilderService
     public array $formatedData = [];
     public array $moreData = [];
     public array $errorData = [];
+    public array $updateData = [];
 
     public function __construct(int $step, array $formData = [])
     {
@@ -51,9 +52,10 @@ class FormBuilderService
 
     }
 
-    public function setDataUser(array $moreData,array $errorData){
+    public function setDataUser(array $moreData,array $errorData,array $updateData){
         $this->errorData = $errorData;
         $this->moreData = $moreData;
+        $this->updateData = $updateData;
     }
 
     public function createFormData(): array
@@ -216,6 +218,11 @@ class FormBuilderService
             }
             if(!empty($this->errorData[$field->uuid])){
                 $field->errorData = $this->errorData[$field->uuid];
+            }
+            if(!empty($this->updateData[$field->uuid])){
+                $field->updateData = $this->updateData[$field->uuid];
+            }else{
+                $field->updateData = '';
             }
 
             if ($field->type != FieldsTypeEnum::directory->value) {

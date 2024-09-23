@@ -63,6 +63,7 @@ class Bank extends Model implements ModelDirectoryInterface
 
                 $dataForUpsert[] = ['uuid' => $item['id'], 'name' => $code.' '.$name,'bic'=>$code,'active'=>true];
             }
+            self::truncate();
             self::upsert($dataForUpsert, ['uuid'], ['name','bic','active']);
         }
     }

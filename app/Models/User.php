@@ -37,7 +37,9 @@ class User extends Authenticatable
         'estateData',
         'requisitesData',
         'mapAddress',
-        'mapRadius'
+        'mapRadius',
+        'updateData',
+        'coordinates'
     ];
 
     /**

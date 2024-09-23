@@ -7,6 +7,7 @@ use App\Models\Fields\Fields;
 use App\Models\User;
 use App\Services\ApiTokenService\ApiTokenService;
 use App\Services\FormBuilderService;
+use App\Services\OneC\OneCServices;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -119,14 +120,24 @@ class UserPersonalInfoController extends Controller
         } else {
             $user->errorData = [];
         }
+        if (!empty($user->updateData)) {
+            $user->updateData = json_decode($user->updateData, true);
+        } else {
+            $user->updateData = [];
+        }
         if(!is_array($user->errorData)){
             $user->errorData = json_encode([]);
             $user->save();
             $user->errorData = [];
         }
+        if(!is_array($user->updateData)){
+            $user->updateData = json_encode([]);
+            $user->save();
+            $user->updateData = [];
+        }
 
 
-        $formDataService->setDataUser($user->expansionData, $user->errorData);
+        $formDataService->setDataUser($user->expansionData, $user->errorData,$user->updateData);
         $response['result']['formData'] = $formDataService->createPersonalUserFormData($request->section);
         $response['result']['type'] = $formDataService->checkStatusForm(true);
 
@@ -201,16 +212,36 @@ class UserPersonalInfoController extends Controller
     public function saveUserFields(Request $request)
     {
         $user = Auth::user();
+        $updateData = [];
+        $updateDataUp = [];
         if (!empty($request->formData)) {
             $userError = json_decode($user->errorData, true);
+            $updateDataUser = json_decode($user->updateData, true);
             $userData = json_decode($user->data, true);
             foreach ($request->formData as $k => $oneField) {
                 if ((!isset($userData[$k]) && !empty($userError[$k]) && !empty($oneField)) || (!empty($userData[$k]) && !empty($userError[$k]) && $userData[$k] != $oneField)) {
                     unset($userError[$k]);
                 }
+                if ((!isset($userData[$k]) && !empty($oneField)) || (!empty($userData[$k]) && $userData[$k] != $oneField)) {
+                    $updateData[$k] = $oneField;
+                }
                 $userData[$k] = $oneField;
             }
-            $user->data = json_encode($userData);
+            //$user->data = json_encode($userData);
+            if(!empty($updateDataUser)){
+                foreach ($updateDataUser as $k => $oneUpdate){
+                    if(!empty($updateData[$k])){
+                        unset($updateData[$k]);
+                    }
+                }
+                $updateDataUp = array_merge($updateData,$updateDataUser);
+            }
+
+            $updateResult = (new OneCServices($user))->updateUserData($updateData);
+            if($updateResult->status) {
+                $user->updateData = json_encode($updateDataUp);
+            }
+
             if(empty($userError) || !is_array($userData)){
                 $userData = [];
             }
@@ -782,16 +813,34 @@ class UserPersonalInfoController extends Controller
     public function saveUserFieldsActivities(Request $request)
     {
         $user = Auth::user();
+        $updateData = [];
+        $updateDataUp = [];
         if (!empty($request->formData) && $request->step) {
             $userError = json_decode($user->errorData, true);
+            $updateDataUser = json_decode($user->updateData, true);
             $userData = json_decode($user->data, true);
             foreach ($request->formData as $k => $oneField) {
                 if ((!isset($userData[$k]) && !empty($userError[$k]) && !empty($oneField)) || (!empty($userData[$k]) && !empty($userError[$k]) && $userData[$k] != $oneField)) {
                     unset($userError[$k]);
                 }
+                if ((!isset($userData[$k]) && !empty($oneField)) || (!empty($userData[$k]) && $userData[$k] != $oneField)) {
+                    $updateData[$k] = $oneField;
+                }
                 $userData[$k] = $oneField;
             }
-            $user->data = json_encode($userData);
+            if(!empty($updateDataUser)){
+                foreach ($updateDataUser as $k => $oneUpdate){
+                    if(!empty($updateData[$k])){
+                        unset($updateData[$k]);
+                    }
+                }
+                $updateDataUp = array_merge($updateData,$updateDataUser);
+            }
+            $updateResult = (new OneCServices($user))->updateUserData($updateData);
+            if($updateResult->status) {
+                $user->updateData = json_encode($updateDataUp);
+            }
+           // $user->data = json_encode($userData);
             $user->errorData = json_encode($userError);
             $user->save();
 
@@ -964,6 +1013,7 @@ class UserPersonalInfoController extends Controller
         $user = Auth::user();
         $response['result']['mapAddress'] = $user->mapAddress;
         $response['result']['mapRadius'] = $user->mapRadius;
+        $response['result']['coordinates'] = $user->coordinates;
         $response['status'] = 'success';
         return response()->json($response, 200);
     }
@@ -981,6 +1031,7 @@ class UserPersonalInfoController extends Controller
      *             @OA\Schema(
      *                 @OA\Property(property="mapAddress",type="string"),
      *                 @OA\Property(property="mapRadius",type="string"),
+     *                 @OA\Property(property="coordinates",type="string"),
      *             ),
      *         ),
      *     ),
@@ -1002,8 +1053,13 @@ class UserPersonalInfoController extends Controller
         if(!empty($request->mapRadius)){
             $user->mapRadius = $request->mapRadius;
         }
+        if(!empty($request->coordinates)){
+            $user->coordinates = $request->coordinates;
+        }
+        $user->save();
         $response['result']['mapAddress'] = $user->mapAddress;
         $response['result']['mapRadius'] = $user->mapRadius;
+        $response['result']['coordinates'] = $user->coordinates;
         $response['status'] = 'success';
         return response()->json($response, 200);
     }

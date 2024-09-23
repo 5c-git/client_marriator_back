@@ -339,7 +339,7 @@ class FormController extends Controller
         $user = Auth::user();
         if(!$user->finishRegister) {
             $registerResult = (new OneCServices($user))->sendRegister();
-            if($registerResult->statusRegister) {
+            if($registerResult->status) {
                 $user->finishRegister = true;
                 $user->confirmRegister = true;
                 $user->data = json_encode(array_merge(...json_decode($user->data,true)));

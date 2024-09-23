@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Middleware\CheckIntegration;
 
 Route::group(["middleware" => 'throttle:100,10'], function () {
     Route::post('/sendPhone/', 'App\Http\Controllers\Form\RegistrationController@sendPhone')->name('sendPhone');
@@ -64,6 +65,13 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
 
         Route::get('/getMapField/', 'App\Http\Controllers\PersonalArea\UserPersonalInfoController@getMapField')->name('getMapField');
         Route::post('/setMapField/', 'App\Http\Controllers\PersonalArea\UserPersonalInfoController@setMapField')->name('setMapField');
+    });
+});
+
+Route::group(['prefix' => 'integration'], function () {
+    Route::middleware([CheckIntegration::class])->group(function () {
+        Route::get('/ping/', 'App\Http\Controllers\Integration\IntegrationController@ping')->name('ping');
+        Route::post('/updateUserData/', 'App\Http\Controllers\Integration\IntegrationController@updateUserData')->name('updateUserData');
     });
 });
 
