@@ -42,7 +42,8 @@ class DocumentsController extends Controller
         ];
         foreach ($documents as $document){
             $response['document'] = [
-               'name' => $document->file_name
+                'id' => $document->id,
+                'name' => $document->file_name,
             ];
         }
         return response()->json($response, 200);
@@ -81,6 +82,7 @@ class DocumentsController extends Controller
         ];
         foreach ($documents as $document){
             $response['document'] = [
+                'id' => $document->id,
                 'name' => $document->file_name,
                 'path' => Storage::disk('private')->temporaryUrl(
                     $document->file_path, now()->addMinutes(30)
@@ -101,6 +103,7 @@ class DocumentsController extends Controller
         ];
         foreach ($documents as $document){
             $response['document'] = [
+                'id' => $document->id,
                 'name' => $document->file_name,
                 'path' => Storage::disk('private')->temporaryUrl(
                     $document->file_path, now()->addMinutes(30)
@@ -108,6 +111,18 @@ class DocumentsController extends Controller
             ];
         }
         return response()->json($response, 200);
+    }
+
+    public function setConclude(Request $request){
+        if(!empty($request->ids)){
+
+        }
+    }
+
+    public function setTerminate(Request $request){
+        if(!empty($request->ids)){
+
+        }
     }
 
 }
