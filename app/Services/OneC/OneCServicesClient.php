@@ -19,6 +19,7 @@ class OneCServicesClient
     private $url = [
         'sendReg' => '',
         'updateUserData' => '',
+        'updateUserRequisites' => '',
         'ping' => '',
     ];
 
@@ -30,7 +31,8 @@ class OneCServicesClient
         $this->user = $user;
     }
 
-    public function sendRegister(){
+    public function sendRegister(): bool
+    {
         $userData = json_decode($this->user->data,true);
         $data = [
             'userId' => $this->user->id,
@@ -41,7 +43,8 @@ class OneCServicesClient
         return $responseData['status'] == 'success';
     }
 
-    public function sendUpdateUserData($updateData){
+    public function sendUpdateUserData($updateData): bool
+    {
         $userData = json_decode($updateData,true);
         if(empty($userData)){
             $userData = [];
@@ -52,6 +55,21 @@ class OneCServicesClient
             'date' => Carbon::now(),
         ];
         $responseData = $this->sendPost($this->url['updateUserData'],$data);
+        return $responseData['status'] == 'success';
+    }
+
+    public function sendUpdateUserRequisites($updateData): bool
+    {
+        $userData = json_decode($updateData,true);
+        if(empty($userData)){
+            $userData = [];
+        }
+        $data = [
+            'userId' => $this->user->id,
+            'data' => $userData,
+            'date' => Carbon::now(),
+        ];
+        $responseData = $this->sendPost($this->url['updateUserRequisites'],$data);
         return $responseData['status'] == 'success';
     }
 

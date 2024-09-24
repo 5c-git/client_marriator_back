@@ -35,4 +35,9 @@ class OneCServices
         return $this;
     }
 
+    public function sendUpdateUserRequisites(array $updateField){
+        $this->status = $this->oneCServicesClient->sendUpdateUserRequisites($updateField);
+        return $this;
+    }
+
 }
