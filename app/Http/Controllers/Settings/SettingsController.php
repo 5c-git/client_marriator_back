@@ -63,7 +63,7 @@ class SettingsController extends Controller
      *       response="200",
      *       description="Успешный запрос",
      *       @OA\JsonContent(
-     *           @OA\Examples(example="result", value={"status": "success","result":[{"key": "tel","value": "+453453"},{"key": "cor","value": "10"}]},summary="Успех"),
+     *           @OA\Examples(example="result", value={"status": "success","result":{{"key": "tel","value": "+453453"},{"key": "cor","value": "10"}}},summary="Успех"),
      *       )
      *     ),
      * )
