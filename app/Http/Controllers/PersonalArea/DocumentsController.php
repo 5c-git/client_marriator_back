@@ -130,7 +130,7 @@ class DocumentsController extends Controller
     /**
      * @OA\Get(
      *     path="/api/personal/documents/getDocumentInquiries/",
-     *     operationId="get archive file data",
+     *     operationId="get Inquiries file data",
      *     tags={"documents"},
      *     summary="Получить документы из раздела Справки",
      *     description="Метод для получениея документов из раздела Справки",
