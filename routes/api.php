@@ -65,6 +65,17 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
 
         Route::get('/getMapField/', 'App\Http\Controllers\PersonalArea\UserPersonalInfoController@getMapField')->name('getMapField');
         Route::post('/setMapField/', 'App\Http\Controllers\PersonalArea\UserPersonalInfoController@setMapField')->name('setMapField');
+
+        Route::group(['prefix' => 'documents'], function () {
+            Route::get('/getDocumentSigned/', 'App\Http\Controllers\PersonalArea\DocumentsController@getDocumentSigned')->name('getDocumentSigned');
+            Route::get('/getDocumentArchive/', 'App\Http\Controllers\PersonalArea\DocumentsController@getDocumentArchive')->name('getDocumentArchive');
+            Route::get('/getDocumentInquiries/', 'App\Http\Controllers\PersonalArea\DocumentsController@getDocumentInquiries')->name('getDocumentInquiries');
+        });
+    });
+
+    Route::group(['prefix' => 'settings'], function () {
+        Route::get('/getFromKey/', 'App\Http\Controllers\Settings\SettingsController@getFromKey')->name('getFromKey');
+        Route::get('/getAll/', 'App\Http\Controllers\Settings\SettingsController@getAll')->name('getAll');
     });
 });
 

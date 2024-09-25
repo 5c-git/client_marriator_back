@@ -229,6 +229,11 @@ Route::group(['prefix' => 'admin'], function () {
             Route::post('/importSave', 'App\Http\Controllers\Admin\Import\ImportController@importSave')->name('importSave');
         });
 
+        Route::group(['prefix' => 'settings'], function () {
+            Route::get('/', 'App\Http\Controllers\Admin\Settings\SettingsController@index')->name('settingIndex');
+            Route::post('/saveAjax', 'App\Http\Controllers\Admin\Settings\SettingsController@save')->name('settingSave');
+        });
+
 
 
 

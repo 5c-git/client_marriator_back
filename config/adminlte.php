@@ -445,6 +445,11 @@ return [
                 ],
             ],
         ],
+        [
+            'text' => 'Настройки',
+            'url'  => 'admin/settings/',
+            'icon' => 'fas fa-fw fa-cogs',
+        ],
 //        ['header' => 'labels'],
 //        [
 //            'text' => 'important',

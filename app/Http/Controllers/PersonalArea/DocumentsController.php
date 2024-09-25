@@ -30,6 +30,23 @@ class DocumentsController extends Controller
 
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/personal/documents/getDocumentSigned/",
+     *     operationId="get signet doc",
+     *     tags={"documents"},
+     *     summary="Получить документы на подписание",
+     *     description="Метод для получениея документов необходимых для подписания",
+     *     @OA\Response(
+     *       response="200",
+     *       description="Успешный запрос",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result", value={"status": "success","result":[{"id": "1","name": "file name"},{"id": "2","name": "file name 2"}]},summary="Успех"),
+     *       )
+     *     ),
+     * )
+     */
+
     public function getDocumentSigned(Request $request){
         $user = $request->user();
         $documents = Document::query()
@@ -38,10 +55,10 @@ class DocumentsController extends Controller
             ->get();
         $response = [
             'status' => 'success',
-            'document' => []
+            'result' => []
         ];
         foreach ($documents as $document){
-            $response['document'] = [
+            $response['result'][] = [
                 'id' => $document->id,
                 'name' => $document->file_name,
             ];
@@ -53,7 +70,7 @@ class DocumentsController extends Controller
 
         $response = [
             'status' => 'success',
-            'document' => []
+            'result' => []
         ];
 
         //??????????????????????
@@ -69,6 +86,24 @@ class DocumentsController extends Controller
         //??????????????????????
         return response()->json($response, 200);
     }
+
+    /**
+     * @OA\Get(
+     *     path="/api/personal/documents/getDocumentArchive/",
+     *     operationId="get archive file data",
+     *     tags={"documents"},
+     *     summary="Получить документы из архива",
+     *     description="Метод для получениея документов из архива",
+     *     @OA\Response(
+     *       response="200",
+     *       description="Успешный запрос",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result", value={"status": "success","result":[{"id": "1","name": "file name","path": "path"},{"id": "2","name": "file name 2", "path": "path"}]},summary="Успех"),
+     *       )
+     *     ),
+     * )
+     */
+
     public function getDocumentArchive(Request $request){
         $user = $request->user();
         $documents = Document::query()
@@ -78,10 +113,10 @@ class DocumentsController extends Controller
             ->get();
         $response = [
             'status' => 'success',
-            'document' => []
+            'result' => []
         ];
         foreach ($documents as $document){
-            $response['document'] = [
+            $response['result'] = [
                 'id' => $document->id,
                 'name' => $document->file_name,
                 'path' => Storage::disk('private')->temporaryUrl(
@@ -91,6 +126,24 @@ class DocumentsController extends Controller
         }
         return response()->json($response, 200);
     }
+
+    /**
+     * @OA\Get(
+     *     path="/api/personal/documents/getDocumentInquiries/",
+     *     operationId="get archive file data",
+     *     tags={"documents"},
+     *     summary="Получить документы из раздела Справки",
+     *     description="Метод для получениея документов из раздела Справки",
+     *     @OA\Response(
+     *       response="200",
+     *       description="Успешный запрос",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result", value={"status": "success","result":[{"id": "1","name": "file name","path": "path"},{"id": "2","name": "file name 2", "path": "path"}]},summary="Успех"),
+     *       )
+     *     ),
+     * )
+     */
+
     public function getDocumentInquiries(Request $request){
         $user = $request->user();
         $documents = Document::query()
@@ -99,10 +152,10 @@ class DocumentsController extends Controller
             ->get();
         $response = [
             'status' => 'success',
-            'document' => []
+            'result' => []
         ];
         foreach ($documents as $document){
-            $response['document'] = [
+            $response['result'] = [
                 'id' => $document->id,
                 'name' => $document->file_name,
                 'path' => Storage::disk('private')->temporaryUrl(

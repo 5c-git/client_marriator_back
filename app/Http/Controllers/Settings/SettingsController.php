@@ -1,20 +1,9 @@
 <?php
 
-namespace App\Http\Controllers\PersonalArea;
+namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
-use App\Services\ApiTokenService\ApiTokenService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
-use App\Services\Register\SmsCodeService;
-use App\Models\Document\Document;
-use App\Enum\Document\DocumentStatusEnum;
-use App\Enum\Document\DocumentStatusSignatureEnum;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Storage;
 use App\Models\Setting;
 
 
@@ -31,31 +20,65 @@ class SettingsController extends Controller
 
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/settings/getFromKey/",
+     *     operationId="get settings value for key",
+     *     tags={"settings"},
+     *     summary="Получить значение настроек по ключу",
+     *     description="Метод для получениея конкретных данных из настроек",
+     *     @OA\Response(
+     *       response="200",
+     *       description="Успешный запрос",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result", value={"status": "success","result":"значение"},summary="Успех"),
+     *       )
+     *     ),
+     * )
+     */
+
     public function getFromKey(Request $request)
     {
         $response = [
-            'status' => 'error',
+            'status' => 'success',
+            'result' => ''
         ];
         if (!empty($request->key)) {
             $setting = Setting::query()->where('key', $request->key)->first();
             if ($setting) {
-                $response['status'] = 'success';
-                $response['value'] = $setting->value;
+                $response['result'] = $setting->value;
             }
         }
         return response()->json($response, 200);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/settings/getAll/",
+     *     operationId="get all settings keys and values",
+     *     tags={"settings"},
+     *     summary="Получить всех значений настроек",
+     *     description="Метод для получениея всех данных из настроек",
+     *     @OA\Response(
+     *       response="200",
+     *       description="Успешный запрос",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result", value={"status": "success","result":[{"key": "tel","value": "+453453"},{"key": "cor","value": "10"}]},summary="Успех"),
+     *       )
+     *     ),
+     * )
+     */
+
     public function getAll(Request $request){
         $response = [
-            'status' => 'error',
+            'status' => 'success',
+            'result' => []
         ];
         $settings = Setting::query()->get();
         if ($settings) {
             $response['status'] = 'success';
-            $response['data'] = [];
             foreach ($settings as $setting){
-                $response['data'][] = [
+                $response['result'][] = [
                     'key'=>$setting->key,
                     'value'=>$setting->value
                 ];

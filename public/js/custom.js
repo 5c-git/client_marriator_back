@@ -332,6 +332,61 @@ $(document).ready(function () {
     })
 
 
+    $('.settingEdit').submit(function (e) {
+        e.preventDefault();
+        var data = new FormData();
+
+        var form_data = $(this).serializeArray();
+        $.each(form_data, function (key, input) {
+            data.append(input.name, input.value);
+        });
+
+        $(this).find('input[type="file"]').each(function (index, item) {
+            if ($(item)[0].files[0]) {
+                data.append($(item).attr('name'), $(item)[0].files[0]);
+            }
+        })
+
+        $.ajax({
+            url: '/admin/settings/saveAjax',
+            type: "POST",
+            data: data,
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                if (data.status == 'success') {
+                    $(document).Toasts('create', {
+                        title: 'Success',
+                        body: 'Success settings save',
+                        autohide: true,
+                        delay: 2000,
+                        class: 'bg-success',
+                    })
+                    setTimeout(function(){location.reload();},2000);
+                } else {
+                    $(document).Toasts('create', {
+                        title: 'Error',
+                        body: 'Error settings save',
+                        autohide: true,
+                        delay: 4000,
+                        class: 'bg-danger',
+                    })
+                }
+            },
+            error: function (request, status, error) {
+                $(document).Toasts('create', {
+                    title: 'Error',
+                    body: 'Error data save',
+                    autohide: true,
+                    delay: 4000,
+                    class: 'bg-danger',
+                })
+                setTimeout(function(){location.reload();},2000);
+            }
+        });
+    })
+
+
 
 
 
