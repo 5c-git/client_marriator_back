@@ -41,12 +41,26 @@ class ImportController extends Controller
                $dataForImport = $this->getItemStruct($directoryValueNew['items']);
             }
             $restImportTable = [];
-            foreach ($dataForImport as $item){
-                $restImportTable[$item['id']]['new'] = $item;
-            }
+
             foreach ($directoryValue as $item){
                 $restImportTable[$item['uuid']]['old'] = ['id'=>$item['uuid'],'name'=>$item['name']];
             }
+            $count = count($restImportTable);
+            foreach ($dataForImport as $item){
+                if(
+                    empty($restImportTable[$item['id']]) || $count<1000
+//                      ||
+//                    !empty($restImportTable[$item['id']]['old']) && (
+//                        (!empty($item['name']) && $restImportTable[$item['id']]['old']['name'] != $item['name']) ||
+//                        (!empty($item['code']) && $restImportTable[$item['id']]['old']['name'] != $item['code'])
+//                    )
+                ){
+                    $restImportTable[$item['id']]['new'] = $item;
+                }else {
+                    unset($restImportTable[$item['id']]);
+                }
+            }
+
             $response['link'] = $link;
             $response['type'] = $request->importType;
             $response['table'] = $restImportTable;
