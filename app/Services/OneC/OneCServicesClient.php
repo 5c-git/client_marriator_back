@@ -45,7 +45,7 @@ class OneCServicesClient
 
     public function sendUpdateUserData($updateData): bool
     {
-        $userData = json_decode($updateData,true);
+        $userData = $updateData;
         if(empty($userData)){
             $userData = [];
         }
@@ -60,7 +60,7 @@ class OneCServicesClient
 
     public function sendUpdateUserRequisites($updateData): bool
     {
-        $userData = json_decode($updateData,true);
+        $userData = $updateData;
         if(empty($userData)){
             $userData = [];
         }
