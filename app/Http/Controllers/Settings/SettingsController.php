@@ -27,6 +27,15 @@ class SettingsController extends Controller
      *     tags={"settings"},
      *     summary="Получить значение настроек по ключу",
      *     description="Метод для получениея конкретных данных из настроек",
+     *     @OA\Parameter(
+     *         name="key",
+     *         in="query",
+     *         description="Ключ из настроек",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string",
+     *         )
+     *     ),
      *     @OA\Response(
      *       response="200",
      *       description="Успешный запрос",
