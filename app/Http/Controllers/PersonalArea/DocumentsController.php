@@ -240,7 +240,7 @@ class DocumentsController extends Controller
     /**
      * @OA\Post(
      *     path="/api/personal/documents/setTerminate/",
-     *     operationId="set сonclude",
+     *     operationId="set terminate",
      *     tags={"documents"},
      *     summary="Расторгнуть договор с компанией",
      *     description="Метод Расторжения договора с компанией",
