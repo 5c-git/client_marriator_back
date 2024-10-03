@@ -15,6 +15,8 @@ use App\Enum\Document\DocumentStatusEnum;
 use App\Enum\Document\DocumentStatusSignatureEnum;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Fields\Directory\Organization;
+use App\Models\Certificates;
 
 
 class DocumentsController extends Controller
@@ -65,25 +67,58 @@ class DocumentsController extends Controller
         }
         return response()->json($response, 200);
     }
+
+    /**
+     * @OA\Get(
+     *     path="/api/personal/documents/getDocumentConclude/",
+     *     operationId="get document conclude",
+     *     tags={"documents"},
+     *     summary="Получить компании для заключения договора",
+     *     description="Получить компании для заключения договора",
+     *     @OA\Response(
+     *       response="200",
+     *       description="Успешный запрос",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result", value={"status": "success","result": {"organization":{{"id": "1","name": "organization name 1"},{"id": "2","name": "organization name 2"}}}},summary="Успех"),
+     *       )
+     *     ),
+     * )
+     */
+
     public function getDocumentConclude(Request $request){
         $user = $request->user();
-
+        $organization = Organization::query()->select(['id','name'])->where('active',true)->get();
         $response = [
             'status' => 'success',
-            'result' => []
+            'result' => ['organization'=>$organization->toArray()]
         ];
-
-        //??????????????????????
         return response()->json($response, 200);
     }
+
+    /**
+     * @OA\Get(
+     *     path="/api/personal/documents/getDocumentTerminate/",
+     *     operationId="get document terminate",
+     *     tags={"documents"},
+     *     summary="Получить компании для расторжения договора",
+     *     description="Получить компании для расторжения договора",
+     *     @OA\Response(
+     *       response="200",
+     *       description="Успешный запрос",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result", value={"status": "success","result": {"organization":{{"id": "1","name": "organization name 1"},{"id": "2","name": "organization name 2"}}}},summary="Успех"),
+     *       )
+     *     ),
+     * )
+     */
+
     public function getDocumentTerminate(Request $request){
         $user = $request->user();
+        $organization = Organization::query()->select(['id','name'])->where('active',true)->get();
         $response = [
             'status' => 'success',
-            'document' => []
+            'result' => ['organization'=>$organization->toArray()]
         ];
-
-        //??????????????????????
         return response()->json($response, 200);
     }
 
@@ -166,16 +201,106 @@ class DocumentsController extends Controller
         return response()->json($response, 200);
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/personal/documents/setConclude/",
+     *     operationId="set сonclude",
+     *     tags={"documents"},
+     *     summary="Заключить договор с компанией",
+     *     description="Метод Заключения договора с компанией",
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 required={"ids"},
+     *                 @OA\Property(property="ids",type="json"),
+     *             ),
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *       response="200",
+     *       description="Запрос получен",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result", value={"status": "success"},summary="Успех"),
+     *       )
+     *     ),
+     * )
+     */
+
     public function setConclude(Request $request){
         if(!empty($request->ids)){
 
         }
+        $response = [
+            'status' => 'success',
+        ];
+        return response()->json($response, 200);
     }
+
+    /**
+     * @OA\Post(
+     *     path="/api/personal/documents/setTerminate/",
+     *     operationId="set сonclude",
+     *     tags={"documents"},
+     *     summary="Расторгнуть договор с компанией",
+     *     description="Метод Расторжения договора с компанией",
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 required={"ids"},
+     *                 @OA\Property(property="ids",type="json"),
+     *             ),
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *       response="200",
+     *       description="Запрос получен",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result", value={"status": "success"},summary="Успех"),
+     *       )
+     *     ),
+     * )
+     */
 
     public function setTerminate(Request $request){
         if(!empty($request->ids)){
 
         }
+        $response = [
+            'status' => 'success',
+        ];
+        return response()->json($response, 200);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/api/personal/documents/getCompanyAndCertificatesInquiries/",
+     *     operationId="get Company And Certificates Inquiries",
+     *     tags={"documents"},
+     *     summary="Получить компании и типы справок для запроса справки",
+     *     description="Метод для получениея компаний и типов справок для запроса справки",
+     *     @OA\Response(
+     *       response="200",
+     *       description="Успешный запрос",
+     *       @OA\JsonContent(
+     *          @OA\Examples(example="result", value={"status": "success","result": {"organization":{{"id": "1","name": "organization name 1"},{"id": "2","name": "organization name 2"}},"certificates":{{"id": "1","key":"schet","value":"Счет компании"},{"id": "2","key":"schet 2","value":"Счет компании 2"}}}},summary="Успех"),
+     *       )
+     *     ),
+     * )
+     */
+
+    public function getCompanyAndCertificatesInquiries(){
+        $organization = Organization::query()->select(['id','name'])->where('active',true)->get();
+        $certificates = Certificates::query()->get();
+        $response = [
+            'status' => 'success',
+            'result' => [
+                'organization'=>$organization->toArray(),
+                'certificates' => $certificates->toArray(),
+            ]
+        ];
+        return response()->json($response, 200);
     }
 
 }

@@ -18,7 +18,12 @@ class CheckboxMultipleFormatter implements FormaterInterface
             //$data['uuid'] = $fieldsData->uuid;
             $data['inputType'] = self::$type;
             $data['name'] = $fieldsData->uuid;
-            $data['value'] = $value ?: [];
+            if(isset($fieldsData->updateData)){
+                $data['value'] = $fieldsData->updateData?:[];
+            }else {
+                $data['value'] = $value ?: [];
+            }
+
             $data['disabled'] = false;
             $option = [];
             foreach ($fieldsData->valuesDirectory as $item) {
@@ -55,6 +60,12 @@ class CheckboxMultipleFormatter implements FormaterInterface
             }
             if(!empty($fieldsData->errorData)){
                 $data['error'] = $fieldsData->errorData;
+            }
+
+            if(isset($fieldsData->updateData)){
+                $data['update'] = true;
+            }else{
+                $data['update'] = false;
             }
         }
 

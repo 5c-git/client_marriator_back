@@ -125,6 +125,12 @@ class UserPersonalInfoController extends Controller
         } else {
             $user->updateData = [];
         }
+
+        if (!empty($user->change_fields)) {
+            $user->change_fields = json_decode($user->change_fields, true);
+        } else {
+            $user->change_fields = [];
+        }
         if(!is_array($user->errorData)){
             $user->errorData = json_encode([]);
             $user->save();
@@ -137,7 +143,7 @@ class UserPersonalInfoController extends Controller
         }
 
 
-        $formDataService->setDataUser($user->expansionData, $user->errorData,$user->updateData);
+        $formDataService->setDataUser($user->expansionData, $user->errorData,$user->updateData,$user->change_fields);
         $response['result']['formData'] = $formDataService->createPersonalUserFormData($request->section);
         $response['result']['type'] = $formDataService->checkStatusForm(true);
 
@@ -212,38 +218,41 @@ class UserPersonalInfoController extends Controller
     public function saveUserFields(Request $request)
     {
         $user = Auth::user();
-        $updateData = [];
-        $updateDataUp = [];
+        $change_fields = [];
+        $change_fieldsUp = [];
         if (!empty($request->formData)) {
             $userError = json_decode($user->errorData, true);
-            $updateDataUser = json_decode($user->updateData, true);
+            $change_fieldsUser = json_decode($user->change_fields, true);
             $userData = json_decode($user->data, true);
             foreach ($request->formData as $k => $oneField) {
                 if ((!isset($userData[$k]) && !empty($userError[$k]) && !empty($oneField)) || (!empty($userData[$k]) && !empty($userError[$k]) && $userData[$k] != $oneField)) {
                     unset($userError[$k]);
                 }
                 if ((!isset($userData[$k]) && !empty($oneField)) || (!empty($userData[$k]) && $userData[$k] != $oneField)) {
-                    $updateData[$k] = $oneField;
+                    $change_fields[$k] = $oneField;
                 }
                 $userData[$k] = $oneField;
             }
             //$user->data = json_encode($userData);
-            if(!empty($updateDataUser)){
-                foreach ($updateDataUser as $k => $oneUpdate){
-                    if(!empty($updateData[$k])){
-                        unset($updateData[$k]);
+            if(!empty($change_fieldsUser)){
+                foreach ($change_fieldsUser as $k => $oneUpdate){
+                    if(!empty($change_fields[$k])){
+                        unset($change_fields[$k]);
                     }
                 }
-                $updateDataUp = array_merge($updateData,$updateDataUser);
+                $change_fieldsUp = array_merge($change_fields,$change_fieldsUser);
             }
 
-            $updateResult = (new OneCServices($user))->updateUserData($updateData);
-            if($updateResult->status) {
-                $user->updateData = json_encode($updateDataUp);
-            }
+//            $updateResult = (new OneCServices($user))->updateUserData($change_fields);
+//            if($updateResult->status) {
+                $user->change_fields = json_encode($change_fieldsUp);
+           // }
 
             if(empty($userError) || !is_array($userData)){
                 $userData = [];
+            }
+            if(empty($user->date_for_send)){
+                $user->date_for_send = Carbon::now();
             }
             $user->errorData = json_encode($userError);
             $user->save();
@@ -815,35 +824,38 @@ class UserPersonalInfoController extends Controller
     public function saveUserFieldsActivities(Request $request)
     {
         $user = Auth::user();
-        $updateData = [];
-        $updateDataUp = [];
+        $change_fields = [];
+        $change_fieldsUp = [];
         if (!empty($request->formData) && $request->step) {
             $userError = json_decode($user->errorData, true);
-            $updateDataUser = json_decode($user->updateData, true);
+            $change_fieldsUser = json_decode($user->change_fields, true);
             $userData = json_decode($user->data, true);
             foreach ($request->formData as $k => $oneField) {
                 if ((!isset($userData[$k]) && !empty($userError[$k]) && !empty($oneField)) || (!empty($userData[$k]) && !empty($userError[$k]) && $userData[$k] != $oneField)) {
                     unset($userError[$k]);
                 }
                 if ((!isset($userData[$k]) && !empty($oneField)) || (!empty($userData[$k]) && $userData[$k] != $oneField)) {
-                    $updateData[$k] = $oneField;
+                    $change_fields[$k] = $oneField;
                 }
                 $userData[$k] = $oneField;
             }
-            if(!empty($updateDataUser)){
-                foreach ($updateDataUser as $k => $oneUpdate){
-                    if(!empty($updateData[$k])){
-                        unset($updateData[$k]);
+            if(!empty($change_fieldsUser)){
+                foreach ($change_fieldsUser as $k => $oneUpdate){
+                    if(!empty($change_fields[$k])){
+                        unset($change_fields[$k]);
                     }
                 }
-                $updateDataUp = array_merge($updateData,$updateDataUser);
+                $change_fieldsUp = array_merge($change_fields,$change_fieldsUser);
             }
-            $updateResult = (new OneCServices($user))->updateUserData($updateData);
-            if($updateResult->status) {
-                $user->updateData = json_encode($updateDataUp);
-            }
+//            $updateResult = (new OneCServices($user))->updateUserData($change_fields);
+//            if($updateResult->status) {
+                $user->change_fields = json_encode($change_fieldsUp);
+           // }
            // $user->data = json_encode($userData);
             $user->errorData = json_encode($userError);
+            if(empty($user->date_for_send)){
+                $user->date_for_send = Carbon::now();
+            }
             $user->save();
 
             $formDataService = (new FormBuilderService($request->step, $userData));

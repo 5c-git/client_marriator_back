@@ -18,7 +18,12 @@ class SelectMultipleFormatter implements FormaterInterface
             //$data['uuid'] = $fieldsData->uuid;
             $data['inputType'] = self::$type;
             $data['name'] = $fieldsData->uuid;
-            $data['value'] = $value ?: [];
+            if(isset($fieldsData->updateData)){
+                $data['value'] = $fieldsData->updateData?:[];
+            }else {
+                $data['value'] = $value ?: [];
+            }
+
             $data['placeholder'] = $fieldsData->placeholder?:'';
             $data['disabled'] = false;
             $option = [];
@@ -56,6 +61,12 @@ class SelectMultipleFormatter implements FormaterInterface
             }
             if(!empty($fieldsData->errorData)){
                 $data['error']= $fieldsData->errorData;
+            }
+
+            if(isset($fieldsData->updateData)){
+                $data['update'] = true;
+            }else{
+                $data['update'] = false;
             }
         }
 

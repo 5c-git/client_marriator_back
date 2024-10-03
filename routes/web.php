@@ -234,6 +234,11 @@ Route::group(['prefix' => 'admin'], function () {
             Route::post('/saveAjax', 'App\Http\Controllers\Admin\Settings\SettingsController@save')->name('settingSave');
         });
 
+        Route::group(['prefix' => 'certificates'], function () {
+            Route::get('/', 'App\Http\Controllers\Admin\Certificates\CertificatesController@index')->name('certificatesIndex');
+            Route::post('/saveAjax', 'App\Http\Controllers\Admin\Certificates\CertificatesController@save')->name('certificatesSave');
+        });
+
 
 
 

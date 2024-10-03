@@ -14,7 +14,12 @@ class DateFormatter implements FormaterInterface
         //$data['uuid'] = $fieldsData->uuid;
         $data['inputType'] = self::$type;
         $data['name'] = $fieldsData->uuid;
-        $data['value'] = $value?:null;
+        if(isset($fieldsData->updateData)){
+            $data['value'] = $fieldsData->updateData?:null;
+        }else {
+            $data['value'] = $value?:null;
+        }
+
         $data['label'] = $fieldsData->name?:'';
         $data['disabled'] = false;
         if($fieldsData->required){
@@ -50,7 +55,11 @@ class DateFormatter implements FormaterInterface
         if(!empty($fieldsData->errorData)){
             $data['error'] = $fieldsData->errorData;
         }
-
+        if(isset($fieldsData->updateData)){
+            $data['update'] = true;
+        }else{
+            $data['update'] = false;
+        }
 
 
 

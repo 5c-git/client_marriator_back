@@ -40,4 +40,9 @@ class OneCServices
         return $this;
     }
 
+    public function getUserRequisites(){
+        $this->status = $this->oneCServicesClient->getUserRequisites();
+        return $this;
+    }
+
 }

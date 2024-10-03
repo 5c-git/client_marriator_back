@@ -15,7 +15,12 @@ class SelectFormatter implements FormaterInterface
             //$data['uuid'] = $fieldsData->uuid;
             $data['inputType'] = self::$type;
             $data['name'] = $fieldsData->uuid;
-            $data['value'] = (string)$value ?: '';
+            if(isset($fieldsData->updateData)){
+                $data['value'] = (string)$fieldsData->updateData?:'';
+            }else {
+                $data['value'] = (string)$value ?: '';
+            }
+
             $data['disabled'] = false;
             $option = [];
             foreach ($fieldsData->valuesDirectory as $item) {
@@ -54,6 +59,11 @@ class SelectFormatter implements FormaterInterface
             }
             if(!empty($fieldsData->errorData)){
                 $data['error'] = $fieldsData->errorData;
+            }
+            if(isset($fieldsData->updateData)){
+                $data['update'] = true;
+            }else{
+                $data['update'] = false;
             }
         }
 

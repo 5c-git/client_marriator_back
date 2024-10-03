@@ -14,7 +14,11 @@ class SmsFormatter implements FormaterInterface
         //$data['uuid'] = $fieldsData->uuid;
         $data['inputType'] = self::$type;
         $data['name'] = $fieldsData->uuid;
-        $data['value'] = $value?:'';
+        if(isset($fieldsData->updateData)){
+            $data['value'] = $fieldsData->updateData?:'';
+        }else {
+            $data['value'] = $value ?: '';
+        }
         $data['label'] = $fieldsData->name?:'';
         $data['disabled'] = false;
         if($fieldsData->required){
@@ -49,6 +53,11 @@ class SmsFormatter implements FormaterInterface
         }
         if(!empty($fieldsData->errorData)){
             $data['error'] = $fieldsData->errorData;
+        }
+        if(isset($fieldsData->updateData)){
+            $data['update'] = true;
+        }else{
+            $data['update'] = false;
         }
 
 

@@ -14,7 +14,12 @@ class CheckBoxFormatter implements FormaterInterface
         //$data['uuid'] = $fieldsData->uuid;
         $data['inputType'] = self::$type;
         $data['name'] = $fieldsData->uuid;
-        $data['value'] = (bool)$value;
+        if(isset($fieldsData->updateData)){
+            $data['value'] = (bool)$fieldsData->updateData;
+        }else {
+            $data['value'] = (bool)$value;
+        }
+
         $data['label'] = $fieldsData->name?:'';
         $data['disabled'] = false;
         if($fieldsData->required){
@@ -49,7 +54,11 @@ class CheckBoxFormatter implements FormaterInterface
         }
 
 
-
+        if(isset($fieldsData->updateData)){
+            $data['update'] = true;
+        }else{
+            $data['update'] = false;
+        }
 
 
 

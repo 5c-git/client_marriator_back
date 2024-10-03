@@ -52,10 +52,12 @@ class FormBuilderService
 
     }
 
-    public function setDataUser(array $moreData,array $errorData,array $updateData){
+    public function setDataUser(array $moreData,array $errorData,array $updateData,array $changefields){
         $this->errorData = $errorData;
         $this->moreData = $moreData;
         $this->updateData = $updateData;
+        $this->formData = $changefields+$this->formData;
+        $this->formDataThisStep = $changefields+$this->formDataThisStep;
     }
 
     public function createFormData(): array
@@ -219,10 +221,8 @@ class FormBuilderService
             if(!empty($this->errorData[$field->uuid])){
                 $field->errorData = $this->errorData[$field->uuid];
             }
-            if(!empty($this->updateData[$field->uuid])){
+            if(isset($this->updateData[$field->uuid])){
                 $field->updateData = $this->updateData[$field->uuid];
-            }else{
-                $field->updateData = '';
             }
 
             if ($field->type != FieldsTypeEnum::directory->value) {

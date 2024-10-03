@@ -450,6 +450,11 @@ return [
             'url'  => 'admin/settings/',
             'icon' => 'fas fa-fw fa-cogs',
         ],
+        [
+            'text' => 'Типы справок',
+            'url'  => 'admin/certificates/',
+            'icon' => 'fas fa-fw fa-window-restore',
+        ],
 //        ['header' => 'labels'],
 //        [
 //            'text' => 'important',

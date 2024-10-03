@@ -20,6 +20,7 @@ class OneCServicesClient
         'sendReg' => '',
         'updateUserData' => '',
         'updateUserRequisites' => '',
+        'getUserRequisites' => '',
         'ping' => '',
     ];
 
@@ -73,6 +74,15 @@ class OneCServicesClient
         return $responseData['status'] == 'success';
     }
 
+    public function getUserRequisites(): bool
+    {
+        $data = [
+            'userId' => $this->user->id,
+        ];
+        $responseData = $this->sendGet($this->url['getUserRequisites'],$data);
+        return $responseData['status'] == 'success';
+    }
+
     public function ping(){
         $responseData = $this->sendPost($this->url['ping']);
         return $responseData['status'] == 'success';
@@ -81,6 +91,16 @@ class OneCServicesClient
     public function sendPost(string $url,array $data = []){
         return ['status'=>'success'];
         $response = Http::withHeaders([])->post($this->host.$url,$data);
+        if($response->successful()){
+            return ['status'=>'success',$response->body()];
+        }else{
+            return ['status'=>'error',$response->body()];
+        }
+    }
+
+    public function sendGet(string $url,array $data = []){
+        return ['status'=>'success'];
+        $response = Http::withHeaders([])->get($this->host.$url,$data);
         if($response->successful()){
             return ['status'=>'success',$response->body()];
         }else{

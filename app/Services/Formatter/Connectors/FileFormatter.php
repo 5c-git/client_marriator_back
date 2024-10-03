@@ -15,7 +15,11 @@ class FileFormatter implements FormaterInterface
         //$data['uuid'] = $fieldsData->uuid;
         $data['inputType'] = self::$type;
         $data['name'] = $fieldsData->uuid;
-        $data['value'] = $value?:'';
+        if(isset($fieldsData->updateData)){
+            $data['value'] = $fieldsData->updateData?:'';
+        }else {
+            $data['value'] = $value?:'';
+        }
         $data['disabled'] = false;
         $data['placeholder'] = $fieldsData->placeholder?:'';
         if($fieldsData->required){
@@ -65,7 +69,11 @@ class FileFormatter implements FormaterInterface
         }
 
 
-
+        if(isset($fieldsData->updateData)){
+            $data['update'] = true;
+        }else{
+            $data['update'] = false;
+        }
 
 
         return $data;

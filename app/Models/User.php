@@ -39,7 +39,9 @@ class User extends Authenticatable
         'mapAddress',
         'mapRadius',
         'updateData',
-        'coordinates'
+        'coordinates',
+        'change_fields',
+        'date_for_send'
     ];
 
     /**

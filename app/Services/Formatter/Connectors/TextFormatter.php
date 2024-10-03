@@ -14,7 +14,11 @@ class TextFormatter implements FormaterInterface
         //$data['uuid'] = $fieldsData->uuid;
         $data['inputType'] = self::$type;
         $data['name'] = $fieldsData->uuid;
-        $data['value'] = $value?:'';
+        if(isset($fieldsData->updateData)){
+            $data['value'] = $fieldsData->updateData?:'';
+        }else {
+            $data['value'] = $value ?: '';
+        }
         $data['disabled'] = false;
         if($fieldsData->required){
             $data['validation'] = 'default';
@@ -47,6 +51,12 @@ class TextFormatter implements FormaterInterface
         }
         if(!empty($fieldsData->errorData)){
             $data['error'] = $fieldsData->errorData;
+        }
+
+        if(isset($fieldsData->updateData)){
+            $data['update'] = true;
+        }else{
+            $data['update'] = false;
         }
 
         return $data;

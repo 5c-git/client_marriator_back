@@ -13,7 +13,7 @@ class AccountFormatter implements FormaterInterface
         $data = [];
         $data['inputType'] = self::$type;
         $data['name'] = $fieldsData->uuid;
-        if(!empty($fieldsData->updateData) && 0){
+        if(isset($fieldsData->updateData)){
             $data['value'] = $fieldsData->updateData?:'';
         }else {
             $data['value'] = $value ?: '';
@@ -54,11 +54,11 @@ class AccountFormatter implements FormaterInterface
         if(!empty($fieldsData->errorData)){
             $data['error'] = $fieldsData->errorData;
         }
-//        if(!empty($fieldsData->updateData)){
-//            $data['update'] = true;
-//        }else{
-//            $data['update'] = false;
-//        }
+        if(isset($fieldsData->updateData)){
+            $data['update'] = true;
+        }else{
+            $data['update'] = false;
+        }
 
 
 

@@ -70,6 +70,11 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
             Route::get('/getDocumentSigned/', 'App\Http\Controllers\PersonalArea\DocumentsController@getDocumentSigned')->name('getDocumentSigned');
             Route::get('/getDocumentArchive/', 'App\Http\Controllers\PersonalArea\DocumentsController@getDocumentArchive')->name('getDocumentArchive');
             Route::get('/getDocumentInquiries/', 'App\Http\Controllers\PersonalArea\DocumentsController@getDocumentInquiries')->name('getDocumentInquiries');
+            Route::get('/getDocumentConclude/', 'App\Http\Controllers\PersonalArea\DocumentsController@getDocumentConclude')->name('getDocumentConclude');
+            Route::get('/getDocumentTerminate/', 'App\Http\Controllers\PersonalArea\DocumentsController@getDocumentTerminate')->name('getDocumentTerminate');
+            Route::post('/setConclude/', 'App\Http\Controllers\PersonalArea\DocumentsController@setConclude')->name('setConclude');
+            Route::post('/setTerminate/', 'App\Http\Controllers\PersonalArea\DocumentsController@setTerminate')->name('setTerminate');
+            Route::get('/getCompanyAndCertificatesInquiries/', 'App\Http\Controllers\PersonalArea\DocumentsController@getCompanyAndCertificatesInquiries')->name('getCompanyAndCertificatesInquiries');
         });
     });
 
