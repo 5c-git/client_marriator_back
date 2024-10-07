@@ -75,6 +75,7 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
             Route::post('/setConclude/', 'App\Http\Controllers\PersonalArea\DocumentsController@setConclude')->name('setConclude');
             Route::post('/setTerminate/', 'App\Http\Controllers\PersonalArea\DocumentsController@setTerminate')->name('setTerminate');
             Route::get('/getCompanyAndCertificatesInquiries/', 'App\Http\Controllers\PersonalArea\DocumentsController@getCompanyAndCertificatesInquiries')->name('getCompanyAndCertificatesInquiries');
+            Route::post('/requestInquiries/', 'App\Http\Controllers\PersonalArea\DocumentsController@requestInquiries')->name('requestInquiries');
         });
     });
 

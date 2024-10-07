@@ -56,9 +56,12 @@ class DateFormatter implements FormaterInterface
             $data['error'] = $fieldsData->errorData;
         }
         if(isset($fieldsData->updateData)){
-            $data['update'] = true;
+            $data['status'] = "warning";
+            $data['disabled'] = true;
+            $data['helperInfo'] = 'Значение поля находится на модерации';
+            //$data['update'] = true;
         }else{
-            $data['update'] = false;
+            //$data['update'] = false;
         }
 
 

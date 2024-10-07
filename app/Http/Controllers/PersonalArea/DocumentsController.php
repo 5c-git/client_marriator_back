@@ -5,6 +5,7 @@ namespace App\Http\Controllers\PersonalArea;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Services\ApiTokenService\ApiTokenService;
+use App\Services\OneC\OneCServices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -228,12 +229,19 @@ class DocumentsController extends Controller
      */
 
     public function setConclude(Request $request){
-        if(!empty($request->ids)){
-
-        }
+        $user = $request->user();
         $response = [
-            'status' => 'success',
+            'status' => 'error',
         ];
+        if(!empty($request->ids)){
+            if(is_array($request->ids)){
+                if((new OneCServices($user))->setConclude($request->ids)->status){
+                    $response = [
+                        'status' => 'success',
+                    ];
+                };
+            }
+        }
         return response()->json($response, 200);
     }
 
@@ -264,12 +272,19 @@ class DocumentsController extends Controller
      */
 
     public function setTerminate(Request $request){
-        if(!empty($request->ids)){
-
-        }
+        $user = $request->user();
         $response = [
-            'status' => 'success',
+            'status' => 'error',
         ];
+        if(!empty($request->ids)){
+            if(is_array($request->ids)){
+                if((new OneCServices($user))->setTerminate($request->ids)->status){
+                    $response = [
+                        'status' => 'success',
+                    ];
+                };
+            }
+        }
         return response()->json($response, 200);
     }
 
@@ -300,6 +315,54 @@ class DocumentsController extends Controller
                 'certificates' => $certificates->toArray(),
             ]
         ];
+        return response()->json($response, 200);
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/api/personal/documents/requestInquiries/",
+     *     operationId="request Inquiries",
+     *     tags={"documents"},
+     *     summary="Запросить справку",
+     *     description="Метод Запроса справки",
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 required={"ids","certificates"},
+     *                 @OA\Property(property="ids",type="json"),
+     *                 @OA\Property(property="certificates",type="string"),
+     *             ),
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *       response="200",
+     *       description="Запрос получен",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result", value={"status": "success"},summary="Успех"),
+     *       )
+     *     ),
+     * )
+     */
+
+    public function requestInquiries(Request $request){
+        $user = $request->user();
+        $response = [
+            'status' => 'error',
+        ];
+        if(!empty($request->ids) && !empty($request->certificates)){
+            if(is_array($request->ids)){
+                $dataInquiries = [
+                    'company' => $request->ids,
+                    'certificates' => $request->certificates
+                ];
+                if((new OneCServices($user))->requestInquiries($dataInquiries)->status){
+                    $response = [
+                        'status' => 'success',
+                    ];
+                };
+            }
+        }
         return response()->json($response, 200);
     }
 

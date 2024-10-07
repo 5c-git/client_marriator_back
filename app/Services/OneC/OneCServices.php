@@ -40,6 +40,21 @@ class OneCServices
         return $this;
     }
 
+    public function setTerminate(array $terminate){
+        $this->status = $this->oneCServicesClient->setTerminate($terminate);
+        return $this;
+    }
+
+    public function setConclude(array $conclude){
+        $this->status = $this->oneCServicesClient->setConclude($conclude);
+        return $this;
+    }
+
+    public function requestInquiries(array $requestInquiries){
+        $this->status = $this->oneCServicesClient->requestInquiries($requestInquiries);
+        return $this;
+    }
+
     public function getUserRequisites(){
         $this->status = $this->oneCServicesClient->getUserRequisites();
         return $this;

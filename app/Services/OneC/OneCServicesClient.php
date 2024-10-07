@@ -21,6 +21,9 @@ class OneCServicesClient
         'updateUserData' => '',
         'updateUserRequisites' => '',
         'getUserRequisites' => '',
+        'setTerminate' => '',
+        'setConclude' => '',
+        'requestInquiries' => '',
         'ping' => '',
     ];
 
@@ -71,6 +74,39 @@ class OneCServicesClient
             'date' => Carbon::now(),
         ];
         $responseData = $this->sendPost($this->url['updateUserRequisites'],$data);
+        return $responseData['status'] == 'success';
+    }
+
+    public function setTerminate($terminate): bool
+    {
+        $data = [
+            'userId' => $this->user->id,
+            'data' => $terminate,
+            'date' => Carbon::now(),
+        ];
+        $responseData = $this->sendPost($this->url['setTerminate'],$data);
+        return $responseData['status'] == 'success';
+    }
+
+    public function setConclude($conclude): bool
+    {
+        $data = [
+            'userId' => $this->user->id,
+            'data' => $conclude,
+            'date' => Carbon::now(),
+        ];
+        $responseData = $this->sendPost($this->url['setConclude'],$data);
+        return $responseData['status'] == 'success';
+    }
+
+    public function requestInquiries($requestInquiries): bool
+    {
+        $data = [
+            'userId' => $this->user->id,
+            'data' => $requestInquiries,
+            'date' => Carbon::now(),
+        ];
+        $responseData = $this->sendPost($this->url['requestInquiries'],$data);
         return $responseData['status'] == 'success';
     }
 

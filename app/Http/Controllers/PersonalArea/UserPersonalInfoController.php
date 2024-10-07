@@ -661,7 +661,7 @@ class UserPersonalInfoController extends Controller
         } else {
             $requisitesData[] = $request->data;
         }
-        if((new OneCServices($user))->sendUpdateUserRequisites($requisitesData)){
+        if((new OneCServices($user))->sendUpdateUserRequisites($requisitesData)->status){
             $user->requisitesData = json_encode($requisitesData);
             $user->save();
         };
@@ -971,7 +971,7 @@ class UserPersonalInfoController extends Controller
         } else {
             $requisitesData = [];
         }
-        if((new OneCServices($user))->sendUpdateUserRequisites($requisitesData)){
+        if((new OneCServices($user))->sendUpdateUserRequisites($requisitesData)->status){
             $user->requisitesData = json_encode($requisitesData);
             $user->save();
         };
