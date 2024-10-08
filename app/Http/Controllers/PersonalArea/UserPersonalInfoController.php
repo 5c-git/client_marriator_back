@@ -61,6 +61,8 @@ class UserPersonalInfoController extends Controller
         }else{
             $user->email = '';
         }
+        unset($user->change_fields);
+        unset($user->date_for_send);
         $response['result']['userData'] = $user->toArray();
         $response['status'] = 'success';
         return response()->json($response, 200);
