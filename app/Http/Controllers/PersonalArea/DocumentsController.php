@@ -44,7 +44,7 @@ class DocumentsController extends Controller
      *       response="200",
      *       description="Успешный запрос",
      *       @OA\JsonContent(
-     *           @OA\Examples(example="result", value={"status": "success","result": {{uuid: "1","name": "file name"},{"uuid": "2","name": "file name 2"}}},summary="Успех"),
+     *           @OA\Examples(example="result", value={"status": "success","result": {{"uuid": "1","name": "file name"},{"uuid": "2","name": "file name 2"}}},summary="Успех"),
      *       )
      *     ),
      * )
