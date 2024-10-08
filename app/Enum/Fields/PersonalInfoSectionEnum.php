@@ -15,7 +15,6 @@ enum PersonalInfoSectionEnum: int
 
     case personal = 1;
     case certificates = 2;
-    case searchRadius = 3;
     case documents = 4;
 
 
@@ -25,7 +24,6 @@ enum PersonalInfoSectionEnum: int
         {
             self::personal => 'Персональные данные',
             self::certificates => 'Допуски, справки, удостоверения',
-            self::searchRadius => 'Радиус поиска работы',
             self::documents => 'Документы иностранного гражданина',
         };
     }
@@ -36,7 +34,6 @@ enum PersonalInfoSectionEnum: int
         {
             self::personal => 'default',
             self::certificates => 'default',
-            self::searchRadius => 'default',
             self::documents => 'default',
         };
     }
@@ -47,7 +44,6 @@ enum PersonalInfoSectionEnum: int
         {
             self::personal => 1,
             self::certificates => 2,
-            self::searchRadius => 3,
             self::documents => 4,
         };
     }
@@ -58,7 +54,6 @@ enum PersonalInfoSectionEnum: int
         {
             self::personal => $query->where('section',1),
             self::certificates => $query->where('section',2),
-            self::searchRadius => $query->where('section',3),
             self::documents => $query->where('section',4),
         };
     }
@@ -68,7 +63,6 @@ enum PersonalInfoSectionEnum: int
         {
             self::personal => false,
             self::certificates => false,
-            self::searchRadius => false,
             self::documents => false,
         };
     }
