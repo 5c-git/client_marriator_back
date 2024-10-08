@@ -44,7 +44,7 @@ class DocumentsController extends Controller
      *       response="200",
      *       description="Успешный запрос",
      *       @OA\JsonContent(
-     *           @OA\Examples(example="result", value={"status": "success","result": {{"id": "1","name": "file name"},{"id": "2","name": "file name 2"}}},summary="Успех"),
+     *           @OA\Examples(example="result", value={"status": "success","result": {{uuid: "1","name": "file name"},{"uuid": "2","name": "file name 2"}}},summary="Успех"),
      *       )
      *     ),
      * )
@@ -80,7 +80,7 @@ class DocumentsController extends Controller
      *       response="200",
      *       description="Успешный запрос",
      *       @OA\JsonContent(
-     *           @OA\Examples(example="result", value={"status": "success","result": {"organization":{{"id": "1","name": "organization name 1"},{"id": "2","name": "organization name 2"}}}},summary="Успех"),
+     *           @OA\Examples(example="result", value={"status": "success","result": {"organization":{{"uuid": "1","name": "organization name 1"},{"uuid": "2","name": "organization name 2"}}}},summary="Успех"),
      *       )
      *     ),
      * )
@@ -88,7 +88,7 @@ class DocumentsController extends Controller
 
     public function getDocumentConclude(Request $request){
         $user = $request->user();
-        $organization = Organization::query()->select(['id','name'])->where('active',true)->get();
+        $organization = Organization::query()->select(['uuid','name'])->where('active',true)->get();
         $response = [
             'status' => 'success',
             'result' => ['organization'=>$organization->toArray()]
@@ -107,7 +107,7 @@ class DocumentsController extends Controller
      *       response="200",
      *       description="Успешный запрос",
      *       @OA\JsonContent(
-     *           @OA\Examples(example="result", value={"status": "success","result": {"organization":{{"id": "1","name": "organization name 1"},{"id": "2","name": "organization name 2"}}}},summary="Успех"),
+     *           @OA\Examples(example="result", value={"status": "success","result": {"organization":{{"uuid": "1","name": "organization name 1"},{"uuid": "2","name": "organization name 2"}}}},summary="Успех"),
      *       )
      *     ),
      * )
@@ -115,7 +115,7 @@ class DocumentsController extends Controller
 
     public function getDocumentTerminate(Request $request){
         $user = $request->user();
-        $organization = Organization::query()->select(['id','name'])->where('active',true)->get();
+        $organization = Organization::query()->select(['uuid','name'])->where('active',true)->get();
         $response = [
             'status' => 'success',
             'result' => ['organization'=>$organization->toArray()]
@@ -134,7 +134,7 @@ class DocumentsController extends Controller
      *       response="200",
      *       description="Успешный запрос",
      *       @OA\JsonContent(
-     *           @OA\Examples(example="result", value={"status": "success","result":{{"id": "1","name": "file name","path": "path"},{"id": "2","name": "file name 2", "path": "path"}}},summary="Успех"),
+     *           @OA\Examples(example="result", value={"status": "success","result":{{"uuid": "1","name": "file name","path": "path"},{"uuid": "2","name": "file name 2", "path": "path"}}},summary="Успех"),
      *       )
      *     ),
      * )
@@ -155,9 +155,7 @@ class DocumentsController extends Controller
             $response['result'] = [
                 'id' => $document->id,
                 'name' => $document->file_name,
-                'path' => Storage::disk('private')->temporaryUrl(
-                    $document->file_path, now()->addMinutes(30)
-                )
+                'path' => $document->file_path,
             ];
         }
         return response()->json($response, 200);
@@ -174,7 +172,7 @@ class DocumentsController extends Controller
      *       response="200",
      *       description="Успешный запрос",
      *       @OA\JsonContent(
-     *           @OA\Examples(example="result", value={"status": "success","result":{{"id": "1","name": "file name","path": "path"},{"id": "2","name": "file name 2", "path": "path"}}},summary="Успех"),
+     *           @OA\Examples(example="result", value={"status": "success","result":{{"uuid": "1","name": "file name","path": "path"},{"uuid": "2","name": "file name 2", "path": "path"}}},summary="Успех"),
      *       )
      *     ),
      * )
@@ -194,9 +192,7 @@ class DocumentsController extends Controller
             $response['result'] = [
                 'id' => $document->id,
                 'name' => $document->file_name,
-                'path' => Storage::disk('private')->temporaryUrl(
-                    $document->file_path, now()->addMinutes(30)
-                )
+                'path' => $document->file_path,
             ];
         }
         return response()->json($response, 200);
@@ -213,8 +209,8 @@ class DocumentsController extends Controller
      *         @OA\MediaType(
      *             mediaType="application/json",
      *             @OA\Schema(
-     *                 required={"ids"},
-     *                 @OA\Property(property="ids",type="json"),
+     *                 required={"uuid"},
+     *                 @OA\Property(property="uuid",type="json"),
      *             ),
      *         ),
      *     ),
@@ -233,9 +229,9 @@ class DocumentsController extends Controller
         $response = [
             'status' => 'error',
         ];
-        if(!empty($request->ids)){
-            if(is_array($request->ids)){
-                if((new OneCServices($user))->setConclude($request->ids)->status){
+        if(!empty($request->uuid)){
+            if(is_array($request->uuid)){
+                if((new OneCServices($user))->setConclude($request->uuid)->status){
                     $response = [
                         'status' => 'success',
                     ];
@@ -256,8 +252,8 @@ class DocumentsController extends Controller
      *         @OA\MediaType(
      *             mediaType="application/json",
      *             @OA\Schema(
-     *                 required={"ids"},
-     *                 @OA\Property(property="ids",type="json"),
+     *                 required={"uuid"},
+     *                 @OA\Property(property="uuid",type="json"),
      *             ),
      *         ),
      *     ),
@@ -276,9 +272,9 @@ class DocumentsController extends Controller
         $response = [
             'status' => 'error',
         ];
-        if(!empty($request->ids)){
-            if(is_array($request->ids)){
-                if((new OneCServices($user))->setTerminate($request->ids)->status){
+        if(!empty($request->uuid)){
+            if(is_array($request->uuid)){
+                if((new OneCServices($user))->setTerminate($request->uuid)->status){
                     $response = [
                         'status' => 'success',
                     ];
@@ -299,14 +295,14 @@ class DocumentsController extends Controller
      *       response="200",
      *       description="Успешный запрос",
      *       @OA\JsonContent(
-     *          @OA\Examples(example="result", value={"status": "success","result": {"organization":{{"id": "1","name": "organization name 1"},{"id": "2","name": "organization name 2"}},"certificates":{{"id": "1","key":"schet","value":"Счет компании"},{"id": "2","key":"schet 2","value":"Счет компании 2"}}}},summary="Успех"),
+     *          @OA\Examples(example="result", value={"status": "success","result": {"organization":{{"uuid": "1","name": "organization name 1"},{"uuid": "2","name": "organization name 2"}},"certificates":{{"uuid": "1","key":"schet","value":"Счет компании"},{"uuid": "2","key":"schet 2","value":"Счет компании 2"}}}},summary="Успех"),
      *       )
      *     ),
      * )
      */
 
     public function getCompanyAndCertificatesInquiries(){
-        $organization = Organization::query()->select(['id','name'])->where('active',true)->get();
+        $organization = Organization::query()->select(['uuid','name'])->where('active',true)->get();
         $certificates = Certificates::query()->get();
         $response = [
             'status' => 'success',
@@ -329,8 +325,8 @@ class DocumentsController extends Controller
      *         @OA\MediaType(
      *             mediaType="application/json",
      *             @OA\Schema(
-     *                 required={"ids","certificates"},
-     *                 @OA\Property(property="ids",type="json"),
+     *                 required={"uuid","certificates"},
+     *                 @OA\Property(property="uuid",type="json"),
      *                 @OA\Property(property="certificates",type="string"),
      *             ),
      *         ),
@@ -350,10 +346,10 @@ class DocumentsController extends Controller
         $response = [
             'status' => 'error',
         ];
-        if(!empty($request->ids) && !empty($request->certificates)){
-            if(is_array($request->ids)){
+        if(!empty($request->uuid) && !empty($request->certificates)){
+            if(is_array($request->uuid)){
                 $dataInquiries = [
-                    'company' => $request->ids,
+                    'company' => $request->uuid,
                     'certificates' => $request->certificates
                 ];
                 if((new OneCServices($user))->requestInquiries($dataInquiries)->status){
