@@ -253,7 +253,7 @@ class DocumentsController extends Controller
      *             mediaType="application/json",
      *             @OA\Schema(
      *                 required={"uuid"},
-     *                 @OA\Property(property="uuid",type="json"),
+     *                 @OA\Property(property="uuid",type="array"),
      *             ),
      *         ),
      *     ),
