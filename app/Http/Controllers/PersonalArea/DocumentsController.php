@@ -252,8 +252,8 @@ class DocumentsController extends Controller
      *         @OA\MediaType(
      *             mediaType="application/json",
      *             @OA\Schema(
-     *                 required={"uuid"},
-     *                 @OA\Property(property="uuid",type="array"),
+     *                 required={"uuid[]"},
+     *                 @OA\Property(property="uuid[]",type="array",@OA\Items(type="string")),
      *             ),
      *         ),
      *     ),
