@@ -295,7 +295,7 @@ class DocumentsController extends Controller
      *       response="200",
      *       description="Успешный запрос",
      *       @OA\JsonContent(
-     *          @OA\Examples(example="result", value={"status": "success","result": {"organization":{{"uuid": "1","name": "organization name 1"},{"uuid": "2","name": "organization name 2"}},"certificates":{{"uuid": "1","key":"schet","value":"Счет компании"},{"uuid": "2","key":"schet 2","value":"Счет компании 2"}}}},summary="Успех"),
+     *          @OA\Examples(example="result", value={"status": "success","result": {"organization":{{"uuid": "1","name": "organization name 1"},{"uuid": "2","name": "organization name 2"}},"certificates":{{"id": "1","key":"schet","value":"Счет компании"},{"id": "2","key":"schet 2","value":"Счет компании 2"}}}},summary="Успех"),
      *       )
      *     ),
      * )
@@ -326,7 +326,7 @@ class DocumentsController extends Controller
      *             mediaType="application/json",
      *             @OA\Schema(
      *                 required={"uuid","certificates"},
-     *                 @OA\Property(property="uuid",type="json"),
+     *                 @OA\Property(property="uuid",type="string"),
      *                 @OA\Property(property="certificates",type="string"),
      *             ),
      *         ),
@@ -341,23 +341,24 @@ class DocumentsController extends Controller
      * )
      */
 
-    public function requestInquiries(Request $request){
+    public function requestInquiries(Request $request)
+    {
         $user = $request->user();
         $response = [
             'status' => 'error',
         ];
-        if(!empty($request->uuid) && !empty($request->certificates)){
-            if(is_array($request->uuid)){
-                $dataInquiries = [
-                    'company' => $request->uuid,
-                    'certificates' => $request->certificates
+        if (!empty($request->uuid) && !empty($request->certificates)) {
+
+            $dataInquiries = [
+                'company' => $request->uuid,
+                'certificates' => $request->certificates
+            ];
+            if ((new OneCServices($user))->requestInquiries($dataInquiries)->status) {
+                $response = [
+                    'status' => 'success',
                 ];
-                if((new OneCServices($user))->requestInquiries($dataInquiries)->status){
-                    $response = [
-                        'status' => 'success',
-                    ];
-                };
-            }
+            };
+
         }
         return response()->json($response, 200);
     }
