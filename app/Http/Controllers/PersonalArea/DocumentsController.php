@@ -3,19 +3,10 @@
 namespace App\Http\Controllers\PersonalArea;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
-use App\Services\ApiTokenService\ApiTokenService;
 use App\Services\OneC\OneCServices;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
-use App\Services\Register\SmsCodeService;
 use App\Models\Document\Document;
 use App\Enum\Document\DocumentStatusEnum;
-use App\Enum\Document\DocumentStatusSignatureEnum;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Storage;
 use App\Models\Fields\Directory\Organization;
 use App\Models\Certificates;
 
@@ -52,6 +43,9 @@ class DocumentsController extends Controller
 
     public function getDocumentSigned(Request $request){
         $user = $request->user();
+
+        $this->createMockData($user->id,DocumentStatusEnum::Signed);
+
         $documents = Document::query()
             ->where('user_id',$user->id)
             ->where('status',DocumentStatusEnum::Signed)
@@ -62,7 +56,7 @@ class DocumentsController extends Controller
         ];
         foreach ($documents as $document){
             $response['result'][] = [
-                'id' => $document->id,
+                'uuid' => $document->uuid,
                 'name' => $document->file_name,
             ];
         }
@@ -142,6 +136,7 @@ class DocumentsController extends Controller
 
     public function getDocumentArchive(Request $request){
         $user = $request->user();
+        $this->createMockData($user->id,DocumentStatusEnum::Archive);
         $documents = Document::query()
             ->where('user_id',$user->id)
             ->where('status',DocumentStatusEnum::Archive)
@@ -153,7 +148,7 @@ class DocumentsController extends Controller
         ];
         foreach ($documents as $document){
             $response['result'] = [
-                'id' => $document->id,
+                'uuid' => $document->uuid,
                 'name' => $document->file_name,
                 'path' => $document->file_path,
             ];
@@ -180,6 +175,7 @@ class DocumentsController extends Controller
 
     public function getDocumentInquiries(Request $request){
         $user = $request->user();
+        $this->createMockData($user->id,DocumentStatusEnum::Inquiries);
         $documents = Document::query()
             ->where('user_id',$user->id)
             ->where('status',DocumentStatusEnum::Inquiries)
@@ -190,7 +186,7 @@ class DocumentsController extends Controller
         ];
         foreach ($documents as $document){
             $response['result'] = [
-                'id' => $document->id,
+                'uuid' => $document->uuid,
                 'name' => $document->file_name,
                 'path' => $document->file_path,
             ];
@@ -361,6 +357,26 @@ class DocumentsController extends Controller
 
         }
         return response()->json($response, 200);
+    }
+
+    public function createMockData($userId,$status){
+        foreach ([
+            'testLog1'=>['name'=>'testLog1.pdf','path'=>'/testDir/file/file.pdf'],
+            'testLog2'=>['name'=>'testLog2.pdf','path'=>'/testDir/file/file.pdf'],
+            'testLog3'=>['name'=>'testLog3.pdf','path'=>'/testDir/file/file.pdf'],
+                 ] as $k=>$uuid) {
+            Document::query()->updateOrCreate([
+                'user_id' => $userId,
+                'status' => $status,
+                'uuid' => $k,
+            ], [
+                'user_id' => $userId,
+                'status' => $status,
+                'uuid' => $k,
+                'file_path'=>$uuid['path'],
+                'file_name'=>$uuid['name'],
+            ]);
+        }
     }
 
 }
