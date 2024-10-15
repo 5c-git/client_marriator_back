@@ -56,8 +56,8 @@ class DocumentsController extends Controller
             'status' => 'success',
             'result' => []
         ];
-        foreach ($documents as $document){
-            $response['result'][] = [
+        foreach ($documents as $k=>$document){
+            $response['result'][$k] = [
                 'uuid' => $document->uuid,
                 'name' => $document->file_name,
             ];
@@ -148,8 +148,8 @@ class DocumentsController extends Controller
             'status' => 'success',
             'result' => []
         ];
-        foreach ($documents as $document){
-            $response['result'] = [
+        foreach ($documents as $k=>$document){
+            $response['result'][$k] = [
                 'uuid' => $document->uuid,
                 'name' => $document->file_name,
                 'path' => $document->file_path,
@@ -186,8 +186,8 @@ class DocumentsController extends Controller
             'status' => 'success',
             'result' => []
         ];
-        foreach ($documents as $document){
-            $response['result'] = [
+        foreach ($documents as $k=>$document){
+            $response['result'][$k] = [
                 'uuid' => $document->uuid,
                 'name' => $document->file_name,
                 'path' => $document->file_path,
