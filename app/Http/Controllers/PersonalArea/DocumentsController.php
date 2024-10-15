@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\PersonalArea;
 
+use App\Enum\Document\DocumentStatusSignatureEnum;
 use App\Http\Controllers\Controller;
 use App\Services\OneC\OneCServices;
 use Illuminate\Http\Request;
@@ -375,6 +376,7 @@ class DocumentsController extends Controller
                 'uuid' => $k,
                 'file_path'=>$uuid['path'],
                 'file_name'=>$uuid['name'],
+                'status_signature'=>DocumentStatusSignatureEnum::NoSend,
             ]);
         }
     }

@@ -17,5 +17,6 @@ enum DocumentStatusSignatureEnum: string
     case Signed = 'signed';
     case Rejected = 'rejected';
     case Confirmed = 'confirmed';
+    case NoSend = 'noSend';
 
 }
