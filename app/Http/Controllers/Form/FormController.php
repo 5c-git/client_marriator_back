@@ -234,7 +234,7 @@ class FormController extends Controller
     public function saveFile(Request $request)
     {
         $user = Auth::user();
-        if(!$user->finishRegister && $request->fieldUuid) {
+        if($request->fieldUuid) {
             $uploadFiles = $request->allFiles();
             $files = [];
             if (!empty($uploadFiles)) {
