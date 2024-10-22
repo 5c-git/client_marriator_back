@@ -60,8 +60,12 @@ class FormBuilderService
         $this->formDataThisStep = $changefields+$this->formDataThisStep;
     }
 
-    public function createFormData(): array
+    public function createFormData(array $moreData = [],array $errorData = [],array $updateData = []): array
     {
+        $this->errorData = $errorData;
+        $this->moreData = $moreData;
+        $this->updateData = $updateData;
+
         $this->getFilterArr();
         $this->getFields();
         $this->filterFields();

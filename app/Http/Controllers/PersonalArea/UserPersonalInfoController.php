@@ -770,13 +770,47 @@ class UserPersonalInfoController extends Controller
             } else {
                 $step = 1;
             }
+
+            if (!empty($user->expansionData)) {
+                $user->expansionData = json_decode($user->expansionData, true);
+            } else {
+                $user->expansionData = [];
+            }
+            if (!empty($user->errorData)) {
+                $user->errorData = json_decode($user->errorData, true);
+            } else {
+                $user->errorData = [];
+            }
+            if (!empty($user->updateData)) {
+                $user->updateData = json_decode($user->updateData, true);
+            } else {
+                $user->updateData = [];
+            }
+
+            if (!empty($user->change_fields)) {
+                $user->change_fields = json_decode($user->change_fields, true);
+            } else {
+                $user->change_fields = [];
+            }
+            if(!is_array($user->errorData)){
+                $user->errorData = json_encode([]);
+                $user->save();
+                $user->errorData = [];
+            }
+            if(!is_array($user->updateData)){
+                $user->updateData = json_encode([]);
+                $user->save();
+                $user->updateData = [];
+            }
+
             if (!empty($user->data)) {
                 $userData = json_decode($user->data, true);
             } else {
                 $userData = [];
             }
+            $userData = $user->change_fields + $userData;
             $formDataService = (new FormBuilderService($step, $userData));
-            $response['result']['formData'] = $formDataService->createFormData();
+            $response['result']['formData'] = $formDataService->createFormData($user->expansionData, $user->errorData,$user->updateData);
             $response['result']['step'] = $step;
             $response['result']['type'] = $formDataService->checkStatusForm(true);
             $response['status'] = 'success';
