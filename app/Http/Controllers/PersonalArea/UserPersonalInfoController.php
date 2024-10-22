@@ -1006,7 +1006,7 @@ class UserPersonalInfoController extends Controller
 
     public function deleteRequisite(Request $request){
         $user = Auth::user();
-        if (empty($request->dataId)) {
+        if (!isset($request->dataId)) {
             $response['error'] = 'Поле номер реквизитов обязательна для заполнения';
             $response['status'] = 'error';
             return response()->json($response, 417);
