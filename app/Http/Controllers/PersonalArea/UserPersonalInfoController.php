@@ -566,6 +566,7 @@ class UserPersonalInfoController extends Controller
         $responseData = [];
         if (!empty($user->requisitesData)) {
             $requisitesData = json_decode($user->requisitesData, true);
+            $requisitesData = array_values($requisitesData);
             foreach ($requisitesData as $k=>$requisitesDataOne){
                 $responseData[$k] = $requisitesDataOne;
             }
@@ -661,6 +662,7 @@ class UserPersonalInfoController extends Controller
         } else {
             $requisitesData[] = $request->data;
         }
+        $requisitesData = array_values($requisitesData);
         if((new OneCServices($user))->sendUpdateUserRequisites($requisitesData)->status){
             $user->requisitesData = json_encode($requisitesData);
             $user->save();
@@ -971,6 +973,7 @@ class UserPersonalInfoController extends Controller
         } else {
             $requisitesData = [];
         }
+        $requisitesData = array_values($requisitesData);
         if((new OneCServices($user))->sendUpdateUserRequisites($requisitesData)->status){
             $user->requisitesData = json_encode($requisitesData);
             $user->save();
