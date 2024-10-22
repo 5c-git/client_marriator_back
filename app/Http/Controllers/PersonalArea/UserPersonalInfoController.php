@@ -230,20 +230,24 @@ class UserPersonalInfoController extends Controller
                 if ((!isset($userData[$k]) && !empty($userError[$k]) && !empty($oneField)) || (!empty($userData[$k]) && !empty($userError[$k]) && $userData[$k] != $oneField)) {
                     unset($userError[$k]);
                 }
-                if ((!isset($userData[$k]) && !empty($oneField)) || (!empty($userData[$k]) && $userData[$k] != $oneField)) {
+
+                if ((!isset($userData[$k]) && !empty($oneField)) || (!empty($userData[$k]) && $userData[$k] != $oneField || !empty($change_fieldsUser[$k]))) {
                     $change_fields[$k] = $oneField;
                 }
                 $userData[$k] = $oneField;
             }
             //$user->data = json_encode($userData);
             if(!empty($change_fieldsUser)){
-                foreach ($change_fieldsUser as $k => $oneUpdate){
-                    if(!empty($change_fields[$k])){
+                foreach ($change_fieldsUser as $k => &$oneUpdate){
+                    if(!empty($change_fields[$k]) && $change_fields[$k] != $oneUpdate){
+                        $oneUpdate = $change_fields[$k];
                         unset($change_fields[$k]);
                     }
                 }
-                $change_fieldsUp = array_merge($change_fields,$change_fieldsUser);
+            }else{
+                $change_fieldsUser = [];
             }
+            $change_fieldsUp = array_merge($change_fields,$change_fieldsUser);
 
 //            $updateResult = (new OneCServices($user))->updateUserData($change_fields);
 //            if($updateResult->status) {
@@ -870,19 +874,25 @@ class UserPersonalInfoController extends Controller
                 if ((!isset($userData[$k]) && !empty($userError[$k]) && !empty($oneField)) || (!empty($userData[$k]) && !empty($userError[$k]) && $userData[$k] != $oneField)) {
                     unset($userError[$k]);
                 }
-                if ((!isset($userData[$k]) && !empty($oneField)) || (!empty($userData[$k]) && $userData[$k] != $oneField)) {
+                if ((!isset($userData[$k]) && !empty($oneField)) || (!empty($userData[$k]) && $userData[$k] != $oneField || !empty($change_fieldsUser[$k]))) {
                     $change_fields[$k] = $oneField;
                 }
                 $userData[$k] = $oneField;
             }
+
             if(!empty($change_fieldsUser)){
-                foreach ($change_fieldsUser as $k => $oneUpdate){
-                    if(!empty($change_fields[$k])){
+                foreach ($change_fieldsUser as $k => &$oneUpdate){
+                    if(!empty($change_fields[$k]) && $change_fields[$k] != $oneUpdate){
+                        $oneUpdate = $change_fields[$k];
                         unset($change_fields[$k]);
                     }
                 }
-                $change_fieldsUp = array_merge($change_fields,$change_fieldsUser);
+            }else{
+                $change_fieldsUser = [];
             }
+
+            $change_fieldsUp = array_merge($change_fields,$change_fieldsUser);
+
 //            $updateResult = (new OneCServices($user))->updateUserData($change_fields);
 //            if($updateResult->status) {
                 $user->change_fields = json_encode($change_fieldsUp);
