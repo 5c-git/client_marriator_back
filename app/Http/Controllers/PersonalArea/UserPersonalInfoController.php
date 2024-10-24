@@ -661,7 +661,7 @@ class UserPersonalInfoController extends Controller
         } else {
             $requisitesData = [];
         }
-        if (!empty($request->dataId)) {
+        if (isset($request->dataId)) {
             $requisitesData[$request->dataId] = $request->data;
         } else {
             $requisitesData[] = $request->data;
