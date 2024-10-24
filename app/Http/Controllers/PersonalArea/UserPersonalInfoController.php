@@ -1048,7 +1048,7 @@ class UserPersonalInfoController extends Controller
         $banks = Bank::where('active',true)->get();
         $response['result']['bankData'] = [];
         foreach ($banks as $bank) {
-            $response['result']['bankData'][] = ['value' => $bank->uuid, 'label' => $bank->name, 'disabled' => false];
+            $response['result']['bankData'][] = ['value' => $bank->uuid, 'label' => $bank->name, 'bic' => $bank->bic, 'disabled' => false];
         }
         $response['status'] = 'success';
         return response()->json($response, 200);
