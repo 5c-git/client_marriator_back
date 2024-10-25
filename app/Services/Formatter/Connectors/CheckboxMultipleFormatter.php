@@ -43,7 +43,7 @@ class CheckboxMultipleFormatter implements FormaterInterface
             if (!empty($fieldsData->dividerTop)) {
                 $data['dividerTop'] = (bool)$fieldsData->dividerTop;
             }
-            if (!empty($fieldsData->dividerBotto)) {
+            if (!empty($fieldsData->dividerBottom)) {
                 $data['dividerBottom'] = (bool)$fieldsData->dividerBottom;
             }
             if (!empty($fieldsData->helperInfo_text)) {

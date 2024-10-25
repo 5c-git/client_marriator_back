@@ -982,8 +982,8 @@ class UserPersonalInfoController extends Controller
      *         @OA\MediaType(
      *             mediaType="application/json",
      *             @OA\Schema(
-     *                 required={"data"},
-     *                 @OA\Property(property="data",type="json"),
+     *                 required={"dataId"},
+     *                 @OA\Property(property="data",type="number"),
      *             ),
      *         ),
      *     ),
