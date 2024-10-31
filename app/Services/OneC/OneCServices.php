@@ -17,6 +17,7 @@ class OneCServices
 
     private User $user;
     public bool $status;
+    public string $uuid;
     public OneCServicesClient $oneCServicesClient;
 
     public function __construct(User $user)
@@ -25,8 +26,9 @@ class OneCServices
         $this->oneCServicesClient = new OneCServicesClient($user);
     }
 
-    public function sendRegister(){
-        $this->status = $this->oneCServicesClient->sendRegister();
+    public function sendRegister(): static
+    {
+        [$this->status,$this->uuid] = $this->oneCServicesClient->sendRegister();
         return $this;
     }
 

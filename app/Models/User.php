@@ -41,7 +41,8 @@ class User extends Authenticatable
         'updateData',
         'coordinates',
         'change_fields',
-        'date_for_send'
+        'date_for_send',
+        'uuid'
     ];
 
     /**

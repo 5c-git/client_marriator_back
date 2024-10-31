@@ -35,7 +35,7 @@ class OneCServicesClient
         $this->user = $user;
     }
 
-    public function sendRegister(): bool
+    public function sendRegister(): array
     {
         $userData = json_decode($this->user->data,true);
         $data = [
@@ -44,7 +44,12 @@ class OneCServicesClient
             'date' => Carbon::now(),
         ];
         $responseData = $this->sendPost($this->url['sendReg'],$data);
-        return $responseData['status'] == 'success';
+        $userUuid = '';
+        if(!empty($responseData['user']['uuid'])) {
+            $userUuid = $responseData['user']['uuid'];
+        }
+        $status = $responseData['status'] == 'success';
+        return [$status,$userUuid];
     }
 
     public function sendUpdateUserData($updateData): bool
@@ -124,13 +129,19 @@ class OneCServicesClient
         return $responseData['status'] == 'success';
     }
 
-    public function sendPost(string $url,array $data = []){
-        return ['status'=>'success'];
+    public function sendPost(string $url,array $data = []): array
+    {
+        return [
+            'status'=>'success',
+            'user'=>[
+                'uuid'=>uniqid()
+            ]
+        ];
         $response = Http::withHeaders([])->post($this->host.$url,$data);
         if($response->successful()){
-            return ['status'=>'success',$response->body()];
+            return ['status'=>'success',...$response->body()];
         }else{
-            return ['status'=>'error',$response->body()];
+            return ['status'=>'error',...$response->body()];
         }
     }
 
@@ -138,9 +149,9 @@ class OneCServicesClient
         return ['status'=>'success'];
         $response = Http::withHeaders([])->get($this->host.$url,$data);
         if($response->successful()){
-            return ['status'=>'success',$response->body()];
+            return ['status'=>'success',...$response->body()];
         }else{
-            return ['status'=>'error',$response->body()];
+            return ['status'=>'error',...$response->body()];
         }
     }
 
