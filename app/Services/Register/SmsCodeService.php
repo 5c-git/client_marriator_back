@@ -29,6 +29,7 @@ class SmsCodeService
     {
         if(Redis::exists($this->phone)){
             $this->codeTtl = Redis::ttl($this->phone);
+            $this->status = 'error';
             return ['status'=>'exists','ttl'=>$this->codeTtl];
         }else{
             if(SmsService::sendCode($this->phone,$this->code)) {

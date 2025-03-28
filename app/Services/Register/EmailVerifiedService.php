@@ -29,6 +29,7 @@ class EmailVerifiedService
     {
         if(Redis::exists($this->email)){
             $this->codeTtl = Redis::ttl($this->email);
+            $this->status = 'error';
             return ['status'=>'exists','ttl'=>$this->codeTtl];
         }else{
             if(EmailService::sendCode($this->email,$this->code)) {
