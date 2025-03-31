@@ -3,22 +3,23 @@ namespace App\Services\Formatter\Connectors;
 
 use App\Services\Formatter\FormaterInterface;
 
-class RadioFormatter implements FormaterInterface
+class BicFormatter implements FormaterInterface
 {
 
-    public static string $type= 'radio';
+    public static string $type= 'bic';
 
     public static function createFormat($fieldsData,$value):array
     {
         $data = [];
+
         if(!empty($fieldsData->valuesDirectory)) {
             //$data['uuid'] = $fieldsData->uuid;
             $data['inputType'] = self::$type;
             $data['name'] = $fieldsData->uuid;
             if(isset($fieldsData->updateData)){
-                $data['value'] = (string)$fieldsData->updateData?:'';
+                $data['value'] = $fieldsData->updateData?:'';
             }else {
-                $data['value'] = (string)$value?:'';
+                $data['value'] = $value ?: '';
             }
             $checkData = false;
             foreach ($fieldsData->valuesDirectory as $item) {
@@ -31,10 +32,11 @@ class RadioFormatter implements FormaterInterface
                 $data['value'] = '';
             }
 
+            $data['placeholder'] = $fieldsData->placeholder?:'';
             $data['disabled'] = false;
             $option = [];
             foreach ($fieldsData->valuesDirectory as $item) {
-                $option[$item['name']] = ['value' => $item['uuid'], 'label' => $item['name'], 'disabled' => false];
+                $option[$item['name']] = ['value' => $item['uuid'], 'bic'=>$item['bic'], 'label' => $item['name'], 'disabled' => false];
             }
             ksort($option);
             $data['options'] = array_values($option);
@@ -78,7 +80,6 @@ class RadioFormatter implements FormaterInterface
                 //$data['update'] = false;
             }
         }
-
 
         return $data;
 

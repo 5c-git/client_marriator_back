@@ -34,6 +34,7 @@ enum FieldsTypeEnum: int
     case photo = 18;
     case autocomplete = 19;
     case selectMultiple = 20;
+    case bic = 21;
 
 
     public function typeName(): string
@@ -60,6 +61,7 @@ enum FieldsTypeEnum: int
             self::photo => 'Фото',
             self::autocomplete => 'Селект с поиском',
             self::selectMultiple => 'Множественный селект',
+            self::bic => 'Поле BIC',
         };
     }
 
@@ -86,6 +88,7 @@ enum FieldsTypeEnum: int
             self::photo => Connectors\PhotoFormatter::class,
             self::autocomplete => Connectors\AutocompleteFormatter::class,
             self::selectMultiple => Connectors\SelectMultipleFormatter::class,
+            self::bic => Connectors\BicFormatter::class,
         };
     }
 
