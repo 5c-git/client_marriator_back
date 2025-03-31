@@ -23,6 +23,15 @@ class CheckboxMultipleFormatter implements FormaterInterface
             }else {
                 $data['value'] = $value ?: [];
             }
+            $checkDataIter = 0;
+            foreach ($fieldsData->valuesDirectory as $item) {
+                if(in_array($item['uuid'],$data['value'])){
+                    $checkDataIter++;
+                }
+            }
+            if($checkDataIter != count($data['value'])){
+                $data['value'] = [];
+            }
 
             $data['disabled'] = false;
             $option = [];

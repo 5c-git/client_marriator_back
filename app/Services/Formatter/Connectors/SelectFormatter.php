@@ -21,6 +21,17 @@ class SelectFormatter implements FormaterInterface
                 $data['value'] = (string)$value ?: '';
             }
 
+            $checkData = false;
+            foreach ($fieldsData->valuesDirectory as $item) {
+                if($item['uuid'] == $data['value']){
+                    $checkData = true;
+                    break;
+                }
+            }
+            if(!$checkData){
+                $data['value'] = '';
+            }
+
             $data['disabled'] = false;
             $option = [];
             foreach ($fieldsData->valuesDirectory as $item) {

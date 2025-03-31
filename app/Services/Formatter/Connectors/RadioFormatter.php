@@ -20,6 +20,16 @@ class RadioFormatter implements FormaterInterface
             }else {
                 $data['value'] = $value?:'';
             }
+            $checkData = false;
+            foreach ($fieldsData->valuesDirectory as $item) {
+                if($item['uuid'] == $data['value']){
+                    $checkData = true;
+                    break;
+                }
+            }
+            if(!$checkData){
+                $data['value'] = '';
+            }
 
             $data['disabled'] = false;
             $option = [];
