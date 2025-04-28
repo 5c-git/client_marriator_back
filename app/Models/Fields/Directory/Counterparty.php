@@ -1,0 +1,73 @@
+<?php
+
+namespace App\Models\Fields\Directory;
+
+use App\Enum\Fields\FieldsTypeEnum;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
+use App\Models\Fields\Directory\Brand;
+use App\Models\Fields\Directory\Project;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+
+/**
+ * @property int $id
+ * @property string $uuid
+ * @property string $name
+ * @property string $inn
+ * @property string $ogrn
+ * @property string $legal_address
+ * @property string $legal_email
+ * @property-read Collection|Brand[] $brands
+ * @property-read Collection|Project[] $projects
+ *
+ */
+class Counterparty extends Model implements ModelDirectoryInterface
+{
+    use HasFactory;
+
+    public static int $fieldsTypeEnum = FieldsTypeEnum::photoCheckbox->value;
+    public static string $uuid = 'directory_counterparty';
+
+    protected $table = 'directory_counterparty';
+    protected $fillable = [
+        'uuid',
+        'name',
+        'inn',
+        'ogrn',
+        'legal_address',
+        'legal_email',
+    ];
+
+    public $timestamps = false;
+
+    public function getDataDirectory(bool $allFields = false,array $filterData = []){
+
+    }
+
+    public static function upsertFromImport(array $data): void
+    {
+
+    }
+
+    public function brands(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Brand::class,
+            'directory_brand_directory_counterparty',
+            'counterparty_id',
+            'brand_id'
+        );
+    }
+
+    public function projects(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Project::class,
+            'directory_project_directory_counterparty',
+            'counterparty_id',
+            'project_id'
+        );
+    }
+}

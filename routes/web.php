@@ -239,6 +239,51 @@ Route::group(['prefix' => 'admin'], function () {
             Route::post('/saveAjax', 'App\Http\Controllers\Admin\Certificates\CertificatesController@save')->name('certificatesSave');
         });
 
+        Route::group(['prefix' => 'directory_project'], function () {
+            Route::get('/create/', 'App\Http\Controllers\Admin\Page\Fields\Directory\ProjectController@create')->name('projectCreate');
+            Route::post('/createAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\ProjectController@createAjax')->name('projectCreateAjax');
+            Route::get('/', 'App\Http\Controllers\Admin\Page\Fields\Directory\ProjectController@list')->name('projectList');
+            Route::get('/edit/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\ProjectController@edit')->name('projectEdit');
+            Route::post('/editAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\ProjectController@editAjax')->name('projectEditAjax');
+            Route::get('/delete/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\ProjectController@delete')->name('projectDelete');
+        });
+
+        Route::group(['prefix' => 'directory_brand'], function () {
+            Route::get('/create/', 'App\Http\Controllers\Admin\Page\Fields\Directory\BrandController@create')->name('brandCreate');
+            Route::post('/createAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\BrandController@createAjax')->name('brandCreateAjax');
+            Route::get('/', 'App\Http\Controllers\Admin\Page\Fields\Directory\BrandController@list')->name('brandList');
+            Route::get('/edit/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\BrandController@edit')->name('brandEdit');
+            Route::post('/editAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\BrandController@editAjax')->name('brandEditAjax');
+            Route::get('/delete/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\BrandController@delete')->name('brandDelete');
+        });
+
+        Route::group(['prefix' => 'directory_counterparty'], function () {
+            Route::get('/create/', 'App\Http\Controllers\Admin\Page\Fields\Directory\CounterpartyController@create')->name('counterpartyCreate');
+            Route::post('/createAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\CounterpartyController@createAjax')->name('counterpartyCreateAjax');
+            Route::get('/', 'App\Http\Controllers\Admin\Page\Fields\Directory\CounterpartyController@list')->name('counterpartyList');
+            Route::get('/edit/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\CounterpartyController@edit')->name('counterpartyEdit');
+            Route::post('/editAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\CounterpartyController@editAjax')->name('counterpartyEditAjax');
+            Route::get('/delete/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\CounterpartyController@delete')->name('counterpartyDelete');
+        });
+
+        Route::group(['prefix' => 'directory_place'], function () {
+            Route::get('/create/', 'App\Http\Controllers\Admin\Page\Fields\Directory\PlaceController@create')->name('placeCreate');
+            Route::post('/createAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\PlaceController@createAjax')->name('placeCreateAjax');
+            Route::get('/', 'App\Http\Controllers\Admin\Page\Fields\Directory\PlaceController@list')->name('placeList');
+            Route::get('/edit/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\PlaceController@edit')->name('placeEdit');
+            Route::post('/editAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\PlaceController@editAjax')->name('placeEditAjax');
+            Route::get('/delete/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\PlaceController@delete')->name('placeDelete');
+        });
+
+        Route::group(['prefix' => 'directory_standard'], function () {
+            Route::get('/create/', 'App\Http\Controllers\Admin\Page\Fields\Directory\StandardController@create')->name('standardCreate');
+            Route::post('/createAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\StandardController@createAjax')->name('standardCreateAjax');
+            Route::get('/', 'App\Http\Controllers\Admin\Page\Fields\Directory\StandardController@list')->name('standardList');
+            Route::get('/edit/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\StandardController@edit')->name('standardEdit');
+            Route::post('/editAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\StandardController@editAjax')->name('standardEditAjax');
+            Route::get('/delete/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\StandardController@delete')->name('standardDelete');
+        });
+
 
 
 

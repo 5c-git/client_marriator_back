@@ -178,7 +178,11 @@ $(document).ready(function () {
         $(clone).find('select').attr('id',$(clone).find('select').attr('id')+generateRandomString(5));
         $(clone).find('select').find('option').removeAttr('selected');
         $(this).parents('.form-group').find('.addItemSelect').each(function (index,item){
-            $(item).find('select').attr('name','parentFields['+count+'][]');
+            var nameField = 'parentFields';
+            if($(item).find('select').attr('data-name')){
+                nameField = $(item).find('select').attr('data-name');
+            }
+            $(item).find('select').attr('name',nameField+'['+count+'][]');
             $(item).find('select').select2({
                 theme: 'bootstrap4',
             });

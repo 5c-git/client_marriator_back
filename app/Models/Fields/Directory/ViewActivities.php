@@ -5,6 +5,8 @@ namespace App\Models\Fields\Directory;
 use App\Enum\Fields\FieldsTypeEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Fields\Directory\Project;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class ViewActivities extends Model implements ModelDirectoryInterface
 {
@@ -71,5 +73,15 @@ class ViewActivities extends Model implements ModelDirectoryInterface
             self::truncate();
             self::upsert($dataForUpsert, ['uuid'], ['name','active']);
         }
+    }
+
+    public function projects(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Project::class,
+            'directory_project_directory_view_activities',
+            'view_activities_id',
+            'project_id'
+        )->withPivot( 'price');
     }
 }

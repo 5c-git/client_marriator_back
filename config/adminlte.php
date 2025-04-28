@@ -435,6 +435,26 @@ return [
                         [
                             'text' => 'Статус мед книжки',
                             'url' => 'admin/directory_medical_book/',
+                        ],
+                        [
+                            'text' => 'Норматив учета',
+                            'url' => 'admin/directory_standard/',
+                        ],
+                        [
+                            'text' => 'Проекты',
+                            'url' => 'admin/directory_project/',
+                        ],
+                        [
+                            'text' => 'Места проведения',
+                            'url' => 'admin/directory_place/',
+                        ],
+                        [
+                            'text' => 'Бренды',
+                            'url' => 'admin/directory_brand/',
+                        ],
+                        [
+                            'text' => 'Контрагенты',
+                            'url' => 'admin/directory_counterparty/',
                         ]
                     ],
                 ],
