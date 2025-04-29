@@ -475,6 +475,11 @@ return [
             'url'  => 'admin/certificates/',
             'icon' => 'fas fa-fw fa-window-restore',
         ],
+        [
+            'text' => 'Создание QR кода',
+            'url'  => 'admin/qr_code/',
+            'icon' => 'fas fa-fw fa-qrcode',
+        ],
 //        ['header' => 'labels'],
 //        [
 //            'text' => 'important',

@@ -284,11 +284,10 @@ Route::group(['prefix' => 'admin'], function () {
             Route::get('/delete/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\StandardController@delete')->name('standardDelete');
         });
 
-
-
-
-
-
+        Route::group(['prefix' => 'qr_code'], function () {
+            Route::get('/', 'App\Http\Controllers\Admin\QrCode\QrCodeController@index')->name('qrCodeIndex');
+            Route::post('/createAjax', 'App\Http\Controllers\Admin\QrCode\QrCodeController@create')->name('createQr');
+        });
 
     });
 });
