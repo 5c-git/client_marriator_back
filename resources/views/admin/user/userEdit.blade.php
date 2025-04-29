@@ -9,15 +9,6 @@
 @section('content')
 
     @php
-        if($user->roles()->first()){
-            if($user->roles()->first()->id == 1){
-                $checked = 'checked';
-            }else{
-                $checked = '';
-            }
-        }else{
-            $checked = '';
-        }
         if($user->pin_active){
             $pinChecked = 'checked';
         }else{
@@ -132,30 +123,23 @@
         </div>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
         <div class="form-group row">
-                <label class="col-form-label col-sm-2 pt-0">Admin</label>
-                <div class="col-sm-10">
-                    <div class="form-check">
-                        <input class="form-check-input" name="permission" type="checkbox" id="gridCheck1" {{$checked}}>
-                        <label class="form-check-label" for="gridCheck1">
-                           Yes
-                        </label>
+            <label for="select" class="col-sm-2 col-form-label">Роли пользователей</label>
+            <div class="col-sm-10">
+                <div class="row addItemSelect">
+                    <div class="col-sm-9">
+                        <x-adminlte-select2 data-name="roles" id="parentFields" name="roles[]" multiple>
+                            @foreach($roles as $field)
+                                @if($user->roles->contains('id',$field['id']))
+                                    <option selected value="{{$field['id']}}">{{$field['name']}}</option>
+                                @else
+                                    <option value="{{$field['id']}}">{{$field['name']}}</option>
+                                @endif
+                            @endforeach
+                        </x-adminlte-select2>
                     </div>
-
                 </div>
+            </div>
         </div>
 
         <div class="form-group row">

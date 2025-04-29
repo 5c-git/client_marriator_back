@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Services\FormBuilderService;
+use App\Models\User\Role;
 
 
 class UsersController extends Controller
@@ -28,7 +29,7 @@ class UsersController extends Controller
 
     public function usersList(Request $request)
     {
-        $users = User::get();
+        $users = User::query()->with('roles')->get();
         return view('admin.user.users',compact('users'));
     }
 
@@ -58,14 +59,15 @@ class UsersController extends Controller
 
 
         $fields = (new FormBuilderService(10, $user->data))->getUserField($user->expansionData,$user->errorData);
+        $roles = Role::query()->get();
 
-
-        return view('admin.user.userEdit',compact('user','fields'));
+        return view('admin.user.userEdit',compact('user','fields','roles'));
     }
 
     public function usersCreate(Request $request)
     {
-        return view('admin.user.create');
+        $roles = Role::query()->get();
+        return view('admin.user.create',compact('roles'));
     }
 
     public function userDelete(Request $request)
@@ -119,11 +121,10 @@ class UsersController extends Controller
         $user->email = $data['email'];
         $user->phone = $data['phone'];
 
-
-        if(!empty($data['permission'])) {
-            $this->userRoleChange($data['permission'], $data["id"]);
+        if($data['roles']) {
+            $user->roles()->sync($data['roles']);
         }else{
-            $this->userRoleChange('off', $data["id"]);
+            $user->roles()->detach();
         }
 
         $user->save();
@@ -150,13 +151,12 @@ class UsersController extends Controller
 
         $user = User::create($user);
 
-        if($user->id){
-            if(!empty($data['permission'])) {
-                $this->userRoleChange($data['permission'], $user->id);
-            }else{
-                $this->userRoleChange('off', $user->id);
-            }
+        if($data['roles']) {
+            $user->roles()->sync($data['roles']);
+        }else{
+            $user->roles()->sync([2]);
         }
+
         $response['status'] = 'success';
         $response['url'] = '/admin/users/edit/'.$user->id;
 

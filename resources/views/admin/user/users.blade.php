@@ -24,8 +24,8 @@
         ];
 
         foreach ($users as $user){
-            if($user->roles()->first()){
-                $permission = $user->roles()->first()->name;
+            if($user->roles){
+                $permission = $user->roles->pluck('name')->join(', ');
             }else{
                 $permission = '';
             }
