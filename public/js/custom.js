@@ -444,6 +444,111 @@ $(document).ready(function () {
         });
     })
 
+    $('.qrCodeCreate').submit(function (e) {
+        e.preventDefault();
+        var data = new FormData();
+
+        var form_data = $(this).serializeArray();
+        $.each(form_data, function (key, input) {
+            data.append(input.name, input.value);
+        });
+
+        $(this).find('input[type="file"]').each(function (index, item) {
+            if ($(item)[0].files[0]) {
+                data.append($(item).attr('name'), $(item)[0].files[0]);
+            }
+        })
+
+        $.ajax({
+            url: '/admin/qr_code/createUserLink',
+            type: "POST",
+            data: data,
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                if (data.status == 'success') {
+                    $('.linkBlockJs').show();
+                    $('.linkJs').html('/register/?hash='+data.data.hash);
+
+                    //setTimeout(function(){location.reload();},2000);
+                } else {
+
+                }
+            },
+            error: function (request, status, error) {
+                $(document).Toasts('create', {
+                    title: 'Error',
+                    body: 'Error data save',
+                    autohide: true,
+                    delay: 4000,
+                    class: 'bg-danger',
+                })
+                //setTimeout(function(){location.reload();},2000);
+            }
+        });
+    })
+
+
+    $('.rolesCustomJS').change(function (e) {
+        e.preventDefault();
+        var data = new FormData();
+
+        var obj = $(this);
+        var form_data = $(this).parents('form').serializeArray();
+        $.each(form_data, function (key, input) {
+            data.append(input.name, input.value);
+        });
+
+        $.ajax({
+            url: '/admin/qr_code/getBindings',
+            type: "POST",
+            data: data,
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                if (data.status == 'success') {
+                    var option = '';
+                    $('.addSelectJs').html('');
+                    data.data.forEach(function (items,indexs){
+
+                        option += '<div class="form-group row" style="display: block">  ' +
+                            '<label for="select" class="col-sm-6 col-form-label">Справочник - '+data.name[indexs]+'</label> ' +
+                            '<select class="rolesCustomJSBindings custom-select" name="'+data.userFields[indexs]+'[]" required >';
+                        items.forEach(function (item,index){
+                            option += '<option value="'+item.id+'">'+item.name+'</option>';
+                        })
+                        option += '</select>' + '</div>'
+                    })
+
+                    $('.addSelectJs').append(option);
+
+                } else {
+                    $(document).Toasts('create', {
+                        title: 'Error',
+                        body: 'Error settings save',
+                        autohide: true,
+                        delay: 4000,
+                        class: 'bg-danger',
+                    })
+                }
+            },
+            error: function (request, status, error) {
+                $(document).Toasts('create', {
+                    title: 'Error',
+                    body: 'Error data save',
+                    autohide: true,
+                    delay: 4000,
+                    class: 'bg-danger',
+                })
+                //setTimeout(function(){location.reload();},2000);
+            }
+        });
+    })
+
+
+
+
+
 
 
 

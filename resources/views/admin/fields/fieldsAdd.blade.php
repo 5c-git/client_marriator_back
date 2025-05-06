@@ -246,6 +246,21 @@
             </div>
         </div>
 
+        <div class="form-group row">
+            <label for="roles" class="col-sm-2 col-form-label">Роли пользователей</label>
+            <div class="col-sm-10">
+                <div class="row addItemSelect">
+                    <div class="col-sm-9">
+                        <x-adminlte-select2 data-name="roles[]" id="roles" name="roles[]" multiple>
+                            @foreach($roles as $role)
+                                <option selected value="{{$role->id}}">{{$role->name}}</option>
+                            @endforeach
+                        </x-adminlte-select2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 
 
         <div class="form-group row">

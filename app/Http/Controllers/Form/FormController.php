@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use App\Services\OneC\OneCServices;
 use App\Services\ApiTokenService\ApiTokenService;
+use Mpdf\Tag\P;
+use App\Enum\Role\RoleEnum;
 
 class FormController extends Controller
 {
@@ -341,7 +343,7 @@ class FormController extends Controller
             $registerResult = (new OneCServices($user))->sendRegister();
             if($registerResult->status) {
                 $user->finishRegister = true;
-                $user->confirmRegister = true;
+                //$user->confirmRegister = true;
                 $user->uuid = $registerResult->uuid;
                 $user->data = json_encode(array_merge(...json_decode($user->data,true)));
                 $user->save();
@@ -357,6 +359,21 @@ class FormController extends Controller
             $response['status'] = 'error';
         }
         return response()->json($response);
+    }
+
+    public function getDataForUserRoles()
+    {
+
+        $user = Auth::user();
+        $roles = $user->roles;
+        foreach ($roles as $role) {
+            $roleEnum = RoleEnum::from($role->id);
+            $userBindingsField = $roleEnum->getUserBindingFunction();
+            $userBindingsName = $roleEnum->getUserBindingName();
+            $userBindingsData = $user->$userBindingsField;
+
+        }
+
     }
 
 }

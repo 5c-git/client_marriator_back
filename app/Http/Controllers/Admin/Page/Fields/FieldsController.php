@@ -6,11 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\Fields\Fields;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-
 use App\Enum\Fields\FieldsTypeEnum;
 use App\Enum\Fields\FieldsDirectoryEnum;
 use App\Enum\Fields\PersonalInfoSectionEnum;
 use Illuminate\Support\Str;
+use App\Models\User\Role;
 
 class FieldsController extends Controller
 {
@@ -54,7 +54,9 @@ class FieldsController extends Controller
                 }
             }
 
-            return view('admin.fields.fieldsEdit', compact('field','typeEnum','directoryEnum','fields','sectionEnum'));
+            $roles = Role::query()->whereNot('name','admin')->get();
+
+            return view('admin.fields.fieldsEdit', compact('field','typeEnum','directoryEnum','fields','sectionEnum','roles'));
         }else{
             return redirect()->back();
         }
@@ -134,6 +136,13 @@ class FieldsController extends Controller
             $field->requisites = false;
         }
 
+
+        if (empty($data['roles'])) {
+            $data['roles'] = [];
+        }
+
+        $field->roles()->sync($data['roles']);
+
         $field->save();
 
 
@@ -161,8 +170,9 @@ class FieldsController extends Controller
             }
         }
 
+        $roles = Role::query()->whereNot('name','admin')->get();
         $uuidDirectoryFields = Str::random(30);
-        return view('admin.fields.fieldsAdd',compact('typeEnum','directoryEnum','fields','uuidDirectoryFields','sectionEnum'));
+        return view('admin.fields.fieldsAdd',compact('typeEnum','directoryEnum','fields','uuidDirectoryFields','sectionEnum','roles'));
     }
 
     public function fieldsCreateAjax(Request $request)
@@ -231,6 +241,12 @@ class FieldsController extends Controller
         }
 
         $field->save();
+
+        if (empty($data['roles'])) {
+            $data['roles'] = [];
+        }
+
+        $field->roles()->sync($data['roles']);
 
         $response['status'] = 'success';
         $response['url'] = '/admin/fields/edit/' . $field->id;

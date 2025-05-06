@@ -3,8 +3,10 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\CheckIntegration;
+use App\Http\Middleware\CheckRole;
 
 Route::group(["middleware" => 'throttle:100,10'], function () {
+    Route::get('/getUserByHash/','App\Http\Controllers\Form\RegistrationController@getUserByHash')->name('getUserByHash');
     Route::post('/sendPhone/', 'App\Http\Controllers\Form\RegistrationController@sendPhone')->name('sendPhone');
     Route::get('/login', function () {
         return response()->json(['message' => 'Unauthenticated.'], 401);
@@ -76,6 +78,22 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
             Route::post('/setTerminate/', 'App\Http\Controllers\PersonalArea\DocumentsController@setTerminate')->name('setTerminate');
             Route::get('/getCompanyAndCertificatesInquiries/', 'App\Http\Controllers\PersonalArea\DocumentsController@getCompanyAndCertificatesInquiries')->name('getCompanyAndCertificatesInquiries');
             Route::post('/requestInquiries/', 'App\Http\Controllers\PersonalArea\DocumentsController@requestInquiries')->name('requestInquiries');
+        });
+
+        Route::middleware([CheckRole::class.':client'])->group( function () {
+            Route::get('/getBindingsData','App\Http\Controllers\UserRoles\ClientController@getDataProject')->name('getDataProjectClient');
+        });
+        Route::middleware([CheckRole::class.':manager'])->group( function () {
+            Route::get('/getBindingsData','App\Http\Controllers\UserRoles\ManagerController@getDataProject')->name('getDataProjectManager');
+        });
+        Route::middleware([CheckRole::class.':recruiter'])->group( function () {
+            Route::get('/getBindingsData','App\Http\Controllers\UserRoles\RecruiterController@getDataPlace')->name('getDataPlaceRecruiter');
+        });
+        Route::middleware([CheckRole::class.':specialist'])->group( function () {
+            Route::get('/getBindingsData','App\Http\Controllers\UserRoles\SpecialistController@getDataProject')->name('getDataProjectSpecialist');
+        });
+        Route::middleware([CheckRole::class.':supervisor'])->group( function () {
+            Route::get('/getBindingsData','App\Http\Controllers\UserRoles\SupervisorController@getDataProject')->name('getDataProjectSupervisor');
         });
     });
 

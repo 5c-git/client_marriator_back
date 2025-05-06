@@ -36,7 +36,7 @@ class UsersController extends Controller
     public function userEdit(Request $request)
     {
         $user = User::where('id','=',$request->id)->first();
-        if(!empty($user->data) && $user->confirmRegister){
+        if(!empty($user->data) && $user->finishRegister){
             $user->data = json_decode($user->data,true);
             if(!empty($user->data[1])){
                 $user->data = json_encode(array_merge(...$user->data));
@@ -51,6 +51,7 @@ class UsersController extends Controller
         }else{
             $user->expansionData = [];
         }
+
         if(!empty($user->errorData)){
             $user->errorData = json_decode($user->errorData,true);
         }else{
@@ -73,7 +74,7 @@ class UsersController extends Controller
     public function userDelete(Request $request)
     {
         if(Auth::user()->id != $request->id) {
-            User::where('id', '=', $request->id)->delete();
+            User::where('id', '=', $request->id)->first()->delete();
         }
         return back();
     }
@@ -125,6 +126,12 @@ class UsersController extends Controller
             $user->roles()->sync($data['roles']);
         }else{
             $user->roles()->detach();
+        }
+
+        if(!empty($data['confirmRegister'])){
+            $user->confirmRegister = true;
+        }else{
+            $user->confirmRegister = false;
         }
 
         $user->save();

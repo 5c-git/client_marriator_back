@@ -5,6 +5,8 @@ namespace App\Services;
 use App\Enum\Fields\PersonalInfoSectionEnum;
 use App\Models\Fields\Fields;
 use App\Enum\Fields\FieldsTypeEnum;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 class FormBuilderService
@@ -141,7 +143,17 @@ class FormBuilderService
 
     private function getFields(): void
     {
-        $this->fieldsAll = Fields::orderBy('sort', 'asc')->where('active',true)->whereNotNull('step')->get();
+        $user = Auth::user();
+        $userRoles = $user?->roles->pluck('id')->toArray();
+        $this->fieldsAll = Fields::query()->orderBy('sort', 'asc')
+            ->where('active',true)
+            ->whereNotNull('step')
+            ->when(!empty($userRoles), function (Builder $q, array $userRoles) {
+                $q->whereHas('roles', function ($query) use ($userRoles)  {
+                    $query->whereIn('user_role_id', $userRoles);
+                })->orWhereDoesntHave('roles');
+            })
+            ->get();
         foreach ($this->fieldsAll as $field) {
             if (!empty($field->directory)) {
                 $field->oldType = $field->type;
@@ -166,7 +178,19 @@ class FormBuilderService
 
     private function getAllFields($section): void
     {
-        $this->fieldsAll = Fields::orderBy('sort', 'asc')->where('active',true)->where('section',$section)->whereNotNull('step')->get();
+        $user = Auth::user();
+        $userRoles = $user?->roles->pluck('id')->toArray();
+        $this->fieldsAll = Fields::query()
+            ->orderBy('sort', 'asc')
+            ->where('active',true)
+            ->where('section',$section)
+            ->whereNotNull('step')
+            ->when(!empty($userRoles), function (Builder $q, array $userRoles) {
+                $q->whereHas('roles', function ($query) use ($userRoles)  {
+                    $query->whereIn('user_role_id', $userRoles);
+                })->orWhereDoesntHave('roles');
+            })
+            ->get();
         foreach ($this->fieldsAll as $field) {
             if (!empty($field->directory)) {
                 $field->oldType = $field->type;
@@ -282,7 +306,19 @@ class FormBuilderService
 
     public function getUserField(array $moreData,array $errorData): array
     {
-        $this->fieldsAll = Fields::orderBy('step', 'asc')->where('active',true)->whereNotNull('step')->orderBy('sort', 'asc')->get();
+        $user = Auth::user();
+        $userRoles = $user?->roles->pluck('id')->toArray();
+        $this->fieldsAll = Fields::query()
+            ->orderBy('step', 'asc')
+            ->where('active',true)
+            ->whereNotNull('step')
+            ->when(!empty($userRoles), function (Builder $q, array $userRoles) {
+                $q->whereHas('roles', function ($query) use ($userRoles)  {
+                    $query->whereIn('user_role_id', $userRoles);
+                })->orWhereDoesntHave('roles');
+            })
+            ->orderBy('sort', 'asc')
+            ->get();
         $userFields = [];
         foreach ($this->fieldsAll as $field) {
             if (!empty($field->directory)) {
@@ -335,13 +371,25 @@ class FormBuilderService
     {
         $sectionDots = [];
         $menuSection = [];
+        $user = Auth::user();
+        $userRoles = $user?->roles->pluck('id')->toArray();
         if (!empty($userError)) {
             $fieldsUuid = [];
             foreach ($userError as $uuid => $errorFieldData) {
                 $fieldsUuid[] = $uuid;
             }
             if (!empty($fieldsUuid)) {
-                $fieldSections = Fields::whereIn('uuid', $fieldsUuid)->where('active',true)->where('section', '>', 0)->selectRaw('section')->get();
+                $fieldSections = Fields::query()
+                    ->whereIn('uuid', $fieldsUuid)
+                    ->where('active',true)
+                    ->where('section', '>', 0)
+                    ->when(!empty($userRoles), function (Builder $q, array $userRoles) {
+                        $q->whereHas('roles', function ($query) use ($userRoles)  {
+                            $query->whereIn('user_role_id', $userRoles);
+                        })->orWhereDoesntHave('roles');
+                    })
+                    ->selectRaw('section')
+                    ->get();
                 foreach ($fieldSections as $fieldSection) {
                     $sectionDots[] = $fieldSection->section;
                 }

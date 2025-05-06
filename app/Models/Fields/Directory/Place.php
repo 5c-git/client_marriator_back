@@ -29,6 +29,8 @@ class Place extends Model implements ModelDirectoryInterface
 
     public static int $fieldsTypeEnum = FieldsTypeEnum::photoCheckbox->value;
     public static string $uuid = 'directory_place';
+    public static string $nameCustom = 'Место проведения';
+
 
     protected $table = 'directory_place';
     protected $fillable = [

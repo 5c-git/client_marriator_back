@@ -55,6 +55,16 @@
         </div>
 
 
+        <div class="form-group row">
+            <label for="confirmRegister" class="col-sm-2 col-form-label">Регистрация подтверждена</label>
+            <div class="offset-sm-2 col-sm-10">
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" style="margin-top: -1.5rem" name="confirmRegister" value="1" {{$user->confirmRegister?'checked':''}} id="confirmRegister">
+                </div>
+            </div>
+        </div>
+
+
 
 
 

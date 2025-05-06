@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\CheckPermission;
+use App\Http\Middleware\CheckRole;
 
 
 Route::group([
@@ -24,7 +25,7 @@ Route::group(['prefix' => 'admin'], function () {
 
     Route::post('/loginAdminAjax/', 'App\Http\Controllers\Admin\Auth\LoginController@customAdminLogin')->name('loginAdminAjax');
 
-    Route::middleware([CheckPermission::class])->group( function () {
+    Route::middleware([CheckRole::class])->group( function () {
         Route::get('/','App\Http\Controllers\Admin\Page\MainPageController@mainPage')->name('mainPage');
 
         Route::match(['get', 'post'], '/logout', 'App\Http\Controllers\Admin\Auth\LoginController@logout')->name('logout');
@@ -286,7 +287,8 @@ Route::group(['prefix' => 'admin'], function () {
 
         Route::group(['prefix' => 'qr_code'], function () {
             Route::get('/', 'App\Http\Controllers\Admin\QrCode\QrCodeController@index')->name('qrCodeIndex');
-            Route::post('/createAjax', 'App\Http\Controllers\Admin\QrCode\QrCodeController@create')->name('createQr');
+            Route::post('/getBindings', 'App\Http\Controllers\Admin\QrCode\QrCodeController@getBindings')->name('getBindings');
+            Route::post('/createUserLink', 'App\Http\Controllers\Admin\QrCode\QrCodeController@createUserLink')->name('createUserLink');
         });
 
     });

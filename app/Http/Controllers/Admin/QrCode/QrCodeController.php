@@ -5,6 +5,10 @@ namespace App\Http\Controllers\Admin\QrCode;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Setting;
+use App\Models\User\Role;
+use App\Enum\Role\RoleEnum;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class QrCodeController extends Controller
 {
@@ -19,11 +23,69 @@ class QrCodeController extends Controller
     }
 
     public function index(){
-        return view('admin.qrCode.qrCode');
+
+        $users = User::query()->whereNotNull('register_hash')->get();
+
+        $roles = Role::query()->whereNot('name','admin')->get();
+        return view('admin.qrCode.qrCode',compact('roles','users'));
     }
 
-    public function create(Request $request){
+    public function getBindings(Request $request)
+    {
+        $data = [];
+        $name = [];
+        $userFields = [];
+        foreach ($request->roles as $role) {
+            $data[] = (RoleEnum::from($role)?->getUserBinding())::get()->toArray();
+            $name[] = (RoleEnum::from($role)?->getUserBinding())::$nameCustom;
+            $userFields[] = RoleEnum::from($role)?->getUserBindingFunction();
+        }
+        foreach ($data as $k=>$dataBindings){
+            $response['data'][] = $dataBindings;
+            $response['name'][$k] = $name[$k];
+            $response['userFields'][$k] = $userFields[$k];
+        }
+        if(!empty($response['data'])){
+            $response['status'] = 'success';
+        }else{
+            $response = ['status'=>'error'];
+        }
 
+        return response()->json($response);
+    }
+
+    public function createUserLink(Request $request)
+    {
+        if(empty($request->phone) || empty($request->email)){
+            return response()->json([]);
+        }
+        if(!User::query()->where('phone',$request->phone)->where('email',$request->email)->exists()) {
+            $user = new User();
+            $user->phone = $request->phone;
+            $user->password = Hash::make(rand(1000000,999999));
+            $user->email = $request->email;
+            $user->register_hash = Hash::make(date('Y-m-d H:i:s').$request->phone.rand(1000000,999999));
+            $user->save();
+            $userFunction = [];
+            foreach ($request->roles as $role){
+               $userFunction[] = RoleEnum::from($role)?->getUserBindingFunction();
+            }
+            if(!empty($userFunction)){
+                $userFunction = array_unique($userFunction);
+                foreach ($userFunction as $function){
+                    if(!empty($request->$function)){
+                        $user->$function()->sync($request->$function);
+                    }
+                }
+            }
+
+            $user->roles()->sync($request->roles);
+
+            $response = ['status'=>'success','data'=>['hash'=>$user->register_hash]];
+        }else{
+            $response = ['status'=>'error','error_message'=>'Пользователь с такими данными уже существует'];
+        }
+        return response()->json($response);
     }
 
 

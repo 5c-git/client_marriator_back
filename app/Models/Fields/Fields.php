@@ -2,8 +2,11 @@
 
 namespace App\Models\Fields;
 
+use App\Models\Fields\Directory\Project;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use App\Models\User\Role;
 
 class Fields extends Model
 {
@@ -36,8 +39,20 @@ class Fields extends Model
         'section',
         'estate',
         'requisites',
-        'screen'
+        'screen',
+        'role_id'
     ];
 
     public $timestamps = false;
+
+    public function roles(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Role::class,
+            'fields_user_role',
+            'field_id',
+            'user_role_id'
+        );
+    }
+
 }

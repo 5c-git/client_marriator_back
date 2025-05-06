@@ -27,6 +27,7 @@ class Project extends Model implements ModelDirectoryInterface
 
     public static int $fieldsTypeEnum = FieldsTypeEnum::photoCheckbox->value;
     public static string $uuid = 'directory_project';
+    public static string $nameCustom = 'Проект';
 
     protected $table = 'directory_project';
     protected $fillable = [

@@ -274,6 +274,27 @@
 
 
         <div class="form-group row">
+            <label for="roles" class="col-sm-2 col-form-label">Роли пользователей</label>
+            <div class="col-sm-10">
+                <div class="row addItemSelect">
+                    <div class="col-sm-9">
+                        <x-adminlte-select2 data-name="roles[]" id="roles" name="roles[]" multiple>
+                            @foreach($roles as $role)
+                                @if(in_array($role->id,$field->roles->pluck('id')->toArray()))
+                                    <option selected value="{{$role->id}}">{{$role->name}}</option>
+                                @else
+                                    <option value="{{$role->id}}">{{$role->name}}</option>
+                                @endif
+                            @endforeach
+                        </x-adminlte-select2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="form-group row">
             <div class="col-sm-10">
                 <button type="submit" class="btn btn-success">Сохранить</button>
                 <a href="{{route('fieldsList')}}" style="margin-left: 10px" class="btn btn-secondary btn-md active" role="button" aria-pressed="true">Вернуться</a>

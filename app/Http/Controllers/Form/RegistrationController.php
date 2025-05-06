@@ -26,6 +26,29 @@ class RegistrationController extends Controller
 
     }
 
+    public function getUserByHash(Request $request)
+    {
+        if(empty($request->hash)){
+            $response['error'] = 'Недействительная ссылка для регистрации';
+            $response['status'] = 'error';
+            return response()->json($response,417);
+        }
+        $user = User::query()->where('register_hash',$request->hash)->first();
+        if ($user) {
+            $response['result'] = [
+                'userId' => $user->id,
+                'phone' => $user->phone,
+                'email' => $user->email,
+                'role' => $user->roles
+            ];
+            $response['status'] = 'success';
+        } else {
+            $response['error'] = 'Ссылка недействительна';
+            $response['status'] = 'error';
+        }
+        return response()->json($response,200);
+    }
+
     /**
      * @OA\Post(
      *     path="/api/sendPhone/",
@@ -72,18 +95,26 @@ class RegistrationController extends Controller
                    $response['result']['type'] = 'auth';
                }else{
                    if($user->finishRegister){
-                       $response['result']['type'] = 'register';
+                       //пользователь находится на модерации
                    }else {
                        $response['result']['type'] = 'register';
                    }
+                   $user->register_hash = null;
+                   $user->save();
                }
            }else{
-               $user = new User();
-               $user->phone = $request->phone;
-               $user->email = Str::random(20).'@mariator.ru';
-               $user->password = Hash::make(Str::random(20));
-               $user->save();
-               $response['result']['type'] = 'register';
+               //
+               $response['error'] = 'Пользователь не идентифицирован';
+               $response['status'] = 'error';
+               return response()->json($response,401);
+               if(0) {
+                   $user = new User();
+                   $user->phone = $request->phone;
+                   $user->email = Str::random(20) . '@mariator.ru';
+                   $user->password = Hash::make(Str::random(20));
+                   $user->save();
+                   $response['result']['type'] = 'register';
+               }
            }
 
             $smsCodeService = new SmsCodeService($request->phone);
@@ -151,7 +182,7 @@ class RegistrationController extends Controller
                     $token = $apiTokenService->createToken(['register']);
                     $response['result']['token'] = $token;
                 }else{
-                    ///???????????
+                    //пользователь находится на модерации
                 }
             }else{
                 $token = $apiTokenService->createToken(['checkPin']);
@@ -300,7 +331,7 @@ class RegistrationController extends Controller
                     $token = $apiTokenService->createToken(['register']);
                     $response['result']['token'] = $token;
                 }else{
-                    ///???????????
+                    //пользователь находится на модерации
                 }
             }else{
                 $token = $apiTokenService->createToken(['checkPin']);
