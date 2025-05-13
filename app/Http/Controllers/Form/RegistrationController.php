@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use App\Services\Register\SmsCodeService;
+use App\Enum\Role\RoleEnum;
 
 class RegistrationController extends Controller
 {
@@ -39,7 +40,7 @@ class RegistrationController extends Controller
                 'userId' => $user->id,
                 'phone' => $user->phone,
                 'email' => $user->email,
-                'role' => $user->roles
+                'role' => $user->roles?->pluck('name')?->toArray()
             ];
             $response['status'] = 'success';
         } else {
@@ -104,17 +105,17 @@ class RegistrationController extends Controller
                }
            }else{
                //
-               $response['error'] = 'Пользователь не идентифицирован';
-               $response['status'] = 'error';
-               return response()->json($response,401);
-               if(0) {
-                   $user = new User();
-                   $user->phone = $request->phone;
-                   $user->email = Str::random(20) . '@mariator.ru';
-                   $user->password = Hash::make(Str::random(20));
-                   $user->save();
-                   $response['result']['type'] = 'register';
-               }
+//               $response['error'] = 'Пользователь не идентифицирован';
+//               $response['status'] = 'error';
+
+               $user = new User();
+               $user->phone = $request->phone;
+               $user->email = Str::random(20) . '@mariator.ru';
+               $user->password = Hash::make(Str::random(20));
+               $user->save();
+               $user->roles()->sync([RoleEnum::client->value]);
+               $response['result']['type'] = 'register';
+
            }
 
             $smsCodeService = new SmsCodeService($request->phone);

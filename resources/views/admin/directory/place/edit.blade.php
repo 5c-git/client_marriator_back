@@ -59,24 +59,6 @@
         </div>
 
 
-        <div class="form-group row">
-            <label for="select" class="col-sm-2 col-form-label">Привязка Брендов</label>
-            <div class="col-sm-10">
-                        <div class="row addItemSelect">
-                            <div class="col-sm-9">
-                                <x-adminlte-select2 data-name="brand" id="brand" name="brand">
-                                    @foreach($brand as $brandField)
-                                        @if($edit->brand->id == $brandField->id)
-                                            <option selected value="{{$brandField->id}}">{{$brandField->name}}: {{$brandField->name}} [{{$brandField->uuid}}]</option>
-                                        @else
-                                            <option value="{{$brandField->id}}">{{$brandField->name}}: {{$brandField->name}} [{{$brandField->uuid}}]</option>
-                                        @endif
-                                    @endforeach
-                                </x-adminlte-select2>
-                            </div>
-                        </div>
-            </div>
-        </div>
 
         <div class="form-group row">
             <div class="col-sm-10">

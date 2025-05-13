@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property-read Collection|Counterparty[] $counterparties
  * @property-read Collection|Place[] $places
  * @property-read Collection|ViewActivities[] $viewActivities
+ * @property-read Collection|Brand[] $brands
  *
  */
 class Project extends Model implements ModelDirectoryInterface
@@ -74,5 +75,15 @@ class Project extends Model implements ModelDirectoryInterface
             'project_id',
             'view_activities_id'
         )->withPivot('price');
+    }
+
+    public function brands(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Brand::class,
+            'directory_project_directory_brand',
+            'project_id',
+            'brand_id'
+        );
     }
 }

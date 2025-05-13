@@ -4,12 +4,11 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use App\Http\Resources\BrandResource;
 
 /**
- * @mixin \App\Models\Fields\Directory\Place
+ * @mixin \App\Models\User\Role
  */
-class PlaceResource extends JsonResource
+class RoleResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -22,10 +21,7 @@ class PlaceResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'name' => $this->name,
-            'latitude' => $this->latitude,
-            'longitude' => $this->longitude,
-            'address_kladr' => $this->address_kladr,
+            'name' => $this->name
         ];
     }
 }

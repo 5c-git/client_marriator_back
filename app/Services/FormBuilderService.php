@@ -144,7 +144,7 @@ class FormBuilderService
     private function getFields(): void
     {
         $user = Auth::user();
-        $userRoles = $user?->roles->pluck('id')->toArray();
+        $userRoles = $user?->roles?->pluck('id')->toArray();
         $this->fieldsAll = Fields::query()->orderBy('sort', 'asc')
             ->where('active',true)
             ->whereNotNull('step')
@@ -179,7 +179,7 @@ class FormBuilderService
     private function getAllFields($section): void
     {
         $user = Auth::user();
-        $userRoles = $user?->roles->pluck('id')->toArray();
+        $userRoles = $user?->roles?->pluck('id')->toArray();
         $this->fieldsAll = Fields::query()
             ->orderBy('sort', 'asc')
             ->where('active',true)
@@ -307,12 +307,12 @@ class FormBuilderService
     public function getUserField(array $moreData,array $errorData): array
     {
         $user = Auth::user();
-        $userRoles = $user?->roles->pluck('id')->toArray();
+        $userRoles = $user?->roles?->pluck('id')->toArray();
         $this->fieldsAll = Fields::query()
             ->orderBy('step', 'asc')
             ->where('active',true)
             ->whereNotNull('step')
-            ->when(!empty($userRoles), function (Builder $q, array $userRoles) {
+            ->when($userRoles, function (Builder $q, array $userRoles) {
                 $q->whereHas('roles', function ($query) use ($userRoles)  {
                     $query->whereIn('user_role_id', $userRoles);
                 })->orWhereDoesntHave('roles');
@@ -372,7 +372,7 @@ class FormBuilderService
         $sectionDots = [];
         $menuSection = [];
         $user = Auth::user();
-        $userRoles = $user?->roles->pluck('id')->toArray();
+        $userRoles = $user?->roles?->pluck('id')->toArray();
         if (!empty($userError)) {
             $fieldsUuid = [];
             foreach ($userError as $uuid => $errorFieldData) {

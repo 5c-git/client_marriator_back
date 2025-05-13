@@ -21,6 +21,8 @@ class ProjectResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'name' => $this->name,
+            'brand' => ProjectResource::collection($this->brands)
         ];
     }
 }

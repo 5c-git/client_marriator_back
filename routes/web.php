@@ -25,7 +25,7 @@ Route::group(['prefix' => 'admin'], function () {
 
     Route::post('/loginAdminAjax/', 'App\Http\Controllers\Admin\Auth\LoginController@customAdminLogin')->name('loginAdminAjax');
 
-    Route::middleware([CheckRole::class])->group( function () {
+    Route::middleware([CheckPermission::class])->group( function () {
         Route::get('/','App\Http\Controllers\Admin\Page\MainPageController@mainPage')->name('mainPage');
 
         Route::match(['get', 'post'], '/logout', 'App\Http\Controllers\Admin\Auth\LoginController@logout')->name('logout');

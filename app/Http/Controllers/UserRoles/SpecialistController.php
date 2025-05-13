@@ -25,9 +25,5 @@ class SpecialistController extends Controller
 
     }
 
-    public function getDataProject(){
-        $userProject = Auth::user()->project;
-        return new ProjectResource($userProject);
-    }
 
 }

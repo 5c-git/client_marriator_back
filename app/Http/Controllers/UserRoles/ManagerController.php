@@ -2,15 +2,21 @@
 
 namespace App\Http\Controllers\UserRoles;
 
+use App\Enum\Role\RoleEnum;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ConfirmUserRequest;
 use App\Http\Resources\ProjectResource;
+use App\Http\Resources\SuccessResource;
+use App\Models\Fields\Fields;
 use App\Models\User;
 use App\Services\ApiTokenService\ApiTokenService;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use App\Services\Register\SmsCodeService;
+use App\Http\Resources\UserResource;
 
 class ManagerController extends Controller
 {
@@ -28,6 +34,45 @@ class ManagerController extends Controller
     public function getDataProject(){
         $userProject = Auth::user()->project;
         return new ProjectResource($userProject);
+    }
+
+    public function getModerationClient()
+    {
+        $user = Auth::user();
+        $userRoles = $user->roles?->pluck('id')->toArray();
+        $arrRoleConfirm = [];
+        foreach ($userRoles as $role){
+            $arrRoleConfirm = RoleEnum::from($role)->getClientForModeration();
+        }
+        $arrRoleConfirm = array_unique($arrRoleConfirm);
+
+        $usersForModeration = $this->userRepository->getModerationUsers($arrRoleConfirm);
+
+        return UserResource::collection($usersForModeration);
+    }
+
+    public function confirmUserRegister(ConfirmUserRequest $request): SuccessResource
+    {
+        $user = Auth::user();
+        $userRoles = $user->roles?->pluck('id')->toArray();
+        $arrRoleConfirm = [];
+        foreach ($userRoles as $role){
+            $arrRoleConfirm = RoleEnum::from($role)->getClientForModeration();
+        }
+        $arrRoleConfirm = array_unique($arrRoleConfirm);
+
+        $userForModeration = $this->userRepository
+            ->getModerationUsers($arrRoleConfirm)?->where('id',$request->userId)?->first();
+        if(!empty($userForModeration)){
+            if($request->confirm){
+                $userForModeration->confirmRegister = true;
+            }else{
+                $userForModeration->finishRegister = false;
+            }
+            $userForModeration->save();
+        }
+
+        return new SuccessResource();
     }
 
 }

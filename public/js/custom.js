@@ -472,7 +472,13 @@ $(document).ready(function () {
 
                     //setTimeout(function(){location.reload();},2000);
                 } else {
-
+                    $(document).Toasts('create', {
+                        title: 'Error',
+                        body: 'Пользователи уже существует или данные устарели ',
+                        autohide: true,
+                        delay: 4000,
+                        class: 'bg-danger',
+                    })
                 }
             },
             error: function (request, status, error) {

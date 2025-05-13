@@ -26,7 +26,7 @@ class QrCodeController extends Controller
 
         $users = User::query()->whereNotNull('register_hash')->get();
 
-        $roles = Role::query()->whereNot('name','admin')->get();
+        $roles = Role::query()->whereNotIn('name',['admin','specialist'])->get();
         return view('admin.qrCode.qrCode',compact('roles','users'));
     }
 
@@ -36,14 +36,16 @@ class QrCodeController extends Controller
         $name = [];
         $userFields = [];
         foreach ($request->roles as $role) {
-            $data[] = (RoleEnum::from($role)?->getUserBinding())::get()->toArray();
-            $name[] = (RoleEnum::from($role)?->getUserBinding())::$nameCustom;
-            $userFields[] = RoleEnum::from($role)?->getUserBindingFunction();
+            $data[(RoleEnum::from($role)?->getUserBinding())::$nameCustom] = (RoleEnum::from($role)?->getUserBinding())::get()->toArray();
+            $name[(RoleEnum::from($role)?->getUserBinding())::$nameCustom] = (RoleEnum::from($role)?->getUserBinding())::$nameCustom;
+            $userFields[(RoleEnum::from($role)?->getUserBinding())::$nameCustom] = RoleEnum::from($role)?->getUserBindingFunction();
         }
+        $i = 0;
         foreach ($data as $k=>$dataBindings){
             $response['data'][] = $dataBindings;
-            $response['name'][$k] = $name[$k];
-            $response['userFields'][$k] = $userFields[$k];
+            $response['name'][$i] = $name[$k];
+            $response['userFields'][$i] = $userFields[$k];
+            $i++;
         }
         if(!empty($response['data'])){
             $response['status'] = 'success';

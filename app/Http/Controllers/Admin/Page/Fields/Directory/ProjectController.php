@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use App\Models\Fields\Directory\Project;
 use App\Models\Fields\Directory\Place;
+use App\Models\Fields\Directory\Brand;
 use App\Models\Fields\Directory\ViewActivities;
 use App\Models\Fields\Directory\Counterparty;
 
@@ -38,12 +39,13 @@ class ProjectController extends Controller
 
     public function edit(Request $request)
     {
-        $edit = Project::query()->where('id', '=', $request->id)->with(['counterparties','places','viewActivities'])->first();
+        $edit = Project::query()->where('id', '=', $request->id)->with(['counterparties','places','viewActivities','brands'])->first();
         $place = Place::query()->get();
         $viewActivities = ViewActivities::query()->get();
         $counterparty = Counterparty::query()->get();
+        $brands = Brand::query()->get();
         if($edit) {
-            return view('admin.directory.'.$this->view.'.edit', compact('edit','place','viewActivities','counterparty'));
+            return view('admin.directory.'.$this->view.'.edit', compact('edit','place','viewActivities','counterparty','brands'));
         }else{
             return redirect()->back();
         }
@@ -76,10 +78,16 @@ class ProjectController extends Controller
             $counterparty = array_column($data['counterparty'], 0);
         }
 
+        $brands = [];
+        if (!empty($data['brands'])) {
+            $brands = array_column($data['brands'], 0);
+        }
+
         $editObj->save();
         $editObj->viewActivities()->sync($viewActivities);
         $editObj->places()->sync($place);
         $editObj->counterparties()->sync($counterparty);
+        $editObj->brands()->sync($brands);
 
 
         $response['url'] = '/admin/directory_'.$this->view.'/edit/'.$editObj->id;
@@ -97,8 +105,9 @@ class ProjectController extends Controller
         $place = Place::query()->get();
         $viewActivities = ViewActivities::query()->get();
         $counterparty = Counterparty::query()->get();
+        $brands = Brand::query()->get();
 
-        return view('admin.directory.'.$this->view.'.add', compact('uuidDirectoryFields','place','viewActivities','counterparty'));
+        return view('admin.directory.'.$this->view.'.add', compact('uuidDirectoryFields','place','viewActivities','counterparty','brands'));
     }
 
     public function createAjax(Request $request)
@@ -122,6 +131,11 @@ class ProjectController extends Controller
             $counterparty = array_column($data['counterparty'], 0);
         }
 
+        $brands = [];
+        if (!empty($data['brands'])) {
+            $brands = array_column($data['brands'], 0);
+        }
+
         $editObj = new Project();
         $editObj->name = $data['name'];
         $editObj->uuid = $data['uuid'];
@@ -129,6 +143,7 @@ class ProjectController extends Controller
         $editObj->viewActivities()->sync($viewActivities);
         $editObj->places()->sync($place);
         $editObj->counterparties()->sync($counterparty);
+        $editObj->brands()->sync($brands);
 
 
         $response['status'] = 'success';

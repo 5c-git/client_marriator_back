@@ -4,12 +4,12 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use App\Http\Resources\BrandResource;
+use \Illuminate\Support\Facades\Storage;
 
 /**
- * @mixin \App\Models\Fields\Directory\Place
+ * @mixin \App\Models\Fields\Directory\Brand
  */
-class PlaceResource extends JsonResource
+class BrandResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -23,9 +23,8 @@ class PlaceResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'latitude' => $this->latitude,
-            'longitude' => $this->longitude,
-            'address_kladr' => $this->address_kladr,
+            'logo' => $this->logo ? Storage::url($this->logo) : null,
+            'description' => $this->description,
         ];
     }
 }

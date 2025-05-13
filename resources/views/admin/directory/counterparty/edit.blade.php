@@ -91,6 +91,7 @@
                 <div class="row addItemSelect">
                     <div class="col-sm-9">
                         <x-adminlte-select2 data-name="brand" id="parentFields" name="brand[0][]">
+                            <option selected="true" disabled="disabled">Не выбрано</option>
                             @foreach($brand as $field)
                                 @if(!empty($field['uuid']))
                                     <option value="{{$field['id']}}">{{$field['name']}}: {{$field['name']}} [{{$field['uuid']}}]</option>

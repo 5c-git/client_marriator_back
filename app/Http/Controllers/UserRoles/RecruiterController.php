@@ -26,9 +26,9 @@ class RecruiterController extends Controller
 
     }
 
-    public function getDataPlace(){
+    public function getPlace(){
         $userPlace = Auth::user()->place;
-        return new PlaceResource($userPlace);
+        return PlaceResource::collection($userPlace);
     }
 
 }

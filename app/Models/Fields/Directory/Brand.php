@@ -54,4 +54,14 @@ class Brand extends Model implements ModelDirectoryInterface
             'counterparty_id'
         );
     }
+
+    public function projects(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Counterparty::class,
+            'directory_project_directory_brand',
+            'brand_id',
+            'project_id'
+        );
+    }
 }

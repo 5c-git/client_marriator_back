@@ -2,23 +2,25 @@
 
 namespace App\Http\Controllers\UserRoles;
 
-use App\Enum\Role\RoleEnum;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\ConfirmUserRequest;
-use App\Http\Resources\BrandResource;
 use App\Http\Resources\ProjectResource;
-use App\Http\Resources\SuccessResource;
-use App\Http\Resources\UserResource;
+use App\Models\Fields\Fields;
+use App\Models\User\Role;
 use App\Models\User;
 use App\Services\ApiTokenService\ApiTokenService;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use App\Services\Register\SmsCodeService;
-use App\Http\Resources\PlaceResource;
+use App\Http\Resources\UserResource;
+use App\Enum\Role\RoleEnum;
+use App\Http\Requests\ConfirmUserRequest;
+use App\Services\Local\Repositories\Contracts\UserRepository;
+use App\Http\Resources\SuccessResource;
 
-class SupervisorController extends Controller
+class AdminController extends Controller
 {
 
     /**
@@ -26,9 +28,8 @@ class SupervisorController extends Controller
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(protected UserRepository $userRepository)
     {
-
     }
 
     public function getDataProject(){
@@ -73,15 +74,6 @@ class SupervisorController extends Controller
         }
 
         return new SuccessResource();
-    }
-
-
-    public function getPlace()
-    {
-        $places = Auth::user()->project
-            ->flatMap(fn($project) => $project->places)
-            ->unique('id');
-        return PlaceResource::collection($places);
     }
 
 }
