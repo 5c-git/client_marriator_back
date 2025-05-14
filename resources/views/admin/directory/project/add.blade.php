@@ -114,11 +114,7 @@
                             @endforeach
                         </x-adminlte-select2>
                     </div>
-                    <div class="col-sm-3">
-                        <a class="removeItemButtonSelect btn btn-danger">Удалить элемент</a>
-                    </div>
                 </div>
-                <button class="btn btn-primary addItemButtonSelect">Добавить привязку</button>
             </div>
         </div>
 

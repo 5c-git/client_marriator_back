@@ -40,7 +40,7 @@ class RegistrationController extends Controller
                 'userId' => $user->id,
                 'phone' => $user->phone,
                 'email' => $user->email,
-                'role' => $user->roles?->pluck('name')?->toArray()
+                'roles' => $user->roles?->pluck('name')?->toArray()
             ];
             $response['status'] = 'success';
         } else {

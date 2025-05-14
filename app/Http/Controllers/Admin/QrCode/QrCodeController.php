@@ -26,7 +26,7 @@ class QrCodeController extends Controller
 
         $users = User::query()->whereNotNull('register_hash')->get();
 
-        $roles = Role::query()->whereNotIn('name',['admin','specialist'])->get();
+        $roles = Role::query()->whereNotIn('name',['admin','specialist','supervisor'])->get();
         return view('admin.qrCode.qrCode',compact('roles','users'));
     }
 

@@ -13,10 +13,26 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Contracts\Pagination\Paginator;
 
 class EloquentUserRepository implements UserRepository
 {
     public function getModerationUsers(array $roles = []): Collection
+    {
+       return User::query()->orderBy('id', 'desc')
+            ->where('confirmRegister',false)
+            ->where('finishRegister',true)
+            ->with(['roles'])
+            ->when($roles, function (Builder $q, array $roles) {
+                $q->whereHas('roles', function ($query) use ($roles)  {
+                    $query->whereIn('role_id', $roles);
+                });
+            })
+            ->get();
+    }
+
+
+    public function getModerationUsersPaginate(array $roles = [],int $page = 1,int $perPage = 10): Paginator
     {
        return User::query()->orderBy('id', 'desc')
             ->where('confirmRegister',false)
@@ -27,7 +43,7 @@ class EloquentUserRepository implements UserRepository
                     $query->whereIn('role_id', $roles);
                 });
             })
-            ->get();
+            ->simplePaginate($perPage);
     }
 
 }

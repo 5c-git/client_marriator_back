@@ -193,12 +193,9 @@
                                     @endforeach
                                 </x-adminlte-select2>
                             </div>
-                            <div class="col-sm-3">
-                                <a class="removeItemButtonSelect btn btn-danger">Удалить элемент</a>
-                            </div>
                         </div>
                     @endforeach
-                @endif
+                @else
                 <div class="row addItemSelect">
                     <div class="col-sm-9">
                         <x-adminlte-select2 data-name="brands" id="brands" name="brands[{{count($edit->brands??[])}}][]">
@@ -210,11 +207,8 @@
                             @endforeach
                         </x-adminlte-select2>
                     </div>
-                    <div class="col-sm-3">
-                        <a class="removeItemButtonSelect btn btn-danger">Удалить элемент</a>
-                    </div>
                 </div>
-                <button class="btn btn-primary addItemButtonSelect">Добавить привязку</button>
+                @endif
             </div>
         </div>
 

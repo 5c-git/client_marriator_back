@@ -5,12 +5,14 @@ namespace App\Http\Controllers\UserRoles;
 use App\Enum\Role\RoleEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ConfirmUserRequest;
+use App\Http\Requests\PaginatorRequest;
 use App\Http\Resources\BrandResource;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\SuccessResource;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Services\ApiTokenService\ApiTokenService;
+use App\Services\Local\Repositories\Contracts\UserRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -26,17 +28,11 @@ class SupervisorController extends Controller
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(protected UserRepository $userRepository)
     {
-
     }
 
-    public function getDataProject(){
-        $userProject = Auth::user()->project;
-        return new ProjectResource($userProject);
-    }
-
-    public function getModerationClient()
+    public function getModerationClient(PaginatorRequest $request)
     {
         $user = Auth::user();
         $userRoles = $user->roles?->pluck('id')->toArray();
@@ -46,7 +42,10 @@ class SupervisorController extends Controller
         }
         $arrRoleConfirm = array_unique($arrRoleConfirm);
 
-        $usersForModeration = $this->userRepository->getModerationUsers($arrRoleConfirm);
+        $usersForModeration = $this->userRepository->getModerationUsersPaginate($arrRoleConfirm,
+            $request->input('page', 1),
+            $request->input('perPage', 10),
+        );
 
         return UserResource::collection($usersForModeration);
     }

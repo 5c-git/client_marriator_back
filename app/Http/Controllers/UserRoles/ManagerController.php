@@ -5,11 +5,17 @@ namespace App\Http\Controllers\UserRoles;
 use App\Enum\Role\RoleEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ConfirmUserRequest;
+use App\Http\Requests\PaginatorRequest;
+use App\Http\Requests\SetBrandImgRequest;
+use App\Http\Requests\SetPlaceRequest;
+use App\Http\Resources\BrandResource;
+use App\Http\Resources\PlaceResource;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\SuccessResource;
 use App\Models\Fields\Fields;
 use App\Models\User;
 use App\Services\ApiTokenService\ApiTokenService;
+use App\Services\Local\Repositories\Contracts\UserRepository;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -26,17 +32,11 @@ class ManagerController extends Controller
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(protected UserRepository $userRepository)
     {
-
     }
 
-    public function getDataProject(){
-        $userProject = Auth::user()->project;
-        return new ProjectResource($userProject);
-    }
-
-    public function getModerationClient()
+    public function getModerationClient(PaginatorRequest $request)
     {
         $user = Auth::user();
         $userRoles = $user->roles?->pluck('id')->toArray();
@@ -46,7 +46,10 @@ class ManagerController extends Controller
         }
         $arrRoleConfirm = array_unique($arrRoleConfirm);
 
-        $usersForModeration = $this->userRepository->getModerationUsers($arrRoleConfirm);
+        $usersForModeration = $this->userRepository->getModerationUsersPaginate($arrRoleConfirm,
+            $request->input('page', 1),
+            $request->input('perPage', 10),
+        );
 
         return UserResource::collection($usersForModeration);
     }
@@ -72,6 +75,51 @@ class ManagerController extends Controller
             $userForModeration->save();
         }
 
+        return new SuccessResource();
+    }
+
+
+    public function getPlace()
+    {
+        $places = Auth::user()->project
+            ->flatMap(fn($project) => $project->places)
+            ->unique('id');
+        return PlaceResource::collection($places);
+    }
+
+    public function setPlace(SetPlaceRequest $request)
+    {
+        $user = Auth::user();
+        $place = $user->project
+            ->flatMap(fn($project) => $project->places)
+            ->unique('id')->where('id',$request->placeId)->first();
+        if(!empty($place)) {
+            $user->place()->sync([$place->id]);
+            $user->save();
+        }
+
+        return new SuccessResource();
+    }
+
+    public function getBrand()
+    {
+        $brands = Auth::user()->project
+            ->flatMap(fn($project) => $project->brands)
+            ->unique('id');
+        return BrandResource::collection($brands);
+    }
+
+    public function setBrandImg(SetBrandImgRequest $request)
+    {
+        $user = Auth::user();
+        $brands = Auth::user()->project
+            ->flatMap(fn($project) => $project->brands)
+            ->unique('id')?->where('id',$request->brandId)?->first();
+
+        if(!empty($brands)){
+            $user->img = $brands->logo;
+            $user->save();
+        }
         return new SuccessResource();
     }
 

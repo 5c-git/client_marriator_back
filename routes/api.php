@@ -28,12 +28,16 @@ Route::group(["middleware" => ["auth:api", "scope:register"]], function () {
 
 
     Route::middleware([CheckRole::class.':client'])->group( function () {
-        Route::get('/getBrand','App\Http\Controllers\UserRoles\ClientController@getBrandImg')->name('getBrandImgClient');
+        Route::get('/getBrand','App\Http\Controllers\UserRoles\ClientController@getBrand')->name('getBrandImgClient');
         Route::post('/setBrandImg','App\Http\Controllers\UserRoles\ClientController@setBrandImg')->name('setBrandImgClient');
+        Route::get('/getPlace','App\Http\Controllers\UserRoles\ClientController@getPlace')->name('getPlaceClient');
+        Route::post('/setPlace','App\Http\Controllers\UserRoles\ClientController@setPlace')->name('setPlaceClient');
     });
     Route::middleware([CheckRole::class.':manager'])->group( function () {
-        Route::get('/getModerationClient','App\Http\Controllers\UserRoles\AdminController@getModerationClient')->name('getModerationClientManager');
-        Route::post('/confirmUserRegister','App\Http\Controllers\UserRoles\AdminController@confirmUserRegister')->name('confirmUserRegisterManager');
+        Route::get('/getBrand','App\Http\Controllers\UserRoles\ManagerController@getBrand')->name('getBrandImgManager');
+        Route::post('/setBrandImg','App\Http\Controllers\UserRoles\ManagerController@setBrandImg')->name('setBrandImgManager');
+        Route::get('/getPlace','App\Http\Controllers\UserRoles\ManagerController@getPlace')->name('getPlaceManager');
+        Route::post('/setPlace','App\Http\Controllers\UserRoles\ManagerController@setPlace')->name('setPlaceManager');
     });
     Route::middleware([CheckRole::class.':recruiter'])->group( function () {
         Route::get('/getPlace','App\Http\Controllers\UserRoles\RecruiterController@getPlace')->name('getPlaceRecruiter');
@@ -102,16 +106,16 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
         Route::middleware([CheckRole::class.':client'])->group( function () {
         });
         Route::middleware([CheckRole::class.':manager'])->group( function () {
-            Route::get('/getModerationClient','App\Http\Controllers\UserRoles\AdminController@getModerationClient')->name('getModerationClientManager');
-            Route::post('/confirmUserRegister','App\Http\Controllers\UserRoles\AdminController@confirmUserRegister')->name('confirmUserRegisterManager');
+            Route::get('/getModerationClient','App\Http\Controllers\UserRoles\ManagerController@getModerationClient')->name('getModerationClientManager');
+            Route::post('/confirmUserRegister','App\Http\Controllers\UserRoles\ManagerController@confirmUserRegister')->name('confirmUserRegisterManager');
         });
         Route::middleware([CheckRole::class.':recruiter'])->group( function () {
         });
         Route::middleware([CheckRole::class.':specialist'])->group( function () {
         });
         Route::middleware([CheckRole::class.':supervisor'])->group( function () {
-            Route::get('/getModerationClient','App\Http\Controllers\UserRoles\AdminController@getModerationClient')->name('getModerationClientSupervisor');
-            Route::post('/confirmUserRegister','App\Http\Controllers\UserRoles\AdminController@confirmUserRegister')->name('confirmUserRegisterSupervisor');
+            Route::get('/getModerationClient','App\Http\Controllers\UserRoles\SupervisorController@getModerationClient')->name('getModerationClientSupervisor');
+            Route::post('/confirmUserRegister','App\Http\Controllers\UserRoles\SupervisorController@confirmUserRegister')->name('confirmUserRegisterSupervisor');
         });
         Route::middleware([CheckRole::class.':admin'])->group( function () {
             Route::get('/getModerationClient','App\Http\Controllers\UserRoles\AdminController@getModerationClient')->name('getModerationClientAdmin');
@@ -121,10 +125,13 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
 
 
 
-            Route::get('/getBrandImg','App\Http\Controllers\UserRoles\ClientController@getBrandImg')->name('getBrandImgClientAndif');
-            Route::post('/setBrandImg','App\Http\Controllers\UserRoles\ClientController@setBrandImg')->name('setBrandImgClientsvfv');
-
-
+//            Route::get('/getBrandImg','App\Http\Controllers\UserRoles\ClientController@getBrandImg')->name('getBrandImgClientAndif');
+//            Route::post('/setBrandImg','App\Http\Controllers\UserRoles\ClientController@setBrandImg')->name('setBrandImgClientsvfv');
+//
+//
+//
+//            Route::get('/getPlace','App\Http\Controllers\UserRoles\ClientController@getPlace')->name('getPlaceClient');
+//            Route::post('/setPlace','App\Http\Controllers\UserRoles\ClientController@setPlace')->name('setPlaceClient');
 
 
 

@@ -9,6 +9,7 @@ use Illuminate\Cache\CacheManager;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Collection;
+use Illuminate\Contracts\Pagination\Paginator;
 
 class CachingUserRepository implements UserRepository
 {
@@ -21,6 +22,11 @@ class CachingUserRepository implements UserRepository
     public function getModerationUsers(array $roles = []): Collection
     {
         return $this->users->getModerationUsers($roles);
+    }
+
+    public function getModerationUsersPaginate(array $roles = [],int $page = 1,int $perPage = 10): Paginator
+    {
+        return $this->users->getModerationUsersPaginate($roles,$page,$perPage);
     }
 
 

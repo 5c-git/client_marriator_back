@@ -19,6 +19,7 @@ use App\Enum\Role\RoleEnum;
 use App\Http\Requests\ConfirmUserRequest;
 use App\Services\Local\Repositories\Contracts\UserRepository;
 use App\Http\Resources\SuccessResource;
+use App\Http\Requests\PaginatorRequest;
 
 class AdminController extends Controller
 {
@@ -37,7 +38,7 @@ class AdminController extends Controller
         return new ProjectResource($userProject);
     }
 
-    public function getModerationClient()
+    public function getModerationClient(PaginatorRequest $request)
     {
         $user = Auth::user();
         $userRoles = $user->roles?->pluck('id')->toArray();
@@ -47,7 +48,10 @@ class AdminController extends Controller
         }
         $arrRoleConfirm = array_unique($arrRoleConfirm);
 
-        $usersForModeration = $this->userRepository->getModerationUsers($arrRoleConfirm);
+        $usersForModeration = $this->userRepository->getModerationUsersPaginate($arrRoleConfirm,
+            $request->input('page', 1),
+            $request->input('perPage', 10),
+        );
 
         return UserResource::collection($usersForModeration);
     }
