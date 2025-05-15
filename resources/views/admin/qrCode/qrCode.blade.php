@@ -13,7 +13,7 @@
             @csrf
             <div class="form-group row">
                 <label for="select" class="col-sm-2 col-form-label">Роль</label>
-                <select class="rolesCustomJS custom-select" name="roles[]" required multiple>
+                <select class="rolesCustomJS custom-select" name="roles[]" required>
                     <option value="">Не выбрано</option>
                     @foreach($roles as $role)
                         <option value="{{$role->id}}">{{$role->name}}</option>
