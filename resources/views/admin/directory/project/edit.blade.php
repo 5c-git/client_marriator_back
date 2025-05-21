@@ -179,7 +179,7 @@
         <div class="form-group row">
             <label for="select" class="col-sm-2 col-form-label">Привязка Брендов</label>
             <div class="col-sm-10">
-                @if(!empty($edit->brands))
+                @if(!empty($edit->brands->toArray()))
                     @foreach($edit->brands as $kfield=>$brandData)
                         <div class="row addItemSelect">
                             <div class="col-sm-9">
@@ -198,7 +198,7 @@
                 @else
                 <div class="row addItemSelect">
                     <div class="col-sm-9">
-                        <x-adminlte-select2 data-name="brands" id="brands" name="brands[{{count($edit->brands??[])}}][]">
+                        <x-adminlte-select2 data-name="brands" id="brands" name="brands[{{count($edit->brands??[])}}][]" required>
                             <option selected="true" disabled="disabled">Не выбрано</option>
                             @foreach($brands as $field)
                                 @if(!empty($field['uuid']))

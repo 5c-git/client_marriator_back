@@ -1,0 +1,74 @@
+<?php
+
+namespace App\Models\Order;
+
+use App\Models\Fields\Directory\Brand;
+use App\Models\Fields\Directory\Place;
+use App\Models\Fields\Directory\Project;
+use App\Models\Fields\Directory\ViewActivities;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
+use App\Models\Order\OrderActivities;
+use App\Enum\Order\OrderStatusEnum;
+
+/**
+ * @property int $id
+ * @property int $place_id
+ * @property int $user_id
+ * @property bool $self_employed
+ * @property float $latitude
+ * @property float $longitude
+ * @property OrderStatusEnum $status
+ * @property-read User $user
+ * @property-read Place $place
+ * @property-read Collection|OrderActivities[] $orderActivities
+ * @property-read Collection|ViewActivities[] $viewActivities
+ *
+ */
+class Order extends Model
+{
+    use HasFactory;
+
+    protected $table = 'orders';
+    protected $fillable = [
+        'place_id',
+        'user_id',
+        'self_employed',
+        'status'
+    ];
+
+    protected $casts = [
+        'status' => OrderStatusEnum::class,
+    ];
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function place(): BelongsTo
+    {
+        return $this->belongsTo(Place::class, 'place_id');
+    }
+
+    public function orderActivities(): HasMany
+    {
+        return $this->hasMany(OrderActivities::class);
+    }
+
+    public function viewActivities()
+    {
+        return $this->belongsToMany(
+            ViewActivities::class,
+            'order_activities',
+            'order_id',
+            'view_activity_id'
+        )->withPivot(['count', 'date_start', 'date_end', 'need_foto', 'date_activity']);
+    }
+
+}

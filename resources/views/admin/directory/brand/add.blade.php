@@ -37,7 +37,7 @@
         <div class="form-group row">
             <label for="logo" class="col-sm-2 col-form-label">Картинка</label>
             <div class="col-sm-10">
-                <x-adminlte-input-file name="logo" id="logo" />
+                <x-adminlte-input-file name="logo" id="logo" required />
             </div>
         </div>
 

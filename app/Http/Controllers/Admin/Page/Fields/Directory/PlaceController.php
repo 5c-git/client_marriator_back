@@ -40,9 +40,8 @@ class PlaceController extends Controller
     public function edit(Request $request)
     {
         $edit = Place::query()->where('id', '=', $request->id)->first();
-        $brand = Brand::query()->get();
         if($edit) {
-            return view('admin.directory.'.$this->view.'.edit', compact('edit','brand'));
+            return view('admin.directory.'.$this->view.'.edit', compact('edit'));
         }else{
             return redirect()->back();
         }
@@ -57,7 +56,6 @@ class PlaceController extends Controller
 
         $editObj->name = $data['name'];
         $editObj->uuid = $data['uuid'];
-        $editObj->brand_id = $data['brand'];
         $editObj->address_kladr = $data['address_kladr'];
         $editObj->latitude = $data['latitude'];
         $editObj->longitude = $data['longitude'];
@@ -75,9 +73,7 @@ class PlaceController extends Controller
     public function create()
     {
         $uuidDirectoryFields = $this->objClass::$uuid.'_'.Str::random(30);
-        $brand = Brand::query()->get();
-
-        return view('admin.directory.'.$this->view.'.add', compact('uuidDirectoryFields','brand'));
+        return view('admin.directory.'.$this->view.'.add', compact('uuidDirectoryFields'));
     }
 
     public function createAjax(Request $request)
@@ -87,7 +83,6 @@ class PlaceController extends Controller
         $editObj = new Place();
         $editObj->name = $data['name'];
         $editObj->uuid = $data['uuid'];
-        $editObj->brand_id = $data['brand'];
         $editObj->address_kladr = $data['address_kladr'];
         $editObj->latitude = $data['latitude'];
         $editObj->longitude = $data['longitude'];

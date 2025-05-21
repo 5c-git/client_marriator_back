@@ -3,12 +3,11 @@
 namespace App\Http\Requests;
 
 use App\Http\Requests\FormRequest;
-use Illuminate\Validation\Rule;
 
 /**
- * @property-read array placeId
+ * @property-read int placeId
  */
-class SetPlaceRequest extends FormRequest
+class DelPlaceRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -28,11 +27,7 @@ class SetPlaceRequest extends FormRequest
     public function rules()
     {
         return [
-            'placeId' => 'required',
-            'placeId.*' => [
-                'integer',
-                Rule::exists('directory_place', 'id'),
-            ],
+            'placeId' => 'required|integer|exists:directory_place,id',
         ];
     }
 }

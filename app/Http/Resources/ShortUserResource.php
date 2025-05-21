@@ -2,13 +2,17 @@
 
 namespace App\Http\Resources;
 
+use App\Http\Resources\PlaceResource;
+use App\Http\Resources\ProjectResource;
+use App\Http\Resources\RoleResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 /**
- * @mixin \App\Models\Fields\Directory\Project
+ * @mixin \App\Models\User
  */
-class ProjectResource extends JsonResource
+class ShortUserResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -21,8 +25,9 @@ class ProjectResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'name' => $this->name,
-            'brand' => BrandResource::collection($this->brands)
+            'phone' => $this->phone,
+            'email' => $this->email,
+            'logo' =>  $this->img ? Storage::url($this->img) : null,
         ];
     }
 }

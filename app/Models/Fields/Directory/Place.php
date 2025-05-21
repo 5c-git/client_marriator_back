@@ -19,7 +19,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $address_kladr
  * @property float $latitude
  * @property float $longitude
- * @property-read Collection|Brand[] $brand
  * @property-read Collection|Project[] $project
  *
  */
@@ -36,7 +35,6 @@ class Place extends Model implements ModelDirectoryInterface
     protected $fillable = [
         'uuid',
         'name',
-        'brand_id',
         'address_kladr',
         'latitude',
         'longitude',
@@ -51,11 +49,6 @@ class Place extends Model implements ModelDirectoryInterface
     public static function upsertFromImport(array $data): void
     {
 
-    }
-
-    public function brand(): BelongsTo
-    {
-        return $this->belongsTo(Brand::class, 'brand_id');
     }
 
     public function project(): BelongsToMany

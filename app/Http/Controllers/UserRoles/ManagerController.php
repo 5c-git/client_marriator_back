@@ -5,6 +5,7 @@ namespace App\Http\Controllers\UserRoles;
 use App\Enum\Role\RoleEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ConfirmUserRequest;
+use App\Http\Requests\DelPlaceRequest;
 use App\Http\Requests\PaginatorRequest;
 use App\Http\Requests\SetBrandImgRequest;
 use App\Http\Requests\SetPlaceRequest;
@@ -87,17 +88,23 @@ class ManagerController extends Controller
         return PlaceResource::collection($places);
     }
 
-    public function setPlace(SetPlaceRequest $request)
+    public function setPlace(SetPlaceRequest $request): SuccessResource
     {
         $user = Auth::user();
         $place = $user->project
             ->flatMap(fn($project) => $project->places)
-            ->unique('id')->where('id',$request->placeId)->first();
+            ->unique('id')->whereIn('id',$request->placeId)->pluck('id')?->toArray();
         if(!empty($place)) {
-            $user->place()->sync([$place->id]);
+            $user->place()->sync($place);
             $user->save();
         }
+        return new SuccessResource();
+    }
 
+    public function delPlace(DelPlaceRequest $request): SuccessResource
+    {
+        $user = Auth::user();
+        $user->place()->detach([$request->placeId]);
         return new SuccessResource();
     }
 

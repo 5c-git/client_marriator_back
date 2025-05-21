@@ -32,12 +32,14 @@ Route::group(["middleware" => ["auth:api", "scope:register"]], function () {
         Route::post('/setBrandImg','App\Http\Controllers\UserRoles\ClientController@setBrandImg')->name('setBrandImgClient');
         Route::get('/getPlace','App\Http\Controllers\UserRoles\ClientController@getPlace')->name('getPlaceClient');
         Route::post('/setPlace','App\Http\Controllers\UserRoles\ClientController@setPlace')->name('setPlaceClient');
+        Route::post('/delPlace','App\Http\Controllers\UserRoles\ClientController@delPlace')->name('delPlaceClient');
     });
     Route::middleware([CheckRole::class.':manager'])->group( function () {
         Route::get('/getBrand','App\Http\Controllers\UserRoles\ManagerController@getBrand')->name('getBrandImgManager');
         Route::post('/setBrandImg','App\Http\Controllers\UserRoles\ManagerController@setBrandImg')->name('setBrandImgManager');
         Route::get('/getPlace','App\Http\Controllers\UserRoles\ManagerController@getPlace')->name('getPlaceManager');
         Route::post('/setPlace','App\Http\Controllers\UserRoles\ManagerController@setPlace')->name('setPlaceManager');
+        Route::post('/delPlace','App\Http\Controllers\UserRoles\ManagerController@delPlace')->name('delPlaceManager');
     });
     Route::middleware([CheckRole::class.':recruiter'])->group( function () {
         Route::get('/getPlace','App\Http\Controllers\UserRoles\RecruiterController@getPlace')->name('getPlaceRecruiter');
@@ -125,13 +127,24 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
 
 
 
+            Route::post('/createOrder','App\Http\Controllers\UserRoles\ClientController@createOrder')->name('createOrder');
+            Route::get('/getOrders','App\Http\Controllers\UserRoles\ClientController@getOrders')->name('getOrders');
+            Route::post('/cancelOrder','App\Http\Controllers\UserRoles\ClientController@cancelOrder')->name('cancelOrder');
+            Route::post('/sendOrder','App\Http\Controllers\UserRoles\ClientController@sendOrder')->name('sendOrder');
+            Route::post('/updateOrder','App\Http\Controllers\UserRoles\ClientController@updateOrder')->name('updateOrder');
+
+
+
+
+
+
 //            Route::get('/getBrandImg','App\Http\Controllers\UserRoles\ClientController@getBrandImg')->name('getBrandImgClientAndif');
 //            Route::post('/setBrandImg','App\Http\Controllers\UserRoles\ClientController@setBrandImg')->name('setBrandImgClientsvfv');
 //
 //
 //
-//            Route::get('/getPlace','App\Http\Controllers\UserRoles\ClientController@getPlace')->name('getPlaceClient');
-//            Route::post('/setPlace','App\Http\Controllers\UserRoles\ClientController@setPlace')->name('setPlaceClient');
+          //  Route::get('/getPlace','App\Http\Controllers\UserRoles\ClientController@getPlace')->name('getPlaceClient');
+          //  Route::post('/setPlace','App\Http\Controllers\UserRoles\ClientController@setPlace')->name('setPlaceClient');
 
 
 
