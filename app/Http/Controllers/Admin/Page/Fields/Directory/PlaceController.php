@@ -14,6 +14,7 @@ use App\Models\Fields\Directory\Place;
 use App\Models\Fields\Directory\ViewActivities;
 use App\Models\Fields\Directory\Counterparty;
 use App\Models\Fields\Directory\Brand;
+use App\Models\Fields\Directory\RegionOfResidence;
 
 class PlaceController extends Controller
 {
@@ -40,8 +41,9 @@ class PlaceController extends Controller
     public function edit(Request $request)
     {
         $edit = Place::query()->where('id', '=', $request->id)->first();
+        $regions = RegionOfResidence::get();
         if($edit) {
-            return view('admin.directory.'.$this->view.'.edit', compact('edit'));
+            return view('admin.directory.'.$this->view.'.edit', compact('edit','regions'));
         }else{
             return redirect()->back();
         }
@@ -59,6 +61,7 @@ class PlaceController extends Controller
         $editObj->address_kladr = $data['address_kladr'];
         $editObj->latitude = $data['latitude'];
         $editObj->longitude = $data['longitude'];
+        $editObj->directory_region_of_residence_id = $data['region'];
 
         $editObj->save();
 
@@ -73,7 +76,8 @@ class PlaceController extends Controller
     public function create()
     {
         $uuidDirectoryFields = $this->objClass::$uuid.'_'.Str::random(30);
-        return view('admin.directory.'.$this->view.'.add', compact('uuidDirectoryFields'));
+        $regions = RegionOfResidence::get();
+        return view('admin.directory.'.$this->view.'.add', compact('uuidDirectoryFields','regions'));
     }
 
     public function createAjax(Request $request)
@@ -86,6 +90,7 @@ class PlaceController extends Controller
         $editObj->address_kladr = $data['address_kladr'];
         $editObj->latitude = $data['latitude'];
         $editObj->longitude = $data['longitude'];
+        $editObj->directory_region_of_residence_id = $data['region'];
         $editObj->save();
 
         $response['status'] = 'success';

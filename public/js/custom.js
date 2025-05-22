@@ -519,7 +519,7 @@ $(document).ready(function () {
 
                         option += '<div class="form-group row" style="display: block">  ' +
                             '<label for="select" class="col-sm-6 col-form-label">Справочник - '+data.name[indexs]+'</label> ' +
-                            '<select class="rolesCustomJSBindings custom-select" name="'+data.userFields[indexs]+'[]" required >';
+                            '<select class="rolesCustomJSBindings custom-select" name="'+data.userFields[indexs]+'[]" required multiple>';
                         items.forEach(function (item,index){
                             option += '<option value="'+item.id+'">'+item.name+'</option>';
                         })

@@ -59,6 +59,25 @@
         </div>
 
 
+        <div class="form-group row">
+            <label for="select" class="col-sm-2 col-form-label">Регион</label>
+            <div class="col-sm-10">
+                <div class="row addItemSelect">
+                    <div class="col-sm-9">
+                        <x-adminlte-select2 id="region" name="region" required>
+                            @foreach($regions as $region)
+                                @if($region->id == $edit->directory_region_of_residence_id)
+                                    <option selected value="{{$region->id}}">{{$region->name}}</option>
+                                @else
+                                    <option value="{{$region->id}}">{{$region->name}}</option>
+                                @endif
+                            @endforeach
+                        </x-adminlte-select2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 
         <div class="form-group row">
             <div class="col-sm-10">

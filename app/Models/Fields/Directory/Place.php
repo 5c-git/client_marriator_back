@@ -11,15 +11,18 @@ use App\Models\Fields\Directory\Brand;
 use App\Models\Fields\Directory\Project;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\Fields\Directory\RegionOfResidence;
 
 /**
  * @property int $id
+ * @property int $directory_region_of_residence_id
  * @property string $uuid
  * @property string $name
  * @property string $address_kladr
  * @property float $latitude
  * @property float $longitude
  * @property-read Collection|Project[] $project
+ * @property-read RegionOfResidence $region
  *
  */
 class Place extends Model implements ModelDirectoryInterface
@@ -38,6 +41,7 @@ class Place extends Model implements ModelDirectoryInterface
         'address_kladr',
         'latitude',
         'longitude',
+        'directory_region_of_residence_id'
     ];
 
     public $timestamps = false;
@@ -49,6 +53,11 @@ class Place extends Model implements ModelDirectoryInterface
     public static function upsertFromImport(array $data): void
     {
 
+    }
+
+    public function region(): BelongsTo
+    {
+        return $this->belongsTo(RegionOfResidence::class, 'directory_region_of_residence_id');
     }
 
     public function project(): BelongsToMany

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Http\Resources\BrandResource;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Resources\RegionResource;
 
 /**
  * @mixin \App\Models\Fields\Directory\Place
@@ -28,7 +29,8 @@ class PlaceResource extends JsonResource
             'latitude' => $this->latitude,
             'longitude' => $this->longitude,
             'address_kladr' => $this->address_kladr,
-            'logo' => $logo ? Storage::url($logo) : null
+            'logo' => $logo ? Storage::url($logo) : null,
+            'region' => new RegionResource($this->region)
         ];
     }
 }
