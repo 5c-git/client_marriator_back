@@ -3,14 +3,18 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Fields\Directory\Brand;
+use App\Models\Fields\Directory\Counterparty;
 use App\Models\Fields\Directory\Project;
 use App\Models\Fields\Directory\Place;
+use App\Models\Fields\Directory\ViewActivities;
 use App\Models\User\Role;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Laravel\Passport\HasApiTokens;
@@ -18,6 +22,14 @@ use App\Observers\UserObserver;
 use App\Models\Order\Order;
 
 
+/**
+ * @property int $id
+ * @property string $uuid
+ * @property string $name
+ * @property-read Collection|Project[] $project
+ * @property-read Collection|Place[] $place
+ * @property-read Collection|Order[] $acceptOrder
+ */
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -97,6 +109,16 @@ class User extends Authenticatable
             'user_directory_project',
             'user_id',
             'project_id'
+        );
+    }
+
+    public function acceptOrder(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Order::class,
+            'accept_order',
+            'user_id',
+            'order_id'
         );
     }
 

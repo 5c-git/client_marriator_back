@@ -2,16 +2,21 @@
 
 namespace App\Http\Controllers\UserRoles;
 
+use App\Enum\Order\OrderStatusEnum;
 use App\Enum\Role\RoleEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ConfirmUserRequest;
+use App\Http\Requests\Order\GetOrderRequest;
 use App\Http\Requests\PaginatorRequest;
 use App\Http\Resources\BrandResource;
+use App\Http\Resources\ErrorResource;
+use App\Http\Resources\Order\ShortOrderResource;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\SuccessResource;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Services\ApiTokenService\ApiTokenService;
+use App\Services\Local\Repositories\Contracts\OrderRepository;
 use App\Services\Local\Repositories\Contracts\UserRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,6 +24,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use App\Services\Register\SmsCodeService;
 use App\Http\Resources\PlaceResource;
+use App\Http\Requests\Order\AcceptOrderRequest;
 
 class SupervisorController extends Controller
 {
@@ -28,7 +34,7 @@ class SupervisorController extends Controller
      *
      * @return void
      */
-    public function __construct(protected UserRepository $userRepository)
+    public function __construct(protected UserRepository $userRepository,protected OrderRepository $orderRepository)
     {
     }
 
@@ -81,6 +87,29 @@ class SupervisorController extends Controller
             ->flatMap(fn($project) => $project->places)
             ->unique('id');
         return PlaceResource::collection($places);
+    }
+
+    public function getOrders(GetOrderRequest $request)
+    {
+        return ShortOrderResource::collection(
+            $this->orderRepository->getOrderByUserSyncData(
+                $request->user(),
+                OrderStatusEnum::notAccepted,
+                $request->input('page', 1),
+                $request->input('perPage', 10),
+            )
+        );
+    }
+
+    public function acceptOrder(AcceptOrderRequest $request): ErrorResource|SuccessResource
+    {
+        $user = $request->user();
+        if($this->orderRepository->acceptedOrder($user,$request->orderId)) {
+            $user->acceptOrder()->syncWithoutDetaching([$request->orderId]);
+            return new SuccessResource();
+        }else{
+            return new ErrorResource();
+        }
     }
 
 }

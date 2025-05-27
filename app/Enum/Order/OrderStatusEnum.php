@@ -24,8 +24,8 @@ enum OrderStatusEnum: int
     {
         return match($this)
         {
+            self::new => 'Новый',
             self::notAccepted => 'Не принято',
-            self::sentOut => 'Разослано',
             self::accepted => 'Принято',
             self::canceled => 'Отменено',
             self::archive => 'Архив',

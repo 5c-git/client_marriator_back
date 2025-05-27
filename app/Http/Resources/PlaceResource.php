@@ -22,7 +22,8 @@ class PlaceResource extends JsonResource
      */
     public function toArray($request): array
     {
-        $logo = $this->project()?->first()?->brands()?->first()?->logo;
+        $brand = $this->project()?->first()?->brands()?->first();
+        $logo = $brand?->logo;
         return [
             'id' => $this->id,
             'name' => $this->name,
@@ -30,7 +31,8 @@ class PlaceResource extends JsonResource
             'longitude' => $this->longitude,
             'address_kladr' => $this->address_kladr,
             'logo' => $logo ? Storage::url($logo) : null,
-            'region' => new RegionResource($this->region)
+            'region' => new RegionResource($this->region),
+            'brand' => $brand ? new BrandResource($brand) : null
         ];
     }
 }

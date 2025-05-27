@@ -5,6 +5,7 @@ namespace App\Services\Local\Repositories\Order;
 use App\Enum\Order\OrderStatusEnum;
 use App\Http\Requests\Order\CreateOrderRequest;
 use App\Models\Order\Order;
+use App\Models\User;
 use App\Services\Local\Repositories\Contracts\OrderRepository;
 use Illuminate\Cache\CacheManager;
 use Illuminate\Contracts\Pagination\Paginator;
@@ -41,5 +42,15 @@ class CachingOrderRepository implements OrderRepository
     public function updateOrder(CreateOrderRequest $orderRequest): Order
     {
         return $this->orders->updateOrder($orderRequest);
+    }
+
+    public function getOrderByUserSyncData(User $user,?OrderStatusEnum $status, int $page = 1, int $perPage = 10): Paginator
+    {
+        return $this->orders->getOrderByUserSyncData($user,$status,$page,$perPage);
+    }
+
+    public function acceptedOrder(User $user, int $orderId): bool
+    {
+        return $this->orders->acceptedOrder($user,$orderId);
     }
 }

@@ -2,20 +2,26 @@
 
 namespace App\Http\Controllers\UserRoles;
 
+use App\Enum\Order\OrderStatusEnum;
 use App\Enum\Role\RoleEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ConfirmUserRequest;
 use App\Http\Requests\DelPlaceRequest;
+use App\Http\Requests\Order\AcceptOrderRequest;
+use App\Http\Requests\Order\GetOrderRequest;
 use App\Http\Requests\PaginatorRequest;
 use App\Http\Requests\SetBrandImgRequest;
 use App\Http\Requests\SetPlaceRequest;
 use App\Http\Resources\BrandResource;
+use App\Http\Resources\ErrorResource;
+use App\Http\Resources\Order\ShortOrderResource;
 use App\Http\Resources\PlaceResource;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\SuccessResource;
 use App\Models\Fields\Fields;
 use App\Models\User;
 use App\Services\ApiTokenService\ApiTokenService;
+use App\Services\Local\Repositories\Contracts\OrderRepository;
 use App\Services\Local\Repositories\Contracts\UserRepository;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -33,7 +39,7 @@ class ManagerController extends Controller
      *
      * @return void
      */
-    public function __construct(protected UserRepository $userRepository)
+    public function __construct(protected UserRepository $userRepository,protected OrderRepository $orderRepository)
     {
     }
 
@@ -128,6 +134,40 @@ class ManagerController extends Controller
             $user->save();
         }
         return new SuccessResource();
+    }
+
+    public function getOrders(GetOrderRequest $request)
+    {
+        return ShortOrderResource::collection(
+            $this->orderRepository->getOrderByUserSyncData(
+                $request->user(),
+                OrderStatusEnum::notAccepted,
+                $request->input('page', 1),
+                $request->input('perPage', 10),
+            )
+        );
+    }
+
+    public function acceptOrder(AcceptOrderRequest $request): ErrorResource|SuccessResource
+    {
+        $user = $request->user();
+        if($this->orderRepository->acceptedOrder($user,$request->orderId)) {
+            $user->acceptOrder()->syncWithoutDetaching([$request->orderId]);
+            return new SuccessResource();
+        }else{
+            return new ErrorResource();
+        }
+    }
+
+    public function convertTask(AcceptOrderRequest $request): ErrorResource|SuccessResource
+    {
+        $user = $request->user();
+        if($this->orderRepository->acceptedOrder($user,$request->orderId)) {
+            $user->acceptOrder()->syncWithoutDetaching([$request->orderId]);
+            return new SuccessResource();
+        }else{
+            return new ErrorResource();
+        }
     }
 
 }

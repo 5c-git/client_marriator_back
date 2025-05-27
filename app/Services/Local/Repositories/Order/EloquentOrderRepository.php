@@ -6,6 +6,7 @@ use App\Enum\Order\OrderStatusEnum;
 use App\Http\Requests\Order\CreateOrderRequest;
 use App\Models\Order\Order;
 use App\Models\Order\OrderActivities;
+use App\Models\User;
 use App\Services\Local\Repositories\Contracts\OrderRepository;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Support\Facades\DB;
@@ -18,6 +19,7 @@ class EloquentOrderRepository implements OrderRepository
             'place_id' => $orderRequest->placeId,
             'user_id' => $userId,
             'self_employed' => $orderRequest->selfEmployed,
+            'status' => OrderStatusEnum::new->value
         ]);
 
         foreach ($orderRequest->viewActivities as $activity) {
@@ -53,7 +55,7 @@ class EloquentOrderRepository implements OrderRepository
         return Order::query()->where('user_id',$userId)
             ->when($status, function ($q) use ($status) {
                 return $q->where('status', $status->value);
-            })->simplePaginate($perPage);;
+            })->simplePaginate($perPage);
     }
 
     public function cancelOrder(int $orderId): bool
@@ -101,5 +103,30 @@ class EloquentOrderRepository implements OrderRepository
         });
 
         return $order;
+    }
+
+    public function getOrderByUserSyncData(User $user,?OrderStatusEnum $status, int $page = 1, int $perPage = 10): Paginator
+    {
+        $place = $user->place?->pluck('id')->toArray();
+
+        return Order::query()
+            ->where(function ($query) use ($status, $place) {
+                $query->when($status, fn($q) => $q->where('status', $status->value))
+                    ->when($place, fn($q) => $q->whereIn('place_id', $place));
+            })
+            ->orWhere(function ($query) use ($user) {
+                $query->whereHas('acceptingUsers', fn($q) => $q->where('users.id', $user->id))
+                    ->where('status',OrderStatusEnum::accepted->value);
+            })
+            ->simplePaginate($perPage);
+    }
+
+    public function acceptedOrder(User $user, int $orderId): bool
+    {
+        return (bool)Order::query()
+            ->where('id',$orderId)
+            ->update(
+                ['status'=>OrderStatusEnum::accepted]
+            );
     }
 }

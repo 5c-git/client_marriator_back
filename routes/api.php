@@ -28,25 +28,19 @@ Route::group(["middleware" => ["auth:api", "scope:register"]], function () {
 
 
     Route::middleware([CheckRole::class.':client'])->group( function () {
-        Route::get('/getBrand','App\Http\Controllers\UserRoles\ClientController@getBrand')->name('getBrandImgClient');
-        Route::post('/setBrandImg','App\Http\Controllers\UserRoles\ClientController@setBrandImg')->name('setBrandImgClient');
-        Route::get('/getPlace','App\Http\Controllers\UserRoles\ClientController@getPlace')->name('getPlaceClient');
-        Route::post('/setPlace','App\Http\Controllers\UserRoles\ClientController@setPlace')->name('setPlaceClient');
-        Route::post('/delPlace','App\Http\Controllers\UserRoles\ClientController@delPlace')->name('delPlaceClient');
     });
     Route::middleware([CheckRole::class.':manager'])->group( function () {
-        Route::get('/getBrand','App\Http\Controllers\UserRoles\ManagerController@getBrand')->name('getBrandImgManager');
-        Route::post('/setBrandImg','App\Http\Controllers\UserRoles\ManagerController@setBrandImg')->name('setBrandImgManager');
-        Route::get('/getPlace','App\Http\Controllers\UserRoles\ManagerController@getPlace')->name('getPlaceManager');
-        Route::post('/setPlace','App\Http\Controllers\UserRoles\ManagerController@setPlace')->name('setPlaceManager');
-        Route::post('/delPlace','App\Http\Controllers\UserRoles\ManagerController@delPlace')->name('delPlaceManager');
     });
     Route::middleware([CheckRole::class.':recruiter'])->group( function () {
-        Route::get('/getPlace','App\Http\Controllers\UserRoles\RecruiterController@getPlace')->name('getPlaceRecruiter');
     });
     Route::middleware([CheckRole::class.':supervisor'])->group( function () {
-        Route::get('/getPlace','App\Http\Controllers\UserRoles\AdminController@getPlace')->name('getPlaceSupervisor');
     });
+
+    Route::get('/getBrand','App\Http\Controllers\UniversalController@getBrand')->name('getBrand');
+    Route::get('/setBrandImg','App\Http\Controllers\UniversalController@setBrandImg')->name('setBrandImg');
+    Route::get('/getPlace','App\Http\Controllers\UniversalController@getPlace')->name('getPlace');
+    Route::get('/setPlace','App\Http\Controllers\UniversalController@setPlace')->name('setPlace');
+    Route::get('/delPlace','App\Http\Controllers\UniversalController@delPlace')->name('delPlace');
 
 
 });
@@ -106,37 +100,34 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
         });
 
         Route::middleware([CheckRole::class.':client'])->group( function () {
+            Route::post('/createOrder','App\Http\Controllers\UserRoles\ClientController@createOrder')->name('createOrder');
+            Route::post('/cancelOrder','App\Http\Controllers\UserRoles\ClientController@cancelOrder')->name('cancelOrder');
+            Route::post('/sendOrder','App\Http\Controllers\UserRoles\ClientController@sendOrder')->name('sendOrder');
+            Route::post('/updateOrder','App\Http\Controllers\UserRoles\ClientController@updateOrder')->name('updateOrder');
         });
         Route::middleware([CheckRole::class.':manager'])->group( function () {
-            Route::get('/getModerationClient','App\Http\Controllers\UserRoles\ManagerController@getModerationClient')->name('getModerationClientManager');
-            Route::post('/confirmUserRegister','App\Http\Controllers\UserRoles\ManagerController@confirmUserRegister')->name('confirmUserRegisterManager');
         });
         Route::middleware([CheckRole::class.':recruiter'])->group( function () {
         });
         Route::middleware([CheckRole::class.':specialist'])->group( function () {
         });
         Route::middleware([CheckRole::class.':supervisor'])->group( function () {
-            Route::get('/getModerationClient','App\Http\Controllers\UserRoles\SupervisorController@getModerationClient')->name('getModerationClientSupervisor');
-            Route::post('/confirmUserRegister','App\Http\Controllers\UserRoles\SupervisorController@confirmUserRegister')->name('confirmUserRegisterSupervisor');
         });
         Route::middleware([CheckRole::class.':admin'])->group( function () {
-            Route::get('/getModerationClient','App\Http\Controllers\UserRoles\AdminController@getModerationClient')->name('getModerationClientAdmin');
-            Route::post('/confirmUserRegister','App\Http\Controllers\UserRoles\AdminController@confirmUserRegister')->name('confirmUserRegisterAdmin');
 
 
 
 
 
-            Route::post('/createOrder','App\Http\Controllers\UserRoles\ClientController@createOrder')->name('createOrder');
-            Route::get('/getOrders','App\Http\Controllers\UserRoles\ClientController@getOrders')->name('getOrders');
-            Route::post('/cancelOrder','App\Http\Controllers\UserRoles\ClientController@cancelOrder')->name('cancelOrder');
-            Route::post('/sendOrder','App\Http\Controllers\UserRoles\ClientController@sendOrder')->name('sendOrder');
-            Route::post('/updateOrder','App\Http\Controllers\UserRoles\ClientController@updateOrder')->name('updateOrder');
+            //Route::post('/createOrder','App\Http\Controllers\UserRoles\ClientController@createOrder')->name('createOrder');
+            //Route::get('/getOrders','App\Http\Controllers\UserRoles\ClientController@getOrders')->name('getOrders');
+            //Route::post('/cancelOrder','App\Http\Controllers\UserRoles\ClientController@cancelOrder')->name('cancelOrder');
+            //Route::post('/sendOrder','App\Http\Controllers\UserRoles\ClientController@sendOrder')->name('sendOrder');
+            //Route::post('/updateOrder','App\Http\Controllers\UserRoles\ClientController@updateOrder')->name('updateOrder');
 
 
 
-
-
+            //Route::post('/getOrders','App\Http\Controllers\UserRoles\SupervisorController@getOrders')->name('getOrdersSupervisor');
 
 //            Route::get('/getBrandImg','App\Http\Controllers\UserRoles\ClientController@getBrandImg')->name('getBrandImgClientAndif');
 //            Route::post('/setBrandImg','App\Http\Controllers\UserRoles\ClientController@setBrandImg')->name('setBrandImgClientsvfv');
@@ -145,12 +136,13 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
 //
           //  Route::get('/getPlace','App\Http\Controllers\UserRoles\ClientController@getPlace')->name('getPlaceClient');
           //  Route::post('/setPlace','App\Http\Controllers\UserRoles\ClientController@setPlace')->name('setPlaceClient');
-
-
-
-
-
         });
+
+        Route::get('/getOrders','App\Http\Controllers\UniversalController@getOrders')->name('getOrders');
+        Route::get('/getModerationClient','App\Http\Controllers\UniversalController@getModerationClient')->name('getModerationClient');
+        Route::get('/confirmUserRegister','App\Http\Controllers\UniversalController@confirmUserRegister')->name('confirmUserRegister');
+        Route::get('/acceptOrder','App\Http\Controllers\UniversalController@acceptOrder')->name('acceptOrder');
+
     });
 
     Route::group(['prefix' => 'settings'], function () {

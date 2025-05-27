@@ -21,13 +21,12 @@ use App\Enum\Order\OrderStatusEnum;
  * @property int $place_id
  * @property int $user_id
  * @property bool $self_employed
- * @property float $latitude
- * @property float $longitude
  * @property OrderStatusEnum $status
  * @property-read User $user
  * @property-read Place $place
  * @property-read Collection|OrderActivities[] $orderActivities
  * @property-read Collection|ViewActivities[] $viewActivities
+ * @property-read Collection|User[] $acceptingUsers
  *
  */
 class Order extends Model
@@ -59,6 +58,16 @@ class Order extends Model
     public function orderActivities(): HasMany
     {
         return $this->hasMany(OrderActivities::class);
+    }
+
+    public function acceptingUsers(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            User::class,
+            'accept_order',
+            'order_id',
+            'user_id'
+        );
     }
 
     public function viewActivities()
