@@ -24,7 +24,6 @@ use App\Enum\Order\OrderStatusEnum;
  * @property int $accept_user_id
  * @property int $specialist_user_id
  * @property int $order_id
- * @property int $bid_id
  * @property int $scope_of_services
  * @property float $price
  * @property float $income
@@ -52,7 +51,6 @@ class Task extends Model
         'accept_user_id',
         'specialist_user_id',
         'order_id',
-        'bid_id',
         'status',
         'self_employed',
         'price',

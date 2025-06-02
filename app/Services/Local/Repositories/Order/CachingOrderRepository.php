@@ -3,8 +3,10 @@
 namespace App\Services\Local\Repositories\Order;
 
 use App\Enum\Order\OrderStatusEnum;
+use App\Http\Requests\Order\ConvertTaskRequest;
 use App\Http\Requests\Order\CreateOrderRequest;
 use App\Models\Order\Order;
+use App\Models\Order\Task;
 use App\Models\User;
 use App\Services\Local\Repositories\Contracts\OrderRepository;
 use Illuminate\Cache\CacheManager;
@@ -52,5 +54,15 @@ class CachingOrderRepository implements OrderRepository
     public function acceptedOrder(User $user, int $orderId): bool
     {
         return $this->orders->acceptedOrder($user,$orderId);
+    }
+
+    public function convertTask(User $user, ConvertTaskRequest $request): Task
+    {
+        return $this->orders->convertTask($user,$request);
+    }
+
+    public function getTaskByUserSyncData(User $user, ?OrderStatusEnum $status, int $page = 1, int $perPage = 10): Paginator
+    {
+        return $this->orders->getTaskByUserSyncData($user,$status,$page,$perPage);
     }
 }

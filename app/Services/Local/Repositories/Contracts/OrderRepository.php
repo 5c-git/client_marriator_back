@@ -3,10 +3,12 @@
 namespace App\Services\Local\Repositories\Contracts;
 
 use App\Enum\Order\OrderStatusEnum;
+use App\Http\Requests\Order\ConvertTaskRequest;
 use App\Http\Requests\Order\CreateOrderRequest;
 use App\Models\Order\Order;
 use Illuminate\Contracts\Pagination\Paginator;
 use App\Models\User;
+use App\Models\Order\Task;
 
 interface OrderRepository
 {
@@ -19,4 +21,6 @@ interface OrderRepository
 
     public function updateOrder(CreateOrderRequest $orderRequest): Order;
     public function acceptedOrder(User $user,int $orderId): bool;
+    public function convertTask(User $user,ConvertTaskRequest $request): Task;
+    public function getTaskByUserSyncData(User $user,?OrderStatusEnum $status, int $page = 1, int $perPage = 10): Paginator;
 }

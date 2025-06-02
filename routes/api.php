@@ -106,6 +106,9 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
             Route::post('/updateOrder','App\Http\Controllers\UserRoles\ClientController@updateOrder')->name('updateOrder');
         });
         Route::middleware([CheckRole::class.':manager'])->group( function () {
+            Route::get('/convertTask','App\Http\Controllers\UserRoles\ManagerController@convertTask')->name('convertTask');
+            Route::get('/getSurepvisorData','App\Http\Controllers\UserRoles\ManagerController@getSurepvisorData')->name('getSurepvisorData');
+
         });
         Route::middleware([CheckRole::class.':recruiter'])->group( function () {
         });
@@ -115,6 +118,8 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
         });
         Route::middleware([CheckRole::class.':admin'])->group( function () {
 
+            //Route::post('/convertTask','App\Http\Controllers\UserRoles\ManagerController@convertTask')->name('convertTask');
+            //Route::post('/acceptOrder','App\Http\Controllers\UserRoles\ManagerController@acceptOrder')->name('acceptOrderadmin');
 
 
 

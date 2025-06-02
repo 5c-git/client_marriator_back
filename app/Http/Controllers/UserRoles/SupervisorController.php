@@ -71,6 +71,9 @@ class SupervisorController extends Controller
         if(!empty($userForModeration)){
             if($request->confirm){
                 $userForModeration->confirmRegister = true;
+                if($request->supervisorIds) {
+                    $userForModeration->supervisors()->sync($request->supervisorIds);
+                }
             }else{
                 $userForModeration->finishRegister = false;
             }

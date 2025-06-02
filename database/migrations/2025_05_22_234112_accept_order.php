@@ -24,7 +24,6 @@ return new class extends Migration
             $table->bigInteger('accept_user_id')->nullable(false)->index();
             $table->bigInteger('specialist_user_id')->nullable(false)->index();
             $table->bigInteger('order_id')->nullable(false)->index();
-            $table->bigInteger('bid_id')->nullable(false)->index();
             $table->smallInteger('status')->nullable(false)->default(1);
             $table->boolean('self_employed')->default(false);
             $table->decimal('price',10,2)->nullable(false);

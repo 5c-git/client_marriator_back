@@ -14,6 +14,7 @@ use App\Http\Requests\SetBrandImgRequest;
 use App\Http\Requests\SetPlaceRequest;
 use App\Http\Resources\BrandResource;
 use App\Http\Resources\ErrorResource;
+use App\Http\Resources\Order\OrderResource;
 use App\Http\Resources\Order\ShortOrderResource;
 use App\Http\Resources\PlaceResource;
 use App\Http\Resources\ProjectResource;
@@ -30,6 +31,11 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use App\Services\Register\SmsCodeService;
 use App\Http\Resources\UserResource;
+use App\Http\Requests\Order\ConvertTaskRequest;
+use App\Http\Resources\Order\TaskResource;
+use App\Http\Resources\ShortUserResource;
+use App\Http\Requests\Order\GetTaskRequest;
+use App\Http\Resources\Order\TaskShortResource;
 
 class ManagerController extends Controller
 {
@@ -76,6 +82,9 @@ class ManagerController extends Controller
         if(!empty($userForModeration)){
             if($request->confirm){
                 $userForModeration->confirmRegister = true;
+                if($request->supervisorIds) {
+                    $userForModeration->supervisors()->sync($request->supervisorIds);
+                }
             }else{
                 $userForModeration->finishRegister = false;
             }
@@ -141,10 +150,22 @@ class ManagerController extends Controller
         return ShortOrderResource::collection(
             $this->orderRepository->getOrderByUserSyncData(
                 $request->user(),
-                OrderStatusEnum::notAccepted,
+                OrderStatusEnum::from($request->input('status',2)),
                 $request->input('page', 1),
                 $request->input('perPage', 10),
             )
+        );
+    }
+
+    public function getOrder(GetOrderRequest $request)
+    {
+        return OrderResource::collection(
+            $this->orderRepository->getOrderByUserSyncData(
+                $request->user(),
+                OrderStatusEnum::from($request->input('status',2)),
+                $request->input('page', 1),
+                $request->input('perPage', 10),
+            )?->items()
         );
     }
 
@@ -159,15 +180,31 @@ class ManagerController extends Controller
         }
     }
 
-    public function convertTask(AcceptOrderRequest $request): ErrorResource|SuccessResource
+    public function convertTask(ConvertTaskRequest $request): ErrorResource|TaskResource
     {
         $user = $request->user();
-        if($this->orderRepository->acceptedOrder($user,$request->orderId)) {
-            $user->acceptOrder()->syncWithoutDetaching([$request->orderId]);
-            return new SuccessResource();
+        if($task = $this->orderRepository->convertTask($user,$request)) {
+            return new TaskResource($task);
         }else{
             return new ErrorResource();
         }
+    }
+
+    public function getSurepvisorData(Request $request){
+        $user = $request->user();
+        $supervisorUsers = $user->supervisors;
+        return ShortUserResource::collection($supervisorUsers);
+    }
+
+    public function getTask(GetTaskRequest $request){
+        return TaskShortResource::collection(
+            $this->orderRepository->getTaskByUserSyncData(
+                $request->user(),
+                OrderStatusEnum::from($request->input('status',2)),
+                $request->input('page', 1),
+                $request->input('perPage', 10),
+            )
+        );
     }
 
 }

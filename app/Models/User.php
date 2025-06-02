@@ -112,6 +112,26 @@ class User extends Authenticatable
         );
     }
 
+    public function supervisors(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            User::class,
+            'manager_supervisor',
+            'user_id_manager',
+            'user_id_supervisor'
+        );
+    }
+
+    public function manager(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            User::class,
+            'manager_supervisor',
+            'user_id_supervisor',
+            'user_id_manager'
+        );
+    }
+
     public function acceptOrder(): BelongsToMany
     {
         return $this->belongsToMany(

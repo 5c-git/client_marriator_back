@@ -11,9 +11,9 @@ use \App\Http\Resources\Order\OrderActivitiesResource;
 
 
 /**
- * @mixin \App\Models\Order\Order
+ * @mixin \App\Models\Order\Task
  */
-class ShortOrderResource extends JsonResource
+class TaskResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -26,9 +26,15 @@ class ShortOrderResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'place' => new PlaceResource($this->place),
             'selfEmployed' => (bool)$this->self_employed,
-            'status'=>$this->status->getStatusName(),
+            'status' => $this->status->getStatusName(),
+            'place' => new PlaceResource($this->place),
+            'user' => new ShortUserResource($this->user),
+            'acceptUser' => new ShortUserResource($this->acceptUser),
+            'price' => $this->price,
+            'income' => $this->income,
+            'scopeOfServices' => $this->scope_of_services,
+            'orderActivities' => OrderActivitiesResource::collection($this->taskActivities)
         ];
     }
 }

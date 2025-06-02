@@ -11,9 +11,9 @@ use \App\Http\Resources\Order\OrderActivitiesResource;
 
 
 /**
- * @mixin \App\Models\Order\Order
+ * @mixin \App\Models\Order\Task
  */
-class ShortOrderResource extends JsonResource
+class TaskShortResource extends JsonResource
 {
     /**
      * Transform the resource into an array.

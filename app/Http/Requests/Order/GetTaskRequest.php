@@ -11,7 +11,7 @@ use Illuminate\Validation\Rule;
  * @property-read int|null page
  * @property-read int|null perPage
  */
-class GetOrderRequest extends FormRequest
+class GetTaskRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -44,7 +44,6 @@ class GetOrderRequest extends FormRequest
             ],
             'page' => 'sometimes|integer',
             'perPage' => 'sometimes|integer',
-            'orderId'=> 'sometimes|integer|exists:orders,id'
         ];
     }
 }

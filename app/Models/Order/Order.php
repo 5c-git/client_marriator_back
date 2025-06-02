@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 use App\Models\Order\OrderActivities;
 use App\Enum\Order\OrderStatusEnum;
+use App\Models\Order\Task;
 
 /**
  * @property int $id
@@ -27,6 +28,7 @@ use App\Enum\Order\OrderStatusEnum;
  * @property-read Collection|OrderActivities[] $orderActivities
  * @property-read Collection|ViewActivities[] $viewActivities
  * @property-read Collection|User[] $acceptingUsers
+ * @property-read Collection|Task[] $tasks
  *
  */
 class Order extends Model
@@ -58,6 +60,11 @@ class Order extends Model
     public function orderActivities(): HasMany
     {
         return $this->hasMany(OrderActivities::class);
+    }
+
+    public function tasks(): HasMany
+    {
+        return $this->hasMany(Task::class);
     }
 
     public function acceptingUsers(): BelongsToMany

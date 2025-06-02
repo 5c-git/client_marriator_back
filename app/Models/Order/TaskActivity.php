@@ -2,17 +2,31 @@
 
 namespace App\Models\Order;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Models\Fields\Directory\ViewActivities;
 
+
+/**
+ * @property int $task_id
+ * @property int $view_activity_id
+ * @property int $count
+ * @property Carbon $date_start
+ * @property Carbon $date_end
+ * @property bool $need_foto
+ * @property array $date_activity
+ * @property-read Task $task
+ * @property-read ViewActivities $viewActivity
+ *
+ */
 class TaskActivity extends Model
 {
     use HasFactory;
 
     protected $table = 'task_activities';
-
+    public $timestamps = false;
     protected $fillable = [
         'task_id',
         'view_activity_id',
