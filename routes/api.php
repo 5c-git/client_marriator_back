@@ -37,9 +37,9 @@ Route::group(["middleware" => ["auth:api", "scope:register"]], function () {
     });
 
     Route::get('/getBrand','App\Http\Controllers\UniversalController@getBrand')->name('getBrand');
-    Route::get('/setBrandImg','App\Http\Controllers\UniversalController@setBrandImg')->name('setBrandImg');
+    Route::post('/setBrandImg','App\Http\Controllers\UniversalController@setBrandImg')->name('setBrandImg');
     Route::get('/getPlace','App\Http\Controllers\UniversalController@getPlace')->name('getPlace');
-    Route::get('/setPlace','App\Http\Controllers\UniversalController@setPlace')->name('setPlace');
+    Route::post('/setPlace','App\Http\Controllers\UniversalController@setPlace')->name('setPlace');
     Route::get('/delPlace','App\Http\Controllers\UniversalController@delPlace')->name('delPlace');
 
 
@@ -147,7 +147,7 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
         Route::get('/getOrder','App\Http\Controllers\UniversalController@getOrder')->name('getOrder');
         Route::get('/getModerationClient','App\Http\Controllers\UniversalController@getModerationClient')->name('getModerationClient');
         Route::get('/confirmUserRegister','App\Http\Controllers\UniversalController@confirmUserRegister')->name('confirmUserRegister');
-        Route::get('/acceptOrder','App\Http\Controllers\UniversalController@acceptOrder')->name('acceptOrder');
+        Route::post('/acceptOrder','App\Http\Controllers\UniversalController@acceptOrder')->name('acceptOrder');
         Route::get('/getTasks','App\Http\Controllers\UniversalController@getTasks')->name('getTasks');
         Route::get('/getTask','App\Http\Controllers\UniversalController@getTask')->name('getTask');
 

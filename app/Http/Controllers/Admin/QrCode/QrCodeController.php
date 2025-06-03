@@ -81,6 +81,12 @@ class QrCodeController extends Controller
                 }
             }
 
+            $brand = $user->project()?->first()?->brands()?->first();
+            $logoBrand = $brand?->logo;
+            $place = $user->place()?->first()?->project()?->first()?->brands()?->first();
+            $logoPlace = $place?->logo;
+            $user->img = $logoBrand?:$logoPlace;
+
             $user->roles()->sync($request->roles);
 
             $response = ['status'=>'success','data'=>['hash'=>$user->register_hash]];
