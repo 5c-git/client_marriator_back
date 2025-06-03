@@ -344,7 +344,9 @@ class FormController extends Controller
                 $user->finishRegister = true;
                 //$user->confirmRegister = true;
                 $user->uuid = $registerResult->uuid;
-                $user->data = json_encode(array_merge(...json_decode($user->data,true)));
+                if($user->data && strlen($user->data)>5) {
+                    $user->data = json_encode(array_merge(...json_decode($user->data, true)));
+                }
                 $user->save();
                 $apiTokenService = new ApiTokenService($user);
                 $token = $apiTokenService->createToken(['personalArea']);
