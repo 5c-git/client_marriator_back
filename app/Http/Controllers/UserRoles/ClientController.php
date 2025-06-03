@@ -94,11 +94,21 @@ class ClientController extends Controller
     public function getOrders(GetOrderRequest $request)
     {
         return ShortOrderResource::collection(
-            $this->orderRepository->getUserOrderByStatus(
+            $this->orderRepository->getUserOrderByStatusPaginate(
                 $request->status?OrderStatusEnum::from($request->status):null,
                 Auth::user()->id,
                 $request->input('page', 1),
                 $request->input('perPage', 10),
+            )
+        );
+    }
+
+    public function getOrder(GetOrderRequest $request)
+    {
+        return new OrderResource(
+            $this->orderRepository->getUserOrderByStatus(
+                Auth::user()->id,
+                $request->input('orderId',null)
             )
         );
     }

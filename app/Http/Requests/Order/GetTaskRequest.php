@@ -44,6 +44,7 @@ class GetTaskRequest extends FormRequest
             ],
             'page' => 'sometimes|integer',
             'perPage' => 'sometimes|integer',
+            'taskId'=> 'sometimes|integer|exists:tasks,id'
         ];
     }
 }

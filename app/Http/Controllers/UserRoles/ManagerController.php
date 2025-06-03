@@ -148,7 +148,7 @@ class ManagerController extends Controller
     public function getOrders(GetOrderRequest $request)
     {
         return ShortOrderResource::collection(
-            $this->orderRepository->getOrderByUserSyncData(
+            $this->orderRepository->getOrderByUserSyncDataPaginate(
                 $request->user(),
                 OrderStatusEnum::from($request->input('status',2)),
                 $request->input('page', 1),
@@ -157,15 +157,13 @@ class ManagerController extends Controller
         );
     }
 
-    public function getOrder(GetOrderRequest $request)
+    public function getOrder(GetOrderRequest $request): OrderResource
     {
-        return OrderResource::collection(
+        return new OrderResource(
             $this->orderRepository->getOrderByUserSyncData(
                 $request->user(),
-                OrderStatusEnum::from($request->input('status',2)),
-                $request->input('page', 1),
-                $request->input('perPage', 10),
-            )?->items()
+                $request->input('orderId',null)
+            )
         );
     }
 
@@ -196,13 +194,22 @@ class ManagerController extends Controller
         return ShortUserResource::collection($supervisorUsers);
     }
 
-    public function getTask(GetTaskRequest $request){
+    public function getTasks(GetTaskRequest $request){
         return TaskShortResource::collection(
-            $this->orderRepository->getTaskByUserSyncData(
+            $this->orderRepository->getTaskByUserSyncDataPaginate(
                 $request->user(),
                 OrderStatusEnum::from($request->input('status',2)),
                 $request->input('page', 1),
                 $request->input('perPage', 10),
+            )
+        );
+    }
+
+    public function getTask(GetTaskRequest $request){
+        return new TaskResource(
+            $this->orderRepository->getTaskByUserSyncData(
+                $request->user(),
+                $request->input('taskId',null)
             )
         );
     }

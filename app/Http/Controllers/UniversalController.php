@@ -7,6 +7,7 @@ use App\Http\Requests\ConfirmUserRequest;
 use App\Http\Requests\DelPlaceRequest;
 use App\Http\Requests\Order\AcceptOrderRequest;
 use App\Http\Requests\Order\GetOrderRequest;
+use App\Http\Requests\Order\GetTaskRequest;
 use App\Http\Requests\PaginatorRequest;
 use App\Http\Requests\SetBrandImgRequest;
 use App\Http\Requests\SetPlaceRequest;
@@ -101,6 +102,22 @@ class UniversalController extends Controller
         return response()->json(['message' => 'Role not allowed.'], 403);
     }
 
+    public function getOrder(GetOrderRequest $request){
+        if(in_array('client',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\ClientController::class)->getOrder($request);
+        }
+        if(in_array('supervisor',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\SupervisorController::class)->getOrder($request);
+        }
+        if(in_array('manager',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\ManagerController::class)->getOrder($request);
+        }
+        if(in_array('admin',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\AdminController::class)->getOrder($request);
+        }
+        return response()->json(['message' => 'Role not allowed.'], 403);
+    }
+
     public function getModerationClient(PaginatorRequest $request){
         if(in_array('supervisor',$this->roles)){
             return app(\App\Http\Controllers\UserRoles\SupervisorController::class)->getModerationClient($request);
@@ -133,6 +150,26 @@ class UniversalController extends Controller
         }
         if(in_array('manager',$this->roles)){
             return app(\App\Http\Controllers\UserRoles\ManagerController::class)->acceptOrder($request);
+        }
+        return response()->json(['message' => 'Role not allowed.'], 403);
+    }
+
+    public function getTasks(GetTaskRequest $request){
+        if(in_array('supervisor',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\SupervisorController::class)->getTasks($request);
+        }
+        if(in_array('manager',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\ManagerController::class)->getTasks($request);
+        }
+        return response()->json(['message' => 'Role not allowed.'], 403);
+    }
+
+    public function getTask(GetTaskRequest $request){
+        if(in_array('supervisor',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\SupervisorController::class)->getTask($request);
+        }
+        if(in_array('manager',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\ManagerController::class)->getTask($request);
         }
         return response()->json(['message' => 'Role not allowed.'], 403);
     }

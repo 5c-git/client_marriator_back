@@ -144,9 +144,12 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
         });
 
         Route::get('/getOrders','App\Http\Controllers\UniversalController@getOrders')->name('getOrders');
+        Route::get('/getOrder','App\Http\Controllers\UniversalController@getOrder')->name('getOrder');
         Route::get('/getModerationClient','App\Http\Controllers\UniversalController@getModerationClient')->name('getModerationClient');
         Route::get('/confirmUserRegister','App\Http\Controllers\UniversalController@confirmUserRegister')->name('confirmUserRegister');
         Route::get('/acceptOrder','App\Http\Controllers\UniversalController@acceptOrder')->name('acceptOrder');
+        Route::get('/getTasks','App\Http\Controllers\UniversalController@getTasks')->name('getTasks');
+        Route::get('/getTask','App\Http\Controllers\UniversalController@getTask')->name('getTask');
 
     });
 

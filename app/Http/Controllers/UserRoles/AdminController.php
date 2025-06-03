@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\UserRoles;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Order\GetOrderRequest;
+use App\Http\Resources\Order\OrderResource;
 use App\Http\Resources\ProjectResource;
 use App\Models\Fields\Fields;
+use App\Models\Order\Order;
 use App\Models\User\Role;
 use App\Models\User;
 use App\Services\ApiTokenService\ApiTokenService;
@@ -81,6 +84,13 @@ class AdminController extends Controller
         }
 
         return new SuccessResource();
+    }
+
+    public function getOrder(GetOrderRequest $request): OrderResource
+    {
+        return new OrderResource(
+            Order::where('id',$request->orderId)->first()
+        );
     }
 
 }

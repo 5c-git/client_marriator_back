@@ -7,10 +7,13 @@ use App\Enum\Role\RoleEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ConfirmUserRequest;
 use App\Http\Requests\Order\GetOrderRequest;
+use App\Http\Requests\Order\GetTaskRequest;
 use App\Http\Requests\PaginatorRequest;
 use App\Http\Resources\BrandResource;
 use App\Http\Resources\ErrorResource;
+use App\Http\Resources\Order\OrderResource;
 use App\Http\Resources\Order\ShortOrderResource;
+use App\Http\Resources\Order\TaskShortResource;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\SuccessResource;
 use App\Http\Resources\UserResource;
@@ -25,6 +28,7 @@ use Illuminate\Support\Str;
 use App\Services\Register\SmsCodeService;
 use App\Http\Resources\PlaceResource;
 use App\Http\Requests\Order\AcceptOrderRequest;
+use App\Http\Resources\Order\TaskResource;
 
 class SupervisorController extends Controller
 {
@@ -95,11 +99,21 @@ class SupervisorController extends Controller
     public function getOrders(GetOrderRequest $request)
     {
         return ShortOrderResource::collection(
-            $this->orderRepository->getOrderByUserSyncData(
+            $this->orderRepository->getOrderByUserSyncDataPaginate(
                 $request->user(),
                 OrderStatusEnum::notAccepted,
                 $request->input('page', 1),
                 $request->input('perPage', 10),
+            )
+        );
+    }
+
+    public function getOrder(GetOrderRequest $request): OrderResource
+    {
+        return new OrderResource(
+            $this->orderRepository->getOrderByUserSyncData(
+                $request->user(),
+                $request->input('orderId',null)
             )
         );
     }
@@ -113,6 +127,26 @@ class SupervisorController extends Controller
         }else{
             return new ErrorResource();
         }
+    }
+
+    public function getTasks(GetTaskRequest $request){
+        return TaskShortResource::collection(
+            $this->orderRepository->getTaskByUserSyncDataPaginate(
+                $request->user(),
+                OrderStatusEnum::from($request->input('status',2)),
+                $request->input('page', 1),
+                $request->input('perPage', 10),
+            )
+        );
+    }
+
+    public function getTask(GetTaskRequest $request){
+        return new TaskResource(
+            $this->orderRepository->getTaskByUserSyncData(
+                $request->user(),
+                $request->input('taskId',null)
+            )
+        );
     }
 
 }

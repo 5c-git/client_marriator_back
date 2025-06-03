@@ -53,12 +53,20 @@ class EloquentOrderRepository implements OrderRepository
         }, $dateActivities);
     }
 
-    public function getUserOrderByStatus(?OrderStatusEnum $status, int $userId, int $page = 1,int $perPage = 10): Paginator
+    public function getUserOrderByStatusPaginate(?OrderStatusEnum $status, int $userId, int $page = 1,int $perPage = 10): Paginator
     {
         return Order::query()->where('user_id',$userId)
             ->when($status, function ($q) use ($status) {
                 return $q->where('status', $status->value);
             })->simplePaginate($perPage);
+    }
+
+    public function getUserOrderByStatus(int $userId, int|null $orderId): Order|null
+    {
+        if($orderId) {
+            return Order::where('user_id', $userId)->where('id', $orderId)->first();
+        }
+        return null;
     }
 
     public function cancelOrder(int $orderId): bool
@@ -108,7 +116,7 @@ class EloquentOrderRepository implements OrderRepository
         return $order;
     }
 
-    public function getOrderByUserSyncData(User $user,?OrderStatusEnum $status, int $page = 1, int $perPage = 10): Paginator
+    public function getOrderByUserSyncDataPaginate(User $user,?OrderStatusEnum $status, int $page = 1, int $perPage = 10): Paginator
     {
         $place = $user->place?->pluck('id')->toArray();
 
@@ -127,6 +135,29 @@ class EloquentOrderRepository implements OrderRepository
                 }
             })
             ->simplePaginate($perPage);
+    }
+
+    public function getOrderByUserSyncData(User $user, int|null $orderId): Order|null
+    {
+
+        $place = $user->place?->pluck('id')->toArray();
+
+        if($orderId) {
+            return Order
+                ::where(function ($query) use ($place, $orderId) {
+                    $query->when($place, fn($q) => $q->whereIn('place_id', $place))
+                        ->where('status', '!=', OrderStatusEnum::accepted->value)
+                        ->where('id', $orderId);
+                })
+                ->orWhere(function ($query) use ($user, $orderId) {
+                    $userIdsSupervisor = $user->supervisors?->pluck('id')->toArray();
+                    $userIdsSupervisor[] = $user->id;
+                    $query = $query->whereHas('acceptingUsers', fn($q) => $q->whereIn('users.id', $userIdsSupervisor))
+                        ->where('id', $orderId);
+                })
+                ->first();
+        }
+        return null;
     }
 
     public function acceptedOrder(User $user, int $orderId): bool
@@ -153,7 +184,7 @@ class EloquentOrderRepository implements OrderRepository
                 'income' => 0,
                 'scope_of_services' => 0,
                 'accept_user_id' => $request->supervisorId ?? $user->id,
-                'specialist_user_id' => $user->id
+                'specialist_user_id' => null
             ]);
 
             $task->save();
@@ -178,7 +209,7 @@ class EloquentOrderRepository implements OrderRepository
         return $task;
     }
 
-    public function getTaskByUserSyncData(User $user, ?OrderStatusEnum $status, int $page = 1, int $perPage = 10): Paginator
+    public function getTaskByUserSyncDataPaginate(User $user, ?OrderStatusEnum $status, int $page = 1, int $perPage = 10): Paginator
     {
         return Task::query()
             ->where(function ($query) use ($status) {
@@ -194,5 +225,18 @@ class EloquentOrderRepository implements OrderRepository
                 }
             })
             ->simplePaginate($perPage);
+    }
+
+    public function getTaskByUserSyncData(User $user, ?int $taskId): Task|null
+    {
+        if($taskId){
+           return Task::where(function ($query) use ($user,$taskId) {
+                    $userIdsSupervisor = $user->supervisors?->pluck('id')->toArray();
+                    $userIdsSupervisor[] = $user->id;
+                    $query->whereIn('accept_user_id', $userIdsSupervisor)
+                    ->where('id',$taskId);
+                })->first();
+        }
+        return null;
     }
 }

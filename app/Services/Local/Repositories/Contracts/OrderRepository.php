@@ -14,13 +14,16 @@ interface OrderRepository
 {
     public function createOrder(CreateOrderRequest $orderRequest,int $userId): Order;
 
-    public function getUserOrderByStatus(?OrderStatusEnum $status, int $userId, int $page = 1, int $perPage = 10): Paginator;
-    public function getOrderByUserSyncData(User $user,?OrderStatusEnum $status, int $page = 1, int $perPage = 10): Paginator;
+    public function getUserOrderByStatusPaginate(?OrderStatusEnum $status, int $userId, int $page = 1, int $perPage = 10): Paginator;
+    public function getUserOrderByStatus(int $userId,int|null $orderId): Order|null;
+    public function getOrderByUserSyncDataPaginate(User $user,?OrderStatusEnum $status, int $page = 1, int $perPage = 10): Paginator;
+    public function getOrderByUserSyncData(User $user,int|null $orderId): Order|null;
     public function cancelOrder(int $orderId): bool;
     public function sendOrder(int $orderId): bool;
 
     public function updateOrder(CreateOrderRequest $orderRequest): Order;
     public function acceptedOrder(User $user,int $orderId): bool;
     public function convertTask(User $user,ConvertTaskRequest $request): Task;
-    public function getTaskByUserSyncData(User $user,?OrderStatusEnum $status, int $page = 1, int $perPage = 10): Paginator;
+    public function getTaskByUserSyncDataPaginate(User $user,?OrderStatusEnum $status, int $page = 1, int $perPage = 10): Paginator;
+    public function getTaskByUserSyncData(User $user,int|null $taskId): Task|null;
 }
