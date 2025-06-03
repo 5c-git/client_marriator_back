@@ -28,7 +28,7 @@ class SetPlaceRequest extends FormRequest
     public function rules()
     {
         return [
-            'placeId' => 'required',
+            'placeId' => 'required|array',
             'placeId.*' => [
                 'integer',
                 Rule::exists('directory_place', 'id'),
