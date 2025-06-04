@@ -41,6 +41,7 @@ Route::group(["middleware" => ["auth:api", "scope:register"]], function () {
     Route::get('/getPlace','App\Http\Controllers\UniversalController@getPlace')->name('getPlace');
     Route::post('/setPlace','App\Http\Controllers\UniversalController@setPlace')->name('setPlace');
     Route::post('/delPlace','App\Http\Controllers\UniversalController@delPlace')->name('delPlace');
+    Route::post('/setUserData','App\Http\Controllers\UniversalController@setUserData')->name('setUserData');
 
 
 });

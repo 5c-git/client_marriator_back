@@ -12,6 +12,7 @@ use App\Http\Requests\Order\GetOrderRequest;
 use App\Http\Requests\PaginatorRequest;
 use App\Http\Requests\SetBrandImgRequest;
 use App\Http\Requests\SetPlaceRequest;
+use App\Http\Requests\SetUserDataRequest;
 use App\Http\Resources\BrandResource;
 use App\Http\Resources\ErrorResource;
 use App\Http\Resources\Order\OrderResource;
@@ -142,6 +143,14 @@ class ManagerController extends Controller
             $user->img = $brands->logo;
             $user->save();
         }
+        return new SuccessResource();
+    }
+
+    public function setUserData(SetUserDataRequest $request): SuccessResource
+    {
+        $user = Auth::user();
+        $user->name = $request->name;
+        $user->save();
         return new SuccessResource();
     }
 

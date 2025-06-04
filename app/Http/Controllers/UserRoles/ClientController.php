@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\Order\OrderByIdRequest;
 use App\Http\Resources\ErrorResource;
 use App\Http\Requests\DelPlaceRequest;
+use App\Http\Requests\SetUserDataRequest;
 
 class ClientController extends Controller
 {
@@ -78,6 +79,14 @@ class ClientController extends Controller
     {
         $user = Auth::user();
         $user->place()->detach($request->placeId);
+        return new SuccessResource();
+    }
+
+    public function setUserData(SetUserDataRequest $request): SuccessResource
+    {
+        $user = Auth::user();
+        $user->name = $request->name;
+        $user->save();
         return new SuccessResource();
     }
 

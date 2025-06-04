@@ -9,6 +9,7 @@ use App\Http\Requests\ConfirmUserRequest;
 use App\Http\Requests\Order\GetOrderRequest;
 use App\Http\Requests\Order\GetTaskRequest;
 use App\Http\Requests\PaginatorRequest;
+use App\Http\Requests\SetUserDataRequest;
 use App\Http\Resources\BrandResource;
 use App\Http\Resources\ErrorResource;
 use App\Http\Resources\Order\OrderResource;
@@ -94,6 +95,14 @@ class SupervisorController extends Controller
             ->flatMap(fn($project) => $project->places)
             ->unique('id');
         return PlaceResource::collection($places);
+    }
+
+    public function setUserData(SetUserDataRequest $request): SuccessResource
+    {
+        $user = Auth::user();
+        $user->name = $request->name;
+        $user->save();
+        return new SuccessResource();
     }
 
     public function getOrders(GetOrderRequest $request)
