@@ -8,6 +8,7 @@ use App\Models\Fields\Directory\Counterparty;
 use App\Models\Fields\Directory\Project;
 use App\Models\Fields\Directory\Place;
 use App\Models\Fields\Directory\ViewActivities;
+use App\Models\Order\Task;
 use App\Models\User\Role;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -29,6 +30,7 @@ use App\Models\Order\Order;
  * @property-read Collection|Project[] $project
  * @property-read Collection|Place[] $place
  * @property-read Collection|Order[] $acceptOrder
+ * @property-read Collection|Task[] $acceptedTasks
  */
 class User extends Authenticatable
 {
@@ -169,5 +171,11 @@ class User extends Authenticatable
         }else{
             return false;
         }
+    }
+
+    public function acceptedTasks(): BelongsToMany
+    {
+        return $this->belongsToMany(Task::class, 'accept_task', 'user_id', 'task_id')
+            ->withPivot('accepted');
     }
 }

@@ -37,6 +37,7 @@ use App\Enum\Order\OrderStatusEnum;
  * @property-read Place $place
  * @property-read Collection|TaskActivity[] $taskActivities
  * @property-read Collection|ViewActivities[] $viewActivities
+ * @property-read Collection|User[] $acceptingUsers
  *
  */
 class Task extends Model
@@ -105,5 +106,11 @@ class Task extends Model
             'task_id',
             'view_activity_id'
         )->withPivot(['count', 'date_start', 'date_end', 'need_foto', 'date_activity']);
+    }
+
+    public function acceptingUsers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'accept_task', 'task_id', 'user_id')
+            ->withPivot('accepted');
     }
 }

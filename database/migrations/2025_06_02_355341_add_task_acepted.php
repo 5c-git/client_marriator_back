@@ -12,15 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('accept_task', function (Blueprint $table) {
-            $table->unsignedBigInteger('tasks_id')->index()->nullable(false);
+            $table->unsignedBigInteger('task_id')->index()->nullable(false);
             $table->unsignedBigInteger('user_id')->index()->nullable(false);
-            $table->primary(['tasks_id', 'user_id']);
-        });
-
-        Schema::create('specialist_task', function (Blueprint $table) {
-            $table->unsignedBigInteger('tasks_id')->index()->nullable(false);
-            $table->unsignedBigInteger('user_id')->index()->nullable(false);
-            $table->primary(['tasks_id', 'user_id']);
+            $table->boolean('accepted')->default(false);
+            $table->primary(['task_id', 'user_id']);
         });
 
     }

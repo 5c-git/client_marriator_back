@@ -96,7 +96,7 @@ class RegistrationController extends Controller
                    $response['result']['type'] = 'auth';
                }else{
                    if($user->finishRegister){
-                       //пользователь находится на модерации
+                       $response['result']['type'] = 'moderation';
                    }else {
                        $response['result']['type'] = 'register';
                    }
