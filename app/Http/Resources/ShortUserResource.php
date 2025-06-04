@@ -28,6 +28,7 @@ class ShortUserResource extends JsonResource
             'phone' => $this->phone,
             'email' => $this->email,
             'logo' =>  $this->img ? Storage::url($this->img) : null,
+            'roles' => RoleResource::collection($this->roles)
         ];
     }
 }
