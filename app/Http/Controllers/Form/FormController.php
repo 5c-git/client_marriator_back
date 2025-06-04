@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Form;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\RoleResource;
 use App\Models\User;
 use App\Models\User\UserRole;
 use Carbon\Carbon;
@@ -62,6 +63,7 @@ class FormController extends Controller
             $userData['email'] = '';
         }
         $userData['img'] = $user->img;
+        $userData['role'] = RoleResource::collection($user->roles);
         $response['result']['userData'] = $userData;
         $response['status'] = 'success';
         return response()->json($response, 200);
