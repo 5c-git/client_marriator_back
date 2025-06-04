@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\PersonalArea;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\RoleResource;
 use App\Models\Fields\Fields;
 use App\Models\User;
 use App\Services\ApiTokenService\ApiTokenService;
@@ -64,6 +65,7 @@ class UserPersonalInfoController extends Controller
         unset($user->change_fields);
         unset($user->date_for_send);
         $response['result']['userData'] = $user->toArray();
+        $response['result']['userData']['roles'] = RoleResource::collection($user->roles);
         $response['status'] = 'success';
         return response()->json($response, 200);
     }
