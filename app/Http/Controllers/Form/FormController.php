@@ -63,7 +63,7 @@ class FormController extends Controller
             $userData['email'] = '';
         }
         $userData['img'] = $user->img;
-        $userData['role'] = RoleResource::collection($user->roles);
+        $userData['roles'] = RoleResource::collection($user->roles);
         $response['result']['userData'] = $userData;
         $response['status'] = 'success';
         return response()->json($response, 200);
