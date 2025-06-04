@@ -77,7 +77,7 @@ class ClientController extends Controller
     public function delPlace(DelPlaceRequest $request): SuccessResource
     {
         $user = Auth::user();
-        $user->place()->detach([$request->placeId]);
+        $user->place()->detach($request->placeId);
         return new SuccessResource();
     }
 
