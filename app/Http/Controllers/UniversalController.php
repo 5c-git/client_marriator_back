@@ -11,6 +11,7 @@ use App\Http\Requests\Order\GetTaskRequest;
 use App\Http\Requests\PaginatorRequest;
 use App\Http\Requests\SetBrandImgRequest;
 use App\Http\Requests\SetPlaceRequest;
+use App\Http\Requests\SetUserDataRequest;
 use FontLib\Table\Type\glyf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -86,7 +87,7 @@ class UniversalController extends Controller
         return response()->json(['message' => 'Role not allowed.'], 403);
     }
 
-    public function setUserData(DelPlaceRequest $request){
+    public function setUserData(SetUserDataRequest $request){
         if(in_array('client',$this->roles)){
             return app(\App\Http\Controllers\UserRoles\ClientController::class)->setUserData($request);
         }
