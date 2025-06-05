@@ -97,14 +97,6 @@ class SupervisorController extends Controller
         return PlaceResource::collection($places);
     }
 
-    public function setUserData(SetUserDataRequest $request): SuccessResource
-    {
-        $user = Auth::user();
-        $user->name = $request->name;
-        $user->save();
-        return new SuccessResource();
-    }
-
     public function getOrders(GetOrderRequest $request)
     {
         return ShortOrderResource::collection(

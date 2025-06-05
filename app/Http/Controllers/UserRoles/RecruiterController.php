@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\UserRoles;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\SetUserDataRequest;
 use App\Http\Resources\ProjectResource;
+use App\Http\Resources\SuccessResource;
 use App\Models\User;
 use App\Services\ApiTokenService\ApiTokenService;
 use Illuminate\Http\Request;
@@ -29,6 +31,14 @@ class RecruiterController extends Controller
     public function getPlace(){
         $userPlace = Auth::user()->place;
         return PlaceResource::collection($userPlace);
+    }
+
+    public function setUserData(SetUserDataRequest $request): SuccessResource
+    {
+        $user = Auth::user();
+        $user->name = $request->name;
+        $user->save();
+        return new SuccessResource();
     }
 
 }

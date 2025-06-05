@@ -91,8 +91,8 @@ class UniversalController extends Controller
         if(in_array('client',$this->roles)){
             return app(\App\Http\Controllers\UserRoles\ClientController::class)->setUserData($request);
         }
-        if(in_array('supervisor',$this->roles)){
-            return app(\App\Http\Controllers\UserRoles\SupervisorController::class)->setUserData($request);
+        if(in_array('recruiter',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\RecruiterController::class)->setUserData($request);
         }
         if(in_array('manager',$this->roles)){
             return app(\App\Http\Controllers\UserRoles\ManagerController::class)->setUserData($request);
