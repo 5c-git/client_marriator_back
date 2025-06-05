@@ -23,6 +23,7 @@ use App\Http\Requests\ConfirmUserRequest;
 use App\Services\Local\Repositories\Contracts\UserRepository;
 use App\Http\Resources\SuccessResource;
 use App\Http\Requests\PaginatorRequest;
+use App\Enum\User\UserStatusModerationEnum;
 
 class AdminController extends Controller
 {
@@ -51,7 +52,16 @@ class AdminController extends Controller
         }
         $arrRoleConfirm = array_unique($arrRoleConfirm);
 
+        if(!empty($request->status)){
+            if(in_array($request->status,$arrRoleConfirm)){
+                $arrRoleConfirm = [$request->status];
+            }else{
+                $arrRoleConfirm = [];
+            }
+        }
+
         $usersForModeration = $this->userRepository->getModerationUsersPaginate($arrRoleConfirm,
+            UserStatusModerationEnum::from($request->input('status',UserStatusModerationEnum::new->value)),
             $request->input('page', 1),
             $request->input('perPage', 10),
         );

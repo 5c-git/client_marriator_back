@@ -4,10 +4,12 @@ namespace App\Http\Controllers\UserRoles;
 
 use App\Enum\Order\OrderStatusEnum;
 use App\Enum\Role\RoleEnum;
+use App\Enum\User\UserStatusModerationEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ConfirmUserRequest;
 use App\Http\Requests\DelPlaceRequest;
 use App\Http\Requests\Order\AcceptOrderRequest;
+use App\Http\Requests\Order\CreateOrderRequest;
 use App\Http\Requests\Order\GetOrderRequest;
 use App\Http\Requests\PaginatorRequest;
 use App\Http\Requests\SetBrandImgRequest;
@@ -37,6 +39,7 @@ use App\Http\Resources\Order\TaskResource;
 use App\Http\Resources\ShortUserResource;
 use App\Http\Requests\Order\GetTaskRequest;
 use App\Http\Resources\Order\TaskShortResource;
+use App\Http\Requests\Order\CreateTaskRequest;
 
 class ManagerController extends Controller
 {
@@ -60,7 +63,16 @@ class ManagerController extends Controller
         }
         $arrRoleConfirm = array_unique($arrRoleConfirm);
 
+        if(!empty($request->status)){
+            if(in_array($request->status,$arrRoleConfirm)){
+                $arrRoleConfirm = [$request->status];
+            }else{
+                $arrRoleConfirm = [];
+            }
+        }
+
         $usersForModeration = $this->userRepository->getModerationUsersPaginate($arrRoleConfirm,
+            UserStatusModerationEnum::from($request->input('status',UserStatusModerationEnum::new->value)),
             $request->input('page', 1),
             $request->input('perPage', 10),
         );
@@ -221,6 +233,24 @@ class ManagerController extends Controller
                 $request->input('taskId',null)
             )
         );
+    }
+
+    public function createTask(CreateTaskRequest $request){
+        return new TaskResource(
+            $this->orderRepository->createTask(
+                $request,
+                Auth::user()->id
+            )
+        );
+    }
+
+    public function updateTask(CreateTaskRequest $request): ErrorResource|OrderResource
+    {
+        if($request->taskId){
+            return new OrderResource($this->orderRepository->updateTask($request));
+        }else{
+            return new ErrorResource();
+        }
     }
 
 }

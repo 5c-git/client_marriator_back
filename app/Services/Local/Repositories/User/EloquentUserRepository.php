@@ -2,6 +2,7 @@
 
 namespace App\Services\Local\Repositories\User;
 
+use App\Enum\User\UserStatusModerationEnum;
 use App\Models\User;
 use App\Services\Local\Repositories\Contracts\UserRepository;
 use Carbon\Carbon;
@@ -32,18 +33,36 @@ class EloquentUserRepository implements UserRepository
     }
 
 
-    public function getModerationUsersPaginate(array $roles = [],int $page = 1,int $perPage = 10): Paginator
+    public function getModerationUsersPaginate(array $roles = [],UserStatusModerationEnum $status = UserStatusModerationEnum::new,int $page = 1,int $perPage = 10): Paginator
     {
-       return User::query()->orderBy('id', 'desc')
+        $userQuery = User::query()->orderBy('id', 'desc')
             ->where('confirmRegister',false)
             ->where('finishRegister',true)
-            ->with(['roles','project','place'])
-            ->when($roles, function (Builder $q, array $roles) {
-                $q->whereHas('roles', function ($query) use ($roles)  {
+            ->with(['roles','project','place']);
+        if($roles) {
+            $userQuery = $userQuery->when($roles, function (Builder $q, array $roles) {
+                $q->whereHas('roles', function ($query) use ($roles) {
                     $query->whereIn('role_id', $roles);
                 });
-            })
-            ->simplePaginate($perPage);
+            });
+        }else{
+            $userQuery = $userQuery->where('phone','123');
+        }
+        if($status == UserStatusModerationEnum::archive){
+            $userQuery = $userQuery->where('confirmRegister',false)
+                ->where('finishRegister',false);
+        }
+        if($status == UserStatusModerationEnum::new){
+            $userQuery = $userQuery->where('confirmRegister',false)
+                ->where('finishRegister',true);
+        }
+        if($status == UserStatusModerationEnum::inProgress){
+            $userQuery = $userQuery->where('confirmRegister',true)
+                ->where('finishRegister',true);
+        }
+
+
+       return $userQuery->simplePaginate($perPage);
     }
 
 }

@@ -9,10 +9,12 @@ use App\Models\Order\Order;
 use Illuminate\Contracts\Pagination\Paginator;
 use App\Models\User;
 use App\Models\Order\Task;
+use App\Http\Requests\Order\CreateTaskRequest;
 
 interface OrderRepository
 {
     public function createOrder(CreateOrderRequest $orderRequest,int $userId): Order;
+    public function createTask(CreateTaskRequest $taskRequest,int $userId): Task;
 
     public function getUserOrderByStatusPaginate(?OrderStatusEnum $status, int $userId, int $page = 1, int $perPage = 10): Paginator;
     public function getUserOrderByStatus(int $userId,int|null $orderId): Order|null;
@@ -22,6 +24,7 @@ interface OrderRepository
     public function sendOrder(int $orderId): bool;
 
     public function updateOrder(CreateOrderRequest $orderRequest): Order;
+    public function updateTask(CreateTaskRequest $taskRequest): Task;
     public function acceptedOrder(User $user,int $orderId): bool;
     public function convertTask(User $user,ConvertTaskRequest $request): Task;
     public function getTaskByUserSyncDataPaginate(User $user,?OrderStatusEnum $status, int $page = 1, int $perPage = 10): Paginator;

@@ -13,6 +13,7 @@ use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Support\Facades\DB;
 use App\Models\Order\Task;
 use App\Models\Order\TaskActivity;
+use App\Http\Requests\Order\CreateTaskRequest;
 
 class EloquentOrderRepository implements OrderRepository
 {
@@ -39,6 +40,65 @@ class EloquentOrderRepository implements OrderRepository
         }
 
         return $order;
+    }
+    public function createTask(CreateTaskRequest $taskRequest, int $userId): Task
+    {
+        $task = Task::create([
+            'place_id' => $taskRequest->placeId,
+            'user_id' => $userId,
+            'self_employed' => $taskRequest->selfEmployed,
+            'status' => OrderStatusEnum::new->value,
+            'specialist_user_id' => null,
+            'accept_user_id' => null,
+            'order_id' => null,
+            'price' => $taskRequest->price,
+            'income' => $taskRequest->income,
+            'scope_of_services' => $taskRequest->scope_of_services
+        ]);
+
+        foreach ($taskRequest->viewActivities as $activity) {
+            $orderActivity = new TaskActivity([
+                'view_activity_id' => $activity['viewActivityId'],
+                'count' => $activity['count'],
+                'date_start' => $activity['dateStart'],
+                'date_end' => $activity['dateEnd'],
+                'need_foto' => $activity['needFoto'],
+                'date_activity' => $this->processDateActivity($activity['dateActivity']),
+            ]);
+
+            $task->taskActivities()->save($orderActivity);
+        }
+
+        return $task;
+    }
+
+    public function updateTask(CreateTaskRequest $taskRequest): Task
+    {
+        $task = Task::findOrFail($taskRequest->taskId);
+
+        $task->update([
+            'place_id' => $taskRequest->placeId,
+            'self_employed' => $taskRequest->selfEmployed,
+            'price' => $taskRequest->price,
+            'income' => $taskRequest->income,
+            'scope_of_services' => $taskRequest->scope_of_services
+        ]);
+
+        $task->taskActivities()->delete();
+
+        foreach ($taskRequest->viewActivities as $activity) {
+            $newActivity = new TaskActivity([
+                'view_activity_id' => $activity['viewActivityId'],
+                'count' => $activity['count'],
+                'date_start' => $activity['dateStart'],
+                'date_end' => $activity['dateEnd'],
+                'need_foto' => $activity['needFoto'],
+                'date_activity' => $this->processDateActivity($activity['dateActivity']),
+            ]);
+            $task->taskActivities()->save($newActivity);
+        }
+
+        return $task->fresh();
     }
 
     private function processDateActivity(array $dateActivities): array
@@ -113,7 +173,7 @@ class EloquentOrderRepository implements OrderRepository
             }
         });
 
-        return $order;
+        return $order->fresh();
     }
 
     public function getOrderByUserSyncDataPaginate(User $user,?OrderStatusEnum $status, int $page = 1, int $perPage = 10): Paginator

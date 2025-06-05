@@ -5,6 +5,7 @@ namespace App\Services\Local\Repositories\Order;
 use App\Enum\Order\OrderStatusEnum;
 use App\Http\Requests\Order\ConvertTaskRequest;
 use App\Http\Requests\Order\CreateOrderRequest;
+use App\Http\Requests\Order\CreateTaskRequest;
 use App\Models\Order\Order;
 use App\Models\Order\Task;
 use App\Models\User;
@@ -79,5 +80,15 @@ class CachingOrderRepository implements OrderRepository
     public function getTaskByUserSyncData(User $user, ?int $taskId): Task|null
     {
         return $this->orders->getTaskByUserSyncData($user,$taskId);
+    }
+
+    public function createTask(CreateTaskRequest $taskRequest, int $userId): Task
+    {
+        return $this->orders->createTask($taskRequest,$userId);
+    }
+
+    public function updateTask(CreateTaskRequest $taskRequest): Task
+    {
+        return $this->orders->updateTask($taskRequest);
     }
 }

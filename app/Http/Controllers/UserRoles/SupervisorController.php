@@ -4,6 +4,7 @@ namespace App\Http\Controllers\UserRoles;
 
 use App\Enum\Order\OrderStatusEnum;
 use App\Enum\Role\RoleEnum;
+use App\Enum\User\UserStatusModerationEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ConfirmUserRequest;
 use App\Http\Requests\Order\GetOrderRequest;
@@ -53,7 +54,16 @@ class SupervisorController extends Controller
         }
         $arrRoleConfirm = array_unique($arrRoleConfirm);
 
+        if(!empty($request->status)){
+            if(in_array($request->status,$arrRoleConfirm)){
+                $arrRoleConfirm = [$request->status];
+            }else{
+                $arrRoleConfirm = [];
+            }
+        }
+
         $usersForModeration = $this->userRepository->getModerationUsersPaginate($arrRoleConfirm,
+            UserStatusModerationEnum::from($request->input('status',UserStatusModerationEnum::new->value)),
             $request->input('page', 1),
             $request->input('perPage', 10),
         );
