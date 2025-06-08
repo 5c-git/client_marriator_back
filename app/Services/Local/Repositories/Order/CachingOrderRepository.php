@@ -91,4 +91,19 @@ class CachingOrderRepository implements OrderRepository
     {
         return $this->orders->updateTask($taskRequest);
     }
+
+    public function instructTask(int $taskId, ?array $supervisorIds): bool
+    {
+        return $this->orders->instructTask($taskId,$supervisorIds);
+    }
+
+    public function invoiceTask(int $taskId, ?array $supervisorIds): bool
+    {
+        return $this->orders->invoiceTask($taskId,$supervisorIds);
+    }
+
+    public function cancelTask(int $taskId): bool
+    {
+        return $this->orders->cancelTask($taskId);
+    }
 }

@@ -144,7 +144,7 @@ class SupervisorController extends Controller
         return TaskShortResource::collection(
             $this->orderRepository->getTaskByUserSyncDataPaginate(
                 $request->user(),
-                OrderStatusEnum::from($request->input('status',2)),
+                OrderStatusEnum::from($request->input('status',3)),
                 $request->input('page', 1),
                 $request->input('perPage', 10),
             )

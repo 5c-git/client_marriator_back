@@ -53,7 +53,7 @@ class ConfirmUserRequest extends FormRequest
                     }
                 }
             ],
-            'confirm' => 'required|boolean'
+            'confirm' => 'required|boolean',
         ];
     }
 }

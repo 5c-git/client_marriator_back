@@ -3,13 +3,19 @@
 namespace App\Http\Requests\Order;
 
 use App\Enum\Order\OrderStatusEnum;
+use App\Enum\Role\RoleEnum;
 use App\Http\Requests\FormRequest;
-use Illuminate\Validation\Rule;
 use App\Models\Order\Order;
+use App\Models\Order\Task;
+use Illuminate\Validation\Rule;
+use App\Models\User;
+
 /**
- * @property-read int orderId
+ * @property-read int|null status
+ * @property-read int|null page
+ * @property-read int|null perPage
  */
-class AcceptOrderRequest extends FormRequest
+class CancelTaskRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -29,21 +35,19 @@ class AcceptOrderRequest extends FormRequest
     public function rules()
     {
         return [
-            'orderId' => [
+            'taskId' => [
                 'required',
                 'integer',
                 function ($attribute, $value, $fail) {
                     $user = auth()->user();
-                    $place = $user->place?->pluck('id')->toArray();
 
-                    $orderExists = Order::query()
-                        ->where('id', $value)
-                        ->where('status', OrderStatusEnum::notAccepted)
-                        ->whereIn('place_id', $place)
+                    $taskExists = Task::query()
+                        ->where('user_id', $user->id)
+                        ->whereIn('status', [OrderStatusEnum::new,OrderStatusEnum::notAccepted])
                         ->exists();
 
-                    if (!$orderExists) {
-                        $fail('Not your order');
+                    if (!$taskExists) {
+                        $fail('Not your task');
                     }
                 },
             ],

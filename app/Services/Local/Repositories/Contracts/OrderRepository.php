@@ -29,4 +29,8 @@ interface OrderRepository
     public function convertTask(User $user,ConvertTaskRequest $request): Task;
     public function getTaskByUserSyncDataPaginate(User $user,?OrderStatusEnum $status, int $page = 1, int $perPage = 10): Paginator;
     public function getTaskByUserSyncData(User $user,int|null $taskId): Task|null;
+
+    public function instructTask(int $taskId,?array $supervisorIds): bool;
+    public function invoiceTask(int $taskId,?array $supervisorId): bool;
+    public function cancelTask(int $taskId): bool;
 }

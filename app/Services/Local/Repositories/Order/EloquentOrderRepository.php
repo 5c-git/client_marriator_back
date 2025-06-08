@@ -10,6 +10,7 @@ use App\Models\Order\OrderActivities;
 use App\Models\User;
 use App\Services\Local\Repositories\Contracts\OrderRepository;
 use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\Order\Task;
 use App\Models\Order\TaskActivity;
@@ -236,7 +237,7 @@ class EloquentOrderRepository implements OrderRepository
         if($countTaskForUser == 0) {
             $task = new Task([
                 'place_id' => $order->place_id,
-                'user_id' => $order->user_id,
+                'user_id' => $user->id,
                 'self_employed' => $order->self_employed,
                 'status' => OrderStatusEnum::accepted,
                 'order_id' => $order->id,
@@ -272,17 +273,18 @@ class EloquentOrderRepository implements OrderRepository
     public function getTaskByUserSyncDataPaginate(User $user, ?OrderStatusEnum $status, int $page = 1, int $perPage = 10): Paginator
     {
         return Task::query()
-            ->where(function ($query) use ($status) {
-                $query->when($status, fn($q) => $q->where('status', $status->value))
-                    ->where('status','!=',OrderStatusEnum::accepted->value);
+            ->orWhere(function ($query) use ($user,$status) {
+                $query = $query->where('user_id', $user->id);
+                $query->where('status', $status->value);
             })
             ->orWhere(function ($query) use ($user,$status) {
-                $userIdsSupervisor = $user->supervisors?->pluck('id')->toArray();
-                $userIdsSupervisor[] = $user->id;
-                $query = $query->whereIn('accept_user_id', $userIdsSupervisor);
-                if($status == OrderStatusEnum::accepted) {
-                    $query->where('status', OrderStatusEnum::accepted->value);
-                }
+                $query = $query->where('accept_user_id', $user->id);
+                $query->where('status', $status->value);
+            })
+            ->orWhere(function ($query) use ($user,$status) {
+                $userIdsSupervisor = $user->acceptedTasks?->pluck('id')->toArray();
+                $query = $query->whereIn('id', $userIdsSupervisor);
+                $query->where('status', $status->value);
             })
             ->simplePaginate($perPage);
     }
@@ -290,13 +292,49 @@ class EloquentOrderRepository implements OrderRepository
     public function getTaskByUserSyncData(User $user, ?int $taskId): Task|null
     {
         if($taskId){
-           return Task::where(function ($query) use ($user,$taskId) {
-                    $userIdsSupervisor = $user->supervisors?->pluck('id')->toArray();
-                    $userIdsSupervisor[] = $user->id;
-                    $query->whereIn('accept_user_id', $userIdsSupervisor)
-                    ->where('id',$taskId);
+            return Task::orWhere(function ($query) use ($user) {
+                    $query->where('user_id', $user->id);
+                })
+                ->orWhere(function ($query) use ($user) {
+                    $query->where('accept_user_id', $user->id);
+                })
+                ->orWhere(function ($query) use ($user) {
+                    $userIdsSupervisor = $user->acceptedTasks?->pluck('id')->toArray();
+                    $query->whereIn('id', $userIdsSupervisor);
                 })->first();
         }
         return null;
+    }
+
+    public function instructTask(int $taskId,?array $supervisorIds): bool
+    {
+        if($supervisorIds) {
+            $task = Task::query()->where('id', $taskId)->first();
+            $task->status = OrderStatusEnum::notAccepted;
+            $task->acceptingUsers()->syncWithoutDetaching($supervisorIds);
+            $task->save();
+        }
+        return true;
+    }
+
+    public function invoiceTask(int $taskId,?array $supervisorIds): bool
+    {
+        $task = Task::query()->where('id',$taskId)->first();
+        $task->status = OrderStatusEnum::accepted;
+        if(count($supervisorIds)>0) {
+            $task->accept_user_id = current($supervisorIds);
+        }else{
+            $task->accept_user_id = Auth::user()->id;
+        }
+        $task->save();
+        return true;
+    }
+
+    public function cancelTask(int $taskId): bool
+    {
+        $task = Task::query()->where('id',$taskId)->first();
+        $task->status = OrderStatusEnum::canceled;
+        $task->save();
+        return true;
     }
 }

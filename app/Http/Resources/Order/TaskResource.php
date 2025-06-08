@@ -34,7 +34,8 @@ class TaskResource extends JsonResource
             'price' => $this->price,
             'income' => $this->income,
             'scopeOfServices' => $this->scope_of_services,
-            'orderActivities' => OrderActivitiesResource::collection($this->taskActivities)
+            'orderActivities' => OrderActivitiesResource::collection($this->taskActivities),
+            'acceptedTasks' => ShortUserResource::collection($this->acceptingUsers),
         ];
     }
 }

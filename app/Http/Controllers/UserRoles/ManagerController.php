@@ -40,6 +40,8 @@ use App\Http\Resources\ShortUserResource;
 use App\Http\Requests\Order\GetTaskRequest;
 use App\Http\Resources\Order\TaskShortResource;
 use App\Http\Requests\Order\CreateTaskRequest;
+use App\Http\Requests\Order\EntrustTaskRequest;
+use App\Http\Requests\Order\CancelTaskRequest;
 
 class ManagerController extends Controller
 {
@@ -235,7 +237,8 @@ class ManagerController extends Controller
         );
     }
 
-    public function createTask(CreateTaskRequest $request){
+    public function createTask(CreateTaskRequest $request): TaskResource
+    {
         return new TaskResource(
             $this->orderRepository->createTask(
                 $request,
@@ -244,13 +247,47 @@ class ManagerController extends Controller
         );
     }
 
-    public function updateTask(CreateTaskRequest $request): ErrorResource|OrderResource
+    public function updateTask(CreateTaskRequest $request): ErrorResource|TaskResource
     {
         if($request->taskId){
-            return new OrderResource($this->orderRepository->updateTask($request));
+            return new TaskResource($this->orderRepository->updateTask($request));
         }else{
             return new ErrorResource();
         }
     }
+
+    public function instructTask(EntrustTaskRequest $request): ErrorResource|SuccessResource
+    {
+        if($request->taskId){
+            $this->orderRepository->instructTask($request->taskId,$request->input('supervisorIds',[]));
+            return new SuccessResource();
+        }else{
+            return new ErrorResource();
+        }
+    }
+
+    public function invoiceTask(EntrustTaskRequest $request): ErrorResource|SuccessResource
+    {
+        if($request->taskId){
+            $this->orderRepository->invoiceTask($request->taskId,$request->input('supervisorIds',[]));
+            return new SuccessResource();
+        }else{
+            return new ErrorResource();
+        }
+    }
+
+    public function cancelTask(CancelTaskRequest $request): ErrorResource|SuccessResource
+    {
+        if($request->taskId){
+            $this->orderRepository->cancelTask($request->taskId);
+            return new SuccessResource();
+        }else{
+            return new ErrorResource();
+        }
+    }
+
+
+
+
 
 }

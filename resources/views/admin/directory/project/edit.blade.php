@@ -40,8 +40,8 @@
         <div class="form-group row">
             <label for="select" class="col-sm-2 col-form-label">Привязка Мест проведения</label>
             <div class="col-sm-10">
-                @if(!empty($edit->place))
-                    @foreach($edit->place as $kfield=>$placeData)
+                @if(!empty($edit->places))
+                    @foreach($edit->places as $kfield=>$placeData)
                         <div class="row addItemSelect">
                             <div class="col-sm-9">
                                 <x-adminlte-select2 data-name="place" id="place{{$kfield}}" name="place[{{$kfield}}][]">
@@ -62,7 +62,7 @@
                 @endif
                 <div class="row addItemSelect">
                     <div class="col-sm-9">
-                        <x-adminlte-select2 data-name="place" id="parentFields" name="place[{{count($edit->place??[])}}][]">
+                        <x-adminlte-select2 data-name="place" id="parentFields" name="place[{{count($edit->places??[])}}][]">
                             <option selected="true" disabled="disabled">Не выбрано</option>
                             @foreach($place as $field)
                                 @if(!empty($field['uuid']))
@@ -137,8 +137,8 @@
         <div class="form-group row">
             <label for="select" class="col-sm-2 col-form-label">Привязка Контрагентов</label>
             <div class="col-sm-10">
-                @if(!empty($edit->counterparty))
-                    @foreach($edit->counterparty as $kfield=>$counterpartyData)
+                @if(!empty($edit->counterparties))
+                    @foreach($edit->counterparties as $kfield=>$counterpartyData)
                         <div class="row addItemSelect">
                             <div class="col-sm-9">
                                 <x-adminlte-select2 data-name="counterparty" id="counterparty{{$kfield}}" name="counterparty[{{$kfield}}][]">
@@ -159,7 +159,7 @@
                 @endif
                 <div class="row addItemSelect">
                     <div class="col-sm-9">
-                        <x-adminlte-select2 data-name="counterparty" id="parentFields3" name="counterparty[{{count($edit->counterparty??[])}}][]">
+                        <x-adminlte-select2 data-name="counterparty" id="parentFields3" name="counterparty[{{count($edit->counterparties??[])}}][]">
                             <option selected="true" disabled="disabled">Не выбрано</option>
                             @foreach($counterparty as $field)
                                 @if(!empty($field['uuid']))
