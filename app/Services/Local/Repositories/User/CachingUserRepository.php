@@ -33,7 +33,7 @@ class CachingUserRepository implements UserRepository
                                                int $perPage = 10
     ): Paginator
     {
-        return $this->users->getModerationUsersPaginate($roles,$status,$page,$perPage);
+        return $this->users->getModerationUsersPaginate($roles,$sort,$status,$page,$perPage);
     }
 
 
