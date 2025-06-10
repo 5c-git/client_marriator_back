@@ -10,6 +10,7 @@ use Illuminate\Contracts\Pagination\Paginator;
 use App\Models\User;
 use App\Models\Order\Task;
 use App\Http\Requests\Order\CreateTaskRequest;
+use App\Models\Order\Bid;
 
 interface OrderRepository
 {
@@ -33,4 +34,7 @@ interface OrderRepository
     public function instructTask(int $taskId,?array $supervisorIds): bool;
     public function invoiceTask(int $taskId,?array $supervisorId): bool;
     public function cancelTask(int $taskId): bool;
+    public function acceptTask(User $user,int $taskId): bool;
+    public function createBidFromOrder(User $user,int $orderId,int $orderActivityId): Bid;
+    public function createBidFromTask(User $user,int $taskId,int $taskActivityId): Bid;
 }

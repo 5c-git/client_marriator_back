@@ -41,6 +41,7 @@ class ConvertTaskRequest extends FormRequest
                     if(!empty($orders) && in_array($value,$orders)) {
                         $orderExists = Order::query()
                             ->where('id', $value)
+                            ->where('status',OrderStatusEnum::accepted)
                             ->exists();
                     }
                     if (!$orderExists) {
@@ -49,7 +50,7 @@ class ConvertTaskRequest extends FormRequest
                 },
             ],
             'supervisorId' => [
-                'sometimes',
+                'required',
                 'int',
                 'exists:users,id',
                 function ($attribute, $value, $fail) {

@@ -5,6 +5,7 @@ namespace App\Services\Local\Repositories\Order;
 use App\Enum\Order\OrderStatusEnum;
 use App\Http\Requests\Order\ConvertTaskRequest;
 use App\Http\Requests\Order\CreateOrderRequest;
+use App\Models\Order\Bid;
 use App\Models\Order\Order;
 use App\Models\Order\OrderActivities;
 use App\Models\User;
@@ -190,7 +191,7 @@ class EloquentOrderRepository implements OrderRepository
             ->orWhere(function ($query) use ($user,$status) {
                 $userIdsSupervisor = $user->supervisors?->pluck('id')->toArray();
                 $userIdsSupervisor[] = $user->id;
-                $query = $query->whereHas('acceptingUsers', fn($q) => $q->whereIn('users.id', $userIdsSupervisor));
+                $query = $query->whereIn('accept_user_id',$userIdsSupervisor);
                 if($status == OrderStatusEnum::accepted) {
                     $query->where('status', OrderStatusEnum::accepted->value);
                 }
@@ -213,7 +214,7 @@ class EloquentOrderRepository implements OrderRepository
                 ->orWhere(function ($query) use ($user, $orderId) {
                     $userIdsSupervisor = $user->supervisors?->pluck('id')->toArray();
                     $userIdsSupervisor[] = $user->id;
-                    $query = $query->whereHas('acceptingUsers', fn($q) => $q->whereIn('users.id', $userIdsSupervisor))
+                    $query->whereIn('accept_user_id',$userIdsSupervisor)
                         ->where('id', $orderId);
                 })
                 ->first();
@@ -226,7 +227,10 @@ class EloquentOrderRepository implements OrderRepository
         return (bool)Order::query()
             ->where('id',$orderId)
             ->update(
-                ['status'=>OrderStatusEnum::accepted]
+                [
+                    'status'=>OrderStatusEnum::accepted,
+                    'accept_user_id' => $user->id
+                ]
             );
     }
 
@@ -292,15 +296,15 @@ class EloquentOrderRepository implements OrderRepository
     public function getTaskByUserSyncData(User $user, ?int $taskId): Task|null
     {
         if($taskId){
-            return Task::orWhere(function ($query) use ($user) {
-                    $query->where('user_id', $user->id);
+            return Task::where(function ($query) use ($user,$taskId) {
+                    $query->where('user_id', $user->id)->where('id', $taskId);
                 })
-                ->orWhere(function ($query) use ($user) {
-                    $query->where('accept_user_id', $user->id);
+                ->orWhere(function ($query) use ($user,$taskId) {
+                    $query->where('accept_user_id', $user->id)->where('id', $taskId);
                 })
-                ->orWhere(function ($query) use ($user) {
+                ->orWhere(function ($query) use ($user,$taskId) {
                     $userIdsSupervisor = $user->acceptedTasks?->pluck('id')->toArray();
-                    $query->whereIn('id', $userIdsSupervisor);
+                    $query->whereIn('id', $userIdsSupervisor)->where('id', $taskId);
                 })->first();
         }
         return null;
@@ -336,5 +340,29 @@ class EloquentOrderRepository implements OrderRepository
         $task->status = OrderStatusEnum::canceled;
         $task->save();
         return true;
+    }
+
+    public function acceptTask(User $user, int $taskId): bool
+    {
+         (bool)Task::query()
+            ->where('id',$taskId)
+            ->update(
+                [
+                    'status'=>OrderStatusEnum::accepted,
+                    'accept_user_id' => $user->id
+                ]
+            );
+
+        return true;
+    }
+
+    public function createBidFromOrder(User $user, int $orderId, int $orderActivityId): Bid
+    {
+
+    }
+
+    public function createBidFromTask(User $user, int $taskId, int $taskActivityId): Bid
+    {
+
     }
 }

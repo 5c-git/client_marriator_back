@@ -47,12 +47,19 @@ class Bid extends Model
         'place_id',
         'user_id',
         'accept_user_id',
-        'supervisor_user_id',
         'order_id',
+        'task_id',
         'status',
         'self_employed',
         'radius',
-        'price'
+        'price',
+
+        'view_activity_id',
+        'count',
+        'date_start',
+        'date_end',
+        'need_foto',
+        'date_activity'
     ];
 
     protected $casts = [
@@ -89,13 +96,8 @@ class Bid extends Model
         return $this->hasMany(BidActivity::class);
     }
 
-    public function viewActivities(): BelongsToMany
+    public function viewActivity(): BelongsTo
     {
-        return $this->belongsToMany(
-            ViewActivities::class,
-            'bid_activities',
-            'bid_id',
-            'view_activity_id'
-        )->withPivot(['count', 'date_start', 'date_end', 'need_foto', 'date_activity']);
+        return $this->belongsTo(ViewActivities::class, 'view_activity_id');
     }
 }

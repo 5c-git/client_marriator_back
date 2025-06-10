@@ -2,6 +2,7 @@
 
 namespace App\Services\Local\Repositories\User;
 
+use App\Enum\User\SortEnum;
 use App\Enum\User\UserStatusModerationEnum;
 use App\Models\User;
 use App\Services\Local\Repositories\Contracts\UserRepository;
@@ -25,7 +26,12 @@ class CachingUserRepository implements UserRepository
         return $this->users->getModerationUsers($roles);
     }
 
-    public function getModerationUsersPaginate(array $roles = [],UserStatusModerationEnum $status = UserStatusModerationEnum::new,int $page = 1,int $perPage = 10): Paginator
+    public function getModerationUsersPaginate(array $roles = [],
+                                               SortEnum $sort = SortEnum::all,
+                                               UserStatusModerationEnum $status = UserStatusModerationEnum::new,
+                                               int $page = 1,
+                                               int $perPage = 10
+    ): Paginator
     {
         return $this->users->getModerationUsersPaginate($roles,$status,$page,$perPage);
     }

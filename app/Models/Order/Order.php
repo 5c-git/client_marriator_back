@@ -21,6 +21,7 @@ use App\Models\Order\Task;
  * @property int $id
  * @property int $place_id
  * @property int $user_id
+ * @property int $accept_user_id
  * @property bool $self_employed
  * @property OrderStatusEnum $status
  * @property-read User $user
@@ -28,6 +29,7 @@ use App\Models\Order\Task;
  * @property-read Collection|OrderActivities[] $orderActivities
  * @property-read Collection|ViewActivities[] $viewActivities
  * @property-read Collection|User[] $acceptingUsers
+ * @property-read Collection|User[] $acceptOrder
  * @property-read Collection|Task[] $tasks
  *
  */
@@ -40,7 +42,8 @@ class Order extends Model
         'place_id',
         'user_id',
         'self_employed',
-        'status'
+        'status',
+        'accept_user_id'
     ];
 
     protected $casts = [
@@ -50,6 +53,11 @@ class Order extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function acceptUser(): BelongsTo
+    {
+        return $this->belongsTo(User::class,'accept_user_id');
     }
 
     public function place(): BelongsTo

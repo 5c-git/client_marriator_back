@@ -7,6 +7,7 @@ use App\Http\Requests\FormRequest;
 use Illuminate\Validation\Rule;
 use App\Enum\User\UserStatusModerationEnum;
 use App\Enum\Role\RoleEnum;
+use App\Enum\User\SortEnum;
 
 /**
  * @property-read int status
@@ -52,6 +53,15 @@ class PaginatorRequest extends FormRequest
                     RoleEnum::recruiter->value,
                     RoleEnum::specialist->value,
                     RoleEnum::supervisor->value,
+                ]),
+            ],
+            'sort'=> [
+                'sometimes',
+                'integer',
+                Rule::in([
+                    SortEnum::new->value,
+                    SortEnum::old->value,
+                    SortEnum::all->value,
                 ]),
             ],
             'page' => 'sometimes|integer',

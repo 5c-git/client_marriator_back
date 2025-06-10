@@ -29,8 +29,10 @@ use App\Models\Order\Order;
  * @property string $name
  * @property-read Collection|Project[] $project
  * @property-read Collection|Place[] $place
+ * @property-read Collection|Order[] $acceptedOrders
  * @property-read Collection|Order[] $acceptOrder
  * @property-read Collection|Task[] $acceptedTasks
+ * @property-read Collection|Task[] $acceptTask
  */
 class User extends Authenticatable
 {
@@ -99,6 +101,16 @@ class User extends Authenticatable
         return $this->hasMany(Order::class);
     }
 
+    public function acceptOrder(): HasMany
+    {
+        return $this->hasMany(Order::class,'accept_user_id');
+    }
+
+    public function acceptTask(): HasMany
+    {
+        return $this->hasMany(Task::class,'accept_user_id');
+    }
+
     public function isAdmin()
     {
         return $this->roles()->where('name', 'admin')->exists();
@@ -134,7 +146,7 @@ class User extends Authenticatable
         );
     }
 
-    public function acceptOrder(): BelongsToMany
+    public function acceptedOrders(): BelongsToMany
     {
         return $this->belongsToMany(
             Order::class,

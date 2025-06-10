@@ -4,6 +4,7 @@ namespace App\Http\Controllers\UserRoles;
 
 use App\Enum\Order\OrderStatusEnum;
 use App\Enum\Role\RoleEnum;
+use App\Enum\User\SortEnum;
 use App\Enum\User\UserStatusModerationEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ConfirmUserRequest;
@@ -19,6 +20,7 @@ use App\Http\Resources\Order\TaskShortResource;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\SuccessResource;
 use App\Http\Resources\UserResource;
+use App\Models\Order\Task;
 use App\Models\User;
 use App\Services\ApiTokenService\ApiTokenService;
 use App\Services\Local\Repositories\Contracts\OrderRepository;
@@ -31,6 +33,9 @@ use App\Services\Register\SmsCodeService;
 use App\Http\Resources\PlaceResource;
 use App\Http\Requests\Order\AcceptOrderRequest;
 use App\Http\Resources\Order\TaskResource;
+use App\Http\Requests\Order\AcceptTaskRequest;
+use App\Http\Requests\Order\CreateBidFromOrderRequest;
+use App\Http\Requests\Order\CreateBidFromTaskRequest;
 
 class SupervisorController extends Controller
 {
@@ -63,6 +68,7 @@ class SupervisorController extends Controller
         }
 
         $usersForModeration = $this->userRepository->getModerationUsersPaginate($arrRoleConfirm,
+            SortEnum::from($request->input('sort',SortEnum::new->value)),
             UserStatusModerationEnum::from($request->input('status',UserStatusModerationEnum::new->value)),
             $request->input('page', 1),
             $request->input('perPage', 10),
@@ -133,7 +139,6 @@ class SupervisorController extends Controller
     {
         $user = $request->user();
         if($this->orderRepository->acceptedOrder($user,$request->orderId)) {
-            $user->acceptOrder()->syncWithoutDetaching([$request->orderId]);
             return new SuccessResource();
         }else{
             return new ErrorResource();
@@ -158,6 +163,28 @@ class SupervisorController extends Controller
                 $request->input('taskId',null)
             )
         );
+    }
+
+    public function acceptTask(AcceptTaskRequest $request): ErrorResource|SuccessResource
+    {
+        $user = $request->user();
+        if($this->orderRepository->acceptTask($user,$request->taskId)) {
+           Task::where('id',$request->taskId)->first()->acceptingUsers()->delete();
+            return new SuccessResource();
+        }else{
+            return new ErrorResource();
+        }
+    }
+
+    public function createBidFromOrder(CreateBidFromOrderRequest $request){
+        $user = $request->user();
+        $bid = $this->orderRepository->createBidFromOrder($user,$request->orderId,$request->orderActivityId);
+    }
+
+    public function createBidFromTask(CreateBidFromTaskRequest $request){
+        $user = $request->user();
+        $bid = $this->orderRepository->createBidFromTask($user,$request->taskId,$request->taskActivityId);
+
     }
 
 }

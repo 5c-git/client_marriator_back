@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\UserRoles;
 
+use App\Enum\User\SortEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Order\GetOrderRequest;
 use App\Http\Resources\Order\OrderResource;
@@ -61,6 +62,7 @@ class AdminController extends Controller
         }
 
         $usersForModeration = $this->userRepository->getModerationUsersPaginate($arrRoleConfirm,
+            SortEnum::from($request->input('sort',SortEnum::new->value)),
             UserStatusModerationEnum::from($request->input('status',UserStatusModerationEnum::new->value)),
             $request->input('page', 1),
             $request->input('perPage', 10),

@@ -6,6 +6,7 @@ use App\Enum\Order\OrderStatusEnum;
 use App\Http\Requests\Order\ConvertTaskRequest;
 use App\Http\Requests\Order\CreateOrderRequest;
 use App\Http\Requests\Order\CreateTaskRequest;
+use App\Models\Order\Bid;
 use App\Models\Order\Order;
 use App\Models\Order\Task;
 use App\Models\User;
@@ -105,5 +106,20 @@ class CachingOrderRepository implements OrderRepository
     public function cancelTask(int $taskId): bool
     {
         return $this->orders->cancelTask($taskId);
+    }
+
+    public function acceptTask(User $user, int $taskId): bool
+    {
+        return $this->orders->acceptTask($user,$taskId);
+    }
+
+    public function createBidFromOrder(User $user, int $orderId, int $orderActivityId): Bid
+    {
+        return $this->orders->createBidFromOrder($user,$orderId,$orderActivityId);
+    }
+
+    public function createBidFromTask(User $user, int $taskId, int $taskActivityId): Bid
+    {
+        return $this->orders->createBidFromTask($user,$taskId,$taskActivityId);
     }
 }

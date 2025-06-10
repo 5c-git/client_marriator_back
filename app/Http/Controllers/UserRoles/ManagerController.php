@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ConfirmUserRequest;
 use App\Http\Requests\DelPlaceRequest;
 use App\Http\Requests\Order\AcceptOrderRequest;
+use App\Http\Requests\Order\AcceptTaskRequest;
 use App\Http\Requests\Order\CreateOrderRequest;
 use App\Http\Requests\Order\GetOrderRequest;
 use App\Http\Requests\PaginatorRequest;
@@ -23,6 +24,7 @@ use App\Http\Resources\PlaceResource;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\SuccessResource;
 use App\Models\Fields\Fields;
+use App\Models\Order\Task;
 use App\Models\User;
 use App\Services\ApiTokenService\ApiTokenService;
 use App\Services\Local\Repositories\Contracts\OrderRepository;
@@ -42,6 +44,7 @@ use App\Http\Resources\Order\TaskShortResource;
 use App\Http\Requests\Order\CreateTaskRequest;
 use App\Http\Requests\Order\EntrustTaskRequest;
 use App\Http\Requests\Order\CancelTaskRequest;
+use App\Enum\User\SortEnum;
 
 class ManagerController extends Controller
 {
@@ -74,6 +77,7 @@ class ManagerController extends Controller
         }
 
         $usersForModeration = $this->userRepository->getModerationUsersPaginate($arrRoleConfirm,
+            SortEnum::from($request->input('sort',SortEnum::new->value)),
             UserStatusModerationEnum::from($request->input('status',UserStatusModerationEnum::new->value)),
             $request->input('page', 1),
             $request->input('perPage', 10),
@@ -194,7 +198,6 @@ class ManagerController extends Controller
     {
         $user = $request->user();
         if($this->orderRepository->acceptedOrder($user,$request->orderId)) {
-            $user->acceptOrder()->syncWithoutDetaching([$request->orderId]);
             return new SuccessResource();
         }else{
             return new ErrorResource();
@@ -280,6 +283,17 @@ class ManagerController extends Controller
     {
         if($request->taskId){
             $this->orderRepository->cancelTask($request->taskId);
+            return new SuccessResource();
+        }else{
+            return new ErrorResource();
+        }
+    }
+
+    public function acceptTask(AcceptTaskRequest $request): ErrorResource|SuccessResource
+    {
+        $user = $request->user();
+        if($this->orderRepository->acceptTask($user,$request->taskId)) {
+            Task::where('id',$request->taskId)->first()->acceptingUsers()->delete();
             return new SuccessResource();
         }else{
             return new ErrorResource();

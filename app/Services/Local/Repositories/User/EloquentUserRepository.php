@@ -2,6 +2,7 @@
 
 namespace App\Services\Local\Repositories\User;
 
+use App\Enum\User\SortEnum;
 use App\Enum\User\UserStatusModerationEnum;
 use App\Models\User;
 use App\Services\Local\Repositories\Contracts\UserRepository;
@@ -33,9 +34,9 @@ class EloquentUserRepository implements UserRepository
     }
 
 
-    public function getModerationUsersPaginate(array $roles = [],UserStatusModerationEnum $status = UserStatusModerationEnum::new,int $page = 1,int $perPage = 10): Paginator
+    public function getModerationUsersPaginate(array $roles = [],SortEnum $sort = SortEnum::all,UserStatusModerationEnum $status = UserStatusModerationEnum::new,int $page = 1,int $perPage = 10): Paginator
     {
-        $userQuery = User::query()->orderBy('id', 'desc')
+        $userQuery = User::query()
             ->where('confirmRegister',false)
             ->where('finishRegister',true)
             ->with(['roles','project','place']);
@@ -59,6 +60,12 @@ class EloquentUserRepository implements UserRepository
         if($status == UserStatusModerationEnum::inProgress){
             $userQuery = $userQuery->where('confirmRegister',true)
                 ->where('finishRegister',true);
+        }
+        if($sort == SortEnum::new){
+            $userQuery = $userQuery->orderBy('id','desc');
+        }
+        if($sort == SortEnum::old){
+            $userQuery = $userQuery->orderBy('id','asc');
         }
 
 
