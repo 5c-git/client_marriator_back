@@ -65,7 +65,17 @@ class User extends Authenticatable
         'change_fields',
         'date_for_send',
         'uuid',
-        'register_hash'
+        'register_hash',
+        'change_order',
+        'cancel_order',
+        'live_order',
+        'change_task',
+        'cancel_task',
+        'live_task',
+        'repeat_bid',
+        'leave_bid',
+        'refusal_task',
+        'waiting_task'
     ];
 
     /**

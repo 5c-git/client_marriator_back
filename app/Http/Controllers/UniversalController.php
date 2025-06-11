@@ -12,6 +12,12 @@ use App\Http\Requests\PaginatorRequest;
 use App\Http\Requests\SetBrandImgRequest;
 use App\Http\Requests\SetPlaceRequest;
 use App\Http\Requests\SetUserDataRequest;
+use App\Http\Requests\UserData\DelPlaceRequest as DelPlaceModerationRequest;
+use App\Http\Requests\UserData\DelProjectRequest;
+use App\Http\Requests\UserData\GetPlaceRequest;
+use App\Http\Requests\UserData\GetProjectRequest;
+use App\Http\Requests\UserData\SetPlaceRequest as SetPlaceModerationRequest;
+use App\Http\Requests\UserData\SetProjectRequest;
 use FontLib\Table\Type\glyf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -187,4 +193,83 @@ class UniversalController extends Controller
         }
         return response()->json(['message' => 'Role not allowed.'], 403);
     }
+
+    public function getProject(GetProjectRequest $request){
+        if(in_array('supervisor',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\SupervisorController::class)->getProject($request);
+        }
+        if(in_array('manager',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\ManagerController::class)->getProject($request);
+        }
+        if(in_array('admin',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\AdminController::class)->getProject($request);
+        }
+        return response()->json(['message' => 'Role not allowed.'], 403);
+    }
+
+    public function setProject(SetProjectRequest $request){
+        if(in_array('supervisor',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\SupervisorController::class)->setProject($request);
+        }
+        if(in_array('manager',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\ManagerController::class)->setProject($request);
+        }
+        if(in_array('admin',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\AdminController::class)->setProject($request);
+        }
+        return response()->json(['message' => 'Role not allowed.'], 403);
+    }
+
+    public function delProject(DelProjectRequest $request){
+        if(in_array('supervisor',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\SupervisorController::class)->delProject($request);
+        }
+        if(in_array('manager',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\ManagerController::class)->delProject($request);
+        }
+        if(in_array('admin',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\AdminController::class)->delProject($request);
+        }
+        return response()->json(['message' => 'Role not allowed.'], 403);
+    }
+
+    public function getPlaceModeration(GetPlaceRequest $request){
+        if(in_array('supervisor',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\SupervisorController::class)->getPlaceModeration($request);
+        }
+        if(in_array('manager',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\ManagerController::class)->getPlaceModeration($request);
+        }
+        if(in_array('admin',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\AdminController::class)->getPlaceModeration($request);
+        }
+        return response()->json(['message' => 'Role not allowed.'], 403);
+    }
+
+    public function setPlaceModeration(SetPlaceModerationRequest $request){
+        if(in_array('supervisor',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\SupervisorController::class)->setPlaceModeration($request);
+        }
+        if(in_array('manager',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\ManagerController::class)->setPlaceModeration($request);
+        }
+        if(in_array('admin',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\AdminController::class)->setPlaceModeration($request);
+        }
+        return response()->json(['message' => 'Role not allowed.'], 403);
+    }
+
+    public function delPlaceModeration(DelPlaceModerationRequest $request){
+        if(in_array('supervisor',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\SupervisorController::class)->delPlaceModeration($request);
+        }
+        if(in_array('manager',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\ManagerController::class)->delPlaceModeration($request);
+        }
+        if(in_array('admin',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\AdminController::class)->delPlaceModeration($request);
+        }
+        return response()->json(['message' => 'Role not allowed.'], 403);
+    }
+
 }

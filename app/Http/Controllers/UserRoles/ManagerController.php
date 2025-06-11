@@ -23,6 +23,8 @@ use App\Http\Resources\Order\ShortOrderResource;
 use App\Http\Resources\PlaceResource;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\SuccessResource;
+use App\Models\Fields\Directory\Place;
+use App\Models\Fields\Directory\Project;
 use App\Models\Fields\Fields;
 use App\Models\Order\Task;
 use App\Models\User;
@@ -45,6 +47,13 @@ use App\Http\Requests\Order\CreateTaskRequest;
 use App\Http\Requests\Order\EntrustTaskRequest;
 use App\Http\Requests\Order\CancelTaskRequest;
 use App\Enum\User\SortEnum;
+use App\Http\Requests\UserData\UserModerationRequest;
+use App\Http\Requests\UserData\DelProjectRequest;
+use App\Http\Requests\UserData\GetProjectRequest;
+use App\Http\Requests\UserData\SetProjectRequest;
+use App\Http\Requests\UserData\SetPlaceRequest as SetPlaceModerationRequest;
+use App\Http\Requests\UserData\DelPlaceRequest as DelPlaceModerationRequest;
+use App\Http\Requests\UserData\GetPlaceRequest;
 
 class ManagerController extends Controller
 {
@@ -56,6 +65,117 @@ class ManagerController extends Controller
      */
     public function __construct(protected UserRepository $userRepository,protected OrderRepository $orderRepository)
     {
+    }
+
+    public function getProject(GetProjectRequest $request){
+        $user = User::where('id',$request->userId)->first();
+        $userRoles = $user->roles?->pluck('id')->toArray();
+        $checkRole = false;
+        foreach ($userRoles as $userRole){
+            if(in_array($userRole,[RoleEnum::manager->value,RoleEnum::client->value,RoleEnum::specialist->value])){
+                $checkRole = true;
+                break;
+            }
+        }
+        if($checkRole){
+            $project = Project::all();
+            return ProjectResource::collection($project);
+        }else{
+            return new ErrorResource();
+        }
+    }
+
+    public function setProject(SetProjectRequest $request){
+        $user = User::where('id',$request->userId)->first();
+        $userRoles = $user->roles?->pluck('id')->toArray();
+        $checkRole = false;
+        foreach ($userRoles as $userRole){
+            if(in_array($userRole,[RoleEnum::manager->value,RoleEnum::client->value,RoleEnum::specialist->value])){
+                $checkRole = true;
+                break;
+            }
+        }
+        if($checkRole){
+            $user->project()->syncWithoutDetaching($request->projectId);
+            return new SuccessResource();
+        }else{
+            return new ErrorResource();
+        }
+    }
+
+    public function delProject(DelProjectRequest $request){
+        $user = User::where('id',$request->userId)->first();
+        $userRoles = $user->roles?->pluck('id')->toArray();
+        $checkRole = false;
+        foreach ($userRoles as $userRole){
+            if(in_array($userRole,[RoleEnum::manager->value,RoleEnum::client->value,RoleEnum::specialist->value])){
+                $checkRole = true;
+                break;
+            }
+        }
+        if($checkRole){
+            $user->project()->detach($request->projectId);
+            $user = User::where('id',$request->userId)->first();
+            $placesProject = $user->project
+                ->flatMap(fn($project) => $project->places)
+                ->unique('id')?->pluck('id')->toArray();
+            $places = $user->place?->pluck('id')->toArray();
+            $result = array_diff($places, $placesProject);
+            if($result) {
+                $user->place()->detach($result);
+            }
+            return new UserResource($user->fresh());
+        }else{
+            return new ErrorResource();
+        }
+    }
+
+    public function getPlaceModeration(GetPlaceRequest $request)
+    {
+        $user = User::where('id',$request->userId)->first();
+        $userRoles = $user->roles?->pluck('id')->toArray();
+        if(in_array($userRoles[0],[RoleEnum::manager->value,RoleEnum::client->value,RoleEnum::specialist->value])){
+            $places = $user->project
+                ->flatMap(fn($project) => $project->places)
+                ->unique('id');
+            return PlaceResource::collection($places);
+        }
+        if($userRoles[0] == RoleEnum::recruiter->value){
+            $places = Place::all();
+            return PlaceResource::collection($places);
+        }
+        return new ErrorResource();
+    }
+
+    public function setPlaceModeration(SetPlaceModerationRequest $request): SuccessResource
+    {
+        $user = User::where('id',$request->userId)->first();
+        $userRoles = $user->roles?->pluck('id')->toArray();
+        $placeForUser = [];
+        if(in_array($userRoles[0],[RoleEnum::manager->value,RoleEnum::client->value,RoleEnum::specialist->value])) {
+            $placesProject = $user->project
+                ->flatMap(fn($project) => $project->places)
+                ->unique('id')?->pluck('id')->toArray();
+            foreach ($request->placeId as $place) {
+                if (in_array($place, $placesProject)) {
+                    $placeForUser[] = $place;
+                }
+            }
+        }
+        if($userRoles[0] == RoleEnum::recruiter->value){
+            $placeForUser = $request->placeId;
+        }
+        if($placeForUser){
+            $user->place()->syncWithoutDetaching($placeForUser);
+        }
+        return new SuccessResource();
+    }
+
+    public function delPlaceModeration(DelPlaceModerationRequest $request): SuccessResource
+    {
+        $user = User::where('id',$request->userId)->first();
+        $user->place()->detach($request->placeId);
+        return new SuccessResource();
     }
 
     public function getModerationClient(PaginatorRequest $request)
@@ -107,6 +227,16 @@ class ManagerController extends Controller
             }else{
                 $userForModeration->finishRegister = false;
             }
+            $userForModeration->change_order = $request->change_order ?? null;
+            $userForModeration->cancel_order = $request->cancel_order ?? null;
+            $userForModeration->live_order = $request->live_order ?? null;
+            $userForModeration->change_task = $request->change_task ?? null;
+            $userForModeration->cancel_task = $request->cancel_task ?? null;
+            $userForModeration->live_task = $request->live_task ?? null;
+            $userForModeration->repeat_bid = $request->repeat_bid ?? null;
+            $userForModeration->leave_bid = $request->leave_bid ?? null;
+            $userForModeration->refusal_task = $request->refusal_task ?? null;
+            $userForModeration->waiting_task = $request->waiting_task ?? null;
             $userForModeration->save();
         }
 

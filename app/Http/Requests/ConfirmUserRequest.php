@@ -34,7 +34,6 @@ class ConfirmUserRequest extends FormRequest
             'supervisorIds' => [
                 'sometimes',
                 'array',
-                'exists:users,id',
                 function ($attribute, $value, $fail) {
                     $uniqueIds = array_unique($value);
                     if ($uniqueIds) {
@@ -53,7 +52,18 @@ class ConfirmUserRequest extends FormRequest
                     }
                 }
             ],
+            'change_order' => 'sometimes|date_format:H:i',
+            'cancel_order' => 'sometimes|date_format:H:i',
+            'live_order' => 'sometimes|date_format:H:i',
+            'change_task' => 'sometimes|date_format:H:i',
+            'cancel_task' => 'sometimes|date_format:H:i',
+            'live_task' => 'sometimes|date_format:H:i',
+            'repeat_bid' => 'sometimes|date_format:H:i',
+            'leave_bid' => 'sometimes|date_format:H:i',
+            'refusal_task' => 'sometimes|date_format:H:i',
+            'waiting_task' => 'sometimes|integer|min:1',
             'confirm' => 'required|boolean',
+
         ];
     }
 }

@@ -151,12 +151,20 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
 
         Route::get('/getOrders','App\Http\Controllers\UniversalController@getOrders')->name('getOrders');
         Route::get('/getOrder','App\Http\Controllers\UniversalController@getOrder')->name('getOrder');
-        Route::get('/getModerationClient','App\Http\Controllers\UniversalController@getModerationClient')->name('getModerationClient');
-        Route::get('/confirmUserRegister','App\Http\Controllers\UniversalController@confirmUserRegister')->name('confirmUserRegister');
         Route::post('/acceptOrder','App\Http\Controllers\UniversalController@acceptOrder')->name('acceptOrder');
         Route::get('/getTasks','App\Http\Controllers\UniversalController@getTasks')->name('getTasks');
         Route::get('/getTask','App\Http\Controllers\UniversalController@getTask')->name('getTask');
 
+        Route::group(['prefix' => 'moderation'], function () {
+            Route::get('/getProject', 'App\Http\Controllers\UniversalController@getProject')->name('getProject');
+            Route::post('/setProject', 'App\Http\Controllers\UniversalController@setProject')->name('setProject');
+            Route::post('/delProject', 'App\Http\Controllers\UniversalController@setProject')->name('delProject');
+            Route::get('/getPlaceModeration', 'App\Http\Controllers\UniversalController@getPlaceModeration')->name('getPlaceModeration');
+            Route::post('/setPlaceModeration', 'App\Http\Controllers\UniversalController@setPlaceModeration')->name('setPlaceModeration');
+            Route::post('/delPlaceModeration', 'App\Http\Controllers\UniversalController@delPlaceModeration')->name('delPlaceModeration');
+            Route::get('/getModerationClient','App\Http\Controllers\UniversalController@getModerationClient')->name('getModerationClient');
+            Route::get('/confirmUserRegister','App\Http\Controllers\UniversalController@confirmUserRegister')->name('confirmUserRegister');
+        });
     });
 
     Route::group(['prefix' => 'settings'], function () {
