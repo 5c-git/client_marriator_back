@@ -10,7 +10,11 @@ use App\Http\Requests\ConfirmUserRequest;
 use App\Http\Requests\DelPlaceRequest;
 use App\Http\Requests\Order\AcceptOrderRequest;
 use App\Http\Requests\Order\AcceptTaskRequest;
+use App\Http\Requests\Order\CreateBidFromOrderRequest;
+use App\Http\Requests\Order\CreateBidFromTaskRequest;
 use App\Http\Requests\Order\CreateOrderRequest;
+use App\Http\Requests\Order\GetBidRequest;
+use App\Http\Requests\Order\GetBidsRequest;
 use App\Http\Requests\Order\GetOrderRequest;
 use App\Http\Requests\PaginatorRequest;
 use App\Http\Requests\SetBrandImgRequest;
@@ -18,6 +22,7 @@ use App\Http\Requests\SetPlaceRequest;
 use App\Http\Requests\SetUserDataRequest;
 use App\Http\Resources\BrandResource;
 use App\Http\Resources\ErrorResource;
+use App\Http\Resources\Order\BidResource;
 use App\Http\Resources\Order\OrderResource;
 use App\Http\Resources\Order\ShortOrderResource;
 use App\Http\Resources\PlaceResource;
@@ -26,6 +31,7 @@ use App\Http\Resources\SuccessResource;
 use App\Models\Fields\Directory\Place;
 use App\Models\Fields\Directory\Project;
 use App\Models\Fields\Fields;
+use App\Models\Order\Bid;
 use App\Models\Order\Task;
 use App\Models\User;
 use App\Services\ApiTokenService\ApiTokenService;
@@ -54,6 +60,10 @@ use App\Http\Requests\UserData\SetProjectRequest;
 use App\Http\Requests\UserData\SetPlaceRequest as SetPlaceModerationRequest;
 use App\Http\Requests\UserData\DelPlaceRequest as DelPlaceModerationRequest;
 use App\Http\Requests\UserData\GetPlaceRequest;
+use App\Http\Requests\Order\EntrustBidRequest;
+use App\Http\Requests\Order\AcceptBidRequest;
+use App\Http\Requests\Order\CancelBidRequest;
+use App\Http\Requests\Order\GetSpecialistForBisRequest;
 
 class ManagerController extends Controller
 {
@@ -428,6 +438,99 @@ class ManagerController extends Controller
         }else{
             return new ErrorResource();
         }
+    }
+
+    public function createBidFromOrder(CreateBidFromOrderRequest $request){
+        $user = $request->user();
+        return new BidResource(
+            $this->orderRepository->createBidFromOrder(
+                $user,
+                $request->orderId,
+                $request->orderActivityId
+            )
+        );
+    }
+
+    public function createBidFromTask(CreateBidFromTaskRequest $request){
+        $user = $request->user();
+        return new BidResource(
+            $this->orderRepository->createBidFromTask(
+                $user,
+                $request->taskId,
+                $request->taskActivityId
+            )
+        );
+    }
+
+    public function getBids(GetBidsRequest $request)
+    {
+        return ShortOrderResource::collection(
+            $this->orderRepository->getBidsByUserSyncDataPaginate(
+                $request->user(),
+                OrderStatusEnum::from($request->input('status',3)),
+                $request->input('page', 1),
+                $request->input('perPage', 10),
+            )
+        );
+    }
+
+    public function getBid(GetBidRequest $request)
+    {
+        return new OrderResource(
+            $this->orderRepository->getBidByUserSyncData(
+                $request->user(),
+                $request->input('bidId',null)
+            )
+        );
+    }
+
+    public function invoiceBid(EntrustBidRequest $request): ErrorResource|SuccessResource
+    {
+        if($request->bidId){
+            $this->orderRepository->invoiceBid($request->bidId,$request->input('specialistIds',[]));
+            return new SuccessResource();
+        }else{
+            return new ErrorResource();
+        }
+    }
+
+    public function acceptBid(AcceptBidRequest $request): ErrorResource|SuccessResource
+    {
+        $user = $request->user();
+        if($this->orderRepository->acceptBid($user,$request->bidId)) {
+            Bid::where('id',$request->bidId)->first()->acceptingUsers()->delete();
+            return new SuccessResource();
+        }else{
+            return new ErrorResource();
+        }
+    }
+
+    public function instructBid(EntrustBidRequest $request): ErrorResource|SuccessResource
+    {
+        if($request->bidId){
+            $this->orderRepository->instructBid($request->bidId,$request->input('supervisorIds',[]));
+            return new SuccessResource();
+        }else{
+            return new ErrorResource();
+        }
+    }
+
+    public function cancelBid(CancelBidRequest $request): ErrorResource|SuccessResource
+    {
+        if($request->bidId){
+            $this->orderRepository->cancelBid($request->bidId);
+            return new SuccessResource();
+        }else{
+            return new ErrorResource();
+        }
+    }
+
+    public function getSpecialistForBid(GetSpecialistForBisRequest $request){
+        return ShortUserResource::collection($this->orderRepository->getSpecialistForBid($request->bidId));
+    }
+
+    public function updateBid(UpdateBidRequest $request){
+
     }
 
 

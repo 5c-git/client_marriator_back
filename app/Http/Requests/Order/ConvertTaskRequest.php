@@ -37,7 +37,7 @@ class ConvertTaskRequest extends FormRequest
                 function ($attribute, $value, $fail) {
                     $orderExists = false;
                     $user = auth()->user();
-                    $orders = $user->acceptOrder?->pluck('id')?->toArray();
+                    $orders = $user->acceptOrders?->pluck('id')?->toArray();
                     if(!empty($orders) && in_array($value,$orders)) {
                         $orderExists = Order::query()
                             ->where('id', $value)

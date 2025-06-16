@@ -52,8 +52,11 @@ class CreateTaskRequest extends FormRequest
                 'sometimes',
                 'integer',
                 function ($attribute, $value, $fail) {
+                    $user = auth()->user();
+                    $userIdsSupervisor = $user->supervisors->pluck('id')->toArray();
+                    $userIdsSupervisor[] = $user->id;
                     $orderExists = Task::query()->where('id', $value)
-                        ->where('user_id', auth()->id())
+                        ->whereIn('user_id', $userIdsSupervisor)
                         ->exists();
 
                     if (!$orderExists) {

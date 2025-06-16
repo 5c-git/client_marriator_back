@@ -67,7 +67,11 @@ enum RoleEnum: int
                 self::supervisor->value
             ],
             self::client => [self::client->value],
-            self::manager => [self::manager->value,self::recruiter->value,self::supervisor->value],
+            self::manager => [
+                self::manager->value,
+                self::recruiter->value,
+                self::supervisor->value
+            ],
             self::recruiter => [self::recruiter->value],
             self::supervisor => [self::supervisor->value],
         };

@@ -3,19 +3,14 @@
 namespace App\Http\Requests\Order;
 
 use App\Enum\Order\OrderStatusEnum;
-use App\Enum\Role\RoleEnum;
 use App\Http\Requests\FormRequest;
-use App\Models\Order\Order;
-use App\Models\Order\Task;
+use App\Models\Order\Bid;
 use Illuminate\Validation\Rule;
-use App\Models\User;
 
 /**
- * @property-read int|null status
- * @property-read int|null page
- * @property-read int|null perPage
+ * @property-read int bidId
  */
-class CancelTaskRequest extends FormRequest
+class GetSpecialistForBisRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -35,16 +30,19 @@ class CancelTaskRequest extends FormRequest
     public function rules()
     {
         return [
-            'taskId' => [
+            'bidId' => [
                 'required',
                 'integer',
                 function ($attribute, $value, $fail) {
                     $user = auth()->user();
                     $userIdsSupervisor = $user->supervisors->pluck('id')->toArray();
                     $userIdsSupervisor[] = $user->id;
-                    $taskExists = Task::query()
-                        ->whereIn('user_id', $userIdsSupervisor)
-                        ->whereIn('status', [OrderStatusEnum::new,OrderStatusEnum::notAccepted])
+                    $taskExists = Bid::query()
+                        ->whereIn('user_id',$userIdsSupervisor)
+                        ->orWhere(function ($query) use ($user,$value,$userIdsSupervisor) {
+                            $query->whereIn('accept_user_id', $userIdsSupervisor);
+                        })
+                        ->whereIn('status', [OrderStatusEnum::accepted])
                         ->exists();
 
                     if (!$taskExists) {

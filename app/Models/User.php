@@ -8,6 +8,7 @@ use App\Models\Fields\Directory\Counterparty;
 use App\Models\Fields\Directory\Project;
 use App\Models\Fields\Directory\Place;
 use App\Models\Fields\Directory\ViewActivities;
+use App\Models\Order\Bid;
 use App\Models\Order\Task;
 use App\Models\User\Role;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -30,9 +31,12 @@ use App\Models\Order\Order;
  * @property-read Collection|Project[] $project
  * @property-read Collection|Place[] $place
  * @property-read Collection|Order[] $acceptedOrders
- * @property-read Collection|Order[] $acceptOrder
+ * @property-read Collection|Order[] $acceptOrders
  * @property-read Collection|Task[] $acceptedTasks
- * @property-read Collection|Task[] $acceptTask
+ * @property-read Collection|Task[] $acceptTasks
+ * @property-read Collection|Task[] $acceptedBids
+ * @property-read Collection|Task[] $acceptBids
+ * @property-read Collection|User[] $supervisors
  */
 class User extends Authenticatable
 {
@@ -61,7 +65,6 @@ class User extends Authenticatable
         'mapAddress',
         'mapRadius',
         'updateData',
-        'coordinates',
         'change_fields',
         'date_for_send',
         'uuid',
@@ -75,7 +78,9 @@ class User extends Authenticatable
         'repeat_bid',
         'leave_bid',
         'refusal_task',
-        'waiting_task'
+        'waiting_task',
+        'latitude',
+        'longitude'
     ];
 
     /**
@@ -111,9 +116,19 @@ class User extends Authenticatable
         return $this->hasMany(Order::class);
     }
 
+    public function bids(): HasMany
+    {
+        return $this->hasMany(Bid::class);
+    }
+
     public function acceptOrder(): HasMany
     {
         return $this->hasMany(Order::class,'accept_user_id');
+    }
+
+    public function acceptBid(): HasMany
+    {
+        return $this->hasMany(Bid::class,'accept_user_id');
     }
 
     public function acceptTask(): HasMany
@@ -198,6 +213,12 @@ class User extends Authenticatable
     public function acceptedTasks(): BelongsToMany
     {
         return $this->belongsToMany(Task::class, 'accept_task', 'user_id', 'task_id')
+            ->withPivot('accepted');
+    }
+
+    public function acceptedBids(): BelongsToMany
+    {
+        return $this->belongsToMany(Task::class, 'accept_bid', 'user_id', 'bid_id')
             ->withPivot('accepted');
     }
 }

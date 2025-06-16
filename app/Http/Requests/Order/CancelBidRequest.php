@@ -5,18 +5,16 @@ namespace App\Http\Requests\Order;
 use App\Enum\Order\OrderStatusEnum;
 use App\Enum\Role\RoleEnum;
 use App\Http\Requests\FormRequest;
+use App\Models\Order\Bid;
 use App\Models\Order\Order;
 use App\Models\Order\Task;
 use Illuminate\Validation\Rule;
 use App\Models\User;
 
 /**
- * @property-read int|null status
- * @property-read int|null page
- * @property-read int|null perPage
- * @property-read int taskId
+ * @property-read int bidId
  */
-class EntrustTaskRequest extends FormRequest
+class CancelBidRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -36,39 +34,25 @@ class EntrustTaskRequest extends FormRequest
     public function rules()
     {
         return [
-            'taskId' => [
+            'bidId' => [
                 'required',
                 'integer',
                 function ($attribute, $value, $fail) {
                     $user = auth()->user();
                     $userIdsSupervisor = $user->supervisors->pluck('id')->toArray();
                     $userIdsSupervisor[] = $user->id;
-                    $taskExists = Task::query()
-                        ->whereIn('user_id',$userIdsSupervisor)
-                        ->whereIn('status', [OrderStatusEnum::new,OrderStatusEnum::notAccepted])
+                    $taskExists = Bid::query()
+                        ->whereIn('user_id', $userIdsSupervisor)
+                        ->orWhere(function ($query) use ($user,$value,$userIdsSupervisor) {
+                            $query->whereIn('accept_user_id', $userIdsSupervisor);
+                        })
+                        ->whereIn('accept_user_id', $userIdsSupervisor)
                         ->exists();
 
                     if (!$taskExists) {
                         $fail('Not your task');
                     }
                 },
-            ],
-            'supervisorIds' => [
-                'required',
-                'array',
-                function ($attribute, $value, $fail) {
-
-                    $ids = array_map('intval', $value);
-                    $uniqueIds = array_unique($ids);
-
-                    $validIds = User::whereIn('id', $uniqueIds)
-                        ->whereHas('roles', fn($q) => $q->where('role_id', RoleEnum::supervisor))
-                        ->pluck('id')
-                        ->toArray();
-                    $invalidIds = array_diff($uniqueIds, $validIds);
-
-                    $fail('Supervisor ids not exist ' . implode(', ', $invalidIds));
-                }
             ],
         ];
     }

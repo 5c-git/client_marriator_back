@@ -158,7 +158,7 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
         Route::group(['prefix' => 'moderation'], function () {
             Route::get('/getProject', 'App\Http\Controllers\UniversalController@getProject')->name('getProject');
             Route::post('/setProject', 'App\Http\Controllers\UniversalController@setProject')->name('setProject');
-            Route::post('/delProject', 'App\Http\Controllers\UniversalController@setProject')->name('delProject');
+            Route::post('/delProject', 'App\Http\Controllers\UniversalController@delProject')->name('delProject');
             Route::get('/getPlaceModeration', 'App\Http\Controllers\UniversalController@getPlaceModeration')->name('getPlaceModeration');
             Route::post('/setPlaceModeration', 'App\Http\Controllers\UniversalController@setPlaceModeration')->name('setPlaceModeration');
             Route::post('/delPlaceModeration', 'App\Http\Controllers\UniversalController@delPlaceModeration')->name('delPlaceModeration');

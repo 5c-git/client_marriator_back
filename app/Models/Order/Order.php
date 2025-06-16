@@ -31,6 +31,7 @@ use App\Models\Order\Task;
  * @property-read Collection|User[] $acceptingUsers
  * @property-read Collection|User[] $acceptOrder
  * @property-read Collection|Task[] $tasks
+ * @property-read Collection|Bid[] $bids
  *
  */
 class Order extends Model
@@ -53,6 +54,11 @@ class Order extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function bids(): HasMany
+    {
+        return $this->hasMany(Bid::class);
     }
 
     public function acceptUser(): BelongsTo

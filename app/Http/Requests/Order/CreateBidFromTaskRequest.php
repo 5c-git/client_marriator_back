@@ -37,19 +37,17 @@ class CreateBidFromTaskRequest extends FormRequest
                 function ($attribute, $value, $fail) {
                     $user = auth()->user();
 
-                    $orderExists = Task::where(function ($query) use ($user,$value) {
-                        $query->where('user_id', $user->id)->where('id', $value)
+                    $userIdsSupervisor = $user->supervisors->pluck('id')->toArray();
+                    $userIdsSupervisor[] = $user->id;
+                    $orderExists = Task::where(function ($query) use ($user,$value,$userIdsSupervisor) {
+                        $query->whereIn('user_id', $userIdsSupervisor)->where('id', $value)
                             ->where('status', OrderStatusEnum::accepted);
                     })
-                        ->orWhere(function ($query) use ($user,$value) {
-                            $query->where('accept_user_id', $user->id)->where('id', $value)
+                        ->orWhere(function ($query) use ($user,$value,$userIdsSupervisor) {
+                            $query->whereIn('accept_user_id', $userIdsSupervisor)->where('id', $value)
                                 ->where('status', OrderStatusEnum::accepted);
                         })
-                        ->orWhere(function ($query) use ($user,$value) {
-                            $userIdsSupervisor = $user->acceptedTasks?->pluck('id')->toArray();
-                            $query->whereIn('id', $userIdsSupervisor)->where('id', $value)
-                                ->where('status', OrderStatusEnum::accepted);
-                        })->first();
+                        ->first();
 
                     if (!$orderExists) {
                         $fail('Not your task');

@@ -1078,7 +1078,8 @@ class UserPersonalInfoController extends Controller
         $user = Auth::user();
         $response['result']['mapAddress'] = $user->mapAddress;
         $response['result']['mapRadius'] = $user->mapRadius;
-        $response['result']['coordinates'] = $user->coordinates;
+        $response['result']['latitude'] = $user->latitude;
+        $response['result']['longitude'] = $user->longitude;
         $response['status'] = 'success';
         return response()->json($response, 200);
     }
@@ -1096,7 +1097,8 @@ class UserPersonalInfoController extends Controller
      *             @OA\Schema(
      *                 @OA\Property(property="mapAddress",type="string"),
      *                 @OA\Property(property="mapRadius",type="string"),
-     *                 @OA\Property(property="coordinates",type="string"),
+     *                 @OA\Property(property="latitude",type="string"),
+     *                 @OA\Property(property="longitude",type="string"),
      *             ),
      *         ),
      *     ),
@@ -1118,13 +1120,17 @@ class UserPersonalInfoController extends Controller
         if(!empty($request->mapRadius)){
             $user->mapRadius = $request->mapRadius;
         }
-        if(!empty($request->coordinates)){
-            $user->coordinates = $request->coordinates;
+        if(!empty($request->latitude)){
+            $user->latitude = $request->latitude;
+        }
+        if(!empty($request->longitude)){
+            $user->longitude = $request->longitude;
         }
         $user->save();
         $response['result']['mapAddress'] = $user->mapAddress;
         $response['result']['mapRadius'] = $user->mapRadius;
-        $response['result']['coordinates'] = $user->coordinates;
+        $response['result']['latitude'] = $user->latitude;
+        $response['result']['longitude'] = $user->longitude;
         $response['status'] = 'success';
         return response()->json($response, 200);
     }

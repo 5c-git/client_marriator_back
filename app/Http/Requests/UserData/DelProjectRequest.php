@@ -44,7 +44,7 @@ class DelProjectRequest extends FormRequest
             ],
             'projectId' => [
                 'required',
-                'int',
+                'integer',
                 'exists:directory_project,id',
             ],
         ];

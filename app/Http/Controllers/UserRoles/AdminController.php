@@ -213,6 +213,16 @@ class AdminController extends Controller
             }else{
                 $userForModeration->finishRegister = false;
             }
+            $userForModeration->change_order = $request->change_order ?? null;
+            $userForModeration->cancel_order = $request->cancel_order ?? null;
+            $userForModeration->live_order = $request->live_order ?? null;
+            $userForModeration->change_task = $request->change_task ?? null;
+            $userForModeration->cancel_task = $request->cancel_task ?? null;
+            $userForModeration->live_task = $request->live_task ?? null;
+            $userForModeration->repeat_bid = $request->repeat_bid ?? null;
+            $userForModeration->leave_bid = $request->leave_bid ?? null;
+            $userForModeration->refusal_task = $request->refusal_task ?? null;
+            $userForModeration->waiting_task = $request->waiting_task ?? null;
             $userForModeration->save();
         }
 

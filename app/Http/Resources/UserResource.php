@@ -31,7 +31,17 @@ class UserResource extends JsonResource
             'logo' =>  $this->img ? Storage::url($this->img) : null,
             'project' => ProjectResource::collection($this->project),
             'place' => PlaceResource::collection($this->place),
-            'roles' => RoleResource::collection($this->roles)
+            'roles' => RoleResource::collection($this->roles),
+            'change_order' => $this->change_order,
+            'cancel_order' => $this->cancel_order,
+            'live_order' => $this->live_order,
+            'change_task' => $this->change_task,
+            'cancel_task' => $this->cancel_task,
+            'live_task' => $this->live_task,
+            'repeat_bid' => $this->repeat_bid,
+            'leave_bid' => $this->leave_bid,
+            'refusal_task' => $this->refusal_task,
+            'waiting_task' => $this->waiting_task,
         ];
     }
 }

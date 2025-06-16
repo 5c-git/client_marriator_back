@@ -13,6 +13,7 @@ use App\Models\User;
 use App\Services\Local\Repositories\Contracts\OrderRepository;
 use Illuminate\Cache\CacheManager;
 use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Database\Eloquent\Collection;
 
 class CachingOrderRepository implements OrderRepository
 {
@@ -121,5 +122,40 @@ class CachingOrderRepository implements OrderRepository
     public function createBidFromTask(User $user, int $taskId, int $taskActivityId): Bid
     {
         return $this->orders->createBidFromTask($user,$taskId,$taskActivityId);
+    }
+
+    public function getBidsByUserSyncDataPaginate(User $user, ?OrderStatusEnum $status, int $page = 1, int $perPage = 10): Paginator
+    {
+        return $this->orders->getBidsByUserSyncDataPaginate($user,$status,$page,$perPage);
+    }
+
+    public function getBidByUserSyncData(User $user, ?int $bidId): Bid|null
+    {
+        return $this->orders->getBidByUserSyncData($user,$bidId);
+    }
+
+    public function invoiceBid(int $bidId, ?array $specialistIds): bool
+    {
+        return $this->orders->invoiceBid($bidId,$specialistIds);
+    }
+
+    public function acceptBid(User $user, int $bidId): bool
+    {
+        return $this->orders->acceptBid($user,$bidId);
+    }
+
+    public function instructBid(int $bidId, ?array $supervisorIds): bool
+    {
+        return $this->orders->instructBid($bidId,$supervisorIds);
+    }
+
+    public function cancelBid(int $bidId): bool
+    {
+        return $this->orders->cancelBid($bidId);
+    }
+
+    public function getSpecialistForBid(int $bidId): Collection
+    {
+        return $this->orders->getSpecialistForBid($bidId);
     }
 }

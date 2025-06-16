@@ -6,11 +6,13 @@ use App\Enum\Order\OrderStatusEnum;
 use App\Http\Requests\Order\ConvertTaskRequest;
 use App\Http\Requests\Order\CreateOrderRequest;
 use App\Models\Order\Order;
+use FontLib\Table\Type\post;
 use Illuminate\Contracts\Pagination\Paginator;
 use App\Models\User;
 use App\Models\Order\Task;
 use App\Http\Requests\Order\CreateTaskRequest;
 use App\Models\Order\Bid;
+use Illuminate\Database\Eloquent\Collection;
 
 interface OrderRepository
 {
@@ -37,4 +39,11 @@ interface OrderRepository
     public function acceptTask(User $user,int $taskId): bool;
     public function createBidFromOrder(User $user,int $orderId,int $orderActivityId): Bid;
     public function createBidFromTask(User $user,int $taskId,int $taskActivityId): Bid;
+    public function getBidsByUserSyncDataPaginate(User $user,?OrderStatusEnum $status, int $page = 1, int $perPage = 10): Paginator;
+    public function getBidByUserSyncData(User $user,int|null $bidId): Bid|null;
+    public function invoiceBid(int $bidId,?array $specialistIds): bool;
+    public function acceptBid(User $user,int $bidId):bool;
+    public function instructBid(int $bidId,?array $supervisorIds):bool;
+    public function cancelBid(int $bidId): bool;
+    public function getSpecialistForBid(int $bidId): Collection;
 }

@@ -3,6 +3,7 @@
 namespace App\Models\Order;
 
 use App\Enum\Order\OrderStatusEnum;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -23,9 +24,16 @@ use App\Models\Order\OrderActivities;
  * @property int $accept_user_id
  * @property int $supervisor_user_id
  * @property int $order_id
+ * @property int $activity_id
+ * @property int $view_activity_id
  * @property int $radius
+ * @property int $count
  * @property float $price
  * @property bool $self_employed
+ * @property Carbon $date_start
+ * @property Carbon $date_end
+ * @property Carbon $date_activity
+ * @property bool $need_foto
  * @property OrderStatusEnum $status
  * @property-read User $user
  * @property-read User $acceptUser
@@ -34,6 +42,8 @@ use App\Models\Order\OrderActivities;
  * @property-read Place $place
  * @property-read Collection|BidActivity[] $bidActivities
  * @property-read Collection|ViewActivities[] $viewActivities
+ * @property-read ViewActivities $viewActivity
+ * @property-read Collection|User[] $acceptingUsers
  *
  */
 
@@ -53,17 +63,20 @@ class Bid extends Model
         'self_employed',
         'radius',
         'price',
-
         'view_activity_id',
         'count',
         'date_start',
         'date_end',
         'need_foto',
-        'date_activity'
+        'date_activity',
+        'activity_id'
     ];
 
     protected $casts = [
         'status' => OrderStatusEnum::class,
+        'date_start' => 'datetime',
+        'date_end' => 'datetime',
+        'date_activity' => 'datetime',
     ];
 
     public function place(): BelongsTo
@@ -99,5 +112,11 @@ class Bid extends Model
     public function viewActivity(): BelongsTo
     {
         return $this->belongsTo(ViewActivities::class, 'view_activity_id');
+    }
+
+    public function acceptingUsers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'accept_bid', 'bid_id', 'user_id')
+            ->withPivot('accepted');
     }
 }

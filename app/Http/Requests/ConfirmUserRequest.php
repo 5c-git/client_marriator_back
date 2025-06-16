@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use App\Http\Requests\FormRequest;
 use App\Enum\Role\RoleEnum;
 use App\Models\User;
+use Illuminate\Validation\Rule;
 
 /**
  * @property-read int userId
@@ -12,24 +13,14 @@ use App\Models\User;
  */
 class ConfirmUserRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
     public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
     public function rules()
     {
-        return [
+        $rules = [
             'userId' => 'required|integer|exists:users,id',
             'supervisorIds' => [
                 'sometimes',
@@ -52,18 +43,76 @@ class ConfirmUserRequest extends FormRequest
                     }
                 }
             ],
-            'change_order' => 'sometimes|date_format:H:i',
-            'cancel_order' => 'sometimes|date_format:H:i',
-            'live_order' => 'sometimes|date_format:H:i',
-            'change_task' => 'sometimes|date_format:H:i',
-            'cancel_task' => 'sometimes|date_format:H:i',
-            'live_task' => 'sometimes|date_format:H:i',
-            'repeat_bid' => 'sometimes|date_format:H:i',
-            'leave_bid' => 'sometimes|date_format:H:i',
-            'refusal_task' => 'sometimes|date_format:H:i',
-            'waiting_task' => 'sometimes|integer|min:1',
             'confirm' => 'required|boolean',
-
         ];
+
+        $timeFields = [
+            'change_order', 'cancel_order', 'live_order',
+            'change_task', 'cancel_task', 'live_task',
+            'repeat_bid', 'leave_bid', 'refusal_task'
+        ];
+
+        foreach ($timeFields as $field) {
+            $rules[$field] = 'sometimes|date_format:H:i';
+        }
+        $rules['waiting_task'] = 'sometimes|integer|min:1';
+
+        return $rules;
+    }
+
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            // Если есть ошибки в userId - пропускаем
+            if ($validator->errors()->has('userId')) {
+                return;
+            }
+
+            $user = User::find($this->userId);
+            $userRoles = $user->roles?->pluck('id')->toArray();
+
+            if (in_array(RoleEnum::client->value,$userRoles)) {
+                $timeFields = [
+                    'change_order', 'cancel_order', 'live_order',
+                ];
+                foreach ($timeFields as $field) {
+                    if (!$this->filled($field)) {
+                        $validator->errors()->add(
+                            $field,
+                            "Field $field required for user role"
+                        );
+                    }
+                }
+            }
+
+            if (in_array(RoleEnum::manager->value,$userRoles)) {
+                $timeFields = [
+                    'change_task', 'cancel_task', 'live_task',
+                    'repeat_bid', 'leave_bid'
+                ];
+                foreach ($timeFields as $field) {
+                    if (!$this->filled($field)) {
+                        $validator->errors()->add(
+                            $field,
+                            "Field $field required for user role"
+                        );
+                    }
+                }
+            }
+
+            if (in_array(RoleEnum::supervisor->value,$userRoles)) {
+                $timeFields = [
+                    'repeat_bid', 'leave_bid', 'refusal_task', 'waiting_task'
+                ];
+                foreach ($timeFields as $field) {
+                    if (!$this->filled($field)) {
+                        $validator->errors()->add(
+                            $field,
+                            "Field $field required for user role"
+                        );
+                    }
+                }
+            }
+        });
     }
 }

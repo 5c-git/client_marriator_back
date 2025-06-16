@@ -11,11 +11,13 @@ use App\Models\Order\OrderActivities;
 use App\Models\User;
 use App\Services\Local\Repositories\Contracts\OrderRepository;
 use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\Order\Task;
 use App\Models\Order\TaskActivity;
 use App\Http\Requests\Order\CreateTaskRequest;
+use App\Services\СoordinatesService;
 
 class EloquentOrderRepository implements OrderRepository
 {
@@ -189,7 +191,7 @@ class EloquentOrderRepository implements OrderRepository
                 ->where('status','!=',OrderStatusEnum::accepted->value);
             })
             ->orWhere(function ($query) use ($user,$status) {
-                $userIdsSupervisor = $user->supervisors?->pluck('id')->toArray();
+                $userIdsSupervisor = $user->supervisors->pluck('id')->toArray();
                 $userIdsSupervisor[] = $user->id;
                 $query = $query->whereIn('accept_user_id',$userIdsSupervisor);
                 if($status == OrderStatusEnum::accepted) {
@@ -212,7 +214,7 @@ class EloquentOrderRepository implements OrderRepository
                         ->where('id', $orderId);
                 })
                 ->orWhere(function ($query) use ($user, $orderId) {
-                    $userIdsSupervisor = $user->supervisors?->pluck('id')->toArray();
+                    $userIdsSupervisor = $user->supervisors->pluck('id')->toArray();
                     $userIdsSupervisor[] = $user->id;
                     $query->whereIn('accept_user_id',$userIdsSupervisor)
                         ->where('id', $orderId);
@@ -276,13 +278,15 @@ class EloquentOrderRepository implements OrderRepository
 
     public function getTaskByUserSyncDataPaginate(User $user, ?OrderStatusEnum $status, int $page = 1, int $perPage = 10): Paginator
     {
+        $userIdsSupervisor = $user->supervisors->pluck('id')->toArray();
+        $userIdsSupervisor[] = $user->id;
         return Task::query()
-            ->orWhere(function ($query) use ($user,$status) {
-                $query = $query->where('user_id', $user->id);
+            ->orWhere(function ($query) use ($user,$status,$userIdsSupervisor) {
+                $query = $query->whereIn('user_id', $userIdsSupervisor);
                 $query->where('status', $status->value);
             })
-            ->orWhere(function ($query) use ($user,$status) {
-                $query = $query->where('accept_user_id', $user->id);
+            ->orWhere(function ($query) use ($user,$status,$userIdsSupervisor) {
+                $query = $query->whereIn('accept_user_id', $userIdsSupervisor);
                 $query->where('status', $status->value);
             })
             ->orWhere(function ($query) use ($user,$status) {
@@ -295,12 +299,14 @@ class EloquentOrderRepository implements OrderRepository
 
     public function getTaskByUserSyncData(User $user, ?int $taskId): Task|null
     {
+        $userIdsSupervisor = $user->supervisors->pluck('id')->toArray();
+        $userIdsSupervisor[] = $user->id;
         if($taskId){
-            return Task::where(function ($query) use ($user,$taskId) {
-                    $query->where('user_id', $user->id)->where('id', $taskId);
+            return Task::where(function ($query) use ($user,$taskId,$userIdsSupervisor) {
+                    $query->whereIn('user_id', $userIdsSupervisor)->where('id', $taskId);
                 })
-                ->orWhere(function ($query) use ($user,$taskId) {
-                    $query->where('accept_user_id', $user->id)->where('id', $taskId);
+                ->orWhere(function ($query) use ($user,$taskId,$userIdsSupervisor) {
+                    $query->whereIn('accept_user_id', $userIdsSupervisor)->where('id', $taskId);
                 })
                 ->orWhere(function ($query) use ($user,$taskId) {
                     $userIdsSupervisor = $user->acceptedTasks?->pluck('id')->toArray();
@@ -358,11 +364,165 @@ class EloquentOrderRepository implements OrderRepository
 
     public function createBidFromOrder(User $user, int $orderId, int $orderActivityId): Bid
     {
+        $order = Order::where('id', $orderId)->first();
+        $bid = $order->bids?->where('activity_id', $orderActivityId)->first();
+        if(!$bid) {
+            $orderActivities = OrderActivities::where('id',$orderActivityId)->first();
+            $bid = new Bid([
+                'place_id' => $order->place_id,
+                'user_id' => $user->id,
+                'accept_user_id' => null,
+                'order_id' => $order->id,
+                'task_id' => null,
+                'status' => OrderStatusEnum::notAccepted,
+                'self_employed' => $order->self_employed,
+                'radius' => null,
+                'price' => null,
+                'view_activity_id' => $orderActivities->view_activity_id,
+                'count' => $orderActivities->count,
+                'date_start' => $orderActivities->date_start,
+                'date_end' => $orderActivities->date_end,
+                'need_foto' => $orderActivities->need_foto,
+                'date_activity' => $orderActivities->date_activity,
+                'activity_id' => $orderActivityId
+            ]);
 
+            $bid->save();
+        }
+
+        return $bid;
     }
 
     public function createBidFromTask(User $user, int $taskId, int $taskActivityId): Bid
     {
+        $task = Task::where('id', $taskId)->first();
+        $bid = $task->bid?->where('activity_id', $taskActivityId)->first();
+        if(!$bid) {
+            $taskActivities = OrderActivities::where('id',$taskActivityId)->first();
+            $bid = new Bid([
+                'place_id' => $task->place_id,
+                'user_id' => $user->id,
+                'accept_user_id' => null,
+                'order_id' => null,
+                'task_id' => $task->id,
+                'status' => OrderStatusEnum::notAccepted,
+                'self_employed' => $task->self_employed,
+                'radius' => null,
+                'price' => null,
+                'view_activity_id' => $taskActivities->view_activity_id,
+                'count' => $taskActivities->count,
+                'date_start' => $taskActivities->date_start,
+                'date_end' => $taskActivities->date_end,
+                'need_foto' => $taskActivities->need_foto,
+                'date_activity' => $taskActivities->date_activity,
+                'activity_id' => $taskActivityId
+            ]);
+
+            $bid->save();
+        }
+
+        return $bid;
+
+    }
+
+    public function getBidsByUserSyncDataPaginate(User $user, ?OrderStatusEnum $status, int $page = 1, int $perPage = 10): Paginator
+    {
+        $userIdsSupervisor = $user->supervisors->pluck('id')->toArray();
+        $userIdsSupervisor[] = $user->id;
+
+        return Bid::query()
+            ->orWhere(function ($query) use ($user,$status,$userIdsSupervisor) {
+                $query = $query->whereIn('user_id', $userIdsSupervisor);
+                $query->where('status', $status->value);
+            })
+            ->orWhere(function ($query) use ($user,$status,$userIdsSupervisor) {
+                $query = $query->whereIn('accept_user_id', $userIdsSupervisor);
+                $query->where('status', $status->value);
+            })
+            ->orWhere(function ($query) use ($user,$status) {
+                $userIdsSupervisor = $user->acceptedTasks?->pluck('id')->toArray();
+                $query = $query->whereIn('id', $userIdsSupervisor);
+                $query->where('status', $status->value);
+            })
+            ->simplePaginate($perPage);
+    }
+
+    public function getBidByUserSyncData(User $user, ?int $bidId): Bid|null
+    {
+        $userIdsSupervisor = $user->supervisors->pluck('id')->toArray();
+        $userIdsSupervisor[] = $user->id;
+        if($bidId){
+            return Bid::where(function ($query) use ($user,$bidId,$userIdsSupervisor) {
+                $query->whereIn('user_id', $userIdsSupervisor)->where('id', $bidId);
+            })
+                ->orWhere(function ($query) use ($user,$bidId,$userIdsSupervisor) {
+                    $query->whereIn('accept_user_id', $userIdsSupervisor)->where('id', $bidId);
+                })
+                ->orWhere(function ($query) use ($user,$bidId) {
+                    $userIdsSupervisor = $user->acceptedTasks?->pluck('id')->toArray();
+                    $query->whereIn('id', $userIdsSupervisor)->where('id', $bidId);
+                })->first();
+        }
+        return null;
+    }
+
+    public function invoiceBid(int $bidId, ?array $specialistIds): bool
+    {
+        $bid = Bid::query()->where('id',$bidId)->first();
+        $bid->status = OrderStatusEnum::accepted;
+        if(count($specialistIds)>0) {
+            $bid->accept_user_id = current($specialistIds);
+        }else{
+            $bid->accept_user_id = Auth::user()->id;
+        }
+        $bid->save();
+        return true;
+    }
+
+    public function acceptBid(User $user, int $bidId): bool
+    {
+        (bool)Bid::query()
+            ->where('id',$bidId)
+            ->update(
+                [
+                    'status'=>OrderStatusEnum::accepted,
+                    'accept_user_id' => $user->id
+                ]
+            );
+
+        return true;
+    }
+
+    public function instructBid(int $bidId, ?array $specialistIds): bool
+    {
+        if($specialistIds) {
+            $bid = Bid::query()->where('id', $bidId)->first();
+            $bid->status = OrderStatusEnum::notAccepted;
+            $bid->acceptingUsers()->syncWithoutDetaching($specialistIds);
+            $bid->save();
+        }
+        return true;
+    }
+
+    public function cancelBid(int $bidId): bool
+    {
+        $bid = Bid::query()->where('id',$bidId)->first();
+        $bid->status = OrderStatusEnum::canceled;
+        $bid->save();
+        return true;
+    }
+
+    public function getSpecialistForBid(int $bidId): Collection
+    {
+        $bid = Bid::query()->where('id',$bidId)->first();
+        $place = $bid->place;
+
+        return Collection::empty();
+        //СoordinatesService::isPointInRadius()
+        //'latitude',
+        //'longitude'
+       // 'latitude',
+       // 'longitude',
 
     }
 }
