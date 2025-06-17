@@ -64,6 +64,7 @@ use App\Http\Requests\Order\EntrustBidRequest;
 use App\Http\Requests\Order\AcceptBidRequest;
 use App\Http\Requests\Order\CancelBidRequest;
 use App\Http\Requests\Order\GetSpecialistForBisRequest;
+use App\Http\Requests\Order\UpdateBidRequest;
 
 class ManagerController extends Controller
 {

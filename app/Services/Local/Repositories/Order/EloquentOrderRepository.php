@@ -11,13 +11,15 @@ use App\Models\Order\OrderActivities;
 use App\Models\User;
 use App\Services\Local\Repositories\Contracts\OrderRepository;
 use Illuminate\Contracts\Pagination\Paginator;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\Order\Task;
 use App\Models\Order\TaskActivity;
 use App\Http\Requests\Order\CreateTaskRequest;
-use App\Services\СoordinatesService;
+use App\Services\CoordinatesService;
+use App\Models\Fields\Fields;
+use App\Models\Fields\Directory\ViewActivities;
 
 class EloquentOrderRepository implements OrderRepository
 {
@@ -517,12 +519,22 @@ class EloquentOrderRepository implements OrderRepository
         $bid = Bid::query()->where('id',$bidId)->first();
         $place = $bid->place;
 
-        return Collection::empty();
-        //СoordinatesService::isPointInRadius()
-        //'latitude',
-        //'longitude'
-       // 'latitude',
-       // 'longitude',
-
+        $field = Fields::where('directory',ViewActivities::class)->first();
+        if($field && $bid->viewActivity && $place) {
+            $users = User::whereJsonContains('data->'.$field->uuid, $bid->viewActivity->uuid)->get();
+            $userInRadius = collect();
+            foreach ($users as $user) {
+                if (CoordinatesService::isPointInRadius(
+                    $user->latitude,
+                    $user->longitude,
+                    $place->latitude,
+                    $place->longitude,
+                    $user->mapRadius
+                )) {
+                    $userInRadius->push($user);
+                }
+            }
+        }
+        return $userInRadius;
     }
 }

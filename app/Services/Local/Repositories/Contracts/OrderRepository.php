@@ -12,7 +12,7 @@ use App\Models\User;
 use App\Models\Order\Task;
 use App\Http\Requests\Order\CreateTaskRequest;
 use App\Models\Order\Bid;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
 
 interface OrderRepository
 {

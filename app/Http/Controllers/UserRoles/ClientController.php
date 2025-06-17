@@ -144,4 +144,12 @@ class ClientController extends Controller
             return new ErrorResource();
         }
     }
+
+    public function getViewActivitiesForOrder(){
+
+    }
+
+    public function getPlaceForOrder(){
+
+    }
 }

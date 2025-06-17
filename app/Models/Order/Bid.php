@@ -41,7 +41,6 @@ use App\Models\Order\OrderActivities;
  * @property-read Order $order
  * @property-read Place $place
  * @property-read Collection|BidActivity[] $bidActivities
- * @property-read Collection|ViewActivities[] $viewActivities
  * @property-read ViewActivities $viewActivity
  * @property-read Collection|User[] $acceptingUsers
  *

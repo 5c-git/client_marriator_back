@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-class СoordinatesService
+class CoordinatesService
 {
     public const RADIUS_EARTH = 6371;
 
