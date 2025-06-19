@@ -8,7 +8,7 @@ use App\Models\Order\Bid;
 use App\Models\Order\Order;
 use Illuminate\Validation\Rule;
 
-class UpdateBidRequest extends FormRequest
+class BidDataRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -48,7 +48,8 @@ class UpdateBidRequest extends FormRequest
                     }
                 },
             ],
-
+            'radius' => 'required|integer',
+            'price' => 'required|integer',
         ];
     }
 }

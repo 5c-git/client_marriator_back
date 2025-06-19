@@ -3,6 +3,7 @@
 namespace App\Services\Local\Repositories\Order;
 
 use App\Enum\Order\OrderStatusEnum;
+use App\Http\Requests\Order\BidDataRequest;
 use App\Http\Requests\Order\ConvertTaskRequest;
 use App\Http\Requests\Order\CreateOrderRequest;
 use App\Models\Order\Bid;
@@ -20,6 +21,7 @@ use App\Http\Requests\Order\CreateTaskRequest;
 use App\Services\CoordinatesService;
 use App\Models\Fields\Fields;
 use App\Models\Fields\Directory\ViewActivities;
+use App\Models\Fields\Directory\TaxStatus;
 
 class EloquentOrderRepository implements OrderRepository
 {
@@ -518,10 +520,17 @@ class EloquentOrderRepository implements OrderRepository
     {
         $bid = Bid::query()->where('id',$bidId)->first();
         $place = $bid->place;
-
-        $field = Fields::where('directory',ViewActivities::class)->first();
-        if($field && $bid->viewActivity && $place) {
-            $users = User::whereJsonContains('data->'.$field->uuid, $bid->viewActivity->uuid)->get();
+        if($bid->self_employed){
+            $status = TaxStatus::query()->where('id',2)->first()?->uuid;
+        }else{
+            $status = TaxStatus::query()->where('id',1)->first()?->uuid;
+        }
+        $fieldView = Fields::where('directory',ViewActivities::class)->first();
+        $fieldStat = Fields::where('directory',TaxStatus::class)->first();
+        if($fieldView && $bid->viewActivity && $place) {
+            $users = User::whereJsonContains('data->'.$fieldView->uuid, $bid->viewActivity->uuid)
+                ->where('data->'.$fieldStat->uuid, $status)
+                ->get();
             $userInRadius = collect();
             foreach ($users as $user) {
                 if (CoordinatesService::isPointInRadius(
@@ -536,5 +545,14 @@ class EloquentOrderRepository implements OrderRepository
             }
         }
         return $userInRadius;
+    }
+
+    public function updateBid(BidDataRequest $bidRequest): Bid
+    {
+        $bid = Bid::where('id',$bidRequest->bidId)->first();
+        $bid->radius = $bidRequest->radius;
+        $bid->price = $bidRequest->price;
+        $bid->save();
+        return $bid;
     }
 }

@@ -18,6 +18,7 @@ use App\Http\Requests\UserData\GetPlaceRequest;
 use App\Http\Requests\UserData\GetProjectRequest;
 use App\Http\Requests\UserData\SetPlaceRequest as SetPlaceModerationRequest;
 use App\Http\Requests\UserData\SetProjectRequest;
+use App\Http\Requests\UserData\SetUserImgRequest;
 use FontLib\Table\Type\glyf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -216,6 +217,45 @@ class UniversalController extends Controller
         }
         if(in_array('admin',$this->roles)){
             return app(\App\Http\Controllers\UserRoles\AdminController::class)->setProject($request);
+        }
+        return response()->json(['message' => 'Role not allowed.'], 403);
+    }
+
+    public function setUserImg(SetUserImgRequest $request){
+        if(in_array('supervisor',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\SupervisorController::class)->setUserImg($request);
+        }
+        if(in_array('manager',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\ManagerController::class)->setUserImg($request);
+        }
+        if(in_array('admin',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\AdminController::class)->setUserImg($request);
+        }
+        return response()->json(['message' => 'Role not allowed.'], 403);
+    }
+
+    public function getViewActivitiesForOrder(){
+        if(in_array('supervisor',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\SupervisorController::class)->getViewActivitiesForOrder();
+        }
+        if(in_array('manager',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\ManagerController::class)->getViewActivitiesForOrder();
+        }
+        if(in_array('client',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\ClientController::class)->getViewActivitiesForOrder();
+        }
+        return response()->json(['message' => 'Role not allowed.'], 403);
+    }
+
+    public function getPlaceForOrder(){
+        if(in_array('supervisor',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\SupervisorController::class)->getPlace();
+        }
+        if(in_array('manager',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\ManagerController::class)->getPlace();
+        }
+        if(in_array('client',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\ClientController::class)->getPlace();
         }
         return response()->json(['message' => 'Role not allowed.'], 403);
     }

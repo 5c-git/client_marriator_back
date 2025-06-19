@@ -3,6 +3,7 @@
 namespace App\Services\Local\Repositories\Order;
 
 use App\Enum\Order\OrderStatusEnum;
+use App\Http\Requests\Order\BidDataRequest;
 use App\Http\Requests\Order\ConvertTaskRequest;
 use App\Http\Requests\Order\CreateOrderRequest;
 use App\Http\Requests\Order\CreateTaskRequest;
@@ -157,5 +158,10 @@ class CachingOrderRepository implements OrderRepository
     public function getSpecialistForBid(int $bidId): Collection
     {
         return $this->orders->getSpecialistForBid($bidId);
+    }
+
+    public function updateBid(BidDataRequest $bidRequest): Bid
+    {
+        return $this->orders->updateBid($bidRequest);
     }
 }

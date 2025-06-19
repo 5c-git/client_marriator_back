@@ -126,7 +126,9 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
 
             //Route::post('/convertTask','App\Http\Controllers\UserRoles\ManagerController@convertTask')->name('convertTask');
             //Route::post('/acceptOrder','App\Http\Controllers\UserRoles\ManagerController@acceptOrder')->name('acceptOrderadmin');
+            //Route::get('/getViewActivitiesForOrder','App\Http\Controllers\UserRoles\ClientController@getViewActivitiesForOrder')->name('getViewActivitiesForOrder');
 
+            //Route::get('/getPlaceForOrder','App\Http\Controllers\UserRoles\ClientController@getPlace')->name('getPlaceForOrderCreate');
 
 
 
@@ -155,6 +157,9 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
         Route::get('/getTasks','App\Http\Controllers\UniversalController@getTasks')->name('getTasks');
         Route::get('/getTask','App\Http\Controllers\UniversalController@getTask')->name('getTask');
 
+        Route::get('/getViewActivitiesForOrder','App\Http\Controllers\UniversalController@getViewActivitiesForOrder')->name('getViewActivitiesForOrder');
+        Route::get('/getPlaceForOrder','App\Http\Controllers\UniversalController@getPlaceForOrder')->name('getPlaceForOrderCreate');
+
         Route::group(['prefix' => 'moderation'], function () {
             Route::get('/getProject', 'App\Http\Controllers\UniversalController@getProject')->name('getProject');
             Route::post('/setProject', 'App\Http\Controllers\UniversalController@setProject')->name('setProject');
@@ -163,7 +168,8 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
             Route::post('/setPlaceModeration', 'App\Http\Controllers\UniversalController@setPlaceModeration')->name('setPlaceModeration');
             Route::post('/delPlaceModeration', 'App\Http\Controllers\UniversalController@delPlaceModeration')->name('delPlaceModeration');
             Route::get('/getModerationClient','App\Http\Controllers\UniversalController@getModerationClient')->name('getModerationClient');
-            Route::get('/confirmUserRegister','App\Http\Controllers\UniversalController@confirmUserRegister')->name('confirmUserRegister');
+            Route::post('/confirmUserRegister','App\Http\Controllers\UniversalController@confirmUserRegister')->name('confirmUserRegister');
+            Route::post('/setUserImg','App\Http\Controllers\UniversalController@setUserImg')->name('setUserImg');
         });
     });
 

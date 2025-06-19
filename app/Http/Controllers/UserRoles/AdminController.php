@@ -11,6 +11,7 @@ use App\Http\Requests\UserData\GetPlaceRequest;
 use App\Http\Requests\UserData\GetProjectRequest;
 use App\Http\Requests\UserData\SetPlaceRequest as SetPlaceModerationRequest;
 use App\Http\Requests\UserData\SetProjectRequest;
+use App\Http\Requests\UserData\SetUserImgRequest;
 use App\Http\Resources\ErrorResource;
 use App\Http\Resources\Order\OrderResource;
 use App\Http\Resources\PlaceResource;
@@ -78,6 +79,27 @@ class AdminController extends Controller
         }
         if($checkRole){
             $user->project()->syncWithoutDetaching($request->projectId);
+            return new SuccessResource();
+        }else{
+            return new ErrorResource();
+        }
+    }
+
+    public function setUserImg(SetUserImgRequest $request){
+        $user = User::where('id',$request->userId)->first();
+        $userRoles = $user->roles?->pluck('id')->toArray();
+        $checkRole = false;
+        foreach ($userRoles as $userRole){
+            if(in_array($userRole,[RoleEnum::manager->value,RoleEnum::client->value,RoleEnum::specialist->value])){
+                $checkRole = true;
+                break;
+            }
+        }
+        if($checkRole){
+            $project = Project::where('id',$request->projectId)->first();
+            $projectLogo = $project?->brands()?->first()?->logo;
+            $user->img = $projectLogo;
+            $user->save();
             return new SuccessResource();
         }else{
             return new ErrorResource();

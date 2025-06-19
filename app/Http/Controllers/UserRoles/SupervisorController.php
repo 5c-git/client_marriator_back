@@ -9,9 +9,11 @@ use App\Enum\User\UserStatusModerationEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ConfirmUserRequest;
 use App\Http\Requests\Order\AcceptBidRequest;
+use App\Http\Requests\Order\BidDataRequest;
 use App\Http\Requests\Order\CancelBidRequest;
 use App\Http\Requests\Order\EntrustBidRequest;
 use App\Http\Requests\Order\GetOrderRequest;
+use App\Http\Requests\Order\GetSpecialistForBisRequest;
 use App\Http\Requests\Order\GetTaskRequest;
 use App\Http\Requests\PaginatorRequest;
 use App\Http\Requests\SetUserDataRequest;
@@ -21,16 +23,20 @@ use App\Http\Requests\UserData\GetPlaceRequest;
 use App\Http\Requests\UserData\GetProjectRequest;
 use App\Http\Requests\UserData\SetPlaceRequest as SetPlaceModerationRequest;
 use App\Http\Requests\UserData\SetProjectRequest;
+use App\Http\Requests\UserData\SetUserImgRequest;
 use App\Http\Resources\BrandResource;
 use App\Http\Resources\ErrorResource;
 use App\Http\Resources\Order\OrderResource;
 use App\Http\Resources\Order\ShortOrderResource;
 use App\Http\Resources\Order\TaskShortResource;
 use App\Http\Resources\ProjectResource;
+use App\Http\Resources\ShortUserResource;
 use App\Http\Resources\SuccessResource;
 use App\Http\Resources\UserResource;
+use App\Http\Resources\ViewActivityResource;
 use App\Models\Fields\Directory\Place;
 use App\Models\Fields\Directory\Project;
+use App\Models\Fields\Directory\ViewActivities;
 use App\Models\Order\Bid;
 use App\Models\Order\Task;
 use App\Models\User;
@@ -95,6 +101,27 @@ class SupervisorController extends Controller
         }
         if($checkRole){
             $user->project()->syncWithoutDetaching($request->projectId);
+            return new SuccessResource();
+        }else{
+            return new ErrorResource();
+        }
+    }
+
+    public function setUserImg(SetUserImgRequest $request){
+        $user = User::where('id',$request->userId)->first();
+        $userRoles = $user->roles?->pluck('id')->toArray();
+        $checkRole = false;
+        foreach ($userRoles as $userRole){
+            if(in_array($userRole,[RoleEnum::manager->value,RoleEnum::client->value,RoleEnum::specialist->value])){
+                $checkRole = true;
+                break;
+            }
+        }
+        if($checkRole){
+            $project = Project::where('id',$request->projectId)->first();
+            $projectLogo = $project?->brands()?->first()?->logo;
+            $user->img = $projectLogo;
+            $user->save();
             return new SuccessResource();
         }else{
             return new ErrorResource();
@@ -357,6 +384,10 @@ class SupervisorController extends Controller
         );
     }
 
+    public function getViewActivitiesForOrder(){
+        return ViewActivityResource::collection(ViewActivities::all());
+    }
+
     public function invoiceBid(EntrustBidRequest $request): ErrorResource|SuccessResource
     {
         if($request->bidId){
@@ -396,6 +427,14 @@ class SupervisorController extends Controller
         }else{
             return new ErrorResource();
         }
+    }
+
+    public function getSpecialistForBid(GetSpecialistForBisRequest $request){
+        return ShortUserResource::collection($this->orderRepository->getSpecialistForBid($request->bidId));
+    }
+
+    public function updateBid(BidDataRequest $request){
+        return new BidResource($this->orderRepository->updateBid($request->bidId));
     }
 
 }

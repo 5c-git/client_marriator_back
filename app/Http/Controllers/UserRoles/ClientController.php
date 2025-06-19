@@ -13,12 +13,14 @@ use App\Http\Resources\Order\OrderResource;
 use App\Http\Resources\Order\ShortOrderResource;
 use App\Http\Resources\PlaceResource;
 use App\Http\Resources\SuccessResource;
+use App\Models\Fields\Directory\ViewActivities;
 use App\Services\Local\Repositories\Contracts\OrderRepository;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\Order\OrderByIdRequest;
 use App\Http\Resources\ErrorResource;
 use App\Http\Requests\DelPlaceRequest;
 use App\Http\Requests\SetUserDataRequest;
+use App\Http\Resources\ViewActivityResource;
 
 class ClientController extends Controller
 {
@@ -146,10 +148,7 @@ class ClientController extends Controller
     }
 
     public function getViewActivitiesForOrder(){
-
+        return ViewActivityResource::collection(ViewActivities::all());
     }
 
-    public function getPlaceForOrder(){
-
-    }
 }

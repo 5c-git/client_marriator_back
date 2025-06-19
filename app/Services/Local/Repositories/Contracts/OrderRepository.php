@@ -13,6 +13,7 @@ use App\Models\Order\Task;
 use App\Http\Requests\Order\CreateTaskRequest;
 use App\Models\Order\Bid;
 use Illuminate\Support\Collection;
+use App\Http\Requests\Order\BidDataRequest;
 
 interface OrderRepository
 {
@@ -46,4 +47,6 @@ interface OrderRepository
     public function instructBid(int $bidId,?array $supervisorIds):bool;
     public function cancelBid(int $bidId): bool;
     public function getSpecialistForBid(int $bidId): Collection;
+    public function updateBid(BidDataRequest $bidRequest): Bid;
+
 }
