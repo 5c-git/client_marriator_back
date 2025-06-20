@@ -15,6 +15,7 @@ use App\Http\Requests\Order\EntrustBidRequest;
 use App\Http\Requests\Order\GetOrderRequest;
 use App\Http\Requests\Order\GetSpecialistForBisRequest;
 use App\Http\Requests\Order\GetTaskRequest;
+use App\Http\Requests\Order\GetViewActivitiesForOrderRequest;
 use App\Http\Requests\PaginatorRequest;
 use App\Http\Requests\SetUserDataRequest;
 use App\Http\Requests\UserData\DelPlaceRequest as DelPlaceModerationRequest;
@@ -38,6 +39,7 @@ use App\Models\Fields\Directory\Place;
 use App\Models\Fields\Directory\Project;
 use App\Models\Fields\Directory\ViewActivities;
 use App\Models\Order\Bid;
+use App\Models\Order\Order;
 use App\Models\Order\Task;
 use App\Models\User;
 use App\Services\ApiTokenService\ApiTokenService;
@@ -384,8 +386,13 @@ class SupervisorController extends Controller
         );
     }
 
-    public function getViewActivitiesForOrder(){
-        return ViewActivityResource::collection(ViewActivities::all());
+    public function getViewActivitiesForOrder(GetViewActivitiesForOrderRequest $request){
+        $order = Order::where('id',$request->orderId)->first();
+        $viewActivities = $order->place->project
+            ->flatMap(fn($project) => $project->viewActivities)
+            ->unique('id');
+        $viewActivities = $viewActivities->where('self_employed', $order->self_employed);
+        return ViewActivityResource::collection($viewActivities);
     }
 
     public function invoiceBid(EntrustBidRequest $request): ErrorResource|SuccessResource

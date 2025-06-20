@@ -7,7 +7,7 @@ use App\Models\Order\Order;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
-class CreateOrderRequest extends FormRequest
+class UpdateOrderRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -38,6 +38,20 @@ class CreateOrderRequest extends FormRequest
 
                     if (!in_array($value,$places)) {
                         $fail('Not your place');
+                    }
+                },
+            ],
+            'selfEmployed' => 'required|boolean',
+            'orderId' => [
+                'required',
+                'integer',
+                function ($attribute, $value, $fail) {
+                    $orderExists = Order::query()->where('id', $value)
+                        ->where('user_id', auth()->id())
+                        ->exists();
+
+                    if (!$orderExists) {
+                        $fail('Not your order');
                     }
                 },
             ],

@@ -5,6 +5,7 @@ namespace App\Services\Local\Repositories\Contracts;
 use App\Enum\Order\OrderStatusEnum;
 use App\Http\Requests\Order\ConvertTaskRequest;
 use App\Http\Requests\Order\CreateOrderRequest;
+use App\Http\Requests\Order\DeleteOrderActivityRequest;
 use App\Models\Order\Order;
 use FontLib\Table\Type\post;
 use Illuminate\Contracts\Pagination\Paginator;
@@ -14,10 +15,13 @@ use App\Http\Requests\Order\CreateTaskRequest;
 use App\Models\Order\Bid;
 use Illuminate\Support\Collection;
 use App\Http\Requests\Order\BidDataRequest;
+use App\Http\Requests\Order\CreateOrderActivityRequest;
+use App\Http\Requests\Order\UpdateOrderRequest;
 
 interface OrderRepository
 {
     public function createOrder(CreateOrderRequest $orderRequest,int $userId): Order;
+    public function createOrderActivity(CreateOrderActivityRequest $request): Order;
     public function createTask(CreateTaskRequest $taskRequest,int $userId): Task;
 
     public function getUserOrderByStatusPaginate(?OrderStatusEnum $status, int $userId, int $page = 1, int $perPage = 10): Paginator;
@@ -27,7 +31,8 @@ interface OrderRepository
     public function cancelOrder(int $orderId): bool;
     public function sendOrder(int $orderId): bool;
 
-    public function updateOrder(CreateOrderRequest $orderRequest): Order;
+    public function updateOrder(UpdateOrderRequest $orderRequest): Order;
+    public function deleteOrderActivity(DeleteOrderActivityRequest $orderRequest): Order;
     public function updateTask(CreateTaskRequest $taskRequest): Task;
     public function acceptedOrder(User $user,int $orderId): bool;
     public function convertTask(User $user,ConvertTaskRequest $request): Task;

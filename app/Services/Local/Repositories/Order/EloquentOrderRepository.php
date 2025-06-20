@@ -6,6 +6,7 @@ use App\Enum\Order\OrderStatusEnum;
 use App\Http\Requests\Order\BidDataRequest;
 use App\Http\Requests\Order\ConvertTaskRequest;
 use App\Http\Requests\Order\CreateOrderRequest;
+use App\Http\Requests\Order\DeleteOrderActivityRequest;
 use App\Models\Order\Bid;
 use App\Models\Order\Order;
 use App\Models\Order\OrderActivities;
@@ -22,6 +23,8 @@ use App\Services\CoordinatesService;
 use App\Models\Fields\Fields;
 use App\Models\Fields\Directory\ViewActivities;
 use App\Models\Fields\Directory\TaxStatus;
+use App\Http\Requests\Order\CreateOrderActivityRequest;
+use App\Http\Requests\Order\UpdateOrderRequest;
 
 class EloquentOrderRepository implements OrderRepository
 {
@@ -30,24 +33,53 @@ class EloquentOrderRepository implements OrderRepository
         $order = Order::create([
             'place_id' => $orderRequest->placeId,
             'user_id' => $userId,
-            'self_employed' => $orderRequest->selfEmployed,
+            'self_employed' => false,
             'status' => OrderStatusEnum::new->value
         ]);
 
-        foreach ($orderRequest->viewActivities as $activity) {
-            $orderActivity = new OrderActivities([
-                'view_activity_id' => $activity['viewActivityId'],
-                'count' => $activity['count'],
-                'date_start' => $activity['dateStart'],
-                'date_end' => $activity['dateEnd'],
-                'need_foto' => $activity['needFoto'],
-                'date_activity' => $this->processDateActivity($activity['dateActivity']),
-            ]);
+        return $order;
+    }
 
-            $order->orderActivities()->save($orderActivity);
+    public function createOrderActivity(CreateOrderActivityRequest $request): Order
+    {
+        $orderActivity = new OrderActivities([
+            'view_activity_id' => $request->viewActivityId,
+            'count' => $request->count,
+            'date_start' => $request->dateStart,
+            'date_end' => $request->dateEnd,
+            'need_foto' => $request->needFoto,
+            'date_activity' => $this->processDateActivity($request->dateActivity),
+            'order_id' => $request->orderId
+        ]);
+        $orderActivity->save();
+
+        return Order::where('id',$request->orderId)->first();
+    }
+
+    public function updateOrder(UpdateOrderRequest $orderRequest): Order
+    {
+        $order = Order::where('id', $orderRequest->orderId)
+            ->where('user_id', auth()->id())
+            ->firstOrFail();
+
+        DB::transaction(function () use ($order, $orderRequest) {
+            $order->update([
+                'place_id' => $orderRequest->placeId??$order->placeId,
+                'self_employed' => $orderRequest->selfEmployed??$order->selfEmployed,
+            ]);
+        });
+
+        if($orderRequest->placeId){
+
         }
 
-        return $order;
+        return $order->fresh();
+    }
+
+    public function deleteOrderActivity(DeleteOrderActivityRequest $orderRequest): Order
+    {
+        OrderActivities::where('id',$orderRequest->orderActivityId)->where('order_id',$orderRequest->orderId)->delete();
+        return Order::where('id',$orderRequest->orderId)->first();
     }
     public function createTask(CreateTaskRequest $taskRequest, int $userId): Task
     {
@@ -153,35 +185,6 @@ class EloquentOrderRepository implements OrderRepository
             ->update(
                 ['status'=>OrderStatusEnum::notAccepted->value]
             );
-    }
-
-    public function updateOrder(CreateOrderRequest $orderRequest): Order
-    {
-        $order = Order::where('id', $orderRequest->orderId)
-            ->where('user_id', auth()->id())
-            ->firstOrFail();
-
-        DB::transaction(function () use ($order, $orderRequest) {
-            $order->update([
-                'place_id' => $orderRequest->placeId,
-                'self_employed' => $orderRequest->selfEmployed,
-            ]);
-
-            $order->orderActivities()->delete();
-
-            foreach ($orderRequest->viewActivities as $activity) {
-                $order->orderActivities()->create([
-                    'view_activity_id' => $activity['viewActivityId'],
-                    'count' => $activity['count'],
-                    'date_start' => $activity['dateStart'],
-                    'date_end' => $activity['dateEnd'],
-                    'need_foto' => $activity['needFoto'],
-                    'date_activity' => $this->processDateActivity($activity['dateActivity']),
-                ]);
-            }
-        });
-
-        return $order->fresh();
     }
 
     public function getOrderByUserSyncDataPaginate(User $user,?OrderStatusEnum $status, int $page = 1, int $perPage = 10): Paginator

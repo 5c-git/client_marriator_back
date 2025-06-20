@@ -8,6 +8,7 @@ use App\Http\Requests\DelPlaceRequest;
 use App\Http\Requests\Order\AcceptOrderRequest;
 use App\Http\Requests\Order\GetOrderRequest;
 use App\Http\Requests\Order\GetTaskRequest;
+use App\Http\Requests\Order\GetViewActivitiesForOrderRequest;
 use App\Http\Requests\PaginatorRequest;
 use App\Http\Requests\SetBrandImgRequest;
 use App\Http\Requests\SetPlaceRequest;
@@ -234,15 +235,15 @@ class UniversalController extends Controller
         return response()->json(['message' => 'Role not allowed.'], 403);
     }
 
-    public function getViewActivitiesForOrder(){
+    public function getViewActivitiesForOrder(GetViewActivitiesForOrderRequest $request){
         if(in_array('supervisor',$this->roles)){
-            return app(\App\Http\Controllers\UserRoles\SupervisorController::class)->getViewActivitiesForOrder();
+            return app(\App\Http\Controllers\UserRoles\SupervisorController::class)->getViewActivitiesForOrder($request);
         }
         if(in_array('manager',$this->roles)){
-            return app(\App\Http\Controllers\UserRoles\ManagerController::class)->getViewActivitiesForOrder();
+            return app(\App\Http\Controllers\UserRoles\ManagerController::class)->getViewActivitiesForOrder($request);
         }
         if(in_array('client',$this->roles)){
-            return app(\App\Http\Controllers\UserRoles\ClientController::class)->getViewActivitiesForOrder();
+            return app(\App\Http\Controllers\UserRoles\ClientController::class)->getViewActivitiesForOrder($request);
         }
         return response()->json(['message' => 'Role not allowed.'], 403);
     }

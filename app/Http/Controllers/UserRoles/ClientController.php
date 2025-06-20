@@ -14,6 +14,7 @@ use App\Http\Resources\Order\ShortOrderResource;
 use App\Http\Resources\PlaceResource;
 use App\Http\Resources\SuccessResource;
 use App\Models\Fields\Directory\ViewActivities;
+use App\Models\Order\Order;
 use App\Services\Local\Repositories\Contracts\OrderRepository;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\Order\OrderByIdRequest;
@@ -21,6 +22,10 @@ use App\Http\Resources\ErrorResource;
 use App\Http\Requests\DelPlaceRequest;
 use App\Http\Requests\SetUserDataRequest;
 use App\Http\Resources\ViewActivityResource;
+use App\Http\Requests\Order\UpdateOrderRequest;
+use App\Http\Requests\Order\CreateOrderActivityRequest;
+use App\Http\Requests\Order\DeleteOrderActivityRequest;
+use App\Http\Requests\Order\GetViewActivitiesForOrderRequest;
 
 class ClientController extends Controller
 {
@@ -102,6 +107,29 @@ class ClientController extends Controller
         );
     }
 
+    public function createOrderActivity(CreateOrderActivityRequest $request)
+    {
+        return new OrderResource(
+            $this->orderRepository->createOrderActivity(
+                $request
+            )
+        );
+    }
+
+    public function deleteOrderActivity(DeleteOrderActivityRequest $request)
+    {
+        return new OrderResource(
+            $this->orderRepository->deleteOrderActivity(
+                $request
+            )
+        );
+    }
+
+    public function updateOrder(UpdateOrderRequest $request): ErrorResource|OrderResource
+    {
+        return new OrderResource($this->orderRepository->updateOrder($request));
+    }
+
     public function getOrders(GetOrderRequest $request)
     {
         return ShortOrderResource::collection(
@@ -138,17 +166,13 @@ class ClientController extends Controller
             new ErrorResource();
     }
 
-    public function updateOrder(CreateOrderRequest $request): ErrorResource|OrderResource
-    {
-        if($request->orderId){
-            return new OrderResource($this->orderRepository->updateOrder($request));
-        }else{
-            return new ErrorResource();
-        }
-    }
-
-    public function getViewActivitiesForOrder(){
-        return ViewActivityResource::collection(ViewActivities::all());
+    public function getViewActivitiesForOrder(GetViewActivitiesForOrderRequest $request){
+        $order = Order::where('id',$request->orderId)->first();
+        $viewActivities = $order->place->project
+            ->flatMap(fn($project) => $project->viewActivities)
+            ->unique('id');
+        $viewActivities = $viewActivities->where('self_employed', $order->self_employed);
+        return ViewActivityResource::collection($viewActivities);
     }
 
 }

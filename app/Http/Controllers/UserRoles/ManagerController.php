@@ -16,6 +16,7 @@ use App\Http\Requests\Order\CreateOrderRequest;
 use App\Http\Requests\Order\GetBidRequest;
 use App\Http\Requests\Order\GetBidsRequest;
 use App\Http\Requests\Order\GetOrderRequest;
+use App\Http\Requests\Order\GetViewActivitiesForOrderRequest;
 use App\Http\Requests\PaginatorRequest;
 use App\Http\Requests\SetBrandImgRequest;
 use App\Http\Requests\SetPlaceRequest;
@@ -34,6 +35,7 @@ use App\Models\Fields\Directory\Project;
 use App\Models\Fields\Directory\ViewActivities;
 use App\Models\Fields\Fields;
 use App\Models\Order\Bid;
+use App\Models\Order\Order;
 use App\Models\Order\Task;
 use App\Models\User;
 use App\Services\ApiTokenService\ApiTokenService;
@@ -487,8 +489,13 @@ class ManagerController extends Controller
         );
     }
 
-    public function getViewActivitiesForOrder(){
-        return ViewActivityResource::collection(ViewActivities::all());
+    public function getViewActivitiesForOrder(GetViewActivitiesForOrderRequest $request){
+        $order = Order::where('id',$request->orderId)->first();
+        $viewActivities = $order->place->project
+            ->flatMap(fn($project) => $project->viewActivities)
+            ->unique('id');
+        $viewActivities = $viewActivities->where('self_employed', $order->self_employed);
+        return ViewActivityResource::collection($viewActivities);
     }
 
     public function getBids(GetBidsRequest $request)

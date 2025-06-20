@@ -5,8 +5,10 @@ namespace App\Services\Local\Repositories\Order;
 use App\Enum\Order\OrderStatusEnum;
 use App\Http\Requests\Order\BidDataRequest;
 use App\Http\Requests\Order\ConvertTaskRequest;
+use App\Http\Requests\Order\CreateOrderActivityRequest;
 use App\Http\Requests\Order\CreateOrderRequest;
 use App\Http\Requests\Order\CreateTaskRequest;
+use App\Http\Requests\Order\DeleteOrderActivityRequest;
 use App\Models\Order\Bid;
 use App\Models\Order\Order;
 use App\Models\Order\Task;
@@ -15,6 +17,7 @@ use App\Services\Local\Repositories\Contracts\OrderRepository;
 use Illuminate\Cache\CacheManager;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Support\Collection;
+use App\Http\Requests\Order\UpdateOrderRequest;
 
 class CachingOrderRepository implements OrderRepository
 {
@@ -45,7 +48,7 @@ class CachingOrderRepository implements OrderRepository
         return $this->orders->sendOrder($orderId);
     }
 
-    public function updateOrder(CreateOrderRequest $orderRequest): Order
+    public function updateOrder(UpdateOrderRequest $orderRequest): Order
     {
         return $this->orders->updateOrder($orderRequest);
     }
@@ -163,5 +166,15 @@ class CachingOrderRepository implements OrderRepository
     public function updateBid(BidDataRequest $bidRequest): Bid
     {
         return $this->orders->updateBid($bidRequest);
+    }
+
+    public function createOrderActivity(CreateOrderActivityRequest $request): Order
+    {
+        return $this->orders->createOrderActivity($request);
+    }
+
+    public function deleteOrderActivity(DeleteOrderActivityRequest $orderRequest): Order
+    {
+        return $this->orders->deleteOrderActivity($orderRequest);
     }
 }

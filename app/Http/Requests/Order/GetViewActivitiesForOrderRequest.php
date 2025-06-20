@@ -4,10 +4,9 @@ namespace App\Http\Requests\Order;
 
 use App\Http\Requests\FormRequest;
 use App\Models\Order\Order;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
-class CreateOrderRequest extends FormRequest
+class GetViewActivitiesForOrderRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,17 +26,16 @@ class CreateOrderRequest extends FormRequest
     public function rules()
     {
         return [
-            'placeId' => [
+            'orderId' => [
                 'required',
                 'integer',
-                'exists:directory_place,id',
                 function ($attribute, $value, $fail) {
-                    $places = Auth::user()->project
-                        ->flatMap(fn($project) => $project->places)
-                        ->unique('id')?->pluck('id')?->toArray();
+                    $orderExists = Order::query()->where('id', $value)
+                        ->where('user_id', auth()->id())
+                        ->exists();
 
-                    if (!in_array($value,$places)) {
-                        $fail('Not your place');
+                    if (!$orderExists) {
+                        $fail('Not your order');
                     }
                 },
             ],

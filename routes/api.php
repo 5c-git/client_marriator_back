@@ -105,6 +105,8 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
             Route::post('/cancelOrder','App\Http\Controllers\UserRoles\ClientController@cancelOrder')->name('cancelOrder');
             Route::post('/sendOrder','App\Http\Controllers\UserRoles\ClientController@sendOrder')->name('sendOrder');
             Route::post('/updateOrder','App\Http\Controllers\UserRoles\ClientController@updateOrder')->name('updateOrder');
+            Route::post('/createOrderActivity','App\Http\Controllers\UserRoles\ClientController@createOrderActivity')->name('createOrderActivity');
+            Route::post('/deleteOrderActivity','App\Http\Controllers\UserRoles\ClientController@deleteOrderActivity')->name('deleteOrderActivity');
         });
         Route::middleware([CheckRole::class.':manager'])->group( function () {
             Route::get('/convertTask','App\Http\Controllers\UserRoles\ManagerController@convertTask')->name('convertTask');
