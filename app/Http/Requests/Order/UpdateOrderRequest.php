@@ -28,7 +28,7 @@ class UpdateOrderRequest extends FormRequest
     {
         return [
             'placeId' => [
-                'required',
+                'sometimes',
                 'integer',
                 'exists:directory_place,id',
                 function ($attribute, $value, $fail) {
@@ -41,7 +41,7 @@ class UpdateOrderRequest extends FormRequest
                     }
                 },
             ],
-            'selfEmployed' => 'required|boolean',
+            'selfEmployed' => 'sometimes|boolean',
             'orderId' => [
                 'required',
                 'integer',

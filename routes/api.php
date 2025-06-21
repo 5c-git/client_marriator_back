@@ -101,18 +101,22 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
         });
 
         Route::middleware([CheckRole::class.':client'])->group( function () {
-            Route::post('/createOrder','App\Http\Controllers\UserRoles\ClientController@createOrder')->name('createOrder');
+            Route::post('/createOrder','App\Http\Controllers\UserRoles\ClientController@createOrder')->name('createOrder');//??
             Route::post('/cancelOrder','App\Http\Controllers\UserRoles\ClientController@cancelOrder')->name('cancelOrder');
             Route::post('/sendOrder','App\Http\Controllers\UserRoles\ClientController@sendOrder')->name('sendOrder');
-            Route::post('/updateOrder','App\Http\Controllers\UserRoles\ClientController@updateOrder')->name('updateOrder');
-            Route::post('/createOrderActivity','App\Http\Controllers\UserRoles\ClientController@createOrderActivity')->name('createOrderActivity');
-            Route::post('/deleteOrderActivity','App\Http\Controllers\UserRoles\ClientController@deleteOrderActivity')->name('deleteOrderActivity');
+            Route::post('/updateOrder','App\Http\Controllers\UserRoles\ClientController@updateOrder')->name('updateOrder');//??
+            Route::post('/createOrderActivity','App\Http\Controllers\UserRoles\ClientController@createOrderActivity')->name('createOrderActivity');//??
+            Route::post('/deleteOrderActivity','App\Http\Controllers\UserRoles\ClientController@deleteOrderActivity')->name('deleteOrderActivity');//??
+            Route::get('/getViewActivitiesForOrder','App\Http\Controllers\UserRoles\ClientController@getViewActivitiesForOrder')->name('getViewActivitiesForOrder');//??
         });
         Route::middleware([CheckRole::class.':manager'])->group( function () {
             Route::get('/convertTask','App\Http\Controllers\UserRoles\ManagerController@convertTask')->name('convertTask');
             Route::get('/getSurepvisorData','App\Http\Controllers\UserRoles\ManagerController@getSurepvisorData')->name('getSurepvisorData');
             Route::post('/createTask','App\Http\Controllers\UserRoles\ManagerController@createTask')->name('createTask');//??
             Route::post('/updateTask','App\Http\Controllers\UserRoles\ManagerController@updateTask')->name('updateTask');//??
+            Route::post('/createTaskActivity','App\Http\Controllers\UserRoles\ManagerController@createTaskActivity')->name('createTaskActivity');//??
+            Route::post('/deleteTaskActivity','App\Http\Controllers\UserRoles\ManagerController@deleteTaskActivity')->name('deleteTaskActivity');//??
+            Route::get('/getViewActivitiesForTask','App\Http\Controllers\UserRoles\ManagerController@getViewActivitiesForTask')->name('getViewActivitiesForTask');//??
             Route::post('/instructTask','App\Http\Controllers\UserRoles\ManagerController@instructTask')->name('instructTask');//??
             Route::post('/invoiceTask','App\Http\Controllers\UserRoles\ManagerController@invoiceTask')->name('invoiceTask');//??
             Route::post('/cancelTask','App\Http\Controllers\UserRoles\ManagerController@cancelTask')->name('cancelTask');//??
@@ -128,7 +132,7 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
 
             //Route::post('/convertTask','App\Http\Controllers\UserRoles\ManagerController@convertTask')->name('convertTask');
             //Route::post('/acceptOrder','App\Http\Controllers\UserRoles\ManagerController@acceptOrder')->name('acceptOrderadmin');
-            //Route::get('/getViewActivitiesForOrder','App\Http\Controllers\UserRoles\ClientController@getViewActivitiesForOrder')->name('getViewActivitiesForOrder');
+           // Route::get('/getViewActivitiesForOrder','App\Http\Controllers\UserRoles\ClientController@getViewActivitiesForOrder')->name('getViewActivitiesForOrder');
 
             //Route::get('/getPlaceForOrder','App\Http\Controllers\UserRoles\ClientController@getPlace')->name('getPlaceForOrderCreate');
 
@@ -159,7 +163,7 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
         Route::get('/getTasks','App\Http\Controllers\UniversalController@getTasks')->name('getTasks');
         Route::get('/getTask','App\Http\Controllers\UniversalController@getTask')->name('getTask');
 
-        Route::get('/getViewActivitiesForOrder','App\Http\Controllers\UniversalController@getViewActivitiesForOrder')->name('getViewActivitiesForOrder');
+        Route::get('/getViewActivitiesForTask','App\Http\Controllers\UniversalController@getViewActivitiesForTask')->name('getViewActivitiesForTask');
         Route::get('/getPlaceForOrder','App\Http\Controllers\UniversalController@getPlaceForOrder')->name('getPlaceForOrderCreate');
 
         Route::group(['prefix' => 'moderation'], function () {

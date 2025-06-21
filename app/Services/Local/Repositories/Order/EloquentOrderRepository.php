@@ -6,7 +6,10 @@ use App\Enum\Order\OrderStatusEnum;
 use App\Http\Requests\Order\BidDataRequest;
 use App\Http\Requests\Order\ConvertTaskRequest;
 use App\Http\Requests\Order\CreateOrderRequest;
+use App\Http\Requests\Order\CreateTaskActivityRequest;
 use App\Http\Requests\Order\DeleteOrderActivityRequest;
+use App\Http\Requests\Order\DeleteTaskActivityRequest;
+use App\Http\Requests\Order\UpdateTaskRequest;
 use App\Models\Order\Bid;
 use App\Models\Order\Order;
 use App\Models\Order\OrderActivities;
@@ -62,6 +65,11 @@ class EloquentOrderRepository implements OrderRepository
             ->where('user_id', auth()->id())
             ->firstOrFail();
 
+        $viewActivities = $order->place->project
+            ->flatMap(fn($project) => $project->viewActivities)
+            ->unique('id');
+        $viewActivities = $viewActivities->where('self_employed', $order->self_employed);
+
         DB::transaction(function () use ($order, $orderRequest) {
             $order->update([
                 'place_id' => $orderRequest->placeId??$order->placeId,
@@ -70,6 +78,18 @@ class EloquentOrderRepository implements OrderRepository
         });
 
         if($orderRequest->placeId){
+            $order = Order::where('id', $orderRequest->orderId)
+                ->where('user_id', auth()->id())
+                ->firstOrFail();
+
+            $viewActivitiesNew = $order->place->project
+                ->flatMap(fn($project) => $project->viewActivities)
+                ->unique('id');
+            $viewActivitiesNew = $viewActivitiesNew->where('self_employed', $order->self_employed);
+            $result = $viewActivities->diff($viewActivitiesNew->keyBy('id'));
+            if($result->isNotEmpty()){
+                OrderActivities::whereIn('id',$result->pluck('id')->toArray())->delete();
+            }
 
         }
 
@@ -86,59 +106,73 @@ class EloquentOrderRepository implements OrderRepository
         $task = Task::create([
             'place_id' => $taskRequest->placeId,
             'user_id' => $userId,
-            'self_employed' => $taskRequest->selfEmployed,
+            'self_employed' => false,
             'status' => OrderStatusEnum::new->value,
             'specialist_user_id' => null,
             'accept_user_id' => null,
             'order_id' => null,
-            'price' => $taskRequest->price,
-            'income' => $taskRequest->income,
-            'scope_of_services' => $taskRequest->scope_of_services
+            'price' => $taskRequest->price??0,
+            'income' => $taskRequest->income??0,
+            'scope_of_services' => $taskRequest->scope_of_services??0
         ]);
-
-        foreach ($taskRequest->viewActivities as $activity) {
-            $orderActivity = new TaskActivity([
-                'view_activity_id' => $activity['viewActivityId'],
-                'count' => $activity['count'],
-                'date_start' => $activity['dateStart'],
-                'date_end' => $activity['dateEnd'],
-                'need_foto' => $activity['needFoto'],
-                'date_activity' => $this->processDateActivity($activity['dateActivity']),
-            ]);
-
-            $task->taskActivities()->save($orderActivity);
-        }
 
         return $task;
     }
 
-    public function updateTask(CreateTaskRequest $taskRequest): Task
+    public function createTaskActivity(CreateTaskActivityRequest $taskRequest): Task
+    {
+        $taskActivity = new TaskActivity([
+            'view_activity_id' => $taskRequest->viewActivityId,
+            'count' => $taskRequest->count,
+            'date_start' => $taskRequest->dateStart,
+            'date_end' => $taskRequest->dateEnd,
+            'need_foto' => $taskRequest->needFoto,
+            'date_activity' => $this->processDateActivity($taskRequest->dateActivity),
+            'task_id' => $taskRequest->taskId
+        ]);
+
+        $taskActivity->save();
+
+        return Task::where('id',$taskRequest->taskId)->first();
+    }
+
+    public function updateTask(UpdateTaskRequest $taskRequest): Task
     {
         $task = Task::findOrFail($taskRequest->taskId);
 
+        $viewActivities = $task->place->project
+            ->flatMap(fn($project) => $project->viewActivities)
+            ->unique('id');
+        $viewActivities = $viewActivities->where('self_employed', $task->self_employed);
+
         $task->update([
-            'place_id' => $taskRequest->placeId,
-            'self_employed' => $taskRequest->selfEmployed,
-            'price' => $taskRequest->price,
-            'income' => $taskRequest->income,
-            'scope_of_services' => $taskRequest->scope_of_services
+            'place_id' => $taskRequest->placeId??$task->place_id,
+            'self_employed' => $taskRequest->selfEmployed??$task->self_employed,
+            'price' => $taskRequest->price??$task->price,
+            'income' => $taskRequest->income??$task->income,
+            'scope_of_services' => $taskRequest->scope_of_services??$task->scope_of_services
         ]);
 
-        $task->taskActivities()->delete();
+        if($taskRequest->placeId){
+            $task = Task::findOrFail($taskRequest->taskId);
 
-        foreach ($taskRequest->viewActivities as $activity) {
-            $newActivity = new TaskActivity([
-                'view_activity_id' => $activity['viewActivityId'],
-                'count' => $activity['count'],
-                'date_start' => $activity['dateStart'],
-                'date_end' => $activity['dateEnd'],
-                'need_foto' => $activity['needFoto'],
-                'date_activity' => $this->processDateActivity($activity['dateActivity']),
-            ]);
-            $task->taskActivities()->save($newActivity);
+            $viewActivitiesNew = $task->place->project
+                ->flatMap(fn($project) => $project->viewActivities)
+                ->unique('id');
+            $viewActivitiesNew = $viewActivitiesNew->where('self_employed', $task->self_employed);
+            $result = $viewActivities->diff($viewActivitiesNew->keyBy('id'));
+            if($result->isNotEmpty()){
+                TaskActivity::whereIn('id',$result->pluck('id')->toArray())->delete();
+            }
         }
 
         return $task->fresh();
+    }
+
+    public function deleteTaskActivity(DeleteTaskActivityRequest $taskRequest): Task
+    {
+        TaskActivity::where('id',$taskRequest->taskActivityId)->where('order_id',$taskRequest->taskId)->delete();
+        return Task::where('id',$taskRequest->taskId)->first();
     }
 
     private function processDateActivity(array $dateActivities): array
@@ -153,12 +187,12 @@ class EloquentOrderRepository implements OrderRepository
         }, $dateActivities);
     }
 
-    public function getUserOrderByStatusPaginate(?OrderStatusEnum $status, int $userId, int $page = 1,int $perPage = 10): Paginator
+    public function getUserOrderByStatusPaginate(?OrderStatusEnum $status, int $userId): Collection
     {
         return Order::query()->where('user_id',$userId)
             ->when($status, function ($q) use ($status) {
                 return $q->where('status', $status->value);
-            })->simplePaginate($perPage);
+            })->get();
     }
 
     public function getUserOrderByStatus(int $userId, int|null $orderId): Order|null

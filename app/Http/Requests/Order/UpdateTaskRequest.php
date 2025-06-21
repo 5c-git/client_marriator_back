@@ -8,7 +8,7 @@ use App\Models\Order\Task;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
-class CreateTaskRequest extends FormRequest
+class UpdateTaskRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -29,7 +29,7 @@ class CreateTaskRequest extends FormRequest
     {
         return [
             'placeId' => [
-                'required',
+                'sometimes',
                 'integer',
                 'exists:directory_place,id',
                 function ($attribute, $value, $fail) {
@@ -41,7 +41,27 @@ class CreateTaskRequest extends FormRequest
                         $fail('Not your place');
                     }
                 },
-            ]
+            ],
+            'selfEmployed' => 'sometimes|boolean',
+            'price' => 'sometimes|float|min:1',
+            'income' => 'sometimes|float|min:1',
+            'scope_of_services' => 'sometimes|integer|min:1',
+            'taskId' => [
+                'required',
+                'integer',
+                function ($attribute, $value, $fail) {
+                    $user = auth()->user();
+                    $userIdsSupervisor = $user->supervisors->pluck('id')->toArray();
+                    $userIdsSupervisor[] = $user->id;
+                    $orderExists = Task::query()->where('id', $value)
+                        ->whereIn('user_id', $userIdsSupervisor)
+                        ->exists();
+
+                    if (!$orderExists) {
+                        $fail('Not your task');
+                    }
+                },
+            ],
         ];
     }
 }

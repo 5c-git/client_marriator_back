@@ -5,10 +5,9 @@ namespace App\Http\Requests\Order;
 use App\Http\Requests\FormRequest;
 use App\Models\Order\Order;
 use App\Models\Order\Task;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
-class CreateTaskRequest extends FormRequest
+class GetViewActivitiesForTaskRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -28,20 +27,22 @@ class CreateTaskRequest extends FormRequest
     public function rules()
     {
         return [
-            'placeId' => [
+            'taskId' => [
                 'required',
                 'integer',
-                'exists:directory_place,id',
                 function ($attribute, $value, $fail) {
-                    $places = Auth::user()->project
-                        ->flatMap(fn($project) => $project->places)
-                        ->unique('id')?->pluck('id')?->toArray();
+                    $user = auth()->user();
+                    $userIdsSupervisor = $user->supervisors->pluck('id')->toArray();
+                    $userIdsSupervisor[] = $user->id;
+                    $orderExists = Task::query()->where('id', $value)
+                        ->whereIn('user_id', $userIdsSupervisor)
+                        ->exists();
 
-                    if (!in_array($value,$places)) {
-                        $fail('Not your place');
+                    if (!$orderExists) {
+                        $fail('Not your task');
                     }
                 },
-            ]
+            ],
         ];
     }
 }

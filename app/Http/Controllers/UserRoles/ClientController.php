@@ -136,8 +136,6 @@ class ClientController extends Controller
             $this->orderRepository->getUserOrderByStatusPaginate(
                 $request->status?OrderStatusEnum::from($request->status):null,
                 Auth::user()->id,
-                $request->input('page', 1),
-                $request->input('perPage', 10),
             )
         );
     }

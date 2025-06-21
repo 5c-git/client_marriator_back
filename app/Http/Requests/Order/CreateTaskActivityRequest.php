@@ -4,9 +4,11 @@ namespace App\Http\Requests\Order;
 
 use App\Http\Requests\FormRequest;
 use App\Models\Order\Order;
+use App\Models\Order\Task;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
-class CreateOrderActivityRequest extends FormRequest
+class CreateTaskActivityRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -40,12 +42,15 @@ class CreateOrderActivityRequest extends FormRequest
                 'required',
                 Rule::exists('places', 'id'),
             ],
-            'orderId' => [
-                'required',
+            'taskId' => [
+                'sometimes',
                 'integer',
                 function ($attribute, $value, $fail) {
-                    $orderExists = Order::query()->where('id', $value)
-                        ->where('user_id', auth()->id())
+                    $user = auth()->user();
+                    $userIdsSupervisor = $user->supervisors->pluck('id')->toArray();
+                    $userIdsSupervisor[] = $user->id;
+                    $orderExists = Task::query()->where('id', $value)
+                        ->whereIn('user_id', $userIdsSupervisor)
                         ->exists();
 
                     if (!$orderExists) {

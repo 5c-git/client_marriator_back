@@ -7,8 +7,10 @@ use App\Http\Requests\Order\BidDataRequest;
 use App\Http\Requests\Order\ConvertTaskRequest;
 use App\Http\Requests\Order\CreateOrderActivityRequest;
 use App\Http\Requests\Order\CreateOrderRequest;
+use App\Http\Requests\Order\CreateTaskActivityRequest;
 use App\Http\Requests\Order\CreateTaskRequest;
 use App\Http\Requests\Order\DeleteOrderActivityRequest;
+use App\Http\Requests\Order\DeleteTaskActivityRequest;
 use App\Models\Order\Bid;
 use App\Models\Order\Order;
 use App\Models\Order\Task;
@@ -33,9 +35,9 @@ class CachingOrderRepository implements OrderRepository
         return $this->orders->createOrder($orderRequest,$userId);
     }
 
-    public function getUserOrderByStatusPaginate(?OrderStatusEnum $status, int $userId, int $page = 1, int $perPage = 10): Paginator
+    public function getUserOrderByStatusPaginate(?OrderStatusEnum $status, int $userId): Collection
     {
-        return $this->orders->getUserOrderByStatusPaginate($status,$userId,$page,$perPage);
+        return $this->orders->getUserOrderByStatusPaginate($status,$userId);
     }
 
     public function cancelOrder(int $orderId): bool
@@ -176,5 +178,15 @@ class CachingOrderRepository implements OrderRepository
     public function deleteOrderActivity(DeleteOrderActivityRequest $orderRequest): Order
     {
         return $this->orders->deleteOrderActivity($orderRequest);
+    }
+
+    public function createTaskActivity(CreateTaskActivityRequest $taskRequest): Task
+    {
+        return $this->orders->createTaskActivity($taskRequest);
+    }
+
+    public function deleteTaskActivity(DeleteTaskActivityRequest $taskRequest): Task
+    {
+        return $this->orders->deleteTaskActivity($taskRequest);
     }
 }

@@ -16,6 +16,7 @@ use App\Http\Requests\Order\GetOrderRequest;
 use App\Http\Requests\Order\GetSpecialistForBisRequest;
 use App\Http\Requests\Order\GetTaskRequest;
 use App\Http\Requests\Order\GetViewActivitiesForOrderRequest;
+use App\Http\Requests\Order\GetViewActivitiesForTaskRequest;
 use App\Http\Requests\PaginatorRequest;
 use App\Http\Requests\SetUserDataRequest;
 use App\Http\Requests\UserData\DelPlaceRequest as DelPlaceModerationRequest;
@@ -386,12 +387,12 @@ class SupervisorController extends Controller
         );
     }
 
-    public function getViewActivitiesForOrder(GetViewActivitiesForOrderRequest $request){
-        $order = Order::where('id',$request->orderId)->first();
-        $viewActivities = $order->place->project
+    public function getViewActivitiesForTask(GetViewActivitiesForTaskRequest $request){
+        $task = Task::where('id',$request->taskId)->first();
+        $viewActivities = $task->place->project
             ->flatMap(fn($project) => $project->viewActivities)
             ->unique('id');
-        $viewActivities = $viewActivities->where('self_employed', $order->self_employed);
+        $viewActivities = $viewActivities->where('self_employed', $task->self_employed);
         return ViewActivityResource::collection($viewActivities);
     }
 

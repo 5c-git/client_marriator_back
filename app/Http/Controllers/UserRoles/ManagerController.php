@@ -70,6 +70,10 @@ use App\Http\Requests\Order\CancelBidRequest;
 use App\Http\Requests\Order\GetSpecialistForBisRequest;
 use App\Http\Requests\Order\BidDataRequest;
 use App\Http\Requests\UserData\SetUserImgRequest;
+use App\Http\Requests\Order\CreateTaskActivityRequest;
+use App\Http\Requests\Order\UpdateTaskRequest;
+use App\Http\Requests\Order\GetViewActivitiesForTaskRequest;
+use App\Http\Requests\Order\DeleteTaskActivityRequest;
 
 class ManagerController extends Controller
 {
@@ -417,13 +421,27 @@ class ManagerController extends Controller
         );
     }
 
-    public function updateTask(CreateTaskRequest $request): ErrorResource|TaskResource
+    public function createTaskActivity(CreateTaskActivityRequest $request): TaskResource
     {
-        if($request->taskId){
-            return new TaskResource($this->orderRepository->updateTask($request));
-        }else{
-            return new ErrorResource();
-        }
+        return new TaskResource(
+            $this->orderRepository->createTaskActivity(
+                $request
+            )
+        );
+    }
+
+    public function deleteTaskActivity(DeleteTaskActivityRequest $request)
+    {
+        return new TaskResource(
+            $this->orderRepository->deleteTaskActivity(
+                $request
+            )
+        );
+    }
+
+    public function updateTask(UpdateTaskRequest $request): TaskResource
+    {
+        return new TaskResource($this->orderRepository->updateTask($request));
     }
 
     public function instructTask(EntrustTaskRequest $request): ErrorResource|SuccessResource
@@ -489,12 +507,12 @@ class ManagerController extends Controller
         );
     }
 
-    public function getViewActivitiesForOrder(GetViewActivitiesForOrderRequest $request){
-        $order = Order::where('id',$request->orderId)->first();
-        $viewActivities = $order->place->project
+    public function getViewActivitiesForTask(GetViewActivitiesForTaskRequest $request){
+        $task = Task::where('id',$request->taskId)->first();
+        $viewActivities = $task->place->project
             ->flatMap(fn($project) => $project->viewActivities)
             ->unique('id');
-        $viewActivities = $viewActivities->where('self_employed', $order->self_employed);
+        $viewActivities = $viewActivities->where('self_employed', $task->self_employed);
         return ViewActivityResource::collection($viewActivities);
     }
 

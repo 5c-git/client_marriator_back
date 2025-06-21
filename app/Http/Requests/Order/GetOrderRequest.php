@@ -42,8 +42,6 @@ class GetOrderRequest extends FormRequest
                     OrderStatusEnum::archive->value,
                 ]),
             ],
-            'page' => 'sometimes|integer',
-            'perPage' => 'sometimes|integer',
             'orderId'=> 'sometimes|integer|exists:orders,id'
         ];
     }
