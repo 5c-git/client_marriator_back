@@ -8,6 +8,8 @@ use App\Http\Resources\ProjectResource;
 use App\Http\Resources\SuccessResource;
 use App\Models\User;
 use App\Services\ApiTokenService\ApiTokenService;
+use App\Services\Local\Repositories\Contracts\OrderRepository;
+use App\Services\Local\Repositories\Contracts\UserRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -23,9 +25,8 @@ class RecruiterController extends Controller
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(protected UserRepository $userRepository,protected OrderRepository $orderRepository)
     {
-
     }
 
     public function getPlace(){
@@ -39,6 +40,16 @@ class RecruiterController extends Controller
         $user->name = $request->name;
         $user->save();
         return new SuccessResource();
+    }
+
+    public function getRequests(GetRequestsRequest $request)
+    {
+
+    }
+
+    public function getRequest(GetRequestRequest $request)
+    {
+
     }
 
 }

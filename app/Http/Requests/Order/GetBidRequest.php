@@ -42,8 +42,6 @@ class GetBidRequest extends FormRequest
                     OrderStatusEnum::archive->value,
                 ]),
             ],
-            'page' => 'sometimes|integer',
-            'perPage' => 'sometimes|integer',
             'bidId'=> 'sometimes|integer|exists:bids,id'
         ];
     }

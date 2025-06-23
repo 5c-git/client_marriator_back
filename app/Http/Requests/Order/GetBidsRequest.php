@@ -8,8 +8,6 @@ use Illuminate\Validation\Rule;
 
 /**
  * @property-read int|null status
- * @property-read int|null page
- * @property-read int|null perPage
  */
 class GetBidsRequest extends FormRequest
 {
@@ -41,9 +39,7 @@ class GetBidsRequest extends FormRequest
                     OrderStatusEnum::canceled->value,
                     OrderStatusEnum::archive->value,
                 ]),
-            ],
-            'page' => 'sometimes|integer',
-            'perPage' => 'sometimes|integer',
+            ]
         ];
     }
 }

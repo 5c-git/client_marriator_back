@@ -74,6 +74,10 @@ use App\Http\Requests\Order\CreateTaskActivityRequest;
 use App\Http\Requests\Order\UpdateTaskRequest;
 use App\Http\Requests\Order\GetViewActivitiesForTaskRequest;
 use App\Http\Requests\Order\DeleteTaskActivityRequest;
+use App\Http\Requests\Order\CreateRequestFromTaskRequest;
+use App\Http\Requests\Order\CreateRequestFromBidRequest;
+use App\Http\Requests\Order\CancelRequestRequest;
+use App\Http\Resources\Order\RequestResource;
 
 class ManagerController extends Controller
 {
@@ -348,9 +352,7 @@ class ManagerController extends Controller
         return ShortOrderResource::collection(
             $this->orderRepository->getOrderByUserSyncDataPaginate(
                 $request->user(),
-                OrderStatusEnum::from($request->input('status',2)),
-                $request->input('page', 1),
-                $request->input('perPage', 10),
+                OrderStatusEnum::from($request->input('status',2))
             )
         );
     }
@@ -395,9 +397,7 @@ class ManagerController extends Controller
         return TaskShortResource::collection(
             $this->orderRepository->getTaskByUserSyncDataPaginate(
                 $request->user(),
-                OrderStatusEnum::from($request->input('status',2)),
-                $request->input('page', 1),
-                $request->input('perPage', 10),
+                OrderStatusEnum::from($request->input('status',2))
             )
         );
     }
@@ -478,7 +478,7 @@ class ManagerController extends Controller
     {
         $user = $request->user();
         if($this->orderRepository->acceptTask($user,$request->taskId)) {
-            Task::where('id',$request->taskId)->first()->acceptingUsers()->delete();
+            Task::where('id',$request->taskId)->first()->acceptingUsers()->detach();
             return new SuccessResource();
         }else{
             return new ErrorResource();
@@ -521,9 +521,7 @@ class ManagerController extends Controller
         return ShortOrderResource::collection(
             $this->orderRepository->getBidsByUserSyncDataPaginate(
                 $request->user(),
-                OrderStatusEnum::from($request->input('status',3)),
-                $request->input('page', 1),
-                $request->input('perPage', 10),
+                OrderStatusEnum::from($request->input('status',3))
             )
         );
     }
@@ -552,7 +550,7 @@ class ManagerController extends Controller
     {
         $user = $request->user();
         if($this->orderRepository->acceptBid($user,$request->bidId)) {
-            Bid::where('id',$request->bidId)->first()->acceptingUsers()->delete();
+            Bid::where('id',$request->bidId)->first()->acceptingUsers()->detach();
             return new SuccessResource();
         }else{
             return new ErrorResource();
@@ -585,6 +583,26 @@ class ManagerController extends Controller
 
     public function updateBid(BidDataRequest $request){
         return new BidResource($this->orderRepository->updateBid($request->bidId));
+    }
+
+    public function createRequestFromTask(CreateRequestFromTaskRequest $request): RequestResource
+    {
+        $user = $request->user();
+        return new RequestResource($this->orderRepository->createRequestFromTask($request,$user));
+    }
+
+    public function createRequestFromBid(CreateRequestFromBidRequest $request): RequestResource
+    {
+        $user = $request->user();
+        return new RequestResource($this->orderRepository->createRequestFromBid($request,$user));
+    }
+
+    public function cancelRequest(CancelRequestRequest $request): SuccessResource|ErrorResource
+    {
+        if($this->orderRepository->cancelRequest($request)){
+            return new SuccessResource();
+        }
+        return new ErrorResource();
     }
 
 }

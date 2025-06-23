@@ -95,6 +95,15 @@
         </div>
 
         <div class="form-group row">
+            <label for="self_employed" class="col-sm-2 col-form-label">Для самозанятых</label>
+            <div class="offset-sm-2 col-sm-10">
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" style="margin-top: -1.5rem" name="self_employed" value="1" id="self_employed">
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group row">
             <label for="select" class="col-sm-2 col-form-label">Привязка полей</label>
             <div class="col-sm-10">
                 <div class="row addItemSelect">

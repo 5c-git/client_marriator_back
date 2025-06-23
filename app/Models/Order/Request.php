@@ -41,17 +41,14 @@ use App\Models\Order\OrderActivities;
  * @property-read Order $order
  * @property-read Task $task
  * @property-read Place $place
- * @property-read Collection|BidActivity[] $bidActivities
  * @property-read ViewActivities $viewActivity
- * @property-read Collection|User[] $acceptingUsers
- *
  */
 
-class Bid extends Model
+class Request extends Model
 {
     use HasFactory;
 
-    protected $table = 'bids';
+    protected $table = 'requests';
 
     protected $fillable = [
         'place_id',
@@ -104,19 +101,8 @@ class Bid extends Model
         return $this->belongsTo(Task::class,'task_id');
     }
 
-    public function bidActivities(): HasMany
-    {
-        return $this->hasMany(BidActivity::class);
-    }
-
     public function viewActivity(): BelongsTo
     {
         return $this->belongsTo(ViewActivities::class, 'view_activity_id');
-    }
-
-    public function acceptingUsers(): BelongsToMany
-    {
-        return $this->belongsToMany(User::class, 'accept_bid', 'bid_id', 'user_id')
-            ->withPivot('accepted');
     }
 }

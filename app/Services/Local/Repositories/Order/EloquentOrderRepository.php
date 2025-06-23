@@ -4,8 +4,11 @@ namespace App\Services\Local\Repositories\Order;
 
 use App\Enum\Order\OrderStatusEnum;
 use App\Http\Requests\Order\BidDataRequest;
+use App\Http\Requests\Order\CancelRequestRequest;
 use App\Http\Requests\Order\ConvertTaskRequest;
 use App\Http\Requests\Order\CreateOrderRequest;
+use App\Http\Requests\Order\CreateRequestFromBidRequest;
+use App\Http\Requests\Order\CreateRequestFromTaskRequest;
 use App\Http\Requests\Order\CreateTaskActivityRequest;
 use App\Http\Requests\Order\DeleteOrderActivityRequest;
 use App\Http\Requests\Order\DeleteTaskActivityRequest;
@@ -13,6 +16,7 @@ use App\Http\Requests\Order\UpdateTaskRequest;
 use App\Models\Order\Bid;
 use App\Models\Order\Order;
 use App\Models\Order\OrderActivities;
+use App\Models\Order\Request;
 use App\Models\User;
 use App\Services\Local\Repositories\Contracts\OrderRepository;
 use Illuminate\Contracts\Pagination\Paginator;
@@ -221,7 +225,7 @@ class EloquentOrderRepository implements OrderRepository
             );
     }
 
-    public function getOrderByUserSyncDataPaginate(User $user,?OrderStatusEnum $status, int $page = 1, int $perPage = 10): Paginator
+    public function getOrderByUserSyncDataPaginate(User $user,?OrderStatusEnum $status): Collection
     {
         $place = $user->place?->pluck('id')->toArray();
 
@@ -238,8 +242,7 @@ class EloquentOrderRepository implements OrderRepository
                 if($status == OrderStatusEnum::accepted) {
                     $query->where('status', OrderStatusEnum::accepted->value);
                 }
-            })
-            ->simplePaginate($perPage);
+            })->get();
     }
 
     public function getOrderByUserSyncData(User $user, int|null $orderId): Order|null
@@ -317,7 +320,7 @@ class EloquentOrderRepository implements OrderRepository
         return $task;
     }
 
-    public function getTaskByUserSyncDataPaginate(User $user, ?OrderStatusEnum $status, int $page = 1, int $perPage = 10): Paginator
+    public function getTaskByUserSyncDataPaginate(User $user, ?OrderStatusEnum $status): Collection
     {
         $userIdsSupervisor = $user->supervisors->pluck('id')->toArray();
         $userIdsSupervisor[] = $user->id;
@@ -334,8 +337,7 @@ class EloquentOrderRepository implements OrderRepository
                 $userIdsSupervisor = $user->acceptedTasks?->pluck('id')->toArray();
                 $query = $query->whereIn('id', $userIdsSupervisor);
                 $query->where('status', $status->value);
-            })
-            ->simplePaginate($perPage);
+            })->get();
     }
 
     public function getTaskByUserSyncData(User $user, ?int $taskId): Task|null
@@ -391,7 +393,7 @@ class EloquentOrderRepository implements OrderRepository
 
     public function acceptTask(User $user, int $taskId): bool
     {
-         (bool)Task::query()
+        return (bool)Task::query()
             ->where('id',$taskId)
             ->update(
                 [
@@ -399,8 +401,6 @@ class EloquentOrderRepository implements OrderRepository
                     'accept_user_id' => $user->id
                 ]
             );
-
-        return true;
     }
 
     public function createBidFromOrder(User $user, int $orderId, int $orderActivityId): Bid
@@ -449,7 +449,7 @@ class EloquentOrderRepository implements OrderRepository
                 'status' => OrderStatusEnum::notAccepted,
                 'self_employed' => $task->self_employed,
                 'radius' => null,
-                'price' => null,
+                'price' => $task->price,
                 'view_activity_id' => $taskActivities->view_activity_id,
                 'count' => $taskActivities->count,
                 'date_start' => $taskActivities->date_start,
@@ -466,7 +466,7 @@ class EloquentOrderRepository implements OrderRepository
 
     }
 
-    public function getBidsByUserSyncDataPaginate(User $user, ?OrderStatusEnum $status, int $page = 1, int $perPage = 10): Paginator
+    public function getBidsByUserSyncDataPaginate(User $user, ?OrderStatusEnum $status): Collection
     {
         $userIdsSupervisor = $user->supervisors->pluck('id')->toArray();
         $userIdsSupervisor[] = $user->id;
@@ -484,8 +484,7 @@ class EloquentOrderRepository implements OrderRepository
                 $userIdsSupervisor = $user->acceptedTasks?->pluck('id')->toArray();
                 $query = $query->whereIn('id', $userIdsSupervisor);
                 $query->where('status', $status->value);
-            })
-            ->simplePaginate($perPage);
+            })->get();
     }
 
     public function getBidByUserSyncData(User $user, ?int $bidId): Bid|null
@@ -522,7 +521,7 @@ class EloquentOrderRepository implements OrderRepository
 
     public function acceptBid(User $user, int $bidId): bool
     {
-        (bool)Bid::query()
+        return (bool)Bid::query()
             ->where('id',$bidId)
             ->update(
                 [
@@ -530,8 +529,6 @@ class EloquentOrderRepository implements OrderRepository
                     'accept_user_id' => $user->id
                 ]
             );
-
-        return true;
     }
 
     public function instructBid(int $bidId, ?array $specialistIds): bool
@@ -591,5 +588,75 @@ class EloquentOrderRepository implements OrderRepository
         $bid->price = $bidRequest->price;
         $bid->save();
         return $bid;
+    }
+
+    public function rejectBid(User $user, int $bidId): bool
+    {
+        Bid::where('id',$bidId)->first()->acceptingUsers()->detach([$user->id]);
+        return true;
+    }
+
+    public function createRequestFromTask(CreateRequestFromTaskRequest $request, User $user): Request
+    {
+        $task = Task::where('id',$request->taskId)->first();
+        $requestModel = new Request();
+        $requestModel->place_id = $task->place_id;
+        $requestModel->user_id = $user->id;
+        $requestModel->accept_user_id = null;
+        $requestModel->order_id = $task->order_id;
+        $requestModel->task_id = $task->id;
+        $requestModel->status = OrderStatusEnum::notAccepted;
+        $requestModel->self_employed = $task->self_employed;
+        //$requestModel->radius = $task->radius;??
+        $requestModel->price = $task->price;
+
+        $activity = TaskActivity::where('id',$request->taskActivityId)->first();
+        $requestModel->view_activity_id = $activity->view_activity_id;
+        $requestModel->count = $activity->count;
+        $requestModel->date_start = $activity->date_start;
+        $requestModel->date_end = $activity->date_end;
+        $requestModel->need_foto = $activity->need_foto;
+        $requestModel->date_activity = $activity->date_activity;
+        $requestModel->activity_id = $request->taskActivityId;
+
+        $requestModel->save();
+
+        return $requestModel;
+    }
+
+    public function createRequestFromBid(CreateRequestFromBidRequest $request, User $user): Request
+    {
+        $bid = Bid::where('id', $request->bidId)->first();
+        $requestModel = new Request();
+        $requestModel->place_id = $bid->place_id;
+        $requestModel->user_id = $user->id;
+        $requestModel->accept_user_id = null;
+        $requestModel->order_id = $bid->order_id;
+        $requestModel->task_id = $bid->id;
+        $requestModel->status = OrderStatusEnum::notAccepted;
+        $requestModel->self_employed = $bid->self_employed;
+        $requestModel->radius = $bid->radius;
+        $requestModel->price = $bid->price;
+        $requestModel->view_activity_id = $bid->view_activity_id;
+        $requestModel->count = $bid->count;
+        $requestModel->date_start = $bid->date_start;
+        $requestModel->date_end = $bid->date_end;
+        $requestModel->need_foto = $bid->need_foto;
+        $requestModel->date_activity = $bid->date_activity;
+        $requestModel->activity_id = $bid->taskActivityId;
+        $requestModel->save();
+
+        return $requestModel;
+    }
+
+    public function cancelRequest(CancelRequestRequest $request): bool
+    {
+        return (bool)Request::query()
+            ->where('id',$request->requestId)
+            ->update(
+                [
+                    'status'=>OrderStatusEnum::canceled->value,
+                ]
+            );
     }
 }

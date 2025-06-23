@@ -8,8 +8,7 @@ use Illuminate\Validation\Rule;
 
 /**
  * @property-read int|null status
- * @property-read int|null page
- * @property-read int|null perPage
+ * @property-read int taskId
  */
 class GetTaskRequest extends FormRequest
 {
@@ -42,8 +41,6 @@ class GetTaskRequest extends FormRequest
                     OrderStatusEnum::archive->value,
                 ]),
             ],
-            'page' => 'sometimes|integer',
-            'perPage' => 'sometimes|integer',
             'taskId'=> 'sometimes|integer|exists:tasks,id'
         ];
     }

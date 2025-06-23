@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use App\Services\Register\SmsCodeService;
+use App\Http\Requests\Order\RejectBidRequest;
 
 class SpecialistController extends Controller
 {
@@ -40,9 +41,7 @@ class SpecialistController extends Controller
         return ShortOrderResource::collection(
             $this->orderRepository->getBidsByUserSyncDataPaginate(
                 $request->user(),
-                OrderStatusEnum::from($request->input('status',3)),
-                $request->input('page', 1),
-                $request->input('perPage', 10),
+                OrderStatusEnum::from($request->input('status',3))
             )
         );
     }
@@ -61,7 +60,17 @@ class SpecialistController extends Controller
     {
         $user = $request->user();
         if($this->orderRepository->acceptBid($user,$request->bidId)) {
-            Bid::where('id',$request->bidId)->first()->acceptingUsers()->delete();
+            Bid::where('id',$request->bidId)->first()->acceptingUsers()->detach();
+            return new SuccessResource();
+        }else{
+            return new ErrorResource();
+        }
+    }
+
+    public function rejectBid(RejectBidRequest $request): ErrorResource|SuccessResource
+    {
+        $user = $request->user();
+        if($this->orderRepository->rejectBid($user,$request->bidId)) {
             return new SuccessResource();
         }else{
             return new ErrorResource();

@@ -4,15 +4,20 @@ namespace App\Services\Local\Repositories\Order;
 
 use App\Enum\Order\OrderStatusEnum;
 use App\Http\Requests\Order\BidDataRequest;
+use App\Http\Requests\Order\CancelRequestRequest;
 use App\Http\Requests\Order\ConvertTaskRequest;
 use App\Http\Requests\Order\CreateOrderActivityRequest;
 use App\Http\Requests\Order\CreateOrderRequest;
+use App\Http\Requests\Order\CreateRequestFromBidRequest;
+use App\Http\Requests\Order\CreateRequestFromTaskRequest;
 use App\Http\Requests\Order\CreateTaskActivityRequest;
 use App\Http\Requests\Order\CreateTaskRequest;
 use App\Http\Requests\Order\DeleteOrderActivityRequest;
 use App\Http\Requests\Order\DeleteTaskActivityRequest;
+use App\Http\Requests\Order\UpdateTaskRequest;
 use App\Models\Order\Bid;
 use App\Models\Order\Order;
+use App\Models\Order\Request;
 use App\Models\Order\Task;
 use App\Models\User;
 use App\Services\Local\Repositories\Contracts\OrderRepository;
@@ -55,9 +60,9 @@ class CachingOrderRepository implements OrderRepository
         return $this->orders->updateOrder($orderRequest);
     }
 
-    public function getOrderByUserSyncDataPaginate(User $user,?OrderStatusEnum $status, int $page = 1, int $perPage = 10): Paginator
+    public function getOrderByUserSyncDataPaginate(User $user,?OrderStatusEnum $status): Collection
     {
-        return $this->orders->getOrderByUserSyncDataPaginate($user,$status,$page,$perPage);
+        return $this->orders->getOrderByUserSyncDataPaginate($user,$status);
     }
 
     public function getOrderByUserSyncData(User $user,int|null $orderId): Order|null
@@ -75,9 +80,9 @@ class CachingOrderRepository implements OrderRepository
         return $this->orders->convertTask($user,$request);
     }
 
-    public function getTaskByUserSyncDataPaginate(User $user, ?OrderStatusEnum $status, int $page = 1, int $perPage = 10): Paginator
+    public function getTaskByUserSyncDataPaginate(User $user, ?OrderStatusEnum $status): Collection
     {
-        return $this->orders->getTaskByUserSyncDataPaginate($user,$status,$page,$perPage);
+        return $this->orders->getTaskByUserSyncDataPaginate($user,$status);
     }
 
     public function getUserOrderByStatus(int $userId, ?int $orderId): Order|null
@@ -95,7 +100,7 @@ class CachingOrderRepository implements OrderRepository
         return $this->orders->createTask($taskRequest,$userId);
     }
 
-    public function updateTask(CreateTaskRequest $taskRequest): Task
+    public function updateTask(UpdateTaskRequest $taskRequest): Task
     {
         return $this->orders->updateTask($taskRequest);
     }
@@ -130,9 +135,9 @@ class CachingOrderRepository implements OrderRepository
         return $this->orders->createBidFromTask($user,$taskId,$taskActivityId);
     }
 
-    public function getBidsByUserSyncDataPaginate(User $user, ?OrderStatusEnum $status, int $page = 1, int $perPage = 10): Paginator
+    public function getBidsByUserSyncDataPaginate(User $user, ?OrderStatusEnum $status): Collection
     {
-        return $this->orders->getBidsByUserSyncDataPaginate($user,$status,$page,$perPage);
+        return $this->orders->getBidsByUserSyncDataPaginate($user,$status);
     }
 
     public function getBidByUserSyncData(User $user, ?int $bidId): Bid|null
@@ -188,5 +193,25 @@ class CachingOrderRepository implements OrderRepository
     public function deleteTaskActivity(DeleteTaskActivityRequest $taskRequest): Task
     {
         return $this->orders->deleteTaskActivity($taskRequest);
+    }
+
+    public function rejectBid(User $user, int $bidId): bool
+    {
+        return $this->orders->rejectBid($user,$bidId);
+    }
+
+    public function createRequestFromTask(CreateRequestFromTaskRequest $request, User $user): Request
+    {
+        return $this->orders->createRequestFromTask($request,$user);
+    }
+
+    public function createRequestFromBid(CreateRequestFromBidRequest $request, User $user): Request
+    {
+        return $this->orders->createRequestFromBid($request,$user);
+    }
+
+    public function cancelRequest(CancelRequestRequest $request): bool
+    {
+        return $this->orders->cancelRequest($request);
     }
 }

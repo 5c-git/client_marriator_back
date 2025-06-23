@@ -11,6 +11,9 @@ use App\Http\Requests\ConfirmUserRequest;
 use App\Http\Requests\Order\AcceptBidRequest;
 use App\Http\Requests\Order\BidDataRequest;
 use App\Http\Requests\Order\CancelBidRequest;
+use App\Http\Requests\Order\CancelRequestRequest;
+use App\Http\Requests\Order\CreateRequestFromBidRequest;
+use App\Http\Requests\Order\CreateRequestFromTaskRequest;
 use App\Http\Requests\Order\EntrustBidRequest;
 use App\Http\Requests\Order\GetOrderRequest;
 use App\Http\Requests\Order\GetSpecialistForBisRequest;
@@ -29,6 +32,7 @@ use App\Http\Requests\UserData\SetUserImgRequest;
 use App\Http\Resources\BrandResource;
 use App\Http\Resources\ErrorResource;
 use App\Http\Resources\Order\OrderResource;
+use App\Http\Resources\Order\RequestResource;
 use App\Http\Resources\Order\ShortOrderResource;
 use App\Http\Resources\Order\TaskShortResource;
 use App\Http\Resources\ProjectResource;
@@ -285,9 +289,7 @@ class SupervisorController extends Controller
         return ShortOrderResource::collection(
             $this->orderRepository->getOrderByUserSyncDataPaginate(
                 $request->user(),
-                OrderStatusEnum::from($request->input('status',3)),
-                $request->input('page', 1),
-                $request->input('perPage', 10),
+                OrderStatusEnum::from($request->input('status',3))
             )
         );
     }
@@ -316,9 +318,7 @@ class SupervisorController extends Controller
         return TaskShortResource::collection(
             $this->orderRepository->getTaskByUserSyncDataPaginate(
                 $request->user(),
-                OrderStatusEnum::from($request->input('status',3)),
-                $request->input('page', 1),
-                $request->input('perPage', 10),
+                OrderStatusEnum::from($request->input('status',3))
             )
         );
     }
@@ -336,7 +336,7 @@ class SupervisorController extends Controller
     {
         $user = $request->user();
         if($this->orderRepository->acceptTask($user,$request->taskId)) {
-           Task::where('id',$request->taskId)->first()->acceptingUsers()->delete();
+           Task::where('id',$request->taskId)->first()->acceptingUsers()->detach();
             return new SuccessResource();
         }else{
             return new ErrorResource();
@@ -370,9 +370,7 @@ class SupervisorController extends Controller
         return ShortOrderResource::collection(
             $this->orderRepository->getBidsByUserSyncDataPaginate(
                 $request->user(),
-                OrderStatusEnum::from($request->input('status',3)),
-                $request->input('page', 1),
-                $request->input('perPage', 10),
+                OrderStatusEnum::from($request->input('status',3))
             )
         );
     }
@@ -410,7 +408,7 @@ class SupervisorController extends Controller
     {
         $user = $request->user();
         if($this->orderRepository->acceptBid($user,$request->bidId)) {
-            Bid::where('id',$request->bidId)->first()->acceptingUsers()->delete();
+            Bid::where('id',$request->bidId)->first()->acceptingUsers()->detach();
             return new SuccessResource();
         }else{
             return new ErrorResource();
@@ -443,6 +441,26 @@ class SupervisorController extends Controller
 
     public function updateBid(BidDataRequest $request){
         return new BidResource($this->orderRepository->updateBid($request->bidId));
+    }
+
+    public function createRequestFromTask(CreateRequestFromTaskRequest $request): RequestResource
+    {
+        $user = $request->user();
+        return new RequestResource($this->orderRepository->createRequestFromTask($request,$user));
+    }
+
+    public function createRequestFromBid(CreateRequestFromBidRequest $request): RequestResource
+    {
+        $user = $request->user();
+        return new RequestResource($this->orderRepository->createRequestFromBid($request,$user));
+    }
+
+    public function cancelRequest(CancelRequestRequest $request): SuccessResource|ErrorResource
+    {
+        if($this->orderRepository->cancelRequest($request)){
+            return new SuccessResource();
+        }
+        return new ErrorResource();
     }
 
 }

@@ -125,7 +125,7 @@ class ClientController extends Controller
         );
     }
 
-    public function updateOrder(UpdateOrderRequest $request): ErrorResource|OrderResource
+    public function updateOrder(UpdateOrderRequest $request): OrderResource
     {
         return new OrderResource($this->orderRepository->updateOrder($request));
     }
