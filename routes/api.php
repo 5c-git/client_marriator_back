@@ -133,6 +133,8 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
         });
         Route::middleware([CheckRole::class.':admin'])->group( function () {
 
+            //Route::post('/moderation/confirmUserRegister','App\Http\Controllers\UserRoles\ManagerController@confirmUserRegister')->name('confirmUserRegister');
+
             //Route::post('/convertTask','App\Http\Controllers\UserRoles\ManagerController@convertTask')->name('convertTask');
             //Route::post('/acceptOrder','App\Http\Controllers\UserRoles\ManagerController@acceptOrder')->name('acceptOrderadmin');
            // Route::get('/getViewActivitiesForOrder','App\Http\Controllers\UserRoles\ClientController@getViewActivitiesForOrder')->name('getViewActivitiesForOrder');

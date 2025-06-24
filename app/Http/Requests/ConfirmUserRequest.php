@@ -55,7 +55,7 @@ class ConfirmUserRequest extends FormRequest
         foreach ($timeFields as $field) {
             $rules[$field] = [
                 'sometimes',
-                'date_format:h:i'
+                'date_format:H:i'
                 ];
         }
         $rules['waiting_task'] = 'sometimes|integer|min:1';
