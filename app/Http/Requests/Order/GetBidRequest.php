@@ -8,8 +8,6 @@ use Illuminate\Validation\Rule;
 
 /**
  * @property-read int|null status
- * @property-read int|null page
- * @property-read int|null perPage
  */
 class GetBidRequest extends FormRequest
 {

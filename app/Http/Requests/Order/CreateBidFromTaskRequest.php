@@ -41,11 +41,11 @@ class CreateBidFromTaskRequest extends FormRequest
                     $userIdsSupervisor[] = $user->id;
                     $orderExists = Task::where(function ($query) use ($user,$value,$userIdsSupervisor) {
                         $query->whereIn('user_id', $userIdsSupervisor)->where('id', $value)
-                            ->where('status', OrderStatusEnum::accepted);
+                            ->where('status', OrderStatusEnum::accepted->value);
                     })
                         ->orWhere(function ($query) use ($user,$value,$userIdsSupervisor) {
                             $query->whereIn('accept_user_id', $userIdsSupervisor)->where('id', $value)
-                                ->where('status', OrderStatusEnum::accepted);
+                                ->where('status', OrderStatusEnum::accepted->value);
                         })
                         ->first();
 

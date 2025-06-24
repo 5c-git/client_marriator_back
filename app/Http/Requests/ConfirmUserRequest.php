@@ -53,7 +53,10 @@ class ConfirmUserRequest extends FormRequest
         ];
 
         foreach ($timeFields as $field) {
-            $rules[$field] = 'sometimes|date_format:H:i';
+            $rules[$field] = [
+                'sometimes',
+                Rule::date()->format('h:i'),
+                ];
         }
         $rules['waiting_task'] = 'sometimes|integer|min:1';
 

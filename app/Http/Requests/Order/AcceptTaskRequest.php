@@ -40,16 +40,16 @@ class AcceptTaskRequest extends FormRequest
                     $userIdsSupervisor[] = $user->id;
                     $orderExists = Task::where(function ($query) use ($user,$value,$userIdsSupervisor) {
                         $query->whereIn('user_id', $userIdsSupervisor)->where('id', $value)
-                            ->where('status', OrderStatusEnum::notAccepted);
+                            ->where('status', OrderStatusEnum::notAccepted->value);
                     })
                         ->orWhere(function ($query) use ($user,$value,$userIdsSupervisor) {
                             $query->whereIn('accept_user_id', $userIdsSupervisor)->where('id', $value)
-                                ->where('status', OrderStatusEnum::notAccepted);
+                                ->where('status', OrderStatusEnum::notAccepted->value);
                         })
                         ->orWhere(function ($query) use ($user,$value) {
                             $userIdsSupervisor = $user->acceptedTasks?->pluck('id')->toArray();
                             $query->whereIn('id', $userIdsSupervisor)->where('id', $value)
-                                ->where('status', OrderStatusEnum::notAccepted);
+                                ->where('status', OrderStatusEnum::notAccepted->value);
                         })->first();
 
                     if (!$orderExists) {

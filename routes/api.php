@@ -123,6 +123,9 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
 
         });
         Route::middleware([CheckRole::class.':recruiter'])->group( function () {
+            Route::get('/request/getRequests','App\Http\Controllers\UserRoles\RecruiterController@getRequests')->name('getRequests');//??
+            Route::get('/request/getRequest','App\Http\Controllers\UserRoles\RecruiterController@getRequest')->name('getRequest');//??
+            Route::post('/request/acceptRequest','App\Http\Controllers\UserRoles\RecruiterController@acceptRequest')->name('acceptRequest');//??
         });
         Route::middleware([CheckRole::class.':specialist'])->group( function () {
         });

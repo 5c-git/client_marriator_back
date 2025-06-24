@@ -274,7 +274,7 @@ class EloquentOrderRepository implements OrderRepository
             ->where('id',$orderId)
             ->update(
                 [
-                    'status'=>OrderStatusEnum::accepted,
+                    'status'=>OrderStatusEnum::accepted->value,
                     'accept_user_id' => $user->id
                 ]
             );
@@ -289,7 +289,7 @@ class EloquentOrderRepository implements OrderRepository
                 'place_id' => $order->place_id,
                 'user_id' => $user->id,
                 'self_employed' => $order->self_employed,
-                'status' => OrderStatusEnum::accepted,
+                'status' => OrderStatusEnum::accepted->value,
                 'order_id' => $order->id,
                 'price' => 0,
                 'income' => 0,
@@ -363,7 +363,7 @@ class EloquentOrderRepository implements OrderRepository
     {
         if($supervisorIds) {
             $task = Task::query()->where('id', $taskId)->first();
-            $task->status = OrderStatusEnum::notAccepted;
+            $task->status = OrderStatusEnum::notAccepted->value;
             $task->acceptingUsers()->syncWithoutDetaching($supervisorIds);
             $task->save();
         }
@@ -373,7 +373,7 @@ class EloquentOrderRepository implements OrderRepository
     public function invoiceTask(int $taskId,?array $supervisorIds): bool
     {
         $task = Task::query()->where('id',$taskId)->first();
-        $task->status = OrderStatusEnum::accepted;
+        $task->status = OrderStatusEnum::accepted->value;
         if(count($supervisorIds)>0) {
             $task->accept_user_id = current($supervisorIds);
         }else{
@@ -386,7 +386,7 @@ class EloquentOrderRepository implements OrderRepository
     public function cancelTask(int $taskId): bool
     {
         $task = Task::query()->where('id',$taskId)->first();
-        $task->status = OrderStatusEnum::canceled;
+        $task->status = OrderStatusEnum::canceled->value;
         $task->save();
         return true;
     }
@@ -397,7 +397,7 @@ class EloquentOrderRepository implements OrderRepository
             ->where('id',$taskId)
             ->update(
                 [
-                    'status'=>OrderStatusEnum::accepted,
+                    'status'=>OrderStatusEnum::accepted->value,
                     'accept_user_id' => $user->id
                 ]
             );
@@ -415,7 +415,7 @@ class EloquentOrderRepository implements OrderRepository
                 'accept_user_id' => null,
                 'order_id' => $order->id,
                 'task_id' => null,
-                'status' => OrderStatusEnum::notAccepted,
+                'status' => OrderStatusEnum::notAccepted->value,
                 'self_employed' => $order->self_employed,
                 'radius' => null,
                 'price' => null,
@@ -446,7 +446,7 @@ class EloquentOrderRepository implements OrderRepository
                 'accept_user_id' => null,
                 'order_id' => null,
                 'task_id' => $task->id,
-                'status' => OrderStatusEnum::notAccepted,
+                'status' => OrderStatusEnum::notAccepted->value,
                 'self_employed' => $task->self_employed,
                 'radius' => null,
                 'price' => $task->price,
@@ -509,7 +509,7 @@ class EloquentOrderRepository implements OrderRepository
     public function invoiceBid(int $bidId, ?array $specialistIds): bool
     {
         $bid = Bid::query()->where('id',$bidId)->first();
-        $bid->status = OrderStatusEnum::accepted;
+        $bid->status = OrderStatusEnum::accepted->value;
         if(count($specialistIds)>0) {
             $bid->accept_user_id = current($specialistIds);
         }else{
@@ -525,7 +525,7 @@ class EloquentOrderRepository implements OrderRepository
             ->where('id',$bidId)
             ->update(
                 [
-                    'status'=>OrderStatusEnum::accepted,
+                    'status'=>OrderStatusEnum::accepted->value,
                     'accept_user_id' => $user->id
                 ]
             );
@@ -535,7 +535,7 @@ class EloquentOrderRepository implements OrderRepository
     {
         if($specialistIds) {
             $bid = Bid::query()->where('id', $bidId)->first();
-            $bid->status = OrderStatusEnum::notAccepted;
+            $bid->status = OrderStatusEnum::notAccepted->value;
             $bid->acceptingUsers()->syncWithoutDetaching($specialistIds);
             $bid->save();
         }
@@ -545,7 +545,7 @@ class EloquentOrderRepository implements OrderRepository
     public function cancelBid(int $bidId): bool
     {
         $bid = Bid::query()->where('id',$bidId)->first();
-        $bid->status = OrderStatusEnum::canceled;
+        $bid->status = OrderStatusEnum::canceled->value;
         $bid->save();
         return true;
     }
@@ -605,7 +605,7 @@ class EloquentOrderRepository implements OrderRepository
         $requestModel->accept_user_id = null;
         $requestModel->order_id = $task->order_id;
         $requestModel->task_id = $task->id;
-        $requestModel->status = OrderStatusEnum::notAccepted;
+        $requestModel->status = OrderStatusEnum::notAccepted->value;
         $requestModel->self_employed = $task->self_employed;
         //$requestModel->radius = $task->radius;??
         $requestModel->price = $task->price;
@@ -633,7 +633,7 @@ class EloquentOrderRepository implements OrderRepository
         $requestModel->accept_user_id = null;
         $requestModel->order_id = $bid->order_id;
         $requestModel->task_id = $bid->id;
-        $requestModel->status = OrderStatusEnum::notAccepted;
+        $requestModel->status = OrderStatusEnum::notAccepted->value;
         $requestModel->self_employed = $bid->self_employed;
         $requestModel->radius = $bid->radius;
         $requestModel->price = $bid->price;

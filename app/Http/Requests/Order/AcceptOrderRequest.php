@@ -38,7 +38,7 @@ class AcceptOrderRequest extends FormRequest
 
                     $orderExists = Order::query()
                         ->where('id', $value)
-                        ->where('status', OrderStatusEnum::notAccepted)
+                        ->where('status', OrderStatusEnum::notAccepted->value)
                         ->whereIn('place_id', $place)
                         ->exists();
 

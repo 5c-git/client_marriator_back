@@ -77,5 +77,22 @@ class SpecialistController extends Controller
         }
     }
 
+    public function startDay(StartDayRequest $request)
+    {
+
+    }
+
+    public function endDay(EndDayRequest $request)
+    {
+
+    }
+
+    public function reportBid(ReportRequest $request)
+    {
+
+    }
+
+
+
 
 }

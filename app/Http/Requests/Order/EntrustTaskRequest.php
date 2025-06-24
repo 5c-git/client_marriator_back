@@ -45,7 +45,7 @@ class EntrustTaskRequest extends FormRequest
                     $userIdsSupervisor[] = $user->id;
                     $taskExists = Task::query()
                         ->whereIn('user_id',$userIdsSupervisor)
-                        ->whereIn('status', [OrderStatusEnum::new,OrderStatusEnum::notAccepted])
+                        ->whereIn('status', [OrderStatusEnum::new->value,OrderStatusEnum::notAccepted->value])
                         ->exists();
 
                     if (!$taskExists) {
