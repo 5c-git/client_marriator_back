@@ -16,6 +16,7 @@ use App\Http\Requests\SetPlaceRequest;
 use App\Http\Requests\SetUserDataRequest;
 use App\Http\Requests\UserData\DelPlaceRequest as DelPlaceModerationRequest;
 use App\Http\Requests\UserData\DelProjectRequest;
+use App\Http\Requests\UserData\GetClientRequest;
 use App\Http\Requests\UserData\GetPlaceRequest;
 use App\Http\Requests\UserData\GetProjectRequest;
 use App\Http\Requests\UserData\SetPlaceRequest as SetPlaceModerationRequest;
@@ -150,6 +151,19 @@ class UniversalController extends Controller
         }
         if(in_array('admin',$this->roles)){
             return app(\App\Http\Controllers\UserRoles\AdminController::class)->getModerationClient($request);
+        }
+        return response()->json(['message' => 'Role not allowed.'], 403);
+    }
+
+    public function getModerationSingleClient(GetClientRequest $request){
+        if(in_array('supervisor',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\SupervisorController::class)->getModerationSingleClient($request);
+        }
+        if(in_array('manager',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\ManagerController::class)->getModerationSingleClient($request);
+        }
+        if(in_array('admin',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\AdminController::class)->getModerationSingleClient($request);
         }
         return response()->json(['message' => 'Role not allowed.'], 403);
     }

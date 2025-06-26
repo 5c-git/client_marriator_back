@@ -42,6 +42,8 @@ class UserResource extends JsonResource
             'leave_bid' => $this->leave_bid,
             'refusal_task' => $this->refusal_task,
             'waiting_task' => $this->waiting_task,
+            'supervisors' => ShortUserResource::collection($this->supervisors),
+            'manager' => ShortUserResource::collection($this->manager)
         ];
     }
 }

@@ -37,5 +37,8 @@ class CachingUserRepository implements UserRepository
     }
 
 
-
+    public function getModerationUser(int $userId, array $roles = []): User
+    {
+        return $this->users->getModerationUser($userId,$roles);
+    }
 }

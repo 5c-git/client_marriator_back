@@ -24,6 +24,7 @@ use App\Http\Requests\PaginatorRequest;
 use App\Http\Requests\SetUserDataRequest;
 use App\Http\Requests\UserData\DelPlaceRequest as DelPlaceModerationRequest;
 use App\Http\Requests\UserData\DelProjectRequest;
+use App\Http\Requests\UserData\GetClientRequest;
 use App\Http\Requests\UserData\GetPlaceRequest;
 use App\Http\Requests\UserData\GetProjectRequest;
 use App\Http\Requests\UserData\SetPlaceRequest as SetPlaceModerationRequest;
@@ -236,6 +237,32 @@ class SupervisorController extends Controller
         );
 
         return UserResource::collection($usersForModeration);
+    }
+
+    public function getModerationSingleClient(GetClientRequest $request): UserResource
+    {
+        $user = Auth::user();
+        $userRoles = $user->roles?->pluck('id')->toArray();
+        $arrRoleConfirm = [];
+        foreach ($userRoles as $role){
+            $arrRoleConfirm = RoleEnum::from($role)->getClientForModeration();
+        }
+        $arrRoleConfirm = array_unique($arrRoleConfirm);
+
+        if(!empty($request->status)){
+            if(in_array($request->status,$arrRoleConfirm)){
+                $arrRoleConfirm = [$request->status];
+            }else{
+                $arrRoleConfirm = [];
+            }
+        }
+
+        $usersForModeration = $this->userRepository->getModerationUser(
+            $request->userId,
+            $arrRoleConfirm
+        );
+
+        return new UserResource($usersForModeration);
     }
 
     public function confirmUserRegister(ConfirmUserRequest $request): SuccessResource

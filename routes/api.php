@@ -179,6 +179,7 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
             Route::post('/setPlaceModeration', 'App\Http\Controllers\UniversalController@setPlaceModeration')->name('setPlaceModeration');
             Route::post('/delPlaceModeration', 'App\Http\Controllers\UniversalController@delPlaceModeration')->name('delPlaceModeration');
             Route::get('/getModerationClient','App\Http\Controllers\UniversalController@getModerationClient')->name('getModerationClient');
+            Route::get('/getModerationSingleClient','App\Http\Controllers\UniversalController@getModerationSingleClient')->name('getModerationSingleClient');
             Route::post('/confirmUserRegister','App\Http\Controllers\UniversalController@confirmUserRegister')->name('confirmUserRegister');
             Route::post('/setUserImg','App\Http\Controllers\UniversalController@setUserImg')->name('setUserImg');
         });

@@ -37,8 +37,6 @@ class EloquentUserRepository implements UserRepository
     public function getModerationUsersPaginate(array $roles = [],SortEnum $sort = SortEnum::all,UserStatusModerationEnum $status = UserStatusModerationEnum::new,int $page = 1,int $perPage = 10): Paginator
     {
         $userQuery = User::query()
-            ->where('confirmRegister',false)
-            ->where('finishRegister',true)
             ->with(['roles','project','place']);
         if($roles) {
             $userQuery = $userQuery->when($roles, function (Builder $q, array $roles) {
@@ -72,4 +70,20 @@ class EloquentUserRepository implements UserRepository
        return $userQuery->simplePaginate($perPage);
     }
 
+    public function getModerationUser(int $userId, array $roles = []): User
+    {
+        $userQuery = User::query()
+            ->with(['roles','project','place']);
+        if($roles) {
+            $userQuery = $userQuery->when($roles, function (Builder $q, array $roles) {
+                $q->whereHas('roles', function ($query) use ($roles) {
+                    $query->whereIn('role_id', $roles);
+                });
+            });
+        }else{
+            $userQuery = $userQuery->where('phone','123');
+        }
+
+        return $userQuery->first();
+    }
 }
