@@ -7,16 +7,20 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Order\GetOrderRequest;
 use App\Http\Requests\UserData\DelPlaceRequest as DelPlaceModerationRequest;
 use App\Http\Requests\UserData\DelProjectRequest;
+use App\Http\Requests\UserData\DelSurepvisorRequest;
 use App\Http\Requests\UserData\GetClientRequest;
 use App\Http\Requests\UserData\GetPlaceRequest;
 use App\Http\Requests\UserData\GetProjectRequest;
+use App\Http\Requests\UserData\GetSurepvisorRequest;
 use App\Http\Requests\UserData\SetPlaceRequest as SetPlaceModerationRequest;
 use App\Http\Requests\UserData\SetProjectRequest;
+use App\Http\Requests\UserData\SetSurepvisorsRequest;
 use App\Http\Requests\UserData\SetUserImgRequest;
 use App\Http\Resources\ErrorResource;
 use App\Http\Resources\Order\OrderResource;
 use App\Http\Resources\PlaceResource;
 use App\Http\Resources\ProjectResource;
+use App\Http\Resources\ShortUserResource;
 use App\Models\Fields\Directory\Place;
 use App\Models\Fields\Directory\Project;
 use App\Models\Fields\Fields;
@@ -173,6 +177,84 @@ class AdminController extends Controller
             $user->place()->syncWithoutDetaching($placeForUser);
         }
         return new SuccessResource();
+    }
+
+    public function getUserSurepvisorData(GetSurepvisorRequest $request){
+        $user = User::where('id',$request->userId)->first();
+        $userRoles = $user->roles?->pluck('id')->toArray();
+        $checkRole = false;
+        foreach ($userRoles as $userRole){
+            if(in_array($userRole,[RoleEnum::manager->value])){
+                $checkRole = true;
+                break;
+            }
+        }
+        $supervisorUsers = collect();
+        if($checkRole) {
+            $user = $request->user();
+            $supervisorUsers = $user->supervisors;
+        }
+        return ShortUserResource::collection($supervisorUsers);
+    }
+
+    public function getSurepvisors(GetSurepvisorRequest $request){
+        $user = User::where('id',$request->userId)->first();
+        $userRoles = $user->roles?->pluck('id')->toArray();
+        $checkRole = false;
+        foreach ($userRoles as $userRole){
+            if(in_array($userRole,[RoleEnum::manager->value])){
+                $checkRole = true;
+                break;
+            }
+        }
+        $users = collect();
+        if($checkRole) {
+            $deleteSuperVisor = $user->supervisors?->pluck('id')->toArray();
+            $users = User::whereHas('roles', function ($query) {
+                $query->where('role_id', RoleEnum::supervisor->value);
+            });
+            if($deleteSuperVisor) {
+                $users = $users->whereNotIn('id', $deleteSuperVisor);
+            }
+            $users = $users->where('confirmRegister', true)->where('finishRegister', true)->get();
+        }
+        return ShortUserResource::collection($users);
+    }
+
+    public function setSurepvisors(SetSurepvisorsRequest $request){
+        $user = User::where('id',$request->userId)->first();
+        $userRoles = $user->roles?->pluck('id')->toArray();
+        $checkRole = false;
+        foreach ($userRoles as $userRole){
+            if(in_array($userRole,[RoleEnum::manager->value])){
+                $checkRole = true;
+                break;
+            }
+        }
+        if($checkRole) {
+            $user = $request->user();
+            $user->supervisors()->syncWithoutDetaching($request->surepvisorIds);
+            return new SuccessResource();
+        }
+        return new ErrorResource();
+    }
+
+    public function delSurepvisor(DelSurepvisorRequest $request){
+        $user = User::where('id',$request->userId)->first();
+        $userRoles = $user->roles?->pluck('id')->toArray();
+        $checkRole = false;
+        foreach ($userRoles as $userRole){
+            if(in_array($userRole,[RoleEnum::manager->value])){
+                $checkRole = true;
+                break;
+            }
+        }
+        if($checkRole) {
+            $user = $request->user();
+            $user->supervisors()->detach($request->surepvisorId);
+            return new SuccessResource();
+        }
+        return new ErrorResource();
     }
 
     public function delPlaceModeration(DelPlaceModerationRequest $request): SuccessResource

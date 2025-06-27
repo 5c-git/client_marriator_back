@@ -16,11 +16,14 @@ use App\Http\Requests\SetPlaceRequest;
 use App\Http\Requests\SetUserDataRequest;
 use App\Http\Requests\UserData\DelPlaceRequest as DelPlaceModerationRequest;
 use App\Http\Requests\UserData\DelProjectRequest;
+use App\Http\Requests\UserData\DelSurepvisorRequest;
 use App\Http\Requests\UserData\GetClientRequest;
 use App\Http\Requests\UserData\GetPlaceRequest;
 use App\Http\Requests\UserData\GetProjectRequest;
+use App\Http\Requests\UserData\GetSurepvisorRequest;
 use App\Http\Requests\UserData\SetPlaceRequest as SetPlaceModerationRequest;
 use App\Http\Requests\UserData\SetProjectRequest;
+use App\Http\Requests\UserData\SetSurepvisorsRequest;
 use App\Http\Requests\UserData\SetUserImgRequest;
 use FontLib\Table\Type\glyf;
 use Illuminate\Http\Request;
@@ -321,6 +324,46 @@ class UniversalController extends Controller
         }
         if(in_array('admin',$this->roles)){
             return app(\App\Http\Controllers\UserRoles\AdminController::class)->delPlaceModeration($request);
+        }
+        return response()->json(['message' => 'Role not allowed.'], 403);
+    }
+
+    public function getUserSurepvisorData(GetSurepvisorRequest $request){
+        if(in_array('manager',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\ManagerController::class)->getUserSurepvisorData($request);
+        }
+        if(in_array('admin',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\AdminController::class)->getUserSurepvisorData($request);
+        }
+        return response()->json(['message' => 'Role not allowed.'], 403);
+    }
+
+    public function getSurepvisors(GetSurepvisorRequest $request){
+        if(in_array('manager',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\ManagerController::class)->getSurepvisors($request);
+        }
+        if(in_array('admin',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\AdminController::class)->getSurepvisors($request);
+        }
+        return response()->json(['message' => 'Role not allowed.'], 403);
+    }
+
+    public function setSurepvisors(SetSurepvisorsRequest $request){
+        if(in_array('manager',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\ManagerController::class)->setSurepvisors($request);
+        }
+        if(in_array('admin',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\AdminController::class)->setSurepvisors($request);
+        }
+        return response()->json(['message' => 'Role not allowed.'], 403);
+    }
+
+    public function delSurepvisor(DelSurepvisorRequest $request){
+        if(in_array('manager',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\ManagerController::class)->delSurepvisor($request);
+        }
+        if(in_array('admin',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\AdminController::class)->delSurepvisor($request);
         }
         return response()->json(['message' => 'Role not allowed.'], 403);
     }

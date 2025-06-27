@@ -79,6 +79,9 @@ use App\Http\Requests\Order\CreateRequestFromBidRequest;
 use App\Http\Requests\Order\CancelRequestRequest;
 use App\Http\Resources\Order\RequestResource;
 use App\Http\Requests\UserData\GetClientRequest;
+use App\Http\Requests\UserData\GetSurepvisorRequest;
+use App\Http\Requests\UserData\SetSurepvisorsRequest;
+use App\Http\Requests\UserData\DelSurepvisorRequest;
 
 class ManagerController extends Controller
 {
@@ -176,58 +179,82 @@ class ManagerController extends Controller
         }
     }
 
-    public function getSurepvisorData(Request $request){
+    public function getUserSurepvisorData(GetSurepvisorRequest $request){
         $user = User::where('id',$request->userId)->first();
         $userRoles = $user->roles?->pluck('id')->toArray();
         $checkRole = false;
         foreach ($userRoles as $userRole){
-            if(in_array($userRole,[RoleEnum::recruiter->value])){
+            if(in_array($userRole,[RoleEnum::manager->value])){
                 $checkRole = true;
                 break;
             }
         }
-        $user = $request->user();
-        $supervisorUsers = $user->supervisors;
+        $supervisorUsers = collect();
+        if($checkRole) {
+            $user = $request->user();
+            $supervisorUsers = $user->supervisors;
+        }
         return ShortUserResource::collection($supervisorUsers);
     }
 
-    public function getSurepvisors(Request $request){
+    public function getSurepvisors(GetSurepvisorRequest $request){
         $user = User::where('id',$request->userId)->first();
         $userRoles = $user->roles?->pluck('id')->toArray();
         $checkRole = false;
         foreach ($userRoles as $userRole){
-            if(in_array($userRole,[RoleEnum::recruiter->value])){
+            if(in_array($userRole,[RoleEnum::manager->value])){
                 $checkRole = true;
                 break;
             }
         }
-        $users = User::whereHas('roles', function ($query) {
-            $query->whereIn('id', RoleEnum::supervisor->value);
-        })->where('confirmRegister',true)->where('finishRegister',true)->get();
+        $users = collect();
+        if($checkRole) {
+            $deleteSuperVisor = $user->supervisors?->pluck('id')->toArray();
+            $users = User::whereHas('roles', function ($query) {
+                $query->where('role_id', RoleEnum::supervisor->value);
+            });
+            if($deleteSuperVisor) {
+                $users = $users->whereNotIn('id', $deleteSuperVisor);
+            }
+            $users = $users->where('confirmRegister', true)->where('finishRegister', true)->get();
+        }
         return ShortUserResource::collection($users);
     }
 
-    public function setSurepvisors(Request $request){
+    public function setSurepvisors(SetSurepvisorsRequest $request){
         $user = User::where('id',$request->userId)->first();
         $userRoles = $user->roles?->pluck('id')->toArray();
         $checkRole = false;
         foreach ($userRoles as $userRole){
-            if(in_array($userRole,[RoleEnum::recruiter->value])){
+            if(in_array($userRole,[RoleEnum::manager->value])){
                 $checkRole = true;
                 break;
             }
         }
-        $user = $request->user();
-        $user->supervisors()->syncWithoutDetaching($request->surepvisorIds);
-        return new SuccessResource();
+        if($checkRole) {
+            $user = $request->user();
+            $user->supervisors()->syncWithoutDetaching($request->surepvisorIds);
+            return new SuccessResource();
+        }
+        return new ErrorResource();
     }
 
-    public function delSurepvisors(Request $request){
+    public function delSurepvisor(DelSurepvisorRequest $request){
         $user = User::where('id',$request->userId)->first();
         $userRoles = $user->roles?->pluck('id')->toArray();
-        $user = $request->user();
-        $user->supervisors()->detach($request->surepvisorId);
-        return new SuccessResource();
+        $checkRole = false;
+        foreach ($userRoles as $userRole){
+            if(in_array($userRole,[RoleEnum::manager->value])){
+                $checkRole = true;
+                break;
+            }
+        }
+        if($checkRole) {
+            $user = $request->user();
+            $user->supervisors()->detach($request->surepvisorId);
+            return new SuccessResource();
+        }
+        return new ErrorResource();
     }
 
     public function getPlaceModeration(GetPlaceRequest $request)

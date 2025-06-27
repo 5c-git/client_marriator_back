@@ -182,6 +182,12 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
             Route::get('/getModerationSingleClient','App\Http\Controllers\UniversalController@getModerationSingleClient')->name('getModerationSingleClient');
             Route::post('/confirmUserRegister','App\Http\Controllers\UniversalController@confirmUserRegister')->name('confirmUserRegister');
             Route::post('/setUserImg','App\Http\Controllers\UniversalController@setUserImg')->name('setUserImg');
+
+
+            Route::get('/getUserSurepvisorData','App\Http\Controllers\UniversalController@getUserSurepvisorData')->name('getUserSurepvisorData');
+            Route::get('/getSurepvisors','App\Http\Controllers\UniversalController@getSurepvisors')->name('getSurepvisors');
+            Route::post('/setSurepvisors','App\Http\Controllers\UniversalController@setSurepvisors')->name('setSurepvisors');
+            Route::post('/delSurepvisor','App\Http\Controllers\UniversalController@delSurepvisor')->name('delSurepvisor');
         });
     });
 
