@@ -37,6 +37,7 @@ use App\Models\Order\Order;
  * @property-read Collection|Task[] $acceptedBids
  * @property-read Collection|Task[] $acceptBids
  * @property-read Collection|User[] $supervisors
+ * @property-read Collection|Counterparty[] $counterparty
  */
 class User extends Authenticatable
 {
@@ -148,6 +149,16 @@ class User extends Authenticatable
             'user_directory_project',
             'user_id',
             'project_id'
+        );
+    }
+
+    public function counterparty(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Counterparty::class,
+            'user_directory_counterparty',
+            'user_id',
+            'counterparty_id'
         );
     }
 

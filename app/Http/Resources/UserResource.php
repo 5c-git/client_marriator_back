@@ -43,7 +43,8 @@ class UserResource extends JsonResource
             'refusal_task' => $this->refusal_task,
             'waiting_task' => $this->waiting_task,
             'supervisors' => ShortUserResource::collection($this->supervisors),
-            'manager' => ShortUserResource::collection($this->manager)
+            'manager' => ShortUserResource::collection($this->manager),
+            'counterparty' => CounterpartyResource::collection($this->counterparty)
         ];
     }
 }

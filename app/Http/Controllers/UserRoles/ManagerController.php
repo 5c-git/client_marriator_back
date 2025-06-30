@@ -82,6 +82,10 @@ use App\Http\Requests\UserData\GetClientRequest;
 use App\Http\Requests\UserData\GetSurepvisorRequest;
 use App\Http\Requests\UserData\SetSurepvisorsRequest;
 use App\Http\Requests\UserData\DelSurepvisorRequest;
+use App\Models\Fields\Directory\Counterparty;
+use App\Http\Resources\CounterpartyResource;
+use App\Http\Requests\UserData\SetCounterpartyRequest;
+use App\Http\Requests\UserData\DeleteCounterpartyRequest;
 
 class ManagerController extends Controller
 {
@@ -95,6 +99,59 @@ class ManagerController extends Controller
     {
     }
 
+    public function getCounterparty(){
+        return CounterpartyResource::collection(Counterparty::get());
+    }
+
+    public function setCounterparty(SetCounterpartyRequest $request)
+    {
+        $user = User::where('id',$request->userId)->first();
+        $userRoles = $user->roles?->pluck('id')->toArray();
+        $checkRole = false;
+        foreach ($userRoles as $userRole){
+            if(in_array($userRole,[RoleEnum::manager->value,RoleEnum::client->value,RoleEnum::specialist->value])){
+                $checkRole = true;
+                break;
+            }
+        }
+        if($checkRole){
+            $user->counterparty()->syncWithoutDetaching($request->counterpartyIds);
+            return new SuccessResource();
+        }else{
+            return new ErrorResource();
+        }
+    }
+
+    public function deleteCounterparty(DeleteCounterpartyRequest $request){
+        $user = User::where('id',$request->userId)->first();
+        $userRoles = $user->roles?->pluck('id')->toArray();
+        $checkRole = false;
+        foreach ($userRoles as $userRole){
+            if(in_array($userRole,[RoleEnum::manager->value,RoleEnum::client->value,RoleEnum::specialist->value])){
+                $checkRole = true;
+                break;
+            }
+        }
+        if($checkRole){
+            $user->counterparty()->detach($request->counterpartyId);
+
+            $user->project()->detach($request->projectId);
+            $user = User::where('id',$request->userId)->first();
+            $placesProject = $user->project
+                ->flatMap(fn($project) => $project->places)
+                ->unique('id')?->pluck('id')->toArray();
+            $places = $user->place?->pluck('id')->toArray();
+            $result = array_diff($places, $placesProject);
+            if($result) {
+                $user->place()->detach($result);
+            }
+
+            return new SuccessResource();
+        }else{
+            return new ErrorResource();
+        }
+    }
+
     public function getProject(GetProjectRequest $request){
         $user = User::where('id',$request->userId)->first();
         $userRoles = $user->roles?->pluck('id')->toArray();
@@ -106,8 +163,10 @@ class ManagerController extends Controller
             }
         }
         if($checkRole){
-            $project = Project::all();
-            return ProjectResource::collection($project);
+            $projects = $user->counterparty
+                ->flatMap(fn($counterparty) => $counterparty->projects)
+                ->unique('id');
+            return ProjectResource::collection($projects);
         }else{
             return new ErrorResource();
         }
@@ -124,7 +183,16 @@ class ManagerController extends Controller
             }
         }
         if($checkRole){
-            $user->project()->syncWithoutDetaching($request->projectId);
+            $projects = $user->counterparty
+                ->flatMap(fn($counterparty) => $counterparty->projects)
+                ->unique('id')->pluck('id')->toArray();
+            $projectIds = [];
+            foreach ($request->projectId as $projectOneId){
+                if(in_array($projectOneId,$projects)){
+                    $projectIds[] = $projectOneId;
+                }
+            }
+            $user->project()->syncWithoutDetaching($projectIds);
             return new SuccessResource();
         }else{
             return new ErrorResource();
@@ -315,9 +383,9 @@ class ManagerController extends Controller
         }
         $arrRoleConfirm = array_unique($arrRoleConfirm);
 
-        if(!empty($request->status)){
-            if(in_array($request->status,$arrRoleConfirm)){
-                $arrRoleConfirm = [$request->status];
+        if(!empty($request->role)){
+            if(in_array($request->role,$arrRoleConfirm)){
+                $arrRoleConfirm = [$request->role];
             }else{
                 $arrRoleConfirm = [];
             }

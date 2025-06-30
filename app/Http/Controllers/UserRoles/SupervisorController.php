@@ -221,9 +221,9 @@ class SupervisorController extends Controller
         }
         $arrRoleConfirm = array_unique($arrRoleConfirm);
 
-        if(!empty($request->status)){
-            if(in_array($request->status,$arrRoleConfirm)){
-                $arrRoleConfirm = [$request->status];
+        if(!empty($request->role)){
+            if(in_array($request->role,$arrRoleConfirm)){
+                $arrRoleConfirm = [$request->role];
             }else{
                 $arrRoleConfirm = [];
             }
