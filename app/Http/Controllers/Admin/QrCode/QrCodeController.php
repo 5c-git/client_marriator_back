@@ -89,7 +89,7 @@ class QrCodeController extends Controller
 
             $user->roles()->sync($request->roles);
 
-            $response = ['status'=>'success','data'=>['hash'=>$user->register_hash]];
+            $response = ['status'=>'success','data'=>['url'=> env('FRONT_URL', '').'/register/?hash='.$user->register_hash]];
         }else{
             $response = ['status'=>'error','error_message'=>'Пользователь с такими данными уже существует'];
         }

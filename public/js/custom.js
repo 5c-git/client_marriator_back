@@ -468,7 +468,7 @@ $(document).ready(function () {
             success: function (data) {
                 if (data.status == 'success') {
                     $('.linkBlockJs').show();
-                    $('.linkJs').html('/register/?hash='+data.data.hash);
+                    $('.linkJs').html(data.data.url);
 
                     //setTimeout(function(){location.reload();},2000);
                 } else {

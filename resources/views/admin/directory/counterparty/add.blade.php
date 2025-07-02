@@ -56,27 +56,6 @@
         </div>
 
         <div class="form-group row">
-            <label for="select" class="col-sm-2 col-form-label">Привязка брендов</label>
-            <div class="col-sm-10">
-                <div class="row addItemSelect">
-                    <div class="col-sm-9">
-                        <x-adminlte-select2 data-name="brand" id="parentFields" name="brand[0][]">
-                            @foreach($brand as $field)
-                                @if(!empty($field['uuid']))
-                                    <option value="{{$field['id']}}">{{$field['name']}}: {{$field['name']}} [{{$field['uuid']}}]</option>
-                                @endif
-                            @endforeach
-                        </x-adminlte-select2>
-                    </div>
-                    <div class="col-sm-3">
-                        <a class="removeItemButtonSelect btn btn-danger">Удалить элемент</a>
-                    </div>
-                </div>
-                <button class="btn btn-primary addItemButtonSelect">Добавить привязку</button>
-            </div>
-        </div>
-
-        <div class="form-group row">
             <div class="col-sm-10">
                 <button type="submit" class="btn btn-success">Сохранить</button>
                 <a href="{{route('counterpartyList')}}" style="margin-left: 10px" class="btn btn-secondary btn-md active"

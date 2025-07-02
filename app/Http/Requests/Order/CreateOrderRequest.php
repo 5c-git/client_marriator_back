@@ -41,6 +41,10 @@ class CreateOrderRequest extends FormRequest
                     }
                 },
             ],
+            'selfEmployed' => [
+                'sometimes',
+                'boolean'
+            ]
         ];
     }
 }

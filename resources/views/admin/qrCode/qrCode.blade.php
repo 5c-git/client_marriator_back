@@ -92,13 +92,13 @@
                 'data' =>
                    $usersData
                 ,
-                'order' => [[1, 'asc']],
+                'order' => [[0, 'desc']],
                 'columns' => [null,null, null, null, ['orderable' => false]],
             ];
         @endphp
 
         {{-- Minimal example / fill data using the component slot --}}
-        <x-adminlte-datatable id="table1" :heads="$heads" bordered>
+        <x-adminlte-datatable id="table1" :heads="$heads" bordered :config="$config">
             @foreach($config['data'] as $row)
                 <tr>
                     @foreach($row as $cell)

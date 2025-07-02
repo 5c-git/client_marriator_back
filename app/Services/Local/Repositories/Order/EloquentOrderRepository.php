@@ -40,7 +40,7 @@ class EloquentOrderRepository implements OrderRepository
         $order = Order::create([
             'place_id' => $orderRequest->placeId,
             'user_id' => $userId,
-            'self_employed' => false,
+            'self_employed' => $orderRequest->selfEmployed ?? false,
             'status' => OrderStatusEnum::new->value
         ]);
 
