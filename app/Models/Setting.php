@@ -7,6 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 use App\Enum\Document\DocumentStatusEnum;
 use App\Enum\Document\DocumentStatusSignatureEnum;
 
+/**
+ * @property string $key
+ * @property string $value
+ */
 class Setting extends Model
 {
     use HasFactory;

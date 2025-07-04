@@ -304,6 +304,31 @@ return [
             'url'  => 'admin/importDirectory/',
             'icon' => 'fas fa-fw fa-upload',
         ],
+        [
+            'text' => 'Норматив учета',
+            'url' => 'admin/directory_standard/',
+            'icon' => 'fas fa-fw fa-cube',
+        ],
+        [
+            'text' => 'Проекты',
+            'url' => 'admin/directory_project/',
+            'icon' => 'fas fa-fw fa-briefcase',
+        ],
+        [
+            'text' => 'Места проведения',
+            'url' => 'admin/directory_place/',
+            'icon' => 'fas fa-fw fa-map-marker',
+        ],
+        [
+            'text' => 'Бренды',
+            'url' => 'admin/directory_brand/',
+            'icon' => 'fas fa-fw fa-university',
+        ],
+        [
+            'text' => 'Контрагенты',
+            'url' => 'admin/directory_counterparty/',
+            'icon' => 'fas fa-fw fa-user-secret',
+        ],
         // Navbar items:
 //        [
 //            'type' => 'navbar-search',
@@ -435,26 +460,6 @@ return [
                         [
                             'text' => 'Статус мед книжки',
                             'url' => 'admin/directory_medical_book/',
-                        ],
-                        [
-                            'text' => 'Норматив учета',
-                            'url' => 'admin/directory_standard/',
-                        ],
-                        [
-                            'text' => 'Проекты',
-                            'url' => 'admin/directory_project/',
-                        ],
-                        [
-                            'text' => 'Места проведения',
-                            'url' => 'admin/directory_place/',
-                        ],
-                        [
-                            'text' => 'Бренды',
-                            'url' => 'admin/directory_brand/',
-                        ],
-                        [
-                            'text' => 'Контрагенты',
-                            'url' => 'admin/directory_counterparty/',
                         ]
                     ],
                 ],

@@ -81,7 +81,10 @@ class User extends Authenticatable
         'refusal_task',
         'waiting_task',
         'latitude',
-        'longitude'
+        'longitude',
+        'count_wait_bid',
+        'time_answer_bid',
+        'notification_start'
     ];
 
     /**

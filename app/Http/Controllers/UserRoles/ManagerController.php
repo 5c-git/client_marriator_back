@@ -458,6 +458,16 @@ class ManagerController extends Controller
             $userForModeration->leave_bid = $request->leave_bid ?? null;
             $userForModeration->refusal_task = $request->refusal_task ?? null;
             $userForModeration->waiting_task = $request->waiting_task ?? null;
+            $userForModeration->count_wait_bid = $request->count_wait_bid ?? null;
+            $userForModeration->time_answer_bid = $request->time_answer_bid ?? null;
+            $userForModeration->notification_start = $request->notification_start ?? null;
+
+            if($request->phone) {
+                $userForModeration->phone = $request->phone;
+            }
+            if($request->name) {
+                $userForModeration->name = $request->name;
+            }
             $userForModeration->save();
         }
 

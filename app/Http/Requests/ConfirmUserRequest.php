@@ -59,6 +59,9 @@ class ConfirmUserRequest extends FormRequest
                 ];
         }
         $rules['waiting_task'] = 'sometimes|integer|min:1';
+        $rules['count_wait_bid'] = 'sometimes|integer|min:1';
+        $rules['time_answer_bid'] = 'sometimes|integer|min:1';
+        $rules['notification_start'] = 'sometimes|integer|min:1';
 
         return $rules;
     }
@@ -106,6 +109,20 @@ class ConfirmUserRequest extends FormRequest
             if (in_array(RoleEnum::supervisor->value,$userRoles)) {
                 $timeFields = [
                     'repeat_bid', 'leave_bid', 'refusal_task', 'waiting_task'
+                ];
+                foreach ($timeFields as $field) {
+                    if (!$this->filled($field)) {
+                        $validator->errors()->add(
+                            $field,
+                            "Field $field required for user role"
+                        );
+                    }
+                }
+            }
+
+            if (in_array(RoleEnum::specialist->value,$userRoles)) {
+                $timeFields = [
+                    'count_wait_bid', 'time_answer_bid', 'notification_start',
                 ];
                 foreach ($timeFields as $field) {
                     if (!$this->filled($field)) {
