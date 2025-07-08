@@ -66,7 +66,7 @@ class QrCodeController extends Controller
             $user->phone = $request->phone;
             $user->password = Hash::make(rand(1000000,9999999));
             $user->email = $request->email;
-            $user->register_hash = Hash::make(date('Y-m-d H:i:s').$request->phone.rand(1000000,999999));
+            $user->register_hash = Hash::make(date('Y-m-d H:i:s').$request->phone.rand(1000000,9999999));
             $user->save();
             $userFunction = [];
             foreach ($request->roles as $role){

@@ -25,6 +25,7 @@ class OrderActivitiesResource extends JsonResource
     public function toArray($request): array
     {
         return [
+            'id' => $this->id,
             'viewActivity' => new ViewActivityResource($this->viewActivity),
             'count' => $this->count,
             'dateStart' => $this->date_start,

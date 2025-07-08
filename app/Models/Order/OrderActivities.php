@@ -11,6 +11,7 @@ use Illuminate\Support\Collection;
 use App\Models\Fields\Directory\ViewActivities;
 
 /**
+ * @property int $id
  * @property int $order_id
  * @property int $view_activity_id
  * @property int $count
