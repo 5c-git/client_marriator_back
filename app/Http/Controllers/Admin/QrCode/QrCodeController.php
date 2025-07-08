@@ -64,7 +64,7 @@ class QrCodeController extends Controller
         if(!User::query()->where('phone',$request->phone)->where('email',$request->email)->exists()) {
             $user = new User();
             $user->phone = $request->phone;
-            $user->password = Hash::make(rand(1000000,999999));
+            $user->password = Hash::make(rand(1000000,9999999));
             $user->email = $request->email;
             $user->register_hash = Hash::make(date('Y-m-d H:i:s').$request->phone.rand(1000000,999999));
             $user->save();
@@ -89,7 +89,7 @@ class QrCodeController extends Controller
 
             $user->roles()->sync($request->roles);
 
-            $response = ['status'=>'success','data'=>['url'=> env('FRONT_URL', '').'/register/?hash='.$user->register_hash]];
+            $response = ['status'=>'success','data'=>['url'=> env('FRONT_URL', '').'/signin/client/phone?hash='.$user->register_hash]];
         }else{
             $response = ['status'=>'error','error_message'=>'Пользователь с такими данными уже существует'];
         }
