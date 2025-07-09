@@ -14,6 +14,7 @@ use App\Http\Requests\PaginatorRequest;
 use App\Http\Requests\SetBrandImgRequest;
 use App\Http\Requests\SetPlaceRequest;
 use App\Http\Requests\SetUserDataRequest;
+use App\Http\Requests\UserData\DeleteCounterpartyRequest;
 use App\Http\Requests\UserData\DelPlaceRequest as DelPlaceModerationRequest;
 use App\Http\Requests\UserData\DelProjectRequest;
 use App\Http\Requests\UserData\DelSurepvisorRequest;
@@ -21,6 +22,7 @@ use App\Http\Requests\UserData\GetClientRequest;
 use App\Http\Requests\UserData\GetPlaceRequest;
 use App\Http\Requests\UserData\GetProjectRequest;
 use App\Http\Requests\UserData\GetSurepvisorRequest;
+use App\Http\Requests\UserData\SetCounterpartyRequest;
 use App\Http\Requests\UserData\SetPlaceRequest as SetPlaceModerationRequest;
 use App\Http\Requests\UserData\SetProjectRequest;
 use App\Http\Requests\UserData\SetSurepvisorsRequest;
@@ -364,6 +366,45 @@ class UniversalController extends Controller
         }
         if(in_array('admin',$this->roles)){
             return app(\App\Http\Controllers\UserRoles\AdminController::class)->delSurepvisor($request);
+        }
+        return response()->json(['message' => 'Role not allowed.'], 403);
+    }
+
+    public function getCounterparty(){
+        if(in_array('manager',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\ManagerController::class)->getCounterparty();
+        }
+        if(in_array('admin',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\AdminController::class)->getCounterparty();
+        }
+        if(in_array('supervisor',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\SupervisorController::class)->getCounterparty();
+        }
+        return response()->json(['message' => 'Role not allowed.'], 403);
+    }
+
+    public function setCounterparty(SetCounterpartyRequest $request){
+        if(in_array('manager',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\ManagerController::class)->setCounterparty($request);
+        }
+        if(in_array('admin',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\AdminController::class)->setCounterparty($request);
+        }
+        if(in_array('supervisor',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\SupervisorController::class)->setCounterparty($request);
+        }
+        return response()->json(['message' => 'Role not allowed.'], 403);
+    }
+
+    public function deleteCounterparty(DeleteCounterpartyRequest $request){
+        if(in_array('manager',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\ManagerController::class)->deleteCounterparty($request);
+        }
+        if(in_array('admin',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\AdminController::class)->deleteCounterparty($request);
+        }
+        if(in_array('supervisor',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\SupervisorController::class)->deleteCounterparty($request);
         }
         return response()->json(['message' => 'Role not allowed.'], 403);
     }

@@ -188,6 +188,10 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
             Route::get('/getSurepvisors','App\Http\Controllers\UniversalController@getSurepvisors')->name('getSurepvisors');
             Route::post('/setSurepvisors','App\Http\Controllers\UniversalController@setSurepvisors')->name('setSurepvisors');
             Route::post('/delSurepvisor','App\Http\Controllers\UniversalController@delSurepvisor')->name('delSurepvisor');
+
+            Route::get('/getCounterparty','App\Http\Controllers\UniversalController@getCounterparty')->name('getCounterparty');
+            Route::post('/setCounterparty','App\Http\Controllers\UniversalController@setCounterparty')->name('setCounterparty');
+            Route::post('/deleteCounterparty','App\Http\Controllers\UniversalController@deleteCounterparty')->name('deleteCounterparty');
         });
     });
 

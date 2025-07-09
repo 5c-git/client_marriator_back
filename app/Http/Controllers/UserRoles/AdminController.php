@@ -5,6 +5,7 @@ namespace App\Http\Controllers\UserRoles;
 use App\Enum\User\SortEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Order\GetOrderRequest;
+use App\Http\Requests\UserData\DeleteCounterpartyRequest;
 use App\Http\Requests\UserData\DelPlaceRequest as DelPlaceModerationRequest;
 use App\Http\Requests\UserData\DelProjectRequest;
 use App\Http\Requests\UserData\DelSurepvisorRequest;
@@ -12,15 +13,18 @@ use App\Http\Requests\UserData\GetClientRequest;
 use App\Http\Requests\UserData\GetPlaceRequest;
 use App\Http\Requests\UserData\GetProjectRequest;
 use App\Http\Requests\UserData\GetSurepvisorRequest;
+use App\Http\Requests\UserData\SetCounterpartyRequest;
 use App\Http\Requests\UserData\SetPlaceRequest as SetPlaceModerationRequest;
 use App\Http\Requests\UserData\SetProjectRequest;
 use App\Http\Requests\UserData\SetSurepvisorsRequest;
 use App\Http\Requests\UserData\SetUserImgRequest;
+use App\Http\Resources\CounterpartyResource;
 use App\Http\Resources\ErrorResource;
 use App\Http\Resources\Order\OrderResource;
 use App\Http\Resources\PlaceResource;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\ShortUserResource;
+use App\Models\Fields\Directory\Counterparty;
 use App\Models\Fields\Directory\Place;
 use App\Models\Fields\Directory\Project;
 use App\Models\Fields\Fields;
@@ -52,6 +56,69 @@ class AdminController extends Controller
      */
     public function __construct(protected UserRepository $userRepository)
     {
+    }
+
+    public function getCounterparty(){
+        return CounterpartyResource::collection(Counterparty::get());
+    }
+
+    public function setCounterparty(SetCounterpartyRequest $request)
+    {
+        $user = User::where('id',$request->userId)->first();
+        $userRoles = $user->roles?->pluck('id')->toArray();
+        $checkRole = false;
+        foreach ($userRoles as $userRole){
+            if(in_array($userRole,[RoleEnum::manager->value,RoleEnum::client->value,RoleEnum::specialist->value])){
+                $checkRole = true;
+                break;
+            }
+        }
+        if($checkRole){
+            $user->counterparty()->syncWithoutDetaching($request->counterpartyIds);
+            return new SuccessResource();
+        }else{
+            return new ErrorResource();
+        }
+    }
+
+    public function deleteCounterparty(DeleteCounterpartyRequest $request){
+        $user = User::where('id',$request->userId)->first();
+        $userRoles = $user->roles?->pluck('id')->toArray();
+        $checkRole = false;
+        foreach ($userRoles as $userRole){
+            if(in_array($userRole,[RoleEnum::manager->value,RoleEnum::client->value,RoleEnum::specialist->value])){
+                $checkRole = true;
+                break;
+            }
+        }
+        if($checkRole){
+            $user->counterparty()->detach($request->counterpartyId);
+
+            $user = User::where('id',$request->userId)->first();
+            $projectsForCounterparty = $user->counterparty
+                ->flatMap(fn($counterparty) => $counterparty->projects)
+                ->unique('id')->pluck('id')->toArray();
+
+            $projectUser = $user->project?->pluck('id')->toArray();
+            $result = array_diff($projectUser, $projectsForCounterparty);
+            if($result) {
+                $user->project()->detach($result);
+            }
+
+            $user = User::where('id',$request->userId)->first();
+            $placesProject = $user->project
+                ->flatMap(fn($project) => $project->places)
+                ->unique('id')?->pluck('id')->toArray();
+            $places = $user->place?->pluck('id')->toArray();
+            $result = array_diff($places, $placesProject);
+            if($result) {
+                $user->place()->detach($result);
+            }
+
+            return new SuccessResource();
+        }else{
+            return new ErrorResource();
+        }
     }
 
     public function getProject(GetProjectRequest $request){

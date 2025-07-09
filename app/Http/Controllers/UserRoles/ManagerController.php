@@ -135,7 +135,17 @@ class ManagerController extends Controller
         if($checkRole){
             $user->counterparty()->detach($request->counterpartyId);
 
-            $user->project()->detach($request->projectId);
+            $user = User::where('id',$request->userId)->first();
+            $projectsForCounterparty = $user->counterparty
+                ->flatMap(fn($counterparty) => $counterparty->projects)
+                ->unique('id')->pluck('id')->toArray();
+
+            $projectUser = $user->project?->pluck('id')->toArray();
+            $result = array_diff($projectUser, $projectsForCounterparty);
+            if($result) {
+                $user->project()->detach($result);
+            }
+
             $user = User::where('id',$request->userId)->first();
             $placesProject = $user->project
                 ->flatMap(fn($project) => $project->places)
@@ -590,7 +600,7 @@ class ManagerController extends Controller
             )
         );
     }
-
+///////?????????????
     public function createTask(CreateTaskRequest $request): TaskResource
     {
         return new TaskResource(
