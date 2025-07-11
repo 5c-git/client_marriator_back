@@ -82,6 +82,11 @@ class ViewActivitiesController extends Controller
         }else{
             $editObj->self_employed = false;
         }
+        if(!empty($data['traveling'])) {
+            $editObj->traveling = true;
+        }else{
+            $editObj->traveling = false;
+        }
         if(!empty($data['type'])) {
             $editObj->type = $data['type'];
         }
@@ -164,6 +169,11 @@ class ViewActivitiesController extends Controller
             $editObj->self_employed = true;
         }else{
             $editObj->self_employed = false;
+        }
+        if(!empty($data['traveling'])) {
+            $editObj->traveling = true;
+        }else{
+            $editObj->traveling = false;
         }
         if(!empty($data['type'])) {
             $editObj->type = $data['type'];

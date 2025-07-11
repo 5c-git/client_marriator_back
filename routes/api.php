@@ -170,6 +170,7 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
 
         Route::get('/getViewActivitiesForTask','App\Http\Controllers\UniversalController@getViewActivitiesForTask')->name('getViewActivitiesForTask');
         Route::get('/getPlaceForOrder','App\Http\Controllers\UniversalController@getPlaceForOrder')->name('getPlaceForOrderCreate');
+        Route::get('/getPlaceForTask','App\Http\Controllers\UniversalController@getPlaceForOrder')->name('getPlaceForTaskCreate');
 
         Route::group(['prefix' => 'moderation'], function () {
             Route::get('/getProject', 'App\Http\Controllers\UniversalController@getProject')->name('getProject');

@@ -29,7 +29,8 @@ class ViewActivities extends Model implements ModelDirectoryInterface
         'link',
         'type',
         'parentFields',
-        'self_employed'
+        'self_employed',
+        'traveling'
     ];
 
     public $timestamps = false;

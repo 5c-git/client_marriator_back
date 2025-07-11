@@ -29,6 +29,7 @@ class ViewActivityResource extends JsonResource
             'detailName' => $this->detail_name,
             'previewText' => $this->preview_text,
             'logo' =>  $this->img ? Storage::url($this->img) : null,
+            'traveling' =>  (bool)$this->traveling
         ];
 
     }

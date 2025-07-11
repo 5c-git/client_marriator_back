@@ -104,6 +104,15 @@
         </div>
 
         <div class="form-group row">
+            <label for="traveling" class="col-sm-2 col-form-label">Разьездная</label>
+            <div class="offset-sm-2 col-sm-10">
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" style="margin-top: -1.5rem" name="traveling" value="1" id="traveling">
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group row">
             <label for="select" class="col-sm-2 col-form-label">Привязка полей</label>
             <div class="col-sm-10">
                 <div class="row addItemSelect">
