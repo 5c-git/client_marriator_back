@@ -7,6 +7,8 @@ use App\Http\Requests\ConfirmUserRequest;
 use App\Http\Requests\DelPlaceRequest;
 use App\Http\Requests\Order\AcceptOrderRequest;
 use App\Http\Requests\Order\AcceptTaskRequest;
+use App\Http\Requests\Order\CreateBidFromOrderRequest;
+use App\Http\Requests\Order\CreateBidFromTaskRequest;
 use App\Http\Requests\Order\GetOrderRequest;
 use App\Http\Requests\Order\GetTaskRequest;
 use App\Http\Requests\Order\GetViewActivitiesForOrderRequest;
@@ -416,6 +418,27 @@ class UniversalController extends Controller
         }
         if(in_array('supervisor',$this->roles)){
             return app(\App\Http\Controllers\UserRoles\SupervisorController::class)->acceptTask($request);
+        }
+        return response()->json(['message' => 'Role not allowed.'], 403);
+    }
+
+
+    public function createBidFromOrder(CreateBidFromOrderRequest $request){
+        if(in_array('manager',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\ManagerController::class)->createBidFromOrder($request);
+        }
+        if(in_array('supervisor',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\SupervisorController::class)->createBidFromOrder($request);
+        }
+        return response()->json(['message' => 'Role not allowed.'], 403);
+    }
+
+    public function createBidFromTask(CreateBidFromTaskRequest $request){
+        if(in_array('manager',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\ManagerController::class)->createBidFromTask($request);
+        }
+        if(in_array('supervisor',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\SupervisorController::class)->createBidFromTask($request);
         }
         return response()->json(['message' => 'Role not allowed.'], 403);
     }
