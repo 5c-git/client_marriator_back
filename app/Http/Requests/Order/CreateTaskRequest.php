@@ -41,6 +41,10 @@ class CreateTaskRequest extends FormRequest
                         $fail('Not your place');
                     }
                 },
+            ],
+            'selfEmployed' => [
+                'sometimes',
+                'boolean'
             ]
         ];
     }

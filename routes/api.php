@@ -112,14 +112,14 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
         Route::middleware([CheckRole::class.':manager'])->group( function () {
             Route::get('/convertTask','App\Http\Controllers\UserRoles\ManagerController@convertTask')->name('convertTask');
             Route::get('/getSurepvisorData','App\Http\Controllers\UserRoles\ManagerController@getSurepvisorData')->name('getSurepvisorData');
-            Route::post('/createTask','App\Http\Controllers\UserRoles\ManagerController@createTask')->name('createTask');//??
-            Route::post('/updateTask','App\Http\Controllers\UserRoles\ManagerController@updateTask')->name('updateTask');//??
-            Route::post('/createTaskActivity','App\Http\Controllers\UserRoles\ManagerController@createTaskActivity')->name('createTaskActivity');//??
-            Route::post('/deleteTaskActivity','App\Http\Controllers\UserRoles\ManagerController@deleteTaskActivity')->name('deleteTaskActivity');//??
-            Route::get('/getViewActivitiesForTask','App\Http\Controllers\UserRoles\ManagerController@getViewActivitiesForTask')->name('getViewActivitiesForTask');//??
-            Route::post('/instructTask','App\Http\Controllers\UserRoles\ManagerController@instructTask')->name('instructTask');//??
-            Route::post('/invoiceTask','App\Http\Controllers\UserRoles\ManagerController@invoiceTask')->name('invoiceTask');//??
-            Route::post('/cancelTask','App\Http\Controllers\UserRoles\ManagerController@cancelTask')->name('cancelTask');//??
+            Route::post('/createTask','App\Http\Controllers\UserRoles\ManagerController@createTask')->name('createTask');
+            Route::post('/updateTask','App\Http\Controllers\UserRoles\ManagerController@updateTask')->name('updateTask');
+            Route::post('/createTaskActivity','App\Http\Controllers\UserRoles\ManagerController@createTaskActivity')->name('createTaskActivity');
+            Route::post('/deleteTaskActivity','App\Http\Controllers\UserRoles\ManagerController@deleteTaskActivity')->name('deleteTaskActivity');
+            Route::get('/getViewActivitiesForTask','App\Http\Controllers\UserRoles\ManagerController@getViewActivitiesForTask')->name('getViewActivitiesForTask');
+            Route::post('/instructTask','App\Http\Controllers\UserRoles\ManagerController@instructTask')->name('instructTask');
+            Route::post('/invoiceTask','App\Http\Controllers\UserRoles\ManagerController@invoiceTask')->name('invoiceTask');
+            Route::post('/cancelTask','App\Http\Controllers\UserRoles\ManagerController@cancelTask')->name('cancelTask');
 
         });
         Route::middleware([CheckRole::class.':recruiter'])->group( function () {
@@ -168,9 +168,14 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
         Route::get('/getTasks','App\Http\Controllers\UniversalController@getTasks')->name('getTasks');
         Route::get('/getTask','App\Http\Controllers\UniversalController@getTask')->name('getTask');
 
-        Route::get('/getViewActivitiesForTask','App\Http\Controllers\UniversalController@getViewActivitiesForTask')->name('getViewActivitiesForTask');
+        //Route::get('/getViewActivitiesForTask','App\Http\Controllers\UniversalController@getViewActivitiesForTask')->name('getViewActivitiesForTask');
         Route::get('/getPlaceForOrder','App\Http\Controllers\UniversalController@getPlaceForOrder')->name('getPlaceForOrderCreate');
         Route::get('/getPlaceForTask','App\Http\Controllers\UniversalController@getPlaceForOrder')->name('getPlaceForTaskCreate');
+
+        Route::post('/acceptTask','App\Http\Controllers\UniversalController@acceptTask')->name('acceptTask');
+
+        Route::post('/createBidFromOrder','App\Http\Controllers\UniversalController@createBidFromOrder')->name('createBidFromOrder');
+        Route::post('/createBidFromTask','App\Http\Controllers\UniversalController@createBidFromTask')->name('createBidFromTask');
 
         Route::group(['prefix' => 'moderation'], function () {
             Route::get('/getProject', 'App\Http\Controllers\UniversalController@getProject')->name('getProject');

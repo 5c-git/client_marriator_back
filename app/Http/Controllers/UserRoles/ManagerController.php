@@ -86,6 +86,7 @@ use App\Models\Fields\Directory\Counterparty;
 use App\Http\Resources\CounterpartyResource;
 use App\Http\Requests\UserData\SetCounterpartyRequest;
 use App\Http\Requests\UserData\DeleteCounterpartyRequest;
+use App\Http\Requests\Order\InstructTaskRequest;
 
 class ManagerController extends Controller
 {
@@ -634,14 +635,20 @@ class ManagerController extends Controller
         return new TaskResource($this->orderRepository->updateTask($request));
     }
 
-    public function instructTask(EntrustTaskRequest $request): ErrorResource|SuccessResource
+    public function instructTask(InstructTaskRequest $request): ErrorResource|SuccessResource
     {
         if($request->taskId){
-            $this->orderRepository->instructTask($request->taskId,$request->input('supervisorIds',[]));
+            $this->orderRepository->instructTask($request->taskId,$request->input('supervisorId')?[$request->input('supervisorId')]:[]);
             return new SuccessResource();
         }else{
             return new ErrorResource();
         }
+    }
+
+    public function getSurepvisorData($request){
+        $user = $request->user();
+        $supervisorUsers = $user->supervisors;
+        return ShortUserResource::collection($supervisorUsers);
     }
 
     public function invoiceTask(EntrustTaskRequest $request): ErrorResource|SuccessResource

@@ -110,7 +110,7 @@ class EloquentOrderRepository implements OrderRepository
         $task = Task::create([
             'place_id' => $taskRequest->placeId,
             'user_id' => $userId,
-            'self_employed' => false,
+            'self_employed' => $taskRequest->selfEmployed ?? false,
             'status' => OrderStatusEnum::new->value,
             'specialist_user_id' => null,
             'accept_user_id' => null,
@@ -361,17 +361,6 @@ class EloquentOrderRepository implements OrderRepository
 
     public function instructTask(int $taskId,?array $supervisorIds): bool
     {
-        if($supervisorIds) {
-            $task = Task::query()->where('id', $taskId)->first();
-            $task->status = OrderStatusEnum::notAccepted->value;
-            $task->acceptingUsers()->syncWithoutDetaching($supervisorIds);
-            $task->save();
-        }
-        return true;
-    }
-
-    public function invoiceTask(int $taskId,?array $supervisorIds): bool
-    {
         $task = Task::query()->where('id',$taskId)->first();
         $task->status = OrderStatusEnum::accepted->value;
         if(count($supervisorIds)>0) {
@@ -380,6 +369,17 @@ class EloquentOrderRepository implements OrderRepository
             $task->accept_user_id = Auth::user()->id;
         }
         $task->save();
+        return true;
+    }
+
+    public function invoiceTask(int $taskId,?array $supervisorIds): bool
+    {
+        if($supervisorIds) {
+            $task = Task::query()->where('id', $taskId)->first();
+            $task->status = OrderStatusEnum::notAccepted->value;
+            $task->acceptingUsers()->syncWithoutDetaching($supervisorIds);
+            $task->save();
+        }
         return true;
     }
 

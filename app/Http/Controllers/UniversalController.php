@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ConfirmUserRequest;
 use App\Http\Requests\DelPlaceRequest;
 use App\Http\Requests\Order\AcceptOrderRequest;
+use App\Http\Requests\Order\AcceptTaskRequest;
 use App\Http\Requests\Order\GetOrderRequest;
 use App\Http\Requests\Order\GetTaskRequest;
 use App\Http\Requests\Order\GetViewActivitiesForOrderRequest;
@@ -405,6 +406,16 @@ class UniversalController extends Controller
         }
         if(in_array('supervisor',$this->roles)){
             return app(\App\Http\Controllers\UserRoles\SupervisorController::class)->deleteCounterparty($request);
+        }
+        return response()->json(['message' => 'Role not allowed.'], 403);
+    }
+
+    public function acceptTask(AcceptTaskRequest $request){
+        if(in_array('manager',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\ManagerController::class)->acceptTask($request);
+        }
+        if(in_array('supervisor',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\SupervisorController::class)->acceptTask($request);
         }
         return response()->json(['message' => 'Role not allowed.'], 403);
     }
