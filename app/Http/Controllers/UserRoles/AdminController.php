@@ -356,7 +356,7 @@ class AdminController extends Controller
 
         $usersForModeration = $this->userRepository->getModerationUsersPaginate($arrRoleConfirm,
             SortEnum::from($request->input('sort',SortEnum::new->value)),
-            UserStatusModerationEnum::from($request->input('status',null)),
+            $request->input('status') ? UserStatusModerationEnum::from($request->input('status')) : null,
             $request->input('page', 1),
             $request->input('perPage', 10),
         );
