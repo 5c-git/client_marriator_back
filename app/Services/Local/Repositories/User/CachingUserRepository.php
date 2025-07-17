@@ -28,7 +28,7 @@ class CachingUserRepository implements UserRepository
 
     public function getModerationUsersPaginate(array $roles = [],
                                                SortEnum $sort = SortEnum::all,
-                                               UserStatusModerationEnum $status = UserStatusModerationEnum::new,
+                                               UserStatusModerationEnum $status = null,
                                                int $page = 1,
                                                int $perPage = 10
     ): Paginator

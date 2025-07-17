@@ -34,7 +34,7 @@ class EloquentUserRepository implements UserRepository
     }
 
 
-    public function getModerationUsersPaginate(array $roles = [],SortEnum $sort = SortEnum::all,UserStatusModerationEnum $status = UserStatusModerationEnum::new,int $page = 1,int $perPage = 10): Paginator
+    public function getModerationUsersPaginate(array $roles = [],SortEnum $sort = SortEnum::all,UserStatusModerationEnum $status = null,int $page = 1,int $perPage = 10): Paginator
     {
         $userQuery = User::query()
             ->with(['roles','project','place']);
