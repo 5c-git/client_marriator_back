@@ -115,9 +115,12 @@ class EloquentOrderRepository implements OrderRepository
             'specialist_user_id' => null,
             'accept_user_id' => null,
             'order_id' => null,
-            'price' => $taskRequest->price??0,
-            'income' => $taskRequest->income??0,
-            'scope_of_services' => $taskRequest->scope_of_services??0
+            'price' => 0,
+            'income' => 0,
+            'scope_of_services' => 0,
+//            'price' => $taskRequest->price??0,
+//            'income' => $taskRequest->income??0,
+//            'scope_of_services' => $taskRequest->scope_of_services??0
         ]);
 
         return $task;
@@ -152,9 +155,9 @@ class EloquentOrderRepository implements OrderRepository
         $task->update([
             'place_id' => $taskRequest->placeId??$task->place_id,
             'self_employed' => $taskRequest->selfEmployed??$task->self_employed,
-            'price' => $taskRequest->price??$task->price,
-            'income' => $taskRequest->income??$task->income,
-            'scope_of_services' => $taskRequest->scope_of_services??$task->scope_of_services
+//        'price' => $taskRequest->price??$task->price,
+//            'income' => $taskRequest->income??$task->income,
+//            'scope_of_services' => $taskRequest->scope_of_services??$task->scope_of_services
         ]);
 
         if($taskRequest->placeId){

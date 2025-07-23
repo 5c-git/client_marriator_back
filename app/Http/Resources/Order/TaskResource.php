@@ -31,9 +31,10 @@ class TaskResource extends JsonResource
             'place' => new PlaceResource($this->place),
             'user' => new ShortUserResource($this->user),
             'acceptUser' => new ShortUserResource($this->acceptUser),
-            'price' => $this->price,
-            'income' => $this->income,
-            'scopeOfServices' => $this->scope_of_services,
+            //'price' => $this->price,
+            //'priceResult' => $this->price*($this->self_employed?0.94:0.87),
+            //'income' => $this->income,
+            //'scopeOfServices' => $this->scope_of_services,
             'orderActivities' => OrderActivitiesResource::collection($this->taskActivities),
             'acceptedTasks' => ShortUserResource::collection($this->acceptingUsers),
         ];
