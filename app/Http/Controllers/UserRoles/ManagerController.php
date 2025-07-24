@@ -706,8 +706,7 @@ class ManagerController extends Controller
 
     public function getViewActivitiesForTask(GetViewActivitiesForTaskRequest $request){
         $task = Task::where('id',$request->taskId)->first();
-        $viewActivities = $task->place->project
-            ->flatMap(fn($project) => $project->viewActivities)
+        $viewActivities = $task->project->viewActivities
             ->unique('id');
         $viewActivities = $viewActivities->where('self_employed', $task->self_employed);
         return ViewActivityResource::collection($viewActivities);

@@ -42,6 +42,19 @@ class CreateTaskRequest extends FormRequest
                     }
                 },
             ],
+            'projectId' => [
+                'required',
+                'integer',
+                'exists:directory_project,id',
+                function ($attribute, $value, $fail) {
+                    $project = Auth::user()->project
+                        ->unique('id')?->pluck('id')?->toArray();
+
+                    if (!in_array($value,$project)) {
+                        $fail('Not your project');
+                    }
+                },
+            ],
             'selfEmployed' => [
                 'sometimes',
                 'boolean'

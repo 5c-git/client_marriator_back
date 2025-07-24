@@ -27,7 +27,7 @@ class OrderResource extends JsonResource
         return [
             'id' => $this->id,
             'selfEmployed' => (bool)$this->self_employed,
-            'status' => $this->status->getStatusName(),
+            'status' => $this->status->value,
             'place' => new PlaceResource($this->place),
             'user' => new ShortUserResource($this->user),
             'orderActivities' => OrderActivitiesResource::collection($this->orderActivities)

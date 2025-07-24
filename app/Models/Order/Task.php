@@ -24,6 +24,7 @@ use App\Enum\Order\OrderStatusEnum;
  * @property int $accept_user_id
  * @property int $specialist_user_id
  * @property int $order_id
+ * @property int $project_id
  * @property int $scope_of_services
  * @property float $price
  * @property float $income
@@ -35,6 +36,7 @@ use App\Enum\Order\OrderStatusEnum;
  * @property-read Order $order
  * @property-read Bid $bid
  * @property-read Place $place
+ * @property-read Project $project
  * @property-read Collection|TaskActivity[] $taskActivities
  * @property-read Collection|ViewActivities[] $viewActivities
  * @property-read Collection|User[] $acceptingUsers
@@ -56,7 +58,8 @@ class Task extends Model
         'self_employed',
         'price',
         'income',
-        'scope_of_services'
+        'scope_of_services',
+        'project_id'
     ];
 
     protected $casts = [
@@ -66,6 +69,10 @@ class Task extends Model
     public function place(): BelongsTo
     {
         return $this->belongsTo(Place::class,'place_id');
+    }
+    public function project(): BelongsTo
+    {
+        return $this->belongsTo(Project::class,'project_id');
     }
 
     public function user(): BelongsTo

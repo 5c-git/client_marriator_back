@@ -42,6 +42,19 @@ class UpdateTaskRequest extends FormRequest
                     }
                 },
             ],
+            'projectId' => [
+                'sometimes',
+                'integer',
+                'exists:directory_project,id',
+                function ($attribute, $value, $fail) {
+                    $project = Auth::user()->project
+                        ->unique('id')?->pluck('id')?->toArray();
+
+                    if (!in_array($value,$project)) {
+                        $fail('Not your project');
+                    }
+                },
+            ],
             'selfEmployed' => 'sometimes|boolean',
             //'price' => 'sometimes|float|min:1',
             //'income' => 'sometimes|float|min:1',

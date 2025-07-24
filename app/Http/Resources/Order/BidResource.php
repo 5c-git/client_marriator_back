@@ -28,7 +28,7 @@ class BidResource extends JsonResource
             'id' => $this->id,
             'user' => new ShortUserResource($this->user),
             'acceptUserId' => new ShortUserResource($this->acceptUser),
-            'status' => $this->status->getStatusName(),
+            'status' => $this->status->value,
             'selfEmployed' => (bool)$this->self_employed,
             'radius' => $this->radius,
             'price' => $this->price,

@@ -109,6 +109,7 @@ class EloquentOrderRepository implements OrderRepository
     {
         $task = Task::create([
             'place_id' => $taskRequest->placeId,
+            'project_id' => $taskRequest->projectId,
             'user_id' => $userId,
             'self_employed' => $taskRequest->selfEmployed ?? false,
             'status' => OrderStatusEnum::new->value,
@@ -147,24 +148,24 @@ class EloquentOrderRepository implements OrderRepository
     {
         $task = Task::findOrFail($taskRequest->taskId);
 
-        $viewActivities = $task->place->project
-            ->flatMap(fn($project) => $project->viewActivities)
-            ->unique('id');
-        $viewActivities = $viewActivities->where('self_employed', $task->self_employed);
+        if($task->project){
+            $viewActivities = $task->project->viewActivities
+                ->unique('id');
+        }
 
         $task->update([
             'place_id' => $taskRequest->placeId??$task->place_id,
+            'project_id' => $taskRequest->projectId??$task->project_id,
             'self_employed' => $taskRequest->selfEmployed??$task->self_employed,
 //        'price' => $taskRequest->price??$task->price,
 //            'income' => $taskRequest->income??$task->income,
 //            'scope_of_services' => $taskRequest->scope_of_services??$task->scope_of_services
         ]);
 
-        if($taskRequest->placeId){
+        if($taskRequest->projectId){
             $task = Task::findOrFail($taskRequest->taskId);
 
-            $viewActivitiesNew = $task->place->project
-                ->flatMap(fn($project) => $project->viewActivities)
+            $viewActivitiesNew = $task->project->viewActivities
                 ->unique('id');
             $viewActivitiesNew = $viewActivitiesNew->where('self_employed', $task->self_employed);
             $result = $viewActivities->diff($viewActivitiesNew->keyBy('id'));
