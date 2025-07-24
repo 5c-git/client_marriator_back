@@ -28,7 +28,7 @@ class ShortOrderResource extends JsonResource
             'id' => $this->id,
             'place' => new PlaceResource($this->place),
             'selfEmployed' => (bool)$this->self_employed,
-            'status'=>$this->status->getStatusName(),
+            'status'=>$this->status->value,
         ];
     }
 }
