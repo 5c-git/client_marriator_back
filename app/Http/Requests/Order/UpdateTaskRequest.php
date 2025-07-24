@@ -43,7 +43,7 @@ class UpdateTaskRequest extends FormRequest
                 },
             ],
             'projectId' => [
-                'sometimes',
+                Rule::requiredIf($this->has('placeId')),
                 'integer',
                 'exists:directory_project,id',
                 function ($attribute, $value, $fail) {
