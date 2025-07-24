@@ -120,7 +120,7 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
             Route::post('/instructTask','App\Http\Controllers\UserRoles\ManagerController@instructTask')->name('instructTask');
             Route::post('/invoiceTask','App\Http\Controllers\UserRoles\ManagerController@invoiceTask')->name('invoiceTask');
             Route::post('/cancelTask','App\Http\Controllers\UserRoles\ManagerController@cancelTask')->name('cancelTask');
-
+            Route::get('/getProjectsForTask','App\Http\Controllers\UserRoles\ManagerController@getProjectForTask')->name('getProjectForTask');
         });
         Route::middleware([CheckRole::class.':recruiter'])->group( function () {
             Route::get('/request/getRequests','App\Http\Controllers\UserRoles\RecruiterController@getRequests')->name('getRequests');//??

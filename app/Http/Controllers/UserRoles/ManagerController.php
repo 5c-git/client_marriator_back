@@ -87,6 +87,7 @@ use App\Http\Resources\CounterpartyResource;
 use App\Http\Requests\UserData\SetCounterpartyRequest;
 use App\Http\Requests\UserData\DeleteCounterpartyRequest;
 use App\Http\Requests\Order\InstructTaskRequest;
+use App\Http\Requests\Order\GetProjectForTaskRequest;
 
 class ManagerController extends Controller
 {
@@ -799,6 +800,17 @@ class ManagerController extends Controller
             return new SuccessResource();
         }
         return new ErrorResource();
+    }
+
+    public function getProjectForTask(GetProjectForTaskRequest $request)
+    {
+        $user     = Auth::user();
+        $projects = $user->project()
+            ->whereHas('places', function ($query) use ($request) {
+                $query->where('places.id', $request->placeId);
+            })
+            ->get();
+        return ProjectResource::collection($projects);
     }
 
 }
