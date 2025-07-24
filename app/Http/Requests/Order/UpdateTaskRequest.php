@@ -43,9 +43,9 @@ class UpdateTaskRequest extends FormRequest
                 },
             ],
             'selfEmployed' => 'sometimes|boolean',
-            'price' => 'sometimes|float|min:1',
-            'income' => 'sometimes|float|min:1',
-            'scope_of_services' => 'sometimes|integer|min:1',
+            //'price' => 'sometimes|float|min:1',
+            //'income' => 'sometimes|float|min:1',
+            //'scope_of_services' => 'sometimes|integer|min:1',
             'taskId' => [
                 'required',
                 'integer',
@@ -55,6 +55,7 @@ class UpdateTaskRequest extends FormRequest
                     $userIdsSupervisor[] = $user->id;
                     $orderExists = Task::query()->where('id', $value)
                         ->whereIn('user_id', $userIdsSupervisor)
+                        ->whereNull('order_id')
                         ->exists();
 
                     if (!$orderExists) {

@@ -452,7 +452,7 @@ class EloquentOrderRepository implements OrderRepository
                 'status' => OrderStatusEnum::notAccepted->value,
                 'self_employed' => $task->self_employed,
                 'radius' => null,
-                'price' => $task->price,
+                'price' => null,
                 'view_activity_id' => $taskActivities->view_activity_id,
                 'count' => $taskActivities->count,
                 'date_start' => $taskActivities->date_start,
