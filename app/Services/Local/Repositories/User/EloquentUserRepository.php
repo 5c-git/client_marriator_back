@@ -83,6 +83,7 @@ class EloquentUserRepository implements UserRepository
         }else{
             $userQuery = $userQuery->where('phone','123');
         }
+        $userQuery = $userQuery->where('id',$userId);
 
         return $userQuery->first();
     }
