@@ -111,7 +111,7 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
         });
         Route::middleware([CheckRole::class.':manager'])->group( function () {
             Route::get('/convertTask','App\Http\Controllers\UserRoles\ManagerController@convertTask')->name('convertTask');
-            Route::get('/getSurepvisorData','App\Http\Controllers\UserRoles\ManagerController@getSurepvisorData')->name('getSurepvisorData');
+            Route::get('/getSurepvisorsForTask','App\Http\Controllers\UserRoles\ManagerController@getSurepvisorData')->name('getSurepvisorData');
             Route::post('/createTask','App\Http\Controllers\UserRoles\ManagerController@createTask')->name('createTask');
             Route::post('/updateTask','App\Http\Controllers\UserRoles\ManagerController@updateTask')->name('updateTask');
             Route::post('/createTaskActivity','App\Http\Controllers\UserRoles\ManagerController@createTaskActivity')->name('createTaskActivity');

@@ -88,6 +88,7 @@ use App\Http\Requests\UserData\SetCounterpartyRequest;
 use App\Http\Requests\UserData\DeleteCounterpartyRequest;
 use App\Http\Requests\Order\InstructTaskRequest;
 use App\Http\Requests\Order\GetProjectForTaskRequest;
+use App\Http\Requests\Order\GetSurepvisorDataRequest;
 
 class ManagerController extends Controller
 {
@@ -396,7 +397,7 @@ class ManagerController extends Controller
         $arrRoleConfirm = array_unique($arrRoleConfirm);
 
         if(!empty($request->role)){
-            if(in_array($request->role,$arrRoleConfirm)){
+            if(in_array($request->role,$arrRoleConfirm,true)){
                 $arrRoleConfirm = [$request->role];
             }else{
                 $arrRoleConfirm = [];
@@ -646,7 +647,7 @@ class ManagerController extends Controller
         }
     }
 
-    public function getSurepvisorData($request){
+    public function getSurepvisorData(GetSurepvisorDataRequest $request){
         $user = $request->user();
         $supervisorUsers = $user->supervisors;
         return ShortUserResource::collection($supervisorUsers);
