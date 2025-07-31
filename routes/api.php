@@ -168,6 +168,18 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
         Route::get('/getTasks','App\Http\Controllers\UniversalController@getTasks')->name('getTasks');
         Route::get('/getTask','App\Http\Controllers\UniversalController@getTask')->name('getTask');
 
+
+        Route::get('/getBids','App\Http\Controllers\UniversalController@getBids')->name('getBids');
+        Route::get('/getBid','App\Http\Controllers\UniversalController@getBid')->name('getBid');
+        Route::post('/invoiceBid','App\Http\Controllers\UniversalController@invoiceBid')->name('invoiceBid');
+        //???
+        Route::get('/instructBid','App\Http\Controllers\UniversalController@instructBid')->name('instructBid');
+        Route::get('/acceptBid','App\Http\Controllers\UniversalController@acceptBid')->name('acceptBid');
+        Route::get('/cancelBid','App\Http\Controllers\UniversalController@cancelBid')->name('cancelBid');
+        Route::get('/getSpecialistForBid','App\Http\Controllers\UniversalController@getSpecialistForBid')->name('getSpecialistForBid');
+        Route::get('/updateBid','App\Http\Controllers\UniversalController@updateBid')->name('updateBid');
+
+
         //Route::get('/getViewActivitiesForTask','App\Http\Controllers\UniversalController@getViewActivitiesForTask')->name('getViewActivitiesForTask');
         Route::get('/getPlaceForOrder','App\Http\Controllers\UniversalController@getPlaceForOrder')->name('getPlaceForOrderCreate');
         Route::get('/getPlaceForTask','App\Http\Controllers\UniversalController@getPlaceForOrder')->name('getPlaceForTaskCreate');

@@ -89,6 +89,7 @@ use App\Http\Requests\UserData\DeleteCounterpartyRequest;
 use App\Http\Requests\Order\InstructTaskRequest;
 use App\Http\Requests\Order\GetProjectForTaskRequest;
 use App\Http\Requests\Order\GetSurepvisorDataRequest;
+use App\Http\Resources\Order\BidShortResource;
 
 class ManagerController extends Controller
 {
@@ -716,7 +717,7 @@ class ManagerController extends Controller
  ///??/????????
     public function getBids(GetBidsRequest $request)
     {
-        return ShortOrderResource::collection(
+        return BidShortResource::collection(
             $this->orderRepository->getBidsByUserSyncDataPaginate(
                 $request->user(),
                 OrderStatusEnum::from($request->input('status',3))
@@ -726,7 +727,7 @@ class ManagerController extends Controller
 
     public function getBid(GetBidRequest $request)
     {
-        return new OrderResource(
+        return new BidResource(
             $this->orderRepository->getBidByUserSyncData(
                 $request->user(),
                 $request->input('bidId',null)
@@ -758,7 +759,7 @@ class ManagerController extends Controller
     public function instructBid(EntrustBidRequest $request): ErrorResource|SuccessResource
     {
         if($request->bidId){
-            $this->orderRepository->instructBid($request->bidId,$request->input('supervisorIds',[]));
+            $this->orderRepository->instructBid($request->bidId,$request->input('supervisorId',null));
             return new SuccessResource();
         }else{
             return new ErrorResource();

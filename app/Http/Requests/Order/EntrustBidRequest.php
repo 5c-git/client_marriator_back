@@ -54,21 +54,19 @@ class EntrustBidRequest extends FormRequest
                     }
                 },
             ],
-            'specialistIds' => [
-                'sometimes',
-                'array',
+            'specialistId' => [
+                'required',
+                'integer',
                 function ($attribute, $value, $fail) {
 
-                    $ids = array_map('intval', $value);
-                    $uniqueIds = array_unique($ids);
-
-                    $validIds = User::whereIn('id', $uniqueIds)
+                    $validIds = User::where('id', $value)
                         ->whereHas('roles', fn($q) => $q->where('role_id', RoleEnum::specialist))
                         ->pluck('id')
                         ->toArray();
-                    $invalidIds = array_diff($uniqueIds, $validIds);
 
-                    $fail('Supervisor ids not exist ' . implode(', ', $invalidIds));
+                    if(!$validIds) {
+                        $fail('Supervisor ids not exist ' . $value);
+                    }
                 }
             ],
         ];

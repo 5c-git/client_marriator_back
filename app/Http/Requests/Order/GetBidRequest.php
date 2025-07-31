@@ -29,18 +29,7 @@ class GetBidRequest extends FormRequest
     public function rules()
     {
         return [
-            'status'  => [
-                'sometimes',
-                'integer',
-                Rule::in([
-                    OrderStatusEnum::new->value,
-                    OrderStatusEnum::notAccepted->value,
-                    OrderStatusEnum::accepted->value,
-                    OrderStatusEnum::canceled->value,
-                    OrderStatusEnum::archive->value,
-                ]),
-            ],
-            'bidId'=> 'sometimes|integer|exists:bids,id'
+            'bidId'=> 'required|integer|exists:bids,id'
         ];
     }
 }

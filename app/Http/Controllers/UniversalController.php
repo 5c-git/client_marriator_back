@@ -9,6 +9,9 @@ use App\Http\Requests\Order\AcceptOrderRequest;
 use App\Http\Requests\Order\AcceptTaskRequest;
 use App\Http\Requests\Order\CreateBidFromOrderRequest;
 use App\Http\Requests\Order\CreateBidFromTaskRequest;
+use App\Http\Requests\Order\EntrustBidRequest;
+use App\Http\Requests\Order\GetBidRequest;
+use App\Http\Requests\Order\GetBidsRequest;
 use App\Http\Requests\Order\GetOrderRequest;
 use App\Http\Requests\Order\GetTaskRequest;
 use App\Http\Requests\Order\GetViewActivitiesForOrderRequest;
@@ -442,5 +445,43 @@ class UniversalController extends Controller
         }
         return response()->json(['message' => 'Role not allowed.'], 403);
     }
+
+    public function getBids(GetBidsRequest $request){
+        if(in_array('manager',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\ManagerController::class)->getBids($request);
+        }
+        if(in_array('supervisor',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\SupervisorController::class)->getBids($request);
+        }
+        if(in_array('specialist',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\SpecialistController::class)->getBids($request);
+        }
+        return response()->json(['message' => 'Role not allowed.'], 403);
+    }
+
+    public function getBid(GetBidRequest $request){
+        if(in_array('manager',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\ManagerController::class)->getBid($request);
+        }
+        if(in_array('supervisor',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\SupervisorController::class)->getBid($request);
+        }
+        if(in_array('specialist',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\SpecialistController::class)->getBid($request);
+        }
+        return response()->json(['message' => 'Role not allowed.'], 403);
+    }
+
+    public function invoiceBid(EntrustBidRequest $request){
+        if(in_array('manager',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\ManagerController::class)->invoiceBid($request);
+        }
+        if(in_array('supervisor',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\SupervisorController::class)->invoiceBid($request);
+        }
+        return response()->json(['message' => 'Role not allowed.'], 403);
+    }
+
+
 
 }

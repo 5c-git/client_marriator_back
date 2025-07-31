@@ -512,14 +512,12 @@ class EloquentOrderRepository implements OrderRepository
 
     public function invoiceBid(int $bidId, ?array $specialistIds): bool
     {
-        $bid = Bid::query()->where('id',$bidId)->first();
-        $bid->status = OrderStatusEnum::accepted->value;
-        if(count($specialistIds)>0) {
-            $bid->accept_user_id = current($specialistIds);
-        }else{
-            $bid->accept_user_id = Auth::user()->id;
+        if($specialistIds) {
+            $bid = Bid::query()->where('id', $bidId)->first();
+            $bid->status = OrderStatusEnum::notAccepted->value;
+            $bid->acceptingUsers()->syncWithoutDetaching($specialistIds);
+            $bid->save();
         }
-        $bid->save();
         return true;
     }
 
@@ -535,14 +533,16 @@ class EloquentOrderRepository implements OrderRepository
             );
     }
 
-    public function instructBid(int $bidId, ?array $specialistIds): bool
+    public function instructBid(int $bidId, ?int $specialistId): bool
     {
-        if($specialistIds) {
-            $bid = Bid::query()->where('id', $bidId)->first();
-            $bid->status = OrderStatusEnum::notAccepted->value;
-            $bid->acceptingUsers()->syncWithoutDetaching($specialistIds);
-            $bid->save();
+        $bid = Bid::query()->where('id',$bidId)->first();
+        $bid->status = OrderStatusEnum::accepted->value;
+        if($specialistId) {
+            $bid->accept_user_id = $specialistId;
+        }else{
+            $bid->accept_user_id = Auth::user()->id;
         }
+        $bid->save();
         return true;
     }
 
