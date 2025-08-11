@@ -9,6 +9,7 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote')->hourly();
 
 Schedule::command('sendUpdateDataUserCommand')->everyMinute();
+Schedule::command('recognition:process')->everyMinute()->withoutOverlapping();
 
 
 

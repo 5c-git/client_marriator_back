@@ -40,7 +40,7 @@ class CreateTaskActivityRequest extends FormRequest
             'dateActivity.*.placeIds' => 'required|array|min:1',
             'dateActivity.*.placeIds.*' => [
                 'required',
-                Rule::exists('places', 'id'),
+                Rule::exists('directory_place', 'id'),
             ],
             'taskId' => [
                 'sometimes',

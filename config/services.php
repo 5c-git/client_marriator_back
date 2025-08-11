@@ -31,4 +31,8 @@ return [
         ],
     ],
 
+    'correct_recognition' => [
+        'token' => env('CORRECT_RECOGNITION_TOKEN'),
+    ],
+
 ];
