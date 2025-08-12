@@ -188,9 +188,9 @@ class EloquentOrderRepository implements OrderRepository
 
         return array_map(function ($item) {
             return [
-                'timeStart' => $item['timeStart'],
-                'timeEnd' => $item['timeEnd'],
-                'placeIds' => $item['placeIds'],
+                'timeStart' => $item['timeStart']??'',
+                'timeEnd' => $item['timeEnd']??'',
+                'placeIds' => $item['placeIds']??[],
             ];
         }, $dateActivities);
     }
