@@ -55,7 +55,7 @@ class EloquentOrderRepository implements OrderRepository
             'date_start' => $request->dateStart,
             'date_end' => $request->dateEnd,
             'need_foto' => $request->needFoto,
-            'date_activity' => $this->processDateActivity($request->dateActivity),
+            'date_activity' => $this->processDateActivity($request->dateActivity ?? []),
             'order_id' => $request->orderId
         ]);
         $orderActivity->save();
@@ -135,7 +135,7 @@ class EloquentOrderRepository implements OrderRepository
             'date_start' => $taskRequest->dateStart,
             'date_end' => $taskRequest->dateEnd,
             'need_foto' => $taskRequest->needFoto,
-            'date_activity' => $this->processDateActivity($taskRequest->dateActivity),
+            'date_activity' => $this->processDateActivity($taskRequest->dateActivity ?? []),
             'task_id' => $taskRequest->taskId
         ]);
 
@@ -183,7 +183,7 @@ class EloquentOrderRepository implements OrderRepository
         return Task::where('id',$taskRequest->taskId)->first();
     }
 
-    private function processDateActivity(array $dateActivities): array
+    private function processDateActivity(array $dateActivities = []): array
     {
 
         return array_map(function ($item) {
