@@ -398,7 +398,7 @@ class ManagerController extends Controller
         $arrRoleConfirm = array_unique($arrRoleConfirm);
 
         if(!empty($request->role)){
-            if(in_array($request->role,$arrRoleConfirm,true)){
+            if(in_array($request->role,$arrRoleConfirm)){
                 $arrRoleConfirm = [$request->role];
             }else{
                 $arrRoleConfirm = [];

@@ -113,7 +113,7 @@ class RegistrationController extends Controller
                $user->email = Str::random(20) . '@mariator.ru';
                $user->password = Hash::make(Str::random(20));
                $user->save();
-               $user->roles()->sync([RoleEnum::client->value]);
+               $user->roles()->sync([RoleEnum::specialist->value]);
                $response['result']['type'] = 'register';
 
            }
