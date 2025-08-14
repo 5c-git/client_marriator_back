@@ -809,7 +809,7 @@ class ManagerController extends Controller
         $user     = Auth::user();
         $projects = $user->project()
             ->whereHas('places', function ($query) use ($request) {
-                $query->where('places.id', $request->placeId);
+                $query->where('directory_place.id', $request->placeId);
             })
             ->get();
         return ProjectResource::collection($projects);
