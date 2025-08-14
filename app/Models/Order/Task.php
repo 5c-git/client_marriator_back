@@ -85,9 +85,9 @@ class Task extends Model
         return $this->belongsTo(User::class, 'accept_user_id');
     }
 
-    public function bid(): BelongsTo
+    public function bid(): HasMany
     {
-        return $this->belongsTo(Bid::class, 'id','task_id');
+        return $this->hasMany(Bid::class);
     }
 
     public function specialistUser(): BelongsTo
