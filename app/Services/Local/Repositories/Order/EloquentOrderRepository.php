@@ -237,15 +237,17 @@ class EloquentOrderRepository implements OrderRepository
             ->where(function ($query) use ($status, $place) {
                 $query->when($status, fn($q) => $q->where('status', $status->value))
                     ->when($place, fn($q) => $q->whereIn('place_id', $place))
-                ->where('status','!=',OrderStatusEnum::accepted->value);
+                    ->where('status','!=',OrderStatusEnum::accepted->value)
+                    ->has('orderActivities');
             })
             ->orWhere(function ($query) use ($user,$status) {
                 $userIdsSupervisor = $user->supervisors->pluck('id')->toArray();
                 $userIdsSupervisor[] = $user->id;
                 $query = $query->whereIn('accept_user_id',$userIdsSupervisor);
                 if($status == OrderStatusEnum::accepted) {
-                    $query->where('status', OrderStatusEnum::accepted->value);
+                    $query = $query->where('status', OrderStatusEnum::accepted->value);
                 }
+                $query->has('orderActivities');
             })->get();
     }
 
@@ -259,13 +261,15 @@ class EloquentOrderRepository implements OrderRepository
                 ::where(function ($query) use ($place, $orderId) {
                     $query->when($place, fn($q) => $q->whereIn('place_id', $place))
                         ->where('status', '!=', OrderStatusEnum::accepted->value)
-                        ->where('id', $orderId);
+                        ->where('id', $orderId)
+                        ->has('orderActivities');
                 })
                 ->orWhere(function ($query) use ($user, $orderId) {
                     $userIdsSupervisor = $user->supervisors->pluck('id')->toArray();
                     $userIdsSupervisor[] = $user->id;
                     $query->whereIn('accept_user_id',$userIdsSupervisor)
-                        ->where('id', $orderId);
+                        ->where('id', $orderId)
+                        ->has('orderActivities');
                 })
                 ->first();
         }
