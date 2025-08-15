@@ -37,7 +37,7 @@ class CreateOrderActivityRequest extends FormRequest
             'dateActivity.*.timeEnd' => 'required|date|after:timeStart',
             'dateActivity.*.placeIds' => 'sometimes|array|min:1',
             'dateActivity.*.placeIds.*' => [
-                'sometimes',
+                'required',
                 Rule::exists('directory_place', 'id'),
             ],
             'orderId' => [

@@ -66,7 +66,7 @@ class InstructTaskRequest extends FormRequest
                         ->pluck('id')
                         ->toArray();
                     if(!$validIds) {
-                        $fail('Supervisor ids not exist ' . $validIds);
+                        $fail('Supervisor ids not exist ' . print_r($validIds,true));
                     }
                 }
             ],

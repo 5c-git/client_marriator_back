@@ -179,7 +179,7 @@ class EloquentOrderRepository implements OrderRepository
 
     public function deleteTaskActivity(DeleteTaskActivityRequest $taskRequest): Task
     {
-        TaskActivity::where('id',$taskRequest->taskActivityId)->where('order_id',$taskRequest->taskId)->delete();
+        TaskActivity::where('id',$taskRequest->taskActivityId)->where('task_id',$taskRequest->taskId)->delete();
         return Task::where('id',$taskRequest->taskId)->first();
     }
 

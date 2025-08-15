@@ -37,13 +37,13 @@ class CreateTaskActivityRequest extends FormRequest
             'dateActivity' => 'sometimes|array|min:1',
             'dateActivity.*.timeStart' => 'required|date|after:now',
             'dateActivity.*.timeEnd' => 'required|date|after:timeStart',
-            'dateActivity.*.placeIds' => 'required|array|min:1',
+            'dateActivity.*.placeIds' => 'sometimes|array|min:1',
             'dateActivity.*.placeIds.*' => [
                 'required',
                 Rule::exists('directory_place', 'id'),
             ],
             'taskId' => [
-                'sometimes',
+                'required',
                 'integer',
                 function ($attribute, $value, $fail) {
                     $user = auth()->user();
