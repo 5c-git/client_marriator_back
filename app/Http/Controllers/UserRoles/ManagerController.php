@@ -314,7 +314,6 @@ class ManagerController extends Controller
             }
         }
         if($checkRole) {
-            $user = $request->user();
             $user->supervisors()->syncWithoutDetaching($request->surepvisorIds);
             return new SuccessResource();
         }
@@ -332,7 +331,6 @@ class ManagerController extends Controller
             }
         }
         if($checkRole) {
-            $user = $request->user();
             $user->supervisors()->detach($request->surepvisorId);
             return new SuccessResource();
         }
