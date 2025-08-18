@@ -66,8 +66,9 @@ class EntrustTaskRequest extends FormRequest
                         ->pluck('id')
                         ->toArray();
                     $invalidIds = array_diff($uniqueIds, $validIds);
-
-                    $fail('Supervisor ids not exist ' . implode(', ', $invalidIds));
+                    if($invalidIds) {
+                        $fail('Supervisor ids not exist ' . implode(', ', $invalidIds));
+                    }
                 }
             ],
         ];

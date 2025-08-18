@@ -40,7 +40,7 @@ class DelSurepvisorRequest extends FormRequest
                     $user = User::where('id',$value)->first();
                     $roles = $user?->roles?->pluck('id')->toArray();
 
-                    if(!in_array(RoleEnum::manager,$roles)){
+                    if(!in_array(RoleEnum::manager->value,$roles)){
                         $fail('User not manager');
                     }
 
