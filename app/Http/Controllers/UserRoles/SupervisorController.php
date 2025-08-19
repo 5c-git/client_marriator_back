@@ -386,7 +386,7 @@ class SupervisorController extends Controller
         return ShortOrderResource::collection(
             $this->orderRepository->getOrderByUserSyncDataPaginate(
                 $request->user(),
-                OrderStatusEnum::from($request->input('status',null))
+                $request->input('status') ? OrderStatusEnum::from($request->input('status')) : null
             )
         );
     }
@@ -415,7 +415,7 @@ class SupervisorController extends Controller
         return TaskShortResource::collection(
             $this->orderRepository->getTaskByUserSyncDataPaginate(
                 $request->user(),
-                OrderStatusEnum::from($request->input('status',null))
+                $request->input('status') ? OrderStatusEnum::from($request->input('status')) : null
             )
         );
     }
@@ -467,7 +467,7 @@ class SupervisorController extends Controller
         return ShortOrderResource::collection(
             $this->orderRepository->getBidsByUserSyncDataPaginate(
                 $request->user(),
-                OrderStatusEnum::from($request->input('status',null))
+                $request->input('status') ? OrderStatusEnum::from($request->input('status')) : null
             )
         );
     }

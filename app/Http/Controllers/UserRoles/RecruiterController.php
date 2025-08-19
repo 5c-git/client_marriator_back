@@ -52,7 +52,7 @@ class RecruiterController extends Controller
     {
         $user = Auth::user();
         $userPlaceId = $user->place?->pluck('id')?->toArray();
-        $status = OrderStatusEnum::from($request->input('status',3));
+        $status = $request->input('status') ? OrderStatusEnum::from($request->input('status')) : null;
         return RequestResource::collection(Request::query()
             ->orWhere(function ($query) use ($user,$status) {
                 $query = $query->where('accept_user_id', $user->id);
@@ -68,7 +68,7 @@ class RecruiterController extends Controller
     {
         $user = Auth::user();
         $userPlaceId = $user->place?->pluck('id')?->toArray();
-        $status = OrderStatusEnum::from($request->input('status',3));
+        $status = $request->input('status') ? OrderStatusEnum::from($request->input('status')) : null;
         $requestOrderId = $request->requestId;
         return new RequestResource(Request::query()
             ->orWhere(function ($query) use ($user,$status,$requestOrderId) {
