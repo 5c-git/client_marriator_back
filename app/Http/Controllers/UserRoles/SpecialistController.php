@@ -41,7 +41,7 @@ class SpecialistController extends Controller
         return ShortOrderResource::collection(
             $this->orderRepository->getBidsByUserSyncDataPaginate(
                 $request->user(),
-                OrderStatusEnum::from($request->input('status',3))
+                OrderStatusEnum::from($request->input('status',null))
             )
         );
     }

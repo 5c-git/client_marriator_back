@@ -335,16 +335,22 @@ class EloquentOrderRepository implements OrderRepository
         return Task::query()
             ->orWhere(function ($query) use ($user,$status,$userIdsSupervisor) {
                 $query = $query->whereIn('user_id', $userIdsSupervisor);
-                $query->where('status', $status->value);
+                if ($status) {
+                    $query->where('status', $status->value);
+                }
             })
             ->orWhere(function ($query) use ($user,$status,$userIdsSupervisor) {
                 $query = $query->whereIn('accept_user_id', $userIdsSupervisor);
-                $query->where('status', $status->value);
+                if ($status) {
+                    $query->where('status', $status->value);
+                }
             })
             ->orWhere(function ($query) use ($user,$status) {
                 $userIdsSupervisor = $user->acceptedTasks?->pluck('id')->toArray();
                 $query = $query->whereIn('id', $userIdsSupervisor);
-                $query->where('status', $status->value);
+                if ($status) {
+                    $query->where('status', $status->value);
+                }
             })->get();
     }
 
@@ -482,16 +488,22 @@ class EloquentOrderRepository implements OrderRepository
         return Bid::query()
             ->orWhere(function ($query) use ($user,$status,$userIdsSupervisor) {
                 $query = $query->whereIn('user_id', $userIdsSupervisor);
-                $query->where('status', $status->value);
+                if($status) {
+                    $query->where('status', $status->value);
+                }
             })
             ->orWhere(function ($query) use ($user,$status,$userIdsSupervisor) {
                 $query = $query->whereIn('accept_user_id', $userIdsSupervisor);
-                $query->where('status', $status->value);
+                if($status) {
+                    $query->where('status', $status->value);
+                }
             })
             ->orWhere(function ($query) use ($user,$status) {
                 $userIdsSupervisor = $user->acceptedTasks?->pluck('id')->toArray();
                 $query = $query->whereIn('id', $userIdsSupervisor);
-                $query->where('status', $status->value);
+                if($status) {
+                    $query->where('status', $status->value);
+                }
             })->get();
     }
 
