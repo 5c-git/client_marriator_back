@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Order;
 
+use App\Http\Resources\ProjectResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;
@@ -26,9 +27,18 @@ class TaskShortResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'place' => new PlaceResource($this->place),
             'selfEmployed' => (bool)$this->self_employed,
-            'status'=>$this->status->value,
+            'status' => $this->status->value,
+            'place' => new PlaceResource($this->place),
+            'project'=> new ProjectResource($this->project),
+            'user' => new ShortUserResource($this->user),
+            'acceptUser' => new ShortUserResource($this->acceptUser),
+            //'price' => $this->price,
+            //'priceResult' => $this->price*($this->self_employed?0.94:0.87),
+            //'income' => $this->income,
+            //'scopeOfServices' => $this->scope_of_services,
+            'orderActivities' => OrderActivitiesResource::collection($this->taskActivities),
+            'acceptedUser' => ShortUserResource::collection($this->acceptingUsers),
         ];
     }
 }

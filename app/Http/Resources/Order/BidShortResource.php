@@ -26,9 +26,19 @@ class BidShortResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'place' => new PlaceResource($this->place),
+            'user' => new ShortUserResource($this->user),
+            'acceptUserId' => new ShortUserResource($this->acceptUser),
+            'status' => $this->status->value,
             'selfEmployed' => (bool)$this->self_employed,
-            'status'=>$this->status->value,
+            'place' => new PlaceResource($this->place),
+            'radius' => $this->radius,
+            'price' => $this->price,
+            'priceResult' => $this->price*($this->self_employed?0.94:0.87),
+            'viewActivity' => new ViewActivityResource($this->viewActivity),
+            'date_start' => $this->date_start,
+            'date_end' => $this->date_end,
+            'need_foto' => (bool)$this->need_foto,
+            'date_activity' => $this->date_activity,
         ];
     }
 }

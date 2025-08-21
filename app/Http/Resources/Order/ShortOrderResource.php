@@ -2,13 +2,12 @@
 
 namespace App\Http\Resources\Order;
 
+use App\Http\Resources\Order\OrderActivitiesResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Resources\PlaceResource;
 use App\Http\Resources\ShortUserResource;
-use \App\Http\Resources\Order\OrderActivitiesResource;
-
 
 /**
  * @mixin \App\Models\Order\Order
@@ -26,9 +25,11 @@ class ShortOrderResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'place' => new PlaceResource($this->place),
             'selfEmployed' => (bool)$this->self_employed,
-            'status'=>$this->status->value,
+            'status' => $this->status->value,
+            'place' => new PlaceResource($this->place),
+            'user' => new ShortUserResource($this->user),
+            'orderActivities' => OrderActivitiesResource::collection($this->orderActivities)
         ];
     }
 }
