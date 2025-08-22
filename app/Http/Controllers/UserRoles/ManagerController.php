@@ -90,6 +90,7 @@ use App\Http\Requests\Order\InstructTaskRequest;
 use App\Http\Requests\Order\GetProjectForTaskRequest;
 use App\Http\Requests\Order\GetSurepvisorDataRequest;
 use App\Http\Resources\Order\BidShortResource;
+use App\Http\Requests\Order\RepeatTaskRequest;
 
 class ManagerController extends Controller
 {
@@ -634,6 +635,11 @@ class ManagerController extends Controller
     public function updateTask(UpdateTaskRequest $request): TaskResource
     {
         return new TaskResource($this->orderRepository->updateTask($request));
+    }
+
+    public function repeatTask(RepeatTaskRequest $request): TaskResource
+    {
+        return new TaskResource($this->orderRepository->repeatTask($request));
     }
 
     public function instructTask(InstructTaskRequest $request): ErrorResource|SuccessResource

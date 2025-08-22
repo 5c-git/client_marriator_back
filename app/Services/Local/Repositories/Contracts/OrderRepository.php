@@ -24,6 +24,8 @@ use Illuminate\Support\Collection;
 use App\Http\Requests\Order\BidDataRequest;
 use App\Http\Requests\Order\CreateOrderActivityRequest;
 use App\Http\Requests\Order\UpdateOrderRequest;
+use App\Http\Requests\Order\RepeatTaskRequest;
+use App\Http\Requests\Order\RepeatOrderRequest;
 
 interface OrderRepository
 {
@@ -64,5 +66,7 @@ interface OrderRepository
     public function createRequestFromTask(CreateRequestFromTaskRequest $request, User $user): Request;
     public function createRequestFromBid(CreateRequestFromBidRequest $request, User $user): Request;
     public function cancelRequest(CancelRequestRequest $request): bool;
+    public function repeatTask(RepeatTaskRequest $request): Task;
+    public function repeatOrder(RepeatOrderRequest $request): Order;
 
 }

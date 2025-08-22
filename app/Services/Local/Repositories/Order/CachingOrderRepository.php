@@ -14,6 +14,8 @@ use App\Http\Requests\Order\CreateTaskActivityRequest;
 use App\Http\Requests\Order\CreateTaskRequest;
 use App\Http\Requests\Order\DeleteOrderActivityRequest;
 use App\Http\Requests\Order\DeleteTaskActivityRequest;
+use App\Http\Requests\Order\RepeatOrderRequest;
+use App\Http\Requests\Order\RepeatTaskRequest;
 use App\Http\Requests\Order\UpdateTaskRequest;
 use App\Models\Order\Bid;
 use App\Models\Order\Order;
@@ -213,5 +215,15 @@ class CachingOrderRepository implements OrderRepository
     public function cancelRequest(CancelRequestRequest $request): bool
     {
         return $this->orders->cancelRequest($request);
+    }
+
+    public function repeatTask(RepeatTaskRequest $request): Task
+    {
+        return $this->orders->repeatTask($request);
+    }
+
+    public function repeatOrder(RepeatOrderRequest $request): Order
+    {
+        return $this->orders->repeatOrder($request);
     }
 }

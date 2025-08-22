@@ -12,6 +12,7 @@ use App\Http\Requests\Order\CreateRequestFromTaskRequest;
 use App\Http\Requests\Order\CreateTaskActivityRequest;
 use App\Http\Requests\Order\DeleteOrderActivityRequest;
 use App\Http\Requests\Order\DeleteTaskActivityRequest;
+use App\Http\Requests\Order\RepeatTaskRequest;
 use App\Http\Requests\Order\UpdateTaskRequest;
 use App\Models\Order\Bid;
 use App\Models\Order\Order;
@@ -32,6 +33,7 @@ use App\Models\Fields\Directory\ViewActivities;
 use App\Models\Fields\Directory\TaxStatus;
 use App\Http\Requests\Order\CreateOrderActivityRequest;
 use App\Http\Requests\Order\UpdateOrderRequest;
+use App\Http\Requests\Order\RepeatOrderRequest;
 
 class EloquentOrderRepository implements OrderRepository
 {
@@ -678,5 +680,61 @@ class EloquentOrderRepository implements OrderRepository
                     'status'=>OrderStatusEnum::canceled->value,
                 ]
             );
+    }
+
+    public function repeatTask(RepeatTaskRequest $request): Task
+    {
+        $task = Task::where('id',$request->taskId)->first();
+        $newTask = new Task();
+        $newTask->place_id = $task->place_id;
+        $newTask->user_id = $task->user_id;
+        $newTask->order_id = $task->order_id;
+        $newTask->status = OrderStatusEnum::new->value;
+        $newTask->self_employed = $task->self_employed;
+        $newTask->price = $task->price;
+        $newTask->income = $task->income;
+        $newTask->scope_of_services = $task->scope_of_services;
+        $newTask->project_id = $task->project_id;
+        $newTask->save();
+        $taskActivitiesOld = $task->taskActivities??[];
+        foreach ($taskActivitiesOld as $taskActivityOld) {
+            $taskActivity = new TaskActivity([
+                'view_activity_id' => $taskActivityOld->view_activity_id,
+                'count'            => $taskActivityOld->count,
+                'date_start'       => $taskActivityOld->date_start,
+                'date_end'         => $taskActivityOld->date_end,
+                'need_foto'        => $taskActivityOld->need_foto,
+                'date_activity'    => $taskActivityOld->date_activity,
+                'task_id'          => $newTask->id
+            ]);
+            $taskActivity->save();
+        }
+        return $newTask->fresh();
+    }
+
+    public function repeatOrder(RepeatOrderRequest $request): Order
+    {
+        $order = Order::where('id',$request->orderId)->first();
+        $newOrder = new Order();
+        $newOrder->place_id = $order->place_id;
+        $newOrder->user_id = $order->user_id;
+        $newOrder->self_employed = $order->self_employed;
+        $newOrder->status = OrderStatusEnum::new->value;
+        $newOrder->save();
+
+        $orderActivitiesOld = $order->orderActivities??[];
+        foreach ($orderActivitiesOld as $orderActivityOld) {
+            $orderActivity = new OrderActivities([
+                'view_activity_id' => $orderActivityOld->view_activity_id,
+                'count' => $orderActivityOld->count,
+                'date_start' => $orderActivityOld->date_start,
+                'date_end' => $orderActivityOld->date_end,
+                'need_foto' => $orderActivityOld->need_foto,
+                'date_activity' => $orderActivityOld->date_activity,
+                'order_id' => $newOrder->id
+            ]);
+            $orderActivity->save();
+        }
+        return $newOrder->fresh();
     }
 }

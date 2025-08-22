@@ -108,6 +108,7 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
             Route::post('/createOrderActivity','App\Http\Controllers\UserRoles\ClientController@createOrderActivity')->name('createOrderActivity');
             Route::post('/deleteOrderActivity','App\Http\Controllers\UserRoles\ClientController@deleteOrderActivity')->name('deleteOrderActivity');
             Route::get('/getViewActivitiesForOrder','App\Http\Controllers\UserRoles\ClientController@getViewActivitiesForOrder')->name('getViewActivitiesForOrder');
+            Route::post('/repeatOrder','App\Http\Controllers\UserRoles\ClientController@repeatOrder')->name('repeatOrder'); ////???????
         });
         Route::middleware([CheckRole::class.':manager'])->group( function () {
             Route::get('/convertTask','App\Http\Controllers\UserRoles\ManagerController@convertTask')->name('convertTask');
@@ -121,6 +122,7 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
             Route::post('/invoiceTask','App\Http\Controllers\UserRoles\ManagerController@invoiceTask')->name('invoiceTask');
             Route::post('/cancelTask','App\Http\Controllers\UserRoles\ManagerController@cancelTask')->name('cancelTask');
             Route::get('/getProjectsForTask','App\Http\Controllers\UserRoles\ManagerController@getProjectForTask')->name('getProjectForTask');
+            Route::post('/repeatTask','App\Http\Controllers\UserRoles\ManagerController@repeatTask')->name('repeatTask'); ///?????????
         });
         Route::middleware([CheckRole::class.':recruiter'])->group( function () {
             Route::get('/request/getRequests','App\Http\Controllers\UserRoles\RecruiterController@getRequests')->name('getRequests');//??
