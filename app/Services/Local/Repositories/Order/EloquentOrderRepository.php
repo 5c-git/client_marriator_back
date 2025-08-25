@@ -423,26 +423,26 @@ class EloquentOrderRepository implements OrderRepository
     {
         $order = Order::where('id', $orderId)->first();
         $bid = $order->bids?->where('activity_id', $orderActivityId)->first();
-        if(!$bid) {
-            $orderActivities = OrderActivities::where('id',$orderActivityId)->first();
-            $bid = new Bid();
+        if (!$bid) {
+            $orderActivities = OrderActivities::where('id', $orderActivityId)->first();
+            $bid             = new Bid();
 
-                $bid->place_id = $order->place_id;
-                $bid->user_id = $user->id;
-                $bid->accept_user_id = null;
-                $bid->order_id = $order->id;
-                $bid->task_id = null;
-                $bid->status = OrderStatusEnum::notAccepted->value;
-                $bid->self_employed = $order->self_employed;
-                $bid->radius = null;
-                $bid->price = null;
-                $bid->view_activity_id = $orderActivities->view_activity_id;
-                $bid->count = $orderActivities->count;
-                $bid->date_start = $orderActivities->date_start;
-                $bid->date_end = $orderActivities->date_end;
-                $bid->need_foto = $orderActivities->need_foto;
-                $bid->date_activity = $orderActivities->date_activity;
-                $bid->activity_id = $orderActivityId;
+            $bid->place_id         = $order->place_id;
+            $bid->user_id          = $user->id;
+            $bid->accept_user_id   = null;
+            $bid->order_id         = $order->id;
+            $bid->task_id          = null;
+            $bid->status           = OrderStatusEnum::notAccepted->value;
+            $bid->self_employed    = $order->self_employed;
+            $bid->radius           = null;
+            $bid->price            = null;
+            $bid->view_activity_id = $orderActivities->view_activity_id;
+            $bid->count            = $orderActivities->count;
+            $bid->date_start       = $orderActivities->date_start;
+            $bid->date_end         = $orderActivities->date_end;
+            $bid->need_foto        = $orderActivities->need_foto;
+            $bid->date_activity    = $orderActivities->date_activity;
+            $bid->activity_id      = $orderActivityId;
 
 
             $bid->save();
@@ -456,7 +456,7 @@ class EloquentOrderRepository implements OrderRepository
         $task = Task::where('id', $taskId)->first();
         $bid = $task->bid?->where('activity_id', $taskActivityId)->first();
         if (!$bid) {
-            $taskActivities = OrderActivities::where('id', $taskActivityId)->first();
+            $taskActivities = TaskActivity::where('id', $taskActivityId)->first();
             $bid            = new Bid();
 
             $bid->place_id         = $task->place_id;
