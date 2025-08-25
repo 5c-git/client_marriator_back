@@ -33,7 +33,7 @@ use App\Models\Order\OrderActivities;
  * @property bool $self_employed
  * @property Carbon $date_start
  * @property Carbon $date_end
- * @property Carbon $date_activity
+ * @property array $date_activity
  * @property bool $need_foto
  * @property OrderStatusEnum $status
  * @property-read User $user
@@ -76,7 +76,7 @@ class Bid extends Model
         'status' => OrderStatusEnum::class,
         'date_start' => 'datetime',
         'date_end' => 'datetime',
-        'date_activity' => 'datetime',
+        'date_activity' => 'json',
     ];
 
     public function place(): BelongsTo
