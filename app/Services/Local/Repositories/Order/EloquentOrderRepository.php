@@ -13,6 +13,8 @@ use App\Http\Requests\Order\CreateTaskActivityRequest;
 use App\Http\Requests\Order\DeleteOrderActivityRequest;
 use App\Http\Requests\Order\DeleteTaskActivityRequest;
 use App\Http\Requests\Order\RepeatTaskRequest;
+use App\Http\Requests\Order\UpdateOrderActivityRequest;
+use App\Http\Requests\Order\UpdateTaskActivityRequest;
 use App\Http\Requests\Order\UpdateTaskRequest;
 use App\Models\Order\Bid;
 use App\Models\Order\Order;
@@ -738,5 +740,38 @@ class EloquentOrderRepository implements OrderRepository
             $orderActivity->save();
         }
         return $newOrder->fresh();
+    }
+
+    public function updateTaskActivity(UpdateTaskActivityRequest $request): Task
+    {
+        $taskActivity = TaskActivity::where('id', $request->taskActivity)->first();
+
+        $taskActivity->view_activity_id = $request->viewActivityId ?? $taskActivity->view_activity_id;
+        $taskActivity->count            = $request->count ?? $taskActivity->count;
+        $taskActivity->date_start       = $request->dateStart ?? $taskActivity->date_start;
+        $taskActivity->date_end         = $request->dateEnd ?? $taskActivity->date_end;
+        $taskActivity->need_foto        = $request->needFoto ?? $taskActivity->need_foto;
+        $taskActivity->date_activity    = $request->dateActivity ? $this->processDateActivity($request->dateActivity) : $taskActivity->date_activity;
+            $taskActivity->task_id = $request->taskId ?? $taskActivity->task_id;
+        $taskActivity->save();
+
+        return Task::where('id',$request->taskId)->first();
+    }
+
+    public function updateOrderActivity(UpdateOrderActivityRequest $request): Order
+    {
+        $orderActivity = OrderActivities::where('id', $request->orderActivity)->first();
+
+        $orderActivity->view_activity_id = $request->viewActivityId ?? $orderActivity->view_activity_id;
+        $orderActivity->count            = $request->count ?? $orderActivity->count;
+        $orderActivity->date_start       = $request->dateStart ?? $orderActivity->date_start;
+        $orderActivity->date_end         = $request->dateEnd ?? $orderActivity->date_end;
+        $orderActivity->need_foto        = $request->needFoto ?? $orderActivity->need_foto;
+        $orderActivity->date_activity    = $request->dateActivity ? $this->processDateActivity($request->dateActivity) : $orderActivity->date_activity;
+        $orderActivity->order_id         = $request->orderI ?? $orderActivity->order_id;
+
+        $orderActivity->save();
+
+        return Order::where('id', $request->orderId)->first();
     }
 }

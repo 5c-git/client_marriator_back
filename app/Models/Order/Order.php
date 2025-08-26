@@ -29,6 +29,7 @@ use App\Models\Order\Task;
  * @property-read Collection|OrderActivities[] $orderActivities
  * @property-read Collection|ViewActivities[] $viewActivities
  * @property-read Collection|User[] $acceptingUsers
+ * @property-read User $acceptUser
  * @property-read Collection|User[] $acceptOrder
  * @property-read Collection|Task[] $tasks
  * @property-read Collection|Bid[] $bids

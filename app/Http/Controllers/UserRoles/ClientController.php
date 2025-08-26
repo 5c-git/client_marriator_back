@@ -27,6 +27,7 @@ use App\Http\Requests\Order\CreateOrderActivityRequest;
 use App\Http\Requests\Order\DeleteOrderActivityRequest;
 use App\Http\Requests\Order\GetViewActivitiesForOrderRequest;
 use App\Http\Requests\Order\RepeatOrderRequest;
+use App\Http\Requests\Order\UpdateOrderActivityRequest;
 
 class ClientController extends Controller
 {
@@ -121,6 +122,15 @@ class ClientController extends Controller
     {
         return new OrderResource(
             $this->orderRepository->createOrderActivity(
+                $request
+            )
+        );
+    }
+
+    public function updateOrderActivity(UpdateOrderActivityRequest $request)
+    {
+        return new OrderResource(
+            $this->orderRepository->updateOrderActivity(
                 $request
             )
         );

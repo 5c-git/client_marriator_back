@@ -30,7 +30,8 @@ class OrderResource extends JsonResource
             'status' => $this->status->value,
             'place' => new PlaceResource($this->place),
             'user' => new ShortUserResource($this->user),
-            'orderActivities' => OrderActivitiesResource::collection($this->orderActivities)
+            'orderActivities' => OrderActivitiesResource::collection($this->orderActivities),
+            'acceptUser' => new ShortUserResource($this->acceptUser)
         ];
     }
 }

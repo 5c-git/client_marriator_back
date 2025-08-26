@@ -16,11 +16,14 @@ use App\Http\Requests\Order\DeleteOrderActivityRequest;
 use App\Http\Requests\Order\DeleteTaskActivityRequest;
 use App\Http\Requests\Order\RepeatOrderRequest;
 use App\Http\Requests\Order\RepeatTaskRequest;
+use App\Http\Requests\Order\UpdateOrderActivityRequest;
+use App\Http\Requests\Order\UpdateTaskActivityRequest;
 use App\Http\Requests\Order\UpdateTaskRequest;
 use App\Models\Order\Bid;
 use App\Models\Order\Order;
 use App\Models\Order\Request;
 use App\Models\Order\Task;
+use App\Models\Order\TaskActivity;
 use App\Models\User;
 use App\Services\Local\Repositories\Contracts\OrderRepository;
 use Illuminate\Cache\CacheManager;
@@ -225,5 +228,15 @@ class CachingOrderRepository implements OrderRepository
     public function repeatOrder(RepeatOrderRequest $request): Order
     {
         return $this->orders->repeatOrder($request);
+    }
+
+    public function updateTaskActivity(UpdateTaskActivityRequest $request): Task
+    {
+        return $this->orders->updateTaskActivity($request);
+    }
+
+    public function updateOrderActivity(UpdateOrderActivityRequest $request): Order
+    {
+        return $this->orders->updateOrderActivity($request);
     }
 }

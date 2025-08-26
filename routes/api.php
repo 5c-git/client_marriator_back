@@ -106,6 +106,7 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
             Route::post('/sendOrder','App\Http\Controllers\UserRoles\ClientController@sendOrder')->name('sendOrder');
             Route::post('/updateOrder','App\Http\Controllers\UserRoles\ClientController@updateOrder')->name('updateOrder');
             Route::post('/createOrderActivity','App\Http\Controllers\UserRoles\ClientController@createOrderActivity')->name('createOrderActivity');
+            Route::post('/updateOrderActivity','App\Http\Controllers\UserRoles\ClientController@updateOrderActivity')->name('updateOrderActivity');
             Route::post('/deleteOrderActivity','App\Http\Controllers\UserRoles\ClientController@deleteOrderActivity')->name('deleteOrderActivity');
             Route::get('/getViewActivitiesForOrder','App\Http\Controllers\UserRoles\ClientController@getViewActivitiesForOrder')->name('getViewActivitiesForOrder');
             Route::post('/repeatOrder','App\Http\Controllers\UserRoles\ClientController@repeatOrder')->name('repeatOrder'); ////???????
@@ -116,6 +117,7 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
             Route::post('/createTask','App\Http\Controllers\UserRoles\ManagerController@createTask')->name('createTask');
             Route::post('/updateTask','App\Http\Controllers\UserRoles\ManagerController@updateTask')->name('updateTask');
             Route::post('/createTaskActivity','App\Http\Controllers\UserRoles\ManagerController@createTaskActivity')->name('createTaskActivity');
+            Route::post('/updateTaskActivity','App\Http\Controllers\UserRoles\ManagerController@updateTaskActivity')->name('updateTaskActivity');
             Route::post('/deleteTaskActivity','App\Http\Controllers\UserRoles\ManagerController@deleteTaskActivity')->name('deleteTaskActivity');
             Route::get('/getViewActivitiesForTask','App\Http\Controllers\UserRoles\ManagerController@getViewActivitiesForTask')->name('getViewActivitiesForTask');
             Route::post('/instructTask','App\Http\Controllers\UserRoles\ManagerController@instructTask')->name('instructTask');

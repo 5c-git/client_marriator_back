@@ -11,9 +11,12 @@ use App\Http\Requests\Order\CreateRequestFromTaskRequest;
 use App\Http\Requests\Order\CreateTaskActivityRequest;
 use App\Http\Requests\Order\DeleteOrderActivityRequest;
 use App\Http\Requests\Order\DeleteTaskActivityRequest;
+use App\Http\Requests\Order\UpdateOrderActivityRequest;
+use App\Http\Requests\Order\UpdateTaskActivityRequest;
 use App\Http\Requests\Order\UpdateTaskRequest;
 use App\Models\Order\Order;
 use App\Models\Order\Request;
+use App\Models\Order\TaskActivity;
 use FontLib\Table\Type\post;
 use Illuminate\Contracts\Pagination\Paginator;
 use App\Models\User;
@@ -68,5 +71,7 @@ interface OrderRepository
     public function cancelRequest(CancelRequestRequest $request): bool;
     public function repeatTask(RepeatTaskRequest $request): Task;
     public function repeatOrder(RepeatOrderRequest $request): Order;
+    public function updateTaskActivity(UpdateTaskActivityRequest $request): Task;
+    public function updateOrderActivity(UpdateOrderActivityRequest $request): Order;
 
 }

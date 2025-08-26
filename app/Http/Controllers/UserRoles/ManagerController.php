@@ -91,6 +91,7 @@ use App\Http\Requests\Order\GetProjectForTaskRequest;
 use App\Http\Requests\Order\GetSurepvisorDataRequest;
 use App\Http\Resources\Order\BidShortResource;
 use App\Http\Requests\Order\RepeatTaskRequest;
+use App\Http\Requests\Order\UpdateTaskActivityRequest;
 
 class ManagerController extends Controller
 {
@@ -618,6 +619,15 @@ class ManagerController extends Controller
     {
         return new TaskResource(
             $this->orderRepository->createTaskActivity(
+                $request
+            )
+        );
+    }
+
+    public function updateTaskActivity(UpdateTaskActivityRequest $request): TaskResource
+    {
+        return new TaskResource(
+            $this->orderRepository->updateTaskActivity(
                 $request
             )
         );
