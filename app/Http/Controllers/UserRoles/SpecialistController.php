@@ -23,6 +23,9 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use App\Services\Register\SmsCodeService;
 use App\Http\Requests\Order\RejectBidRequest;
+use App\Http\Requests\Order\StartDayRequest;
+use App\Http\Requests\Order\EndDayRequest;
+use App\Http\Requests\Order\ReportRequest;
 
 class SpecialistController extends Controller
 {
@@ -80,16 +83,17 @@ class SpecialistController extends Controller
     public function startDay(StartDayRequest $request)
     {
 
+        return new SuccessResource();
     }
 
     public function endDay(EndDayRequest $request)
     {
-
+        return new SuccessResource();
     }
 
     public function reportBid(ReportRequest $request)
     {
-
+        return new SuccessResource();
     }
 
 

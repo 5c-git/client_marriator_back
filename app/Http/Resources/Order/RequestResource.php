@@ -35,10 +35,10 @@ class RequestResource extends JsonResource
             'priceResult' => $this->price*($this->self_employed?0.94:0.87),
             'viewActivity' => new ViewActivityResource($this->viewActivity),
             'count' => $this->count,
-            'date_start' => $this->date_start,
-            'date_end' => $this->date_end,
-            'need_foto' => (bool)$this->need_foto,
-            'date_activity' => $this->date_activity,
+            'dateStart' => $this->date_start,
+            'dateEnd' => $this->date_end,
+            'needFoto' => (bool)$this->need_foto,
+            'dateActivity' => $this->date_activity,
         ];
     }
 }
