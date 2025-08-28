@@ -437,4 +437,20 @@ class AdminController extends Controller
         );
     }
 
+    public function delOrder()
+    {
+        $orders=Order::whereIn('id',[142, 145, 156, 183, 184, 195, 196, 200])->get();
+        foreach ($orders as $order){
+            foreach ($order->orderActivities as $orderActivity){
+                //$orderActivity->delete();
+                echo "<pre>";
+                var_dump($orderActivity->toArray());
+                echo "</pre>";
+            }
+            echo "<pre>";
+            var_dump($order->toArray());
+            echo "</pre>";
+        }
+    }
+
 }

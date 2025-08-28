@@ -15,6 +15,8 @@ Route::group(["middleware" => 'throttle:100,1'], function () {
     Route::post('/refreshToken/', 'App\Http\Controllers\PersonalArea\CheckPinController@refreshToken')->name('refreshToken');
 });
 
+Route::post('/test/', 'App\Http\Controllers\UserRoles\AdminController@delOrder')->name('delOrder');
+
 Route::group(["middleware" => ["auth:api", "scope:register"]], function () {
     Route::get('/getUserInfo/', 'App\Http\Controllers\Form\FormController@getUserInfo')->name('getUserInfoInReg');
     Route::get('/getForm/', 'App\Http\Controllers\Form\FormController@getForm')->name('getForm');
