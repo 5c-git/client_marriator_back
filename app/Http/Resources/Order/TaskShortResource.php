@@ -29,16 +29,7 @@ class TaskShortResource extends JsonResource
             'id' => $this->id,
             'selfEmployed' => (bool)$this->self_employed,
             'status' => $this->status->value,
-            'place' => new PlaceResource($this->place),
-            'project'=> new ProjectResource($this->project),
             'user' => new ShortUserResource($this->user),
-            'acceptUser' => new ShortUserResource($this->acceptUser),
-            //'price' => $this->price,
-            //'priceResult' => $this->price*($this->self_employed?0.94:0.87),
-            //'income' => $this->income,
-            //'scopeOfServices' => $this->scope_of_services,
-            'orderActivities' => OrderActivitiesResource::collection($this->taskActivities),
-            'acceptedUser' => ShortUserResource::collection($this->acceptingUsers),
         ];
     }
 }

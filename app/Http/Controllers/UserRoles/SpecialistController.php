@@ -8,6 +8,7 @@ use App\Http\Requests\Order\AcceptBidRequest;
 use App\Http\Requests\Order\GetBidRequest;
 use App\Http\Requests\Order\GetBidsRequest;
 use App\Http\Resources\ErrorResource;
+use App\Http\Resources\Order\BidResource;
 use App\Http\Resources\Order\OrderResource;
 use App\Http\Resources\Order\ShortOrderResource;
 use App\Http\Resources\ProjectResource;
@@ -41,7 +42,7 @@ class SpecialistController extends Controller
 
     public function getBids(GetBidsRequest $request)
     {
-        return ShortOrderResource::collection(
+        return BidResource::collection(
             $this->orderRepository->getBidsByUserSyncDataPaginate(
                 $request->user(),
                 $request->input('status') ? OrderStatusEnum::from($request->input('status')) : null

@@ -291,5 +291,30 @@ Route::group(['prefix' => 'admin'], function () {
             Route::post('/createUserLink', 'App\Http\Controllers\Admin\QrCode\QrCodeController@createUserLink')->name('createUserLink');
         });
 
+        Route::group(['prefix' => 'directory_radius'], function () {
+            Route::get('/create/', 'App\Http\Controllers\Admin\Page\Fields\Directory\RadiusController@create')->name('radiusCreate');
+            Route::post('/createAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\RadiusController@createAjax')->name('radiusCreateAjax');
+            Route::get('/', 'App\Http\Controllers\Admin\Page\Fields\Directory\RadiusController@list')->name('radiusList');
+            Route::get('/edit/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\RadiusController@edit')->name('radiusEdit');
+            Route::post('/editAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\RadiusController@editAjax')->name('radiusEditAjax');
+            Route::get('/delete/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\RadiusController@delete')->name('radiusDelete');
+        });
+
+
+        Route::group(['prefix' => 'orderForTest'], function () {
+            Route::get('/', 'App\Http\Controllers\Admin\ForTest\OrderController@list')->name('orderTestList');
+            Route::get('/delete/{id}/', 'App\Http\Controllers\Admin\ForTest\OrderController@delete')->name('orderTestDelete');
+        });
+
+        Route::group(['prefix' => 'taskForTest'], function () {
+            Route::get('/', 'App\Http\Controllers\Admin\ForTest\TaskController@list')->name('taskTestList');
+            Route::get('/delete/{id}/', 'App\Http\Controllers\Admin\ForTest\TaskController@delete')->name('taskTestDelete');
+        });
+
+        Route::group(['prefix' => 'bidForTest'], function () {
+            Route::get('/', 'App\Http\Controllers\Admin\ForTest\BidController@list')->name('bidTestList');
+            Route::get('/delete/{id}/', 'App\Http\Controllers\Admin\ForTest\BidController@delete')->name('bidTestDelete');
+        });
+
     });
 });

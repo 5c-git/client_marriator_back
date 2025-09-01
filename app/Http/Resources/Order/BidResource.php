@@ -4,6 +4,7 @@ namespace App\Http\Resources\Order;
 
 use App\Http\Resources\Order\OrderActivitiesResource;
 use App\Http\Resources\ViewActivityResource;
+use App\Models\Fields\Directory\Radius;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;
@@ -15,6 +16,8 @@ use App\Http\Resources\ShortUserResource;
  */
 class BidResource extends JsonResource
 {
+    private int $radiusDefault = 5;
+    private int $radius = 0;
     /**
      * Transform the resource into an array.
      *
@@ -27,18 +30,33 @@ class BidResource extends JsonResource
         return [
             'id' => $this->id,
             'user' => new ShortUserResource($this->user),
-            'acceptUserId' => new ShortUserResource($this->acceptUser),
+            'acceptUser' => new ShortUserResource($this->acceptUser),
             'status' => $this->status->value,
             'selfEmployed' => (bool)$this->self_employed,
             'place' => new PlaceResource($this->place),
-            'radius' => $this->radius,
+            'radius' => $this->radius ?? $this->getRadius(),
             'price' => $this->price,
             'priceResult' => $this->price*($this->self_employed?0.94:0.87),
             'viewActivity' => new ViewActivityResource($this->viewActivity),
             'dateStart' => $this->date_start,
             'dateEnd' => $this->date_end,
             'needFoto' => (bool)$this->need_foto,
-            'dateActivity' => $this->date_activity,
+            'dateActivity' => DateActivityResource::collection(collect($this->date_activity)),
+            'order' => new ShortOrderResource($this->order),
+            'task' => new TaskShortResource($this->task)
         ];
+    }
+
+    private function getRadius()
+    {
+        if(!$this->radius){
+           $radius = Radius::where('default',true)->first();
+           if(!$radius) {
+               $this->radius = $this->radiusDefault;
+           }else{
+               $this->radius = $radius->value;
+           }
+        }
+        return $this->radius;
     }
 }

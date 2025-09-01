@@ -329,6 +329,11 @@ return [
             'url' => 'admin/directory_counterparty/',
             'icon' => 'fas fa-fw fa-user-secret',
         ],
+        [
+            'text' => 'Радиус поиска',
+            'url' => 'admin/directory_radius/',
+            'icon' => 'fas fa-fw fa-circle',
+        ],
         // Navbar items:
 //        [
 //            'type' => 'navbar-search',
@@ -484,6 +489,21 @@ return [
             'text' => 'Создание QR кода',
             'url'  => 'admin/qr_code/',
             'icon' => 'fas fa-fw fa-qrcode',
+        ],
+        [
+            'text' => 'Поручения',
+            'url'  => 'admin/orderForTest/',
+            'icon' => 'fas fa-fw fa-bug',
+        ],
+        [
+            'text' => 'Задачи',
+            'url'  => 'admin/taskForTest/',
+            'icon' => 'fas fa-fw fa-bug',
+        ],
+        [
+            'text' => 'Заявки',
+            'url'  => 'admin/bidForTest/',
+            'icon' => 'fas fa-fw fa-bug',
         ],
 //        ['header' => 'labels'],
 //        [

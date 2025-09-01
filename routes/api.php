@@ -173,9 +173,9 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
         Route::get('/getTask','App\Http\Controllers\UniversalController@getTask')->name('getTask');
 
 
-        Route::get('/getBids','App\Http\Controllers\UniversalController@getBids')->name('getBids');
-        Route::get('/getBid','App\Http\Controllers\UniversalController@getBid')->name('getBid');
-        Route::post('/invoiceBid','App\Http\Controllers\UniversalController@invoiceBid')->name('invoiceBid');
+        Route::get('/getBids','App\Http\Controllers\UniversalController@getBids')->name('getBids');////??
+        Route::get('/getBid','App\Http\Controllers\UniversalController@getBid')->name('getBid');////??
+        Route::post('/invoiceBid','App\Http\Controllers\UniversalController@invoiceBid')->name('invoiceBid');////??
         //???
         Route::get('/instructBid','App\Http\Controllers\UniversalController@instructBid')->name('instructBid');
         Route::get('/acceptBid','App\Http\Controllers\UniversalController@acceptBid')->name('acceptBid');
@@ -190,8 +190,8 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
 
         Route::post('/acceptTask','App\Http\Controllers\UniversalController@acceptTask')->name('acceptTask');
 
-        Route::post('/createBidFromOrder','App\Http\Controllers\UniversalController@createBidFromOrder')->name('createBidFromOrder');
-        Route::post('/createBidFromTask','App\Http\Controllers\UniversalController@createBidFromTask')->name('createBidFromTask');
+        Route::post('/createBidFromOrder','App\Http\Controllers\UniversalController@createBidFromOrder')->name('createBidFromOrder'); //????
+        Route::post('/createBidFromTask','App\Http\Controllers\UniversalController@createBidFromTask')->name('createBidFromTask');///??????
 
         Route::group(['prefix' => 'moderation'], function () {
             Route::get('/getProject', 'App\Http\Controllers\UniversalController@getProject')->name('getProject');

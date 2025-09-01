@@ -383,7 +383,7 @@ class SupervisorController extends Controller
 
     public function getOrders(GetOrderRequest $request)
     {
-        return ShortOrderResource::collection(
+        return OrderResource::collection(
             $this->orderRepository->getOrderByUserSyncDataPaginate(
                 $request->user(),
                 $request->input('status') ? OrderStatusEnum::from($request->input('status')) : null
@@ -412,7 +412,7 @@ class SupervisorController extends Controller
     }
 
     public function getTasks(GetTaskRequest $request){
-        return TaskShortResource::collection(
+        return TaskResource::collection(
             $this->orderRepository->getTaskByUserSyncDataPaginate(
                 $request->user(),
                 $request->input('status') ? OrderStatusEnum::from($request->input('status')) : null
@@ -464,7 +464,7 @@ class SupervisorController extends Controller
 
     public function getBids(GetBidsRequest $request)
     {
-        return ShortOrderResource::collection(
+        return BidResource::collection(
             $this->orderRepository->getBidsByUserSyncDataPaginate(
                 $request->user(),
                 $request->input('status') ? OrderStatusEnum::from($request->input('status')) : null

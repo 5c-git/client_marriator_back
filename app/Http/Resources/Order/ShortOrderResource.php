@@ -27,10 +27,7 @@ class ShortOrderResource extends JsonResource
             'id' => $this->id,
             'selfEmployed' => (bool)$this->self_employed,
             'status' => $this->status->value,
-            'place' => new PlaceResource($this->place),
-            'user' => new ShortUserResource($this->user),
-            'orderActivities' => OrderActivitiesResource::collection($this->orderActivities),
-            'acceptUser' => new ShortUserResource($this->acceptUser)
+            'user' => new ShortUserResource($this->user)
         ];
     }
 }

@@ -152,7 +152,7 @@ class ClientController extends Controller
 
     public function getOrders(GetOrderRequest $request)
     {
-        return ShortOrderResource::collection(
+        return OrderResource::collection(
             $this->orderRepository->getUserOrderByStatusPaginate(
                 $request->status?OrderStatusEnum::from($request->status):null,
                 Auth::user()->id,
