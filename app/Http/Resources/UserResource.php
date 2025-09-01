@@ -61,7 +61,7 @@ class UserResource extends JsonResource
             if($settings){
                 foreach ($settings as $setting) {
                     /** @var Setting $setting */
-                    $settingsKeyValue[$setting->key] = $setting->value;
+                    $settingsKeyValue[$setting->key] = is_numeric($setting->value) ? (int)$setting->value : $setting->value;
                 }
             }
             $this->settings = $settingsKeyValue;
