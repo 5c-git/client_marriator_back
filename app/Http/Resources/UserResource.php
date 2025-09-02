@@ -43,17 +43,17 @@ class UserResource extends JsonResource
             'repeat_bid' => $this->repeat_bid ?? $this->getSettings('repeat_bid'),
             'leave_bid' => $this->leave_bid ?? $this->getSettings('leave_bid'),
             'refusal_task' => $this->refusal_task ?? $this->getSettings('refusal_task'),
-            'waiting_task' => $this->waiting_task ?? $this->getSettings('waiting_task'),
-            'count_wait_bid' => $this->count_wait_bid ?? $this->getSettings('count_wait_bid'),
-            'time_answer_bid' => $this->time_answer_bid ?? $this->getSettings('time_answer_bid'),
-            'notification_start' => $this->notification_start ?? $this->getSettings('notification_start'),
+            'waiting_task' => (int)($this->waiting_task ?? $this->getSettings('waiting_task')),
+            'count_wait_bid' => (int)($this->count_wait_bid ?? $this->getSettings('count_wait_bid')),
+            'time_answer_bid' => (int)($this->time_answer_bid ?? $this->getSettings('time_answer_bid')),
+            'notification_start' => (int)($this->notification_start ?? $this->getSettings('notification_start')),
             'supervisors' => ShortUserResource::collection($this->supervisors),
             'manager' => ShortUserResource::collection($this->manager),
             'counterparty' => CounterpartyResource::collection($this->counterparty)
         ];
     }
 
-    protected function getSettings(string $key): string|null
+    protected function getSettings(string $key): int|string|null
     {
         if(!$this->settings){
             $settingsKeyValue = [];
