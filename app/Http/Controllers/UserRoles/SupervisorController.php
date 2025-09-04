@@ -539,7 +539,7 @@ class SupervisorController extends Controller
     }
 
     public function updateBid(BidDataRequest $request){
-        return new BidResource($this->orderRepository->updateBid($request->bidId));
+        return new BidResource($this->orderRepository->updateBid($request));
     }
 
     public function createRequestFromTask(CreateRequestFromTaskRequest $request): RequestResource

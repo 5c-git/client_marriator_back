@@ -603,13 +603,21 @@ class EloquentOrderRepository implements OrderRepository
                 ->where('data->'.$fieldStat->uuid, $status)
                 ->get();
             $userInRadius = collect();
+            $radius = Radius::where('default',true)->first();
+            if(!$radius) {
+                $radius = 5;
+            }else{
+                $radius = $radius->value;
+            }
             foreach ($users as $user) {
-                if (CoordinatesService::isPointInRadius(
+                if (
+                    $user->latitude && $user->longitude && $place->latitude && $place->longitude &&
+                    CoordinatesService::isPointInRadius(
                     $user->latitude,
                     $user->longitude,
                     $place->latitude,
                     $place->longitude,
-                    $user->mapRadius
+                    $user->mapRadius ?: $radius
                 )) {
                     $userInRadius->push($user);
                 }
