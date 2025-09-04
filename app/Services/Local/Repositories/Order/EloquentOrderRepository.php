@@ -16,6 +16,7 @@ use App\Http\Requests\Order\RepeatTaskRequest;
 use App\Http\Requests\Order\UpdateOrderActivityRequest;
 use App\Http\Requests\Order\UpdateTaskActivityRequest;
 use App\Http\Requests\Order\UpdateTaskRequest;
+use App\Models\Fields\Directory\Radius;
 use App\Models\Order\Bid;
 use App\Models\Order\Order;
 use App\Models\Order\OrderActivities;
@@ -428,7 +429,12 @@ class EloquentOrderRepository implements OrderRepository
         if (!$bid) {
             $orderActivities = OrderActivities::where('id', $orderActivityId)->first();
             $bid             = new Bid();
-
+            $radius = Radius::where('default',true)->first();
+            if(!$radius) {
+                $bid->radius = 5;
+            }else{
+                $bid->radius = $radius->value;
+            }
             $bid->place_id         = $order->place_id;
             $bid->user_id          = $user->id;
             $bid->accept_user_id   = null;
@@ -436,7 +442,6 @@ class EloquentOrderRepository implements OrderRepository
             $bid->task_id          = null;
             $bid->status           = OrderStatusEnum::notAccepted->value;
             $bid->self_employed    = $order->self_employed;
-            $bid->radius           = null;
             $bid->price            = null;
             $bid->view_activity_id = $orderActivities->view_activity_id;
             $bid->count            = $orderActivities->count;
@@ -461,6 +466,13 @@ class EloquentOrderRepository implements OrderRepository
             $taskActivities = TaskActivity::where('id', $taskActivityId)->first();
             $bid            = new Bid();
 
+            $radius = Radius::where('default',true)->first();
+            if(!$radius) {
+                $bid->radius = 5;
+            }else{
+                $bid->radius = $radius->value;
+            }
+
             $bid->place_id         = $task->place_id;
             $bid->user_id          = $user->id;
             $bid->accept_user_id   = null;
@@ -468,7 +480,6 @@ class EloquentOrderRepository implements OrderRepository
             $bid->task_id          = $task->id;
             $bid->status           = OrderStatusEnum::notAccepted->value;
             $bid->self_employed    = $task->self_employed;
-            $bid->radius           = null;
             $bid->price            = null;
             $bid->view_activity_id = $taskActivities->view_activity_id;
             $bid->count            = $taskActivities->count;
@@ -610,8 +621,14 @@ class EloquentOrderRepository implements OrderRepository
     public function updateBid(BidDataRequest $bidRequest): Bid
     {
         $bid = Bid::where('id',$bidRequest->bidId)->first();
-        $bid->radius = $bidRequest->radius;
-        $bid->price = $bidRequest->price;
+        $bid->radius = $bidRequest->radius??$bid->radius;
+        $bid->price = $bidRequest->price??$bid->price;
+        $bid->view_activity_id = $bidRequest->viewActivityId ?? $bid->view_activity_id;
+        $bid->count = $bidRequest->count ?? $bid->count;
+        $bid->date_start = $bidRequest->dateStart ?? $bid->date_start;
+        $bid->date_end = $bidRequest->dateEnd ?? $bid->date_end;
+        $bid->need_foto = $bidRequest->needFoto ?? $bid->need_foto;
+        $bid->date_activity = $bidRequest->dateActivity ? $this->processDateActivity($bidRequest->dateActivity) : $bid->date_activity;
         $bid->save();
         return $bid;
     }

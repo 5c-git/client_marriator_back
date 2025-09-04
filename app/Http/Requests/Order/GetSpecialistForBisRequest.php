@@ -40,9 +40,9 @@ class GetSpecialistForBisRequest extends FormRequest
                     $taskExists = Bid::query()
                         ->whereIn('user_id',$userIdsSupervisor)
                         ->orWhere(function ($query) use ($user,$value,$userIdsSupervisor) {
-                            $query->whereIn('accept_user_id', $userIdsSupervisor);
+                            $query->whereIn('accept_user_id', $userIdsSupervisor)
+                            ->whereIn('status', [OrderStatusEnum::accepted]);
                         })
-                        ->whereIn('status', [OrderStatusEnum::accepted])
                         ->exists();
 
                     if (!$taskExists) {

@@ -16,6 +16,7 @@ use App\Http\Requests\Order\CreateOrderRequest;
 use App\Http\Requests\Order\GetBidRequest;
 use App\Http\Requests\Order\GetBidsRequest;
 use App\Http\Requests\Order\GetOrderRequest;
+use App\Http\Requests\Order\GetPlaceForBidRequest;
 use App\Http\Requests\Order\GetViewActivitiesForOrderRequest;
 use App\Http\Requests\PaginatorRequest;
 use App\Http\Requests\SetBrandImgRequest;
@@ -28,10 +29,12 @@ use App\Http\Resources\Order\OrderResource;
 use App\Http\Resources\Order\ShortOrderResource;
 use App\Http\Resources\PlaceResource;
 use App\Http\Resources\ProjectResource;
+use App\Http\Resources\RadiusResponse;
 use App\Http\Resources\SuccessResource;
 use App\Http\Resources\ViewActivityResource;
 use App\Models\Fields\Directory\Place;
 use App\Models\Fields\Directory\Project;
+use App\Models\Fields\Directory\Radius;
 use App\Models\Fields\Directory\ViewActivities;
 use App\Models\Fields\Fields;
 use App\Models\Order\Bid;
@@ -827,6 +830,20 @@ class ManagerController extends Controller
             })
             ->get();
         return ProjectResource::collection($projects);
+    }
+
+    public function getPlaceForBid()
+    {
+        $places = Auth::user()->project
+            ->flatMap(fn($project) => $project->places)
+            ->unique('id');
+        return PlaceResource::collection($places);
+    }
+
+    public function getRadiusSelect()
+    {
+        $radius = Radius::get();
+        return RadiusResponse::collection($radius);
     }
 
 }

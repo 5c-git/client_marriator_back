@@ -13,6 +13,7 @@ use App\Http\Requests\Order\EntrustBidRequest;
 use App\Http\Requests\Order\GetBidRequest;
 use App\Http\Requests\Order\GetBidsRequest;
 use App\Http\Requests\Order\GetOrderRequest;
+use App\Http\Requests\Order\GetPlaceForBidRequest;
 use App\Http\Requests\Order\GetTaskRequest;
 use App\Http\Requests\Order\GetViewActivitiesForOrderRequest;
 use App\Http\Requests\Order\GetViewActivitiesForTaskRequest;
@@ -482,6 +483,34 @@ class UniversalController extends Controller
         return response()->json(['message' => 'Role not allowed.'], 403);
     }
 
+    public function getPlaceForBid(){
+        if(in_array('manager',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\ManagerController::class)->getPlaceForBid();
+        }
+        if(in_array('supervisor',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\SupervisorController::class)->getPlaceForBid();
+        }
+        return response()->json(['message' => 'Role not allowed.'], 403);
+    }
 
+    public function getRadiusSelect(){
+        if(in_array('manager',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\ManagerController::class)->getRadiusSelect();
+        }
+        if(in_array('supervisor',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\SupervisorController::class)->getRadiusSelect();
+        }
+        return response()->json(['message' => 'Role not allowed.'], 403);
+    }
+
+    public function updateBid(){
+        if(in_array('manager',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\ManagerController::class)->updateBid();
+        }
+        if(in_array('supervisor',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\SupervisorController::class)->updateBid();
+        }
+        return response()->json(['message' => 'Role not allowed.'], 403);
+    }
 
 }

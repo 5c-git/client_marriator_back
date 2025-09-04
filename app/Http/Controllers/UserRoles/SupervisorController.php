@@ -40,6 +40,7 @@ use App\Http\Resources\Order\RequestResource;
 use App\Http\Resources\Order\ShortOrderResource;
 use App\Http\Resources\Order\TaskShortResource;
 use App\Http\Resources\ProjectResource;
+use App\Http\Resources\RadiusResponse;
 use App\Http\Resources\ShortUserResource;
 use App\Http\Resources\SuccessResource;
 use App\Http\Resources\UserResource;
@@ -47,6 +48,7 @@ use App\Http\Resources\ViewActivityResource;
 use App\Models\Fields\Directory\Counterparty;
 use App\Models\Fields\Directory\Place;
 use App\Models\Fields\Directory\Project;
+use App\Models\Fields\Directory\Radius;
 use App\Models\Fields\Directory\ViewActivities;
 use App\Models\Order\Bid;
 use App\Models\Order\Order;
@@ -558,6 +560,20 @@ class SupervisorController extends Controller
             return new SuccessResource();
         }
         return new ErrorResource();
+    }
+
+    public function getPlaceForBid()
+    {
+        $places = Auth::user()->project
+            ->flatMap(fn($project) => $project->places)
+            ->unique('id');
+        return PlaceResource::collection($places);
+    }
+
+    public function getRadiusSelect()
+    {
+        $radius = Radius::get();
+        return RadiusResponse::collection($radius);
     }
 
 }

@@ -6,9 +6,10 @@ use App\Enum\Order\OrderStatusEnum;
 use App\Http\Requests\FormRequest;
 use App\Models\Order\Bid;
 use App\Models\Order\Order;
+use App\Models\Order\Task;
 use Illuminate\Validation\Rule;
 
-class BidDataRequest extends FormRequest
+class GetPlaceForBidRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -36,33 +37,17 @@ class BidDataRequest extends FormRequest
                     $userIdsSupervisor = $user->supervisors->pluck('id')->toArray();
                     $userIdsSupervisor[] = $user->id;
                     $taskExists = Bid::query()
+                        ->where('id',$value)
                         ->whereIn('user_id',$userIdsSupervisor)
                         ->orWhere(function ($query) use ($user,$value,$userIdsSupervisor) {
-                            $query->whereIn('accept_user_id', $userIdsSupervisor);
+                            $query->whereIn('accept_user_id', $userIdsSupervisor)->whereIn('status', [OrderStatusEnum::accepted]);
                         })
-                        ->whereIn('status', [OrderStatusEnum::new,OrderStatusEnum::notAccepted])
                         ->exists();
 
                     if (!$taskExists) {
                         $fail('Not your task');
                     }
                 },
-            ],
-            'radius' => 'sometimes|integer',
-            'price' => 'sometimes|integer',
-            'viewActivityId' => 'sometimes|exists:directory_view_activities,id',
-            'count' => 'sometimes|integer|min:1',
-            'dateStart' => 'sometimes|date|after:now',
-            'dateEnd' => 'sometimes|date|after:dateStart',
-            'needFoto' => 'sometimes|boolean',
-
-            'dateActivity' => 'sometimes|array|min:1',
-            'dateActivity.*.timeStart' => 'required|date|after:now',
-            'dateActivity.*.timeEnd' => 'required|date|after:timeStart',
-            'dateActivity.*.placeIds' => 'sometimes|array|min:1',
-            'dateActivity.*.placeIds.*' => [
-                'required',
-                Rule::exists('directory_place', 'id'),
             ],
         ];
     }

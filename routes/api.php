@@ -112,7 +112,7 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
             Route::post('/repeatOrder','App\Http\Controllers\UserRoles\ClientController@repeatOrder')->name('repeatOrder'); ////???????
         });
         Route::middleware([CheckRole::class.':manager'])->group( function () {
-            Route::get('/convertTask','App\Http\Controllers\UserRoles\ManagerController@convertTask')->name('convertTask');
+            Route::post('/convertTask','App\Http\Controllers\UserRoles\ManagerController@convertTask')->name('convertTask');
             Route::get('/getSurepvisorsForTask','App\Http\Controllers\UserRoles\ManagerController@getSurepvisorData')->name('getSurepvisorData');
             Route::post('/createTask','App\Http\Controllers\UserRoles\ManagerController@createTask')->name('createTask');
             Route::post('/updateTask','App\Http\Controllers\UserRoles\ManagerController@updateTask')->name('updateTask');
@@ -180,13 +180,13 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
         Route::get('/instructBid','App\Http\Controllers\UniversalController@instructBid')->name('instructBid');
         Route::get('/acceptBid','App\Http\Controllers\UniversalController@acceptBid')->name('acceptBid');
         Route::get('/cancelBid','App\Http\Controllers\UniversalController@cancelBid')->name('cancelBid');
-        Route::get('/getSpecialistForBid','App\Http\Controllers\UniversalController@getSpecialistForBid')->name('getSpecialistForBid');
-        Route::get('/updateBid','App\Http\Controllers\UniversalController@updateBid')->name('updateBid');
+        Route::get('/getSpecialistForBid','App\Http\Controllers\UniversalController@getSpecialistForBid')->name('getSpecialistForBid');// перенесено
+        Route::post('/updateBid','App\Http\Controllers\UniversalController@updateBid')->name('updateBid');//перенесено
 
-
-        //Route::get('/getViewActivitiesForTask','App\Http\Controllers\UniversalController@getViewActivitiesForTask')->name('getViewActivitiesForTask');
         Route::get('/getPlaceForOrder','App\Http\Controllers\UniversalController@getPlaceForOrder')->name('getPlaceForOrderCreate');
         Route::get('/getPlaceForTask','App\Http\Controllers\UniversalController@getPlaceForOrder')->name('getPlaceForTaskCreate');
+        Route::get('/getPlaceForBid','App\Http\Controllers\UniversalController@getPlaceForBid')->name('getPlaceForBid');/// перенесено
+        Route::get('/getRadiusSelect','App\Http\Controllers\UniversalController@getRadiusSelect')->name('getRadiusSelect');/// перенесено
 
         Route::post('/acceptTask','App\Http\Controllers\UniversalController@acceptTask')->name('acceptTask');
 
