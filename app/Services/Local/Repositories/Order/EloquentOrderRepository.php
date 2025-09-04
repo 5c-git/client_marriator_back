@@ -629,6 +629,14 @@ class EloquentOrderRepository implements OrderRepository
     public function updateBid(BidDataRequest $bidRequest): Bid
     {
         $bid = Bid::where('id',$bidRequest->bidId)->first();
+        $radius = Radius::where('default',true)->first();
+        if(!$radius) {
+            if(!$bid->radius) {
+                $bid->radius = 5;
+            }
+        }else{
+            $bid->radius = $radius->value;
+        }
         $bid->radius = $bidRequest->radius??$bid->radius;
         $bid->price = $bidRequest->price??$bid->price;
         $bid->view_activity_id = $bidRequest->viewActivityId ?? $bid->view_activity_id;
