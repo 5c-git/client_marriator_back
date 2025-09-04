@@ -22,6 +22,9 @@ use App\Http\Requests\PaginatorRequest;
 use App\Http\Requests\SetBrandImgRequest;
 use App\Http\Requests\SetPlaceRequest;
 use App\Http\Requests\SetUserDataRequest;
+use App\Http\Requests\UserData\DelManagerRequest;
+use App\Http\Requests\UserData\GetManagerRequest;
+use App\Http\Requests\UserData\SetManagerRequest;
 use App\Http\Resources\BrandResource;
 use App\Http\Resources\ErrorResource;
 use App\Http\Resources\Order\BidResource;
@@ -308,6 +311,30 @@ class ManagerController extends Controller
         return ShortUserResource::collection($users);
     }
 
+    public function getManager(GetManagerRequest $request){
+        $user = User::where('id',$request->userId)->first();
+        $userRoles = $user->roles?->pluck('id')->toArray();
+        $checkRole = false;
+        foreach ($userRoles as $userRole){
+            if(in_array($userRole,[RoleEnum::supervisor->value])){
+                $checkRole = true;
+                break;
+            }
+        }
+        $users = collect();
+        if($checkRole) {
+            $deleteManager = $user->manager?->pluck('id')->toArray();
+            $users = User::whereHas('roles', function ($query) {
+                $query->where('role_id', RoleEnum::manager->value);
+            });
+            if($deleteManager) {
+                $users = $users->whereNotIn('id', $deleteManager);
+            }
+            $users = $users->where('confirmRegister', true)->where('finishRegister', true)->get();
+        }
+        return ShortUserResource::collection($users);
+    }
+
     public function setSurepvisors(SetSurepvisorsRequest $request){
         $user = User::where('id',$request->userId)->first();
         $userRoles = $user->roles?->pluck('id')->toArray();
@@ -325,6 +352,23 @@ class ManagerController extends Controller
         return new ErrorResource();
     }
 
+    public function setManagers(SetManagerRequest $request){
+        $user = User::where('id',$request->userId)->first();
+        $userRoles = $user->roles?->pluck('id')->toArray();
+        $checkRole = false;
+        foreach ($userRoles as $userRole){
+            if(in_array($userRole,[RoleEnum::supervisor->value])){
+                $checkRole = true;
+                break;
+            }
+        }
+        if($checkRole) {
+            $user->manager()->syncWithoutDetaching($request->managerIds);
+            return new SuccessResource();
+        }
+        return new ErrorResource();
+    }
+
     public function delSurepvisor(DelSurepvisorRequest $request){
         $user = User::where('id',$request->userId)->first();
         $userRoles = $user->roles?->pluck('id')->toArray();
@@ -337,6 +381,23 @@ class ManagerController extends Controller
         }
         if($checkRole) {
             $user->supervisors()->detach($request->surepvisorId);
+            return new SuccessResource();
+        }
+        return new ErrorResource();
+    }
+
+    public function delManager(DelManagerRequest $request){
+        $user = User::where('id',$request->userId)->first();
+        $userRoles = $user->roles?->pluck('id')->toArray();
+        $checkRole = false;
+        foreach ($userRoles as $userRole){
+            if(in_array($userRole,[RoleEnum::supervisor->value])){
+                $checkRole = true;
+                break;
+            }
+        }
+        if($checkRole) {
+            $user->manager()->detach($request->managerId);
             return new SuccessResource();
         }
         return new ErrorResource();

@@ -44,7 +44,7 @@ class BidDataRequest extends FormRequest
                         ->exists();
 
                     if (!$taskExists) {
-                        $fail('Not your task');
+                        $fail('Not your bid');
                     }
                 },
             ],

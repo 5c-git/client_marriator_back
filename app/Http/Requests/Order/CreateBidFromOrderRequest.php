@@ -49,7 +49,7 @@ class CreateBidFromOrderRequest extends FormRequest
                         })->first();
 
                     if (!$orderExists) {
-                        $fail('Not your task');
+                        $fail('Not your order');
                     }
                 },
             ],

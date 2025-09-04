@@ -125,6 +125,9 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
             Route::post('/cancelTask','App\Http\Controllers\UserRoles\ManagerController@cancelTask')->name('cancelTask');
             Route::get('/getProjectsForTask','App\Http\Controllers\UserRoles\ManagerController@getProjectForTask')->name('getProjectForTask');
             Route::post('/repeatTask','App\Http\Controllers\UserRoles\ManagerController@repeatTask')->name('repeatTask'); ///?????????
+            Route::get('/getManager','App\Http\Controllers\UserRoles\ManagerController@getManager')->name('getManager'); ///перенесено
+            Route::post('/setManagers','App\Http\Controllers\UserRoles\ManagerController@setManagers')->name('setManagers'); ///перенесено
+            Route::post('/delManager','App\Http\Controllers\UserRoles\ManagerController@delManager')->name('delManager'); ///перенесено
         });
         Route::middleware([CheckRole::class.':recruiter'])->group( function () {
             Route::get('/request/getRequests','App\Http\Controllers\UserRoles\RecruiterController@getRequests')->name('getRequests');//??
