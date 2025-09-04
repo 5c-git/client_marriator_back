@@ -7,6 +7,7 @@ use App\Http\Requests\ConfirmUserRequest;
 use App\Http\Requests\DelPlaceRequest;
 use App\Http\Requests\Order\AcceptOrderRequest;
 use App\Http\Requests\Order\AcceptTaskRequest;
+use App\Http\Requests\Order\BidDataRequest;
 use App\Http\Requests\Order\CreateBidFromOrderRequest;
 use App\Http\Requests\Order\CreateBidFromTaskRequest;
 use App\Http\Requests\Order\EntrustBidRequest;
@@ -504,12 +505,12 @@ class UniversalController extends Controller
         return response()->json(['message' => 'Role not allowed.'], 403);
     }
 
-    public function updateBid(){
+    public function updateBid(BidDataRequest $request){
         if(in_array('manager',$this->roles)){
-            return app(\App\Http\Controllers\UserRoles\ManagerController::class)->updateBid();
+            return app(\App\Http\Controllers\UserRoles\ManagerController::class)->updateBid($request);
         }
         if(in_array('supervisor',$this->roles)){
-            return app(\App\Http\Controllers\UserRoles\SupervisorController::class)->updateBid();
+            return app(\App\Http\Controllers\UserRoles\SupervisorController::class)->updateBid($request);
         }
         return response()->json(['message' => 'Role not allowed.'], 403);
     }
