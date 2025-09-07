@@ -160,7 +160,7 @@ class CachingOrderRepository implements OrderRepository
         return $this->orders->acceptBid($user,$bidId);
     }
 
-    public function instructBid(int $bidId, ?int $specialistId): bool
+    public function instructBid(int $bidId, int $specialistId): bool
     {
         return $this->orders->instructBid($bidId,$specialistId);
     }

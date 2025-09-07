@@ -62,7 +62,7 @@ interface OrderRepository
     public function invoiceBid(int $bidId,?array $specialistIds): bool;
     public function acceptBid(User $user,int $bidId):bool;
     public function rejectBid(User $user,int $bidId):bool;
-    public function instructBid(int $bidId,?int $specialistId):bool;
+    public function instructBid(int $bidId,int $specialistId):bool;
     public function cancelBid(int $bidId): bool;
     public function getSpecialistForBid(int $bidId): Collection;
     public function updateBid(BidDataRequest $bidRequest): Bid;

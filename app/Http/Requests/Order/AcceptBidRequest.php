@@ -43,10 +43,6 @@ class AcceptBidRequest extends FormRequest
                         $query->whereIn('user_id', $userIdsSupervisor)->where('id', $value)
                             ->where('status', OrderStatusEnum::notAccepted);
                     })
-                        ->orWhere(function ($query) use ($user,$value,$userIdsSupervisor) {
-                            $query->whereIn('accept_user_id', $userIdsSupervisor)->where('id', $value)
-                                ->where('status', OrderStatusEnum::notAccepted);
-                        })
                         ->orWhere(function ($query) use ($user,$value) {
                             $userIdsSupervisor = $user->acceptedBids?->pluck('id')->toArray();
                             $query->whereIn('id', $userIdsSupervisor)->where('id', $value)
@@ -54,7 +50,7 @@ class AcceptBidRequest extends FormRequest
                         })->first();
 
                     if (!$orderExists) {
-                        $fail('Not your order');
+                        $fail('Not your bid');
                     }
                 },
             ],

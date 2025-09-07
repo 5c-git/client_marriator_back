@@ -9,6 +9,7 @@ use App\Http\Requests\Order\GetBidRequest;
 use App\Http\Requests\Order\GetBidsRequest;
 use App\Http\Resources\ErrorResource;
 use App\Http\Resources\Order\BidResource;
+use App\Http\Resources\Order\BidShortResource;
 use App\Http\Resources\Order\OrderResource;
 use App\Http\Resources\Order\ShortOrderResource;
 use App\Http\Resources\ProjectResource;
@@ -42,7 +43,7 @@ class SpecialistController extends Controller
 
     public function getBids(GetBidsRequest $request)
     {
-        return BidResource::collection(
+        return BidShortResource::collection(
             $this->orderRepository->getBidsByUserSyncDataPaginate(
                 $request->user(),
                 $request->input('status') ? OrderStatusEnum::from($request->input('status')) : null
@@ -52,7 +53,7 @@ class SpecialistController extends Controller
 
     public function getBid(GetBidRequest $request)
     {
-        return new OrderResource(
+        return new BidResource(
             $this->orderRepository->getBidByUserSyncData(
                 $request->user(),
                 $request->input('bidId',null)
@@ -64,7 +65,6 @@ class SpecialistController extends Controller
     {
         $user = $request->user();
         if($this->orderRepository->acceptBid($user,$request->bidId)) {
-            Bid::where('id',$request->bidId)->first()->acceptingUsers()->detach();
             return new SuccessResource();
         }else{
             return new ErrorResource();

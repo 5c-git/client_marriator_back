@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Order;
 
+use App\Http\Resources\AcceptingUsersResource;
 use App\Http\Resources\Order\OrderActivitiesResource;
 use App\Http\Resources\ViewActivityResource;
 use App\Models\Fields\Directory\Radius;
@@ -30,7 +31,6 @@ class BidResource extends JsonResource
         return [
             'id' => $this->id,
             'user' => new ShortUserResource($this->user),
-            'acceptUser' => new ShortUserResource($this->acceptUser),
             'status' => $this->status->value,
             'selfEmployed' => (bool)$this->self_employed,
             'place' => new PlaceResource($this->place),
@@ -43,7 +43,8 @@ class BidResource extends JsonResource
             'needFoto' => (bool)$this->need_foto,
             'dateActivity' => DateActivityResource::collection(collect($this->date_activity)),
             'order' => new ShortOrderResource($this->order),
-            'task' => new TaskShortResource($this->task)
+            'task' => new TaskShortResource($this->task),
+            'acceptingUsers' => AcceptingUsersResource::collection($this->acceptingUsers)
         ];
     }
 

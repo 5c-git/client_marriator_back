@@ -466,7 +466,7 @@ class SupervisorController extends Controller
 
     public function getBids(GetBidsRequest $request)
     {
-        return BidResource::collection(
+        return BidShortResource::collection(
             $this->orderRepository->getBidsByUserSyncDataPaginate(
                 $request->user(),
                 $request->input('status') ? OrderStatusEnum::from($request->input('status')) : null
@@ -476,7 +476,7 @@ class SupervisorController extends Controller
 
     public function getBid(GetBidRequest $request)
     {
-        return new OrderResource(
+        return new BidResource(
             $this->orderRepository->getBidByUserSyncData(
                 $request->user(),
                 $request->input('bidId',null)
@@ -507,7 +507,6 @@ class SupervisorController extends Controller
     {
         $user = $request->user();
         if($this->orderRepository->acceptBid($user,$request->bidId)) {
-            Bid::where('id',$request->bidId)->first()->acceptingUsers()->detach();
             return new SuccessResource();
         }else{
             return new ErrorResource();
@@ -517,7 +516,7 @@ class SupervisorController extends Controller
     public function instructBid(EntrustBidRequest $request): ErrorResource|SuccessResource
     {
         if($request->bidId){
-            $this->orderRepository->instructBid($request->bidId,$request->input('supervisorIds',[]));
+            $this->orderRepository->instructBid($request->bidId,$request->input('supervisorIds'));
             return new SuccessResource();
         }else{
             return new ErrorResource();

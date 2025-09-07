@@ -35,4 +35,9 @@ return [
         'token' => env('CORRECT_RECOGNITION_TOKEN'),
     ],
 
+    'nopaper' => [
+        'base_url' => env('NOPAPER_BASE_URL'),
+        'api_key' => env('NOPAPER_API_KEY'),
+    ]
+
 ];

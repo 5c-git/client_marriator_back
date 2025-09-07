@@ -117,6 +117,6 @@ class Bid extends Model
     public function acceptingUsers(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'accept_bid', 'bid_id', 'user_id')
-            ->withPivot('accepted');
+            ->withPivot('accepted','task_id','order_id');
     }
 }

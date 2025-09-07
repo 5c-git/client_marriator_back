@@ -125,16 +125,18 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
             Route::post('/cancelTask','App\Http\Controllers\UserRoles\ManagerController@cancelTask')->name('cancelTask');
             Route::get('/getProjectsForTask','App\Http\Controllers\UserRoles\ManagerController@getProjectForTask')->name('getProjectForTask');
             Route::post('/repeatTask','App\Http\Controllers\UserRoles\ManagerController@repeatTask')->name('repeatTask'); ///?????????
-            Route::get('/getManager','App\Http\Controllers\UserRoles\ManagerController@getManager')->name('getManager'); ///перенесено
-            Route::post('/setManagers','App\Http\Controllers\UserRoles\ManagerController@setManagers')->name('setManagers'); ///перенесено
-            Route::post('/delManager','App\Http\Controllers\UserRoles\ManagerController@delManager')->name('delManager'); ///перенесено
+            Route::get('/getManager','App\Http\Controllers\UserRoles\ManagerController@getManager')->name('getManager');
+            Route::post('/setManagers','App\Http\Controllers\UserRoles\ManagerController@setManagers')->name('setManagers');
+            Route::post('/delManager','App\Http\Controllers\UserRoles\ManagerController@delManager')->name('delManager');
         });
         Route::middleware([CheckRole::class.':recruiter'])->group( function () {
-            Route::get('/request/getRequests','App\Http\Controllers\UserRoles\RecruiterController@getRequests')->name('getRequests');//??
-            Route::get('/request/getRequest','App\Http\Controllers\UserRoles\RecruiterController@getRequest')->name('getRequest');//??
-            Route::post('/request/acceptRequest','App\Http\Controllers\UserRoles\RecruiterController@acceptRequest')->name('acceptRequest');//??
+            Route::get('/request/getRequests','App\Http\Controllers\UserRoles\RecruiterController@getRequests')->name('getRequests');
+            Route::get('/request/getRequest','App\Http\Controllers\UserRoles\RecruiterController@getRequest')->name('getRequest');
+            Route::post('/request/acceptRequest','App\Http\Controllers\UserRoles\RecruiterController@acceptRequest')->name('acceptRequest');
         });
         Route::middleware([CheckRole::class.':specialist'])->group( function () {
+            Route::post('/acceptBid','App\Http\Controllers\UserRoles\SpecialistController@acceptBid')->name('acceptBid');
+            Route::post('/rejectBid','App\Http\Controllers\UserRoles\SpecialistController@rejectBid')->name('rejectBid');
         });
         Route::middleware([CheckRole::class.':supervisor'])->group( function () {
         });
@@ -176,25 +178,24 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
         Route::get('/getTask','App\Http\Controllers\UniversalController@getTask')->name('getTask');
 
 
-        Route::get('/getBids','App\Http\Controllers\UniversalController@getBids')->name('getBids');////??
-        Route::get('/getBid','App\Http\Controllers\UniversalController@getBid')->name('getBid');////??
-        Route::post('/invoiceBid','App\Http\Controllers\UniversalController@invoiceBid')->name('invoiceBid');////??
-        //???
-        Route::get('/instructBid','App\Http\Controllers\UniversalController@instructBid')->name('instructBid');
-        Route::get('/acceptBid','App\Http\Controllers\UniversalController@acceptBid')->name('acceptBid');
-        Route::get('/cancelBid','App\Http\Controllers\UniversalController@cancelBid')->name('cancelBid');
-        Route::get('/getSpecialistForBid','App\Http\Controllers\UniversalController@getSpecialistForBid')->name('getSpecialistForBid');// перенесено
-        Route::post('/updateBid','App\Http\Controllers\UniversalController@updateBid')->name('updateBid');//перенесено
+        Route::get('/getBids','App\Http\Controllers\UniversalController@getBids')->name('getBids');
+        Route::get('/getBid','App\Http\Controllers\UniversalController@getBid')->name('getBid');
+        Route::post('/invoiceBid','App\Http\Controllers\UniversalController@invoiceBid')->name('invoiceBid');
+        Route::post('/instructBid','App\Http\Controllers\UniversalController@instructBid')->name('instructBid');
+        Route::post('/cancelBid','App\Http\Controllers\UniversalController@cancelBid')->name('cancelBid');
+
+        Route::get('/getSpecialistForBid','App\Http\Controllers\UniversalController@getSpecialistForBid')->name('getSpecialistForBid');
+        Route::post('/updateBid','App\Http\Controllers\UniversalController@updateBid')->name('updateBid');
 
         Route::get('/getPlaceForOrder','App\Http\Controllers\UniversalController@getPlaceForOrder')->name('getPlaceForOrderCreate');
         Route::get('/getPlaceForTask','App\Http\Controllers\UniversalController@getPlaceForOrder')->name('getPlaceForTaskCreate');
-        Route::get('/getPlaceForBid','App\Http\Controllers\UniversalController@getPlaceForBid')->name('getPlaceForBid');/// перенесено
-        Route::get('/getRadiusSelect','App\Http\Controllers\UniversalController@getRadiusSelect')->name('getRadiusSelect');/// перенесено
+        Route::get('/getPlaceForBid','App\Http\Controllers\UniversalController@getPlaceForBid')->name('getPlaceForBid');
+        Route::get('/getRadiusSelect','App\Http\Controllers\UniversalController@getRadiusSelect')->name('getRadiusSelect');
 
         Route::post('/acceptTask','App\Http\Controllers\UniversalController@acceptTask')->name('acceptTask');
 
-        Route::post('/createBidFromOrder','App\Http\Controllers\UniversalController@createBidFromOrder')->name('createBidFromOrder'); //????
-        Route::post('/createBidFromTask','App\Http\Controllers\UniversalController@createBidFromTask')->name('createBidFromTask');///??????
+        Route::post('/createBidFromOrder','App\Http\Controllers\UniversalController@createBidFromOrder')->name('createBidFromOrder');
+        Route::post('/createBidFromTask','App\Http\Controllers\UniversalController@createBidFromTask')->name('createBidFromTask');
 
         Route::group(['prefix' => 'moderation'], function () {
             Route::get('/getProject', 'App\Http\Controllers\UniversalController@getProject')->name('getProject');

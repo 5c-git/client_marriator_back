@@ -2,6 +2,7 @@
 
 namespace App\Services\Local\Repositories\Order;
 
+use App\Enum\Order\BidAcceptingStatusEnum;
 use App\Enum\Order\OrderStatusEnum;
 use App\Http\Requests\Order\BidDataRequest;
 use App\Http\Requests\Order\CancelRequestRequest;
@@ -509,14 +510,8 @@ class EloquentOrderRepository implements OrderRepository
                     $query->where('status', $status->value);
                 }
             })
-            ->orWhere(function ($query) use ($user,$status,$userIdsSupervisor) {
-                $query = $query->whereIn('accept_user_id', $userIdsSupervisor);
-                if($status) {
-                    $query->where('status', $status->value);
-                }
-            })
             ->orWhere(function ($query) use ($user,$status) {
-                $userIdsSupervisor = $user->acceptedTasks?->pluck('id')->toArray();
+                $userIdsSupervisor = $user->acceptedBids?->pluck('id')->toArray();
                 $query = $query->whereIn('id', $userIdsSupervisor);
                 if($status) {
                     $query->where('status', $status->value);
@@ -532,11 +527,8 @@ class EloquentOrderRepository implements OrderRepository
             return Bid::where(function ($query) use ($user,$bidId,$userIdsSupervisor) {
                 $query->whereIn('user_id', $userIdsSupervisor)->where('id', $bidId);
             })
-                ->orWhere(function ($query) use ($user,$bidId,$userIdsSupervisor) {
-                    $query->whereIn('accept_user_id', $userIdsSupervisor)->where('id', $bidId);
-                })
                 ->orWhere(function ($query) use ($user,$bidId) {
-                    $userIdsSupervisor = $user->acceptedTasks?->pluck('id')->toArray();
+                    $userIdsSupervisor = $user->acceptedBids?->pluck('id')->toArray();
                     $query->whereIn('id', $userIdsSupervisor)->where('id', $bidId);
                 })->first();
         }
@@ -546,9 +538,18 @@ class EloquentOrderRepository implements OrderRepository
     public function invoiceBid(int $bidId, ?array $specialistIds): bool
     {
         if($specialistIds) {
+            /** @var Bid $bid  */
             $bid = Bid::query()->where('id', $bidId)->first();
             $bid->status = OrderStatusEnum::notAccepted->value;
-            $bid->acceptingUsers()->syncWithoutDetaching($specialistIds);
+            $bid->acceptingUsers()->syncWithoutDetaching(
+                collect($specialistIds)->mapWithKeys(function ($id) use ($bid) {
+                    return [$id => [
+                        'accepted' => BidAcceptingStatusEnum::notAccepted->value,
+                        'task_id' => $bid->task_id,
+                        'order_id' => $bid->order_id
+                    ]];
+                })->toArray()
+            );
             $bid->save();
         }
         return true;
@@ -556,27 +557,66 @@ class EloquentOrderRepository implements OrderRepository
 
     public function acceptBid(User $user, int $bidId): bool
     {
-        return (bool)Bid::query()
-            ->where('id',$bidId)
-            ->update(
+        $bid = Bid::query()->where('id', $bidId)->first();
+        /** @var Bid $bid  */
+        $count = $bid->acceptingUsers()->count();
+        if ($bid->acceptingUsers()->where('user_id', $user->id)->exists()) {
+            $updated = $bid->acceptingUsers()->updateExistingPivot(
+                $user->id,
                 [
-                    'status'=>OrderStatusEnum::accepted->value,
-                    'accept_user_id' => $user->id
+                    'accepted' => BidAcceptingStatusEnum::accepted->value,
+                    'task_id' => $bid->task_id,
+                    'order_id' => $bid->order_id
                 ]
             );
+            if($updated) {
+                if (($count + 1) >= $bid->count) {
+                    $bid->status = OrderStatusEnum::accepted->value;
+                    $bid->save();
+                }
+            }
+            return (bool)$updated;
+        }
+        if($count >= $bid->count) {
+            $bid->status = OrderStatusEnum::accepted->value;
+            $bid->save();
+        }
+        return false;
     }
 
-    public function instructBid(int $bidId, ?int $specialistId): bool
+    public function instructBid(int $bidId, int $specialistId): bool
     {
-        $bid = Bid::query()->where('id',$bidId)->first();
-        $bid->status = OrderStatusEnum::accepted->value;
-        if($specialistId) {
-            $bid->accept_user_id = $specialistId;
-        }else{
-            $bid->accept_user_id = Auth::user()->id;
+        $bid = Bid::query()->where('id', $bidId)->first();
+        /** @var Bid $bid  */
+        $count = $bid->acceptingUsers()->count();
+        if ($bid->acceptingUsers()->where('user_id', $specialistId)->exists()) {
+            $updated = $bid->acceptingUsers()->updateExistingPivot(
+                $specialistId,
+                [
+                    'accepted' => BidAcceptingStatusEnum::accepted->value,
+                    'task_id' => $bid->task_id,
+                    'order_id' => $bid->order_id
+                ]
+            );
+            if($updated) {
+                if (($count + 1) >= $bid->count) {
+                    $bid->status = OrderStatusEnum::accepted->value;
+                    $bid->save();
+                }
+            }
+            return (bool)$updated;
+        } else {
+            $bid->acceptingUsers()->attach($specialistId, [
+                'accepted' => BidAcceptingStatusEnum::accepted->value,
+                'task_id' => $bid->task_id,
+                'order_id' => $bid->order_id
+            ]);
+            if (($count + 1) >= $bid->count) {
+                $bid->status = OrderStatusEnum::accepted->value;
+                $bid->save();
+            }
+            return true;
         }
-        $bid->save();
-        return true;
     }
 
     public function cancelBid(int $bidId): bool
@@ -651,7 +691,15 @@ class EloquentOrderRepository implements OrderRepository
 
     public function rejectBid(User $user, int $bidId): bool
     {
-        Bid::where('id',$bidId)->first()->acceptingUsers()->detach([$user->id]);
+        $bid = Bid::where('id',$bidId)->first();
+        $bid->acceptingUsers()->updateExistingPivot(
+            $user->id,
+            [
+                'accepted' => BidAcceptingStatusEnum::declined->value,
+                'task_id' => $bid->task_id,
+                'order_id' => $bid->order_id
+            ]
+        );
         return true;
     }
 

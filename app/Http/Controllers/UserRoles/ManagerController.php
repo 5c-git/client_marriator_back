@@ -827,7 +827,6 @@ class ManagerController extends Controller
     {
         $user = $request->user();
         if($this->orderRepository->acceptBid($user,$request->bidId)) {
-            Bid::where('id',$request->bidId)->first()->acceptingUsers()->detach();
             return new SuccessResource();
         }else{
             return new ErrorResource();
@@ -837,7 +836,7 @@ class ManagerController extends Controller
     public function instructBid(EntrustBidRequest $request): ErrorResource|SuccessResource
     {
         if($request->bidId){
-            $this->orderRepository->instructBid($request->bidId,$request->input('supervisorId',null));
+            $this->orderRepository->instructBid($request->bidId,$request->input('supervisorId'));
             return new SuccessResource();
         }else{
             return new ErrorResource();

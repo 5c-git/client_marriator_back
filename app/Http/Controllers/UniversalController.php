@@ -8,6 +8,7 @@ use App\Http\Requests\DelPlaceRequest;
 use App\Http\Requests\Order\AcceptOrderRequest;
 use App\Http\Requests\Order\AcceptTaskRequest;
 use App\Http\Requests\Order\BidDataRequest;
+use App\Http\Requests\Order\CancelBidRequest;
 use App\Http\Requests\Order\CreateBidFromOrderRequest;
 use App\Http\Requests\Order\CreateBidFromTaskRequest;
 use App\Http\Requests\Order\EntrustBidRequest;
@@ -521,6 +522,26 @@ class UniversalController extends Controller
         }
         if(in_array('supervisor',$this->roles)){
             return app(\App\Http\Controllers\UserRoles\SupervisorController::class)->getSpecialistForBid($request);
+        }
+        return response()->json(['message' => 'Role not allowed.'], 403);
+    }
+
+    public function instructBid(EntrustBidRequest $request){
+        if(in_array('manager',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\ManagerController::class)->instructBid($request);
+        }
+        if(in_array('supervisor',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\SupervisorController::class)->instructBid($request);
+        }
+        return response()->json(['message' => 'Role not allowed.'], 403);
+    }
+
+    public function cancelBid(CancelBidRequest $request){
+        if(in_array('manager',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\ManagerController::class)->cancelBid($request);
+        }
+        if(in_array('supervisor',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\SupervisorController::class)->cancelBid($request);
         }
         return response()->json(['message' => 'Role not allowed.'], 403);
     }

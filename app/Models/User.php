@@ -34,8 +34,8 @@ use App\Models\Order\Order;
  * @property-read Collection|Order[] $acceptOrders
  * @property-read Collection|Task[] $acceptedTasks
  * @property-read Collection|Task[] $acceptTasks
- * @property-read Collection|Task[] $acceptedBids
- * @property-read Collection|Task[] $acceptBids
+ * @property-read Collection|Bid[] $acceptedBids
+ * @property-read Collection|Bid[] $acceptBids
  * @property-read Collection|User[] $supervisors
  * @property-read Collection|Counterparty[] $counterparty
  */
