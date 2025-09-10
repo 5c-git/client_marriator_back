@@ -30,7 +30,7 @@ class ConfirmUserRequest extends FormRequest
                     if ($uniqueIds) {
                         $validIds = User::whereIn('id', $uniqueIds)
                             ->whereHas('roles', function ($query) {
-                                $query->where('role_id', RoleEnum::supervisor);
+                                $query->where('role_id', RoleEnum::supervisor->value);
                             })
                             ->pluck('id')
                             ->toArray();

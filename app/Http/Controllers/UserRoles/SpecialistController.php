@@ -83,6 +83,10 @@ class SpecialistController extends Controller
 
     public function startDay(StartDayRequest $request)
     {
+        $user = $request->user();
+        /** @var  $bid Bid */
+        $bid = Bid::where('id',$request->bidId)->first();
+        $accepting = $bid->acceptingUsers()->where('user_id',$user->id)->first();
 
         return new SuccessResource();
     }

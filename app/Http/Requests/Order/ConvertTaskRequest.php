@@ -57,7 +57,7 @@ class ConvertTaskRequest extends FormRequest
 
                         $validIds = User::where('id', $value)
                             ->whereHas('roles', function ($query) {
-                                $query->where('role_id', RoleEnum::supervisor);
+                                $query->where('role_id', RoleEnum::supervisor->value);
                             })
                             ->pluck('id')
                             ->toArray();

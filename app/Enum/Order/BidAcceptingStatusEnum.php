@@ -17,6 +17,8 @@ enum BidAcceptingStatusEnum: int
     case notAccepted = 1;
     case accepted = 2;
     case declined = 3;
+    case consideration = 4;
+    case work = 5;
 
     public function getStatusName(): string
     {
@@ -25,6 +27,8 @@ enum BidAcceptingStatusEnum: int
             self::notAccepted => 'Не принято',
             self::accepted => 'Принято',
             self::declined => 'Отклонено',
+            self::consideration => 'На рассмотрении',
+            self::work => 'В работе',
         };
     }
 }

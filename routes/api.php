@@ -181,7 +181,7 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
         Route::get('/getBids','App\Http\Controllers\UniversalController@getBids')->name('getBids');
         Route::get('/getBid','App\Http\Controllers\UniversalController@getBid')->name('getBid');
         Route::post('/invoiceBid','App\Http\Controllers\UniversalController@invoiceBid')->name('invoiceBid');
-        Route::post('/instructBid','App\Http\Controllers\UniversalController@instructBid')->name('instructBid');
+        //Route::post('/instructBid','App\Http\Controllers\UniversalController@instructBid')->name('instructBid');
         Route::post('/cancelBid','App\Http\Controllers\UniversalController@cancelBid')->name('cancelBid');
 
         Route::get('/getSpecialistForBid','App\Http\Controllers\UniversalController@getSpecialistForBid')->name('getSpecialistForBid');

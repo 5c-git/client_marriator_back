@@ -4,6 +4,7 @@ namespace App\Services\Local\Repositories\Order;
 
 use App\Enum\Order\BidAcceptingStatusEnum;
 use App\Enum\Order\OrderStatusEnum;
+use App\Enum\Role\RoleEnum;
 use App\Http\Requests\Order\BidDataRequest;
 use App\Http\Requests\Order\CancelRequestRequest;
 use App\Http\Requests\Order\ConvertTaskRequest;
@@ -541,15 +542,52 @@ class EloquentOrderRepository implements OrderRepository
             /** @var Bid $bid  */
             $bid = Bid::query()->where('id', $bidId)->first();
             $bid->status = OrderStatusEnum::notAccepted->value;
-            $bid->acceptingUsers()->syncWithoutDetaching(
-                collect($specialistIds)->mapWithKeys(function ($id) use ($bid) {
-                    return [$id => [
-                        'accepted' => BidAcceptingStatusEnum::notAccepted->value,
-                        'task_id' => $bid->task_id,
-                        'order_id' => $bid->order_id
-                    ]];
-                })->toArray()
-            );
+            /** @var User $user  */
+            $user = User::where('id',Auth::id())->first();
+            $userRoles = $user->roles?->pluck('id')->toArray();
+            if(in_array(RoleEnum::manager->value,$userRoles)){
+                $specialistIdsFromRelated = $user->managerSpecialist()->allRelatedIds()->toArray();
+            }
+            if(in_array(RoleEnum::supervisor->value,$userRoles)){
+                $specialistIdsFromRelated = $user->supervisorSpecialist()->allRelatedIds()->toArray();
+            }
+            $commonIds = array_intersect($specialistIdsFromRelated, $specialistIds);
+
+            $uniqueToSpecialistIds = array_diff($specialistIds, $specialistIdsFromRelated);
+
+            if($uniqueToSpecialistIds) {
+                $bid->acceptingUsers()->syncWithoutDetaching(
+                    collect($uniqueToSpecialistIds)->mapWithKeys(function ($id) use ($bid) {
+                        return [
+                            $id => [
+                                'accepted' => BidAcceptingStatusEnum::notAccepted->value,
+                                'task_id'  => $bid->task_id,
+                                'order_id' => $bid->order_id,
+                                'user_id'  => Auth::id()
+                            ]
+                        ];
+                    })->toArray()
+                );
+            }
+
+            if($commonIds) {
+                $bid->acceptingUsers()->syncWithoutDetaching(
+                    collect($commonIds)->mapWithKeys(function ($id) use ($bid) {
+                        return [
+                            $id => [
+                                'accepted' => BidAcceptingStatusEnum::accepted->value,
+                                'task_id'  => $bid->task_id,
+                                'order_id' => $bid->order_id,
+                                'user_id'  => Auth::id()
+                            ]
+                        ];
+                    })->toArray()
+                );
+                if (count($commonIds) >= $bid->count) {
+                    $bid->status = OrderStatusEnum::accepted->value;
+                    $bid->save();
+                }
+            }
             $bid->save();
         }
         return true;
@@ -564,7 +602,7 @@ class EloquentOrderRepository implements OrderRepository
             $updated = $bid->acceptingUsers()->updateExistingPivot(
                 $user->id,
                 [
-                    'accepted' => BidAcceptingStatusEnum::accepted->value,
+                    'accepted' => BidAcceptingStatusEnum::consideration->value,
                     'task_id' => $bid->task_id,
                     'order_id' => $bid->order_id
                 ]

@@ -62,7 +62,7 @@ class InstructTaskRequest extends FormRequest
 
 
                     $validIds = User::where('id', $ids)
-                        ->whereHas('roles', fn($q) => $q->where('role_id', RoleEnum::supervisor))
+                        ->whereHas('roles', fn($q) => $q->where('role_id', RoleEnum::supervisor->value))
                         ->pluck('id')
                         ->toArray();
                     if(!$validIds) {

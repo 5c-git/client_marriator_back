@@ -58,7 +58,7 @@ class RejectBidRequest extends FormRequest
                         })->first();
 
                     if (!$orderExists) {
-                        $fail('Not your order');
+                        $fail('Not your bid');
                     }
                 },
             ],

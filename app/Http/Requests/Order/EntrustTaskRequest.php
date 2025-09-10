@@ -62,7 +62,7 @@ class EntrustTaskRequest extends FormRequest
                     $uniqueIds = array_unique($ids);
 
                     $validIds = User::whereIn('id', $uniqueIds)
-                        ->whereHas('roles', fn($q) => $q->where('role_id', RoleEnum::supervisor))
+                        ->whereHas('roles', fn($q) => $q->where('role_id', RoleEnum::supervisor->value))
                         ->pluck('id')
                         ->toArray();
                     $invalidIds = array_diff($uniqueIds, $validIds);

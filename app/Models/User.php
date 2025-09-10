@@ -37,6 +37,8 @@ use App\Models\Order\Order;
  * @property-read Collection|Bid[] $acceptedBids
  * @property-read Collection|Bid[] $acceptBids
  * @property-read Collection|User[] $supervisors
+ * @property-read Collection|User[] $managerSpecialist
+ * @property-read Collection|User[] $supervisorSpecialist
  * @property-read Collection|Counterparty[] $counterparty
  */
 class User extends Authenticatable
@@ -182,6 +184,26 @@ class User extends Authenticatable
             'manager_supervisor',
             'user_id_supervisor',
             'user_id_manager'
+        );
+    }
+
+    public function managerSpecialist(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            User::class,
+            'manager_specialist',
+            'user_id_manager',
+            'user_id_specialist'
+        );
+    }
+
+    public function supervisorSpecialist(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            User::class,
+            'supervisor_specialist',
+            'user_id_supervisor',
+            'user_id_specialist'
         );
     }
 

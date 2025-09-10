@@ -44,7 +44,7 @@ class EntrustBidRequest extends FormRequest
                     $taskExists = Bid::query()
                         ->whereIn('user_id',$userIdsSupervisor)
                         ->where('id',$value)
-                        ->whereIn('status', [OrderStatusEnum::new,OrderStatusEnum::notAccepted])
+                        ->where('status', OrderStatusEnum::new)
                         ->exists();
 
                     if (!$taskExists) {
@@ -52,18 +52,29 @@ class EntrustBidRequest extends FormRequest
                     }
                 },
             ],
-            'specialistId' => [
+            'specialistIds' => [
                 'required',
-                'integer',
+                'array',
                 function ($attribute, $value, $fail) {
 
-                    $validIds = User::where('id', $value)
-                        ->whereHas('roles', fn($q) => $q->where('role_id', RoleEnum::specialist))
-                        ->pluck('id')
+                    $taskExists = Bid::query()
+                        ->where('id',$this->bidId)->first();
+                    if($taskExists){
+                        if($taskExists->count < count($value)){
+                            $fail('Supervisor count more than need count');
+                        }
+                        if($taskExists->count > count($value)){
+                            $fail('Supervisor count less than necessary need count');
+                        }
+                    }
+
+                    $validIds = User::whereIn('id', $value)
+                        ->whereHas('roles', fn($q) => $q->where('role_id', RoleEnum::specialist->value))
+                        ?->pluck('id')
                         ->toArray();
 
-                    if(!$validIds) {
-                        $fail('Supervisor ids not exist ' . $value);
+                    if(!$validIds || count($validIds) < count($value)) {
+                        $fail('Supervisor ids not exist ' . implode(' ,',array_diff($value, $validIds)));
                     }
                 }
             ],
