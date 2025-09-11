@@ -547,6 +547,13 @@ class EloquentOrderRepository implements OrderRepository
             $userRoles = $user->roles?->pluck('id')->toArray();
             if(in_array(RoleEnum::manager->value,$userRoles)){
                 $specialistIdsFromRelated = $user->managerSpecialist()->allRelatedIds()->toArray();
+                if(!empty($user->supervisors)) {
+                    $arrSpecialist = [];
+                    foreach ($user->supervisors as $supervisor) {
+                        $arrSpecialist[] = $supervisor->supervisorSpecialist()->allRelatedIds()->toArray();
+                    }
+                    $specialistIdsFromRelated = array_merge($specialistIdsFromRelated,...$arrSpecialist);
+                }
             }
             if(in_array(RoleEnum::supervisor->value,$userRoles)){
                 $specialistIdsFromRelated = $user->supervisorSpecialist()->allRelatedIds()->toArray();
