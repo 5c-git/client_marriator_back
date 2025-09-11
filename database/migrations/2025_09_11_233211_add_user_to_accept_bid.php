@@ -13,7 +13,7 @@ return new class extends Migration
     {
 
         Schema::table('accept_bid', function (Blueprint $table) {
-            $table->unsignedBigInteger('user_id')->index();
+            $table->unsignedBigInteger('user_id_maintainer')->index();
         });
 
     }
@@ -25,7 +25,7 @@ return new class extends Migration
     {
         Schema::table('accept_bid', function (Blueprint $table) {
             $table->dropColumn([
-                'user_id'
+                'user_id_maintainer'
             ]);
         });
     }

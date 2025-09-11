@@ -570,7 +570,7 @@ class EloquentOrderRepository implements OrderRepository
                                 'accepted' => BidAcceptingStatusEnum::notAccepted->value,
                                 'task_id'  => $bid->task_id,
                                 'order_id' => $bid->order_id,
-                                'user_id'  => Auth::id()
+                                'user_id_maintainer'  => Auth::id()
                             ]
                         ];
                     })->toArray()
@@ -589,7 +589,7 @@ class EloquentOrderRepository implements OrderRepository
                                 'accepted' => BidAcceptingStatusEnum::accepted->value,
                                 'task_id'  => $bid->task_id,
                                 'order_id' => $bid->order_id,
-                                'user_id'  => Auth::id()
+                                'user_id_maintainer'  => Auth::id()
                             ]
                         ];
                     })->toArray()
