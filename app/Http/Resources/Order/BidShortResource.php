@@ -42,7 +42,8 @@ class BidShortResource extends JsonResource
             'needFoto' => (bool)$this->need_foto,
             'dateActivity' => DateActivityResource::collection(collect($this->date_activity)),
             'order' => new ShortOrderResource($this->order),
-            'task' => new TaskShortResource($this->task)
+            'task' => new TaskShortResource($this->task),
+            'count' => $this->count,
         ];
     }
 
