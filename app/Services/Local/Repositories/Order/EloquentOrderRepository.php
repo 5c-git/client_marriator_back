@@ -676,17 +676,19 @@ class EloquentOrderRepository implements OrderRepository
     {
         $bid = Bid::query()->where('id',$bidId)->first();
         $place = $bid->place;
+        $status = [];
+        $status[] = TaxStatus::query()->where('id',1)->first()?->uuid;
         if($bid->self_employed){
-            $status = TaxStatus::query()->where('id',2)->first()?->uuid;
-        }else{
-            $status = TaxStatus::query()->where('id',1)->first()?->uuid;
+            $status[] = TaxStatus::query()->where('id',2)->first()?->uuid;
         }
         $fieldView = Fields::where('directory',ViewActivities::class)->first();
         $fieldStat = Fields::where('directory',TaxStatus::class)->first();
+
         if($fieldView && $bid->viewActivity && $place) {
             $users = User::whereJsonContains('data->'.$fieldView->uuid, $bid->viewActivity->uuid)
-                ->where('data->'.$fieldStat->uuid, $status)
+                ->whereIn('data->'.$fieldStat->uuid, $status)
                 ->get();
+
             $userInRadius = collect();
             $radius = Radius::where('default',true)->first();
             if(!$radius) {
@@ -694,16 +696,17 @@ class EloquentOrderRepository implements OrderRepository
             }else{
                 $radius = $radius->value;
             }
+
             foreach ($users as $user) {
                 if (
                     $user->latitude && $user->longitude && $place->latitude && $place->longitude &&
                     CoordinatesService::isPointInRadius(
-                    $user->latitude,
-                    $user->longitude,
-                    $place->latitude,
-                    $place->longitude,
-                    $user->mapRadius ?: $radius
-                )) {
+                        $user->latitude,
+                        $user->longitude,
+                        $place->latitude,
+                        $place->longitude,
+                        $user->mapRadius ?: $radius
+                    )) {
                     $userInRadius->push($user);
                 }
             }
