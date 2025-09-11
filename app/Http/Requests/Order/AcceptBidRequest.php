@@ -50,7 +50,7 @@ class AcceptBidRequest extends FormRequest
                         })->first();
 
                     if (!$orderExists) {
-                        $fail('Not your bid');
+                        $fail('Not your bid or status is not notAccepted');
                     }
                 },
             ],

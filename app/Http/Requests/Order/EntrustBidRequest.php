@@ -48,7 +48,7 @@ class EntrustBidRequest extends FormRequest
                         ->exists();
 
                     if (!$taskExists) {
-                        $fail('Not your bid');
+                        $fail('Not your bid or status not new');
                     }
                 },
             ],
@@ -60,9 +60,6 @@ class EntrustBidRequest extends FormRequest
                     $taskExists = Bid::query()
                         ->where('id',$this->bidId)->first();
                     if($taskExists){
-                        if($taskExists->count < count($value)){
-                            $fail('Supervisor count more than need count');
-                        }
                         if($taskExists->count > count($value)){
                             $fail('Supervisor count less than necessary need count');
                         }

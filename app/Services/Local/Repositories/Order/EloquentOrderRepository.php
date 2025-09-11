@@ -572,7 +572,11 @@ class EloquentOrderRepository implements OrderRepository
 
             if($commonIds) {
                 $bid->acceptingUsers()->syncWithoutDetaching(
-                    collect($commonIds)->mapWithKeys(function ($id) use ($bid) {
+                    collect($commonIds)->mapWithKeys(function ($id) use ($bid,$commonIds) {
+                        if (count($commonIds) >= $bid->count) {
+                            $bid->status = OrderStatusEnum::accepted->value;
+                            $bid->save();
+                        }
                         return [
                             $id => [
                                 'accepted' => BidAcceptingStatusEnum::accepted->value,
@@ -583,10 +587,6 @@ class EloquentOrderRepository implements OrderRepository
                         ];
                     })->toArray()
                 );
-                if (count($commonIds) >= $bid->count) {
-                    $bid->status = OrderStatusEnum::accepted->value;
-                    $bid->save();
-                }
             }
             $bid->save();
         }
