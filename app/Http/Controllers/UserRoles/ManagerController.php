@@ -792,7 +792,7 @@ class ManagerController extends Controller
         $viewActivities = $viewActivities->where('self_employed', $task->self_employed);
         return ViewActivityResource::collection($viewActivities);
     }
- ///??/????????
+
     public function getBids(GetBidsRequest $request)
     {
         return BidShortResource::collection(

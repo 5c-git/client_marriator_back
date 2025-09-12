@@ -442,7 +442,7 @@ class EloquentOrderRepository implements OrderRepository
             $bid->accept_user_id   = null;
             $bid->order_id         = $order->id;
             $bid->task_id          = null;
-            $bid->status           = OrderStatusEnum::notAccepted->value;
+            $bid->status           = OrderStatusEnum::new->value;
             $bid->self_employed    = $order->self_employed;
             $bid->price            = null;
             $bid->view_activity_id = $orderActivities->view_activity_id;
@@ -480,7 +480,7 @@ class EloquentOrderRepository implements OrderRepository
             $bid->accept_user_id   = null;
             $bid->order_id         = null;
             $bid->task_id          = $task->id;
-            $bid->status           = OrderStatusEnum::notAccepted->value;
+            $bid->status           = OrderStatusEnum::new->value;
             $bid->self_employed    = $task->self_employed;
             $bid->price            = null;
             $bid->view_activity_id = $taskActivities->view_activity_id;
