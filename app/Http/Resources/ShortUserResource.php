@@ -67,27 +67,29 @@ class ShortUserResource extends JsonResource
     private function getFieldView($name)
     {
         $data = '';
-        if(is_array($this->data[$this->moreInfo[$name]->uuid])){
-            foreach ($this->data[$this->moreInfo[$name]->uuid] as $field){
-                if(!empty($this->moreInfoField[$name][$field]['name'])) {
-                    if($data) {
-                        $data = $data . ', ' .$this->moreInfoField[$name][$field]['name'];
-                    }else{
-                        $data = $data . $this->moreInfoField[$name][$field]['name'];
-                    }
-                }else{
-                    if($data) {
-                        $data = $data . ', ' . $field;
-                    }else{
-                        $data = $data . $field;
+        if(!empty($this->data[$this->moreInfo[$name]->uuid])) {
+            if (is_array($this->data[$this->moreInfo[$name]->uuid])) {
+                foreach ($this->data[$this->moreInfo[$name]->uuid] as $field) {
+                    if (!empty($this->moreInfoField[$name][$field]['name'])) {
+                        if ($data) {
+                            $data = $data . ', ' . $this->moreInfoField[$name][$field]['name'];
+                        } else {
+                            $data = $data . $this->moreInfoField[$name][$field]['name'];
+                        }
+                    } else {
+                        if ($data) {
+                            $data = $data . ', ' . $field;
+                        } else {
+                            $data = $data . $field;
+                        }
                     }
                 }
-            }
-        }else{
-            if(!empty($this->moreInfoField[$name][$this->data[$this->moreInfo[$name]->uuid]]['name'])) {
-                $data = $this->moreInfoField[$name][$this->data[$this->moreInfo[$name]->uuid]]['name'];
-            }else{
-                $data = $this->data[$this->moreInfo[$name]->uuid];
+            } else {
+                if (!empty($this->moreInfoField[$name][$this->data[$this->moreInfo[$name]->uuid]]['name'])) {
+                    $data = $this->moreInfoField[$name][$this->data[$this->moreInfo[$name]->uuid]]['name'];
+                } else {
+                    $data = $this->data[$this->moreInfo[$name]->uuid];
+                }
             }
         }
         return $data;
