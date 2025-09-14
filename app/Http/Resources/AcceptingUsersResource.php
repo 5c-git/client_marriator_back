@@ -31,20 +31,22 @@ class AcceptingUsersResource extends JsonResource
     public function toArray($request): array
     {
         $this->getMoreInformation();
-        return [
+        $return = [
             'id' => $this->id,
             'phone' => $this->phone,
             'email' => $this->email,
             'logo' =>  $this->img ? Storage::url($this->img) : null,
             'roles' => RoleResource::collection($this->roles),
             'radius' => $this->mapRadius,
-            'status' => $this->pivot->accepted,
             'name' => $this->getName(),
             'age' => $this->getFieldView('fieldAge'),
             'country' => $this->getFieldView('fieldCiti'),
             'viewActivities' => $this->getFieldView('fieldView'),
-
         ];
+        if(!empty($this->pivot) && !empty($this->pivot->accepted)){
+            $return['status'] = $this->pivot->accepted;
+        }
+        return $return;
     }
 
     private function getMoreInformation()

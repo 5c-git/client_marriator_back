@@ -27,6 +27,7 @@ use App\Http\Requests\SetUserDataRequest;
 use App\Http\Requests\UserData\DelManagerRequest;
 use App\Http\Requests\UserData\GetManagerRequest;
 use App\Http\Requests\UserData\SetManagerRequest;
+use App\Http\Resources\AcceptingUsersResource;
 use App\Http\Resources\BrandResource;
 use App\Http\Resources\ErrorResource;
 use App\Http\Resources\Order\BidResource;
@@ -856,7 +857,7 @@ class ManagerController extends Controller
     }
 
     public function getSpecialistForBid(GetSpecialistForBisRequest $request){
-        return ShortUserResource::collection($this->orderRepository->getSpecialistForBid($request->bidId));
+        return AcceptingUsersResource::collection($this->orderRepository->getSpecialistForBid($request->bidId));
     }
 
     public function updateBid(BidDataRequest $request){
