@@ -38,7 +38,7 @@ class ShortUserResource extends JsonResource
             'logo' =>  $this->img ? Storage::url($this->img) : null,
             'roles' => RoleResource::collection($this->roles),
             'radius' => $this->mapRadius,
-            'name' => trim($this->getFieldView('name') . ' ' .$this->getFieldView('lastName'). ' ' .$this->getFieldView('secondName')) ,
+            'name' => $this->getName(),
             'age' => $this->getFieldView('fieldAge'),
             'country' => $this->getFieldView('fieldCiti'),
             'viewActivities' => $this->getFieldView('fieldView'),
@@ -93,5 +93,14 @@ class ShortUserResource extends JsonResource
             }
         }
         return $data;
+    }
+
+    private function getName()
+    {
+       $name = trim($this->getFieldView('name') . ' ' .$this->getFieldView('lastName'). ' ' .$this->getFieldView('secondName'));
+       if(!$name){
+           $name = $this->name;
+       }
+       return $name;
     }
 }
