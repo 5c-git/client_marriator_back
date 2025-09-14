@@ -37,13 +37,7 @@ class AcceptBidRequest extends FormRequest
                 function ($attribute, $value, $fail) {
                     $user = auth()->user();
 
-                    $userIdsSupervisor = $user->supervisors->pluck('id')->toArray();
-                    $userIdsSupervisor[] = $user->id;
-                    $orderExists = Bid::where(function ($query) use ($user,$value,$userIdsSupervisor) {
-                        $query->whereIn('user_id', $userIdsSupervisor)->where('id', $value)
-                            ->where('status', OrderStatusEnum::notAccepted);
-                    })
-                        ->orWhere(function ($query) use ($user,$value) {
+                    $orderExists = Bid::where(function ($query) use ($user,$value) {
                             $userIdsSupervisor = $user->acceptedBids?->pluck('id')->toArray();
                             $query->whereIn('id', $userIdsSupervisor)->where('id', $value)
                                 ->where('status', OrderStatusEnum::notAccepted);

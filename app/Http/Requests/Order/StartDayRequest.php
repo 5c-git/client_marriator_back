@@ -38,16 +38,14 @@ class StartDayRequest extends FormRequest
                 function ($attribute, $value, $fail) {
                     $user = auth()->user();
 
-                    $userIdsSupervisor = $user->supervisors->pluck('id')->toArray();
-                    $userIdsSupervisor[] = $user->id;
-                    $orderExists = Bid::where(function ($query) use ($user,$value,$userIdsSupervisor) {
+                    $orderExists = Bid::where(function ($query) use ($user,$value) {
                         $query->where(function ($query) use ($user, $value) {
                             $bidsIds = $user->acceptedBids()
                                 ->wherePivot('accepted', BidAcceptingStatusEnum::work)
                                 ->pluck('bid_id')
                                 ->toArray();
                             $query->whereIn('id', $bidsIds)->where('id', $value)
-                                ->where('status', OrderStatusEnum::notAccepted);
+                                ->where('status', OrderStatusEnum::accepted);
                         })->first();
                     });
 

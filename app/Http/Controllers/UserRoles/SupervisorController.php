@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\UserRoles;
 
+use App\Enum\Order\BidAcceptingStatusEnum;
 use App\Enum\Order\OrderStatusEnum;
 use App\Enum\Role\RoleEnum;
 use App\Enum\User\SortEnum;
@@ -9,6 +10,7 @@ use App\Enum\User\UserStatusModerationEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ConfirmUserRequest;
 use App\Http\Requests\Order\AcceptBidRequest;
+use App\Http\Requests\Order\AcceptSpecialistRequest;
 use App\Http\Requests\Order\BidDataRequest;
 use App\Http\Requests\Order\CancelBidRequest;
 use App\Http\Requests\Order\CancelRequestRequest;
@@ -573,6 +575,22 @@ class SupervisorController extends Controller
     {
         $radius = Radius::get();
         return RadiusResponse::collection($radius);
+    }
+
+    public function acceptSpecialist(AcceptSpecialistRequest $request)
+    {
+        $bid = Bid::where('id',$request->bidId)->first();
+        $bid->acceptingUsers()->updateExistingPivot($request->specialistId, [
+            'accepted' => BidAcceptingStatusEnum::accepted->value,
+        ]);
+    }
+
+    public function declinedSpecialist(AcceptSpecialistRequest $request)
+    {
+        $bid = Bid::where('id',$request->bidId)->first();
+        $bid->acceptingUsers()->updateExistingPivot($request->specialistId, [
+            'accepted' => BidAcceptingStatusEnum::declined->value,
+        ]);
     }
 
 }

@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Storage;
 class AcceptingUsersResource extends JsonResource
 {
     private array $moreInfo = [];
+    private array $moreInfoField = [];
     /**
      * Transform the resource into an array.
      *
@@ -29,6 +30,7 @@ class AcceptingUsersResource extends JsonResource
      */
     public function toArray($request): array
     {
+        $this->getMoreInformation();
         return [
             'id' => $this->id,
             'phone' => $this->phone,
@@ -36,7 +38,12 @@ class AcceptingUsersResource extends JsonResource
             'logo' =>  $this->img ? Storage::url($this->img) : null,
             'roles' => RoleResource::collection($this->roles),
             'radius' => $this->mapRadius,
-            'status' => $this->pivot->accepted
+            'status' => $this->pivot->accepted,
+            'name' => $this->name,
+            'age' => $this->getFieldView('fieldAge'),
+            'country' => $this->getFieldView('fieldCiti'),
+            'viewActivities' => $this->getFieldView('fieldView'),
+
         ];
     }
 
@@ -46,6 +53,34 @@ class AcceptingUsersResource extends JsonResource
             $this->moreInfo['fieldView'] = Fields::where('directory', ViewActivities::class)->first();
             $this->moreInfo['fieldCiti'] = Fields::where('directory', Citizenship::class)->first();
             $this->moreInfo['fieldAge']  = Fields::where('directory', Age::class)->first();
+
+            $this->moreInfoField['fieldView']=ViewActivities::get()->keyBy('uuid')->toArray();
+            $this->moreInfoField['fieldCiti']=Citizenship::get()->keyBy('uuid')->toArray();
+            $this->moreInfoField['fieldAge']=Age::get()->keyBy('uuid')->toArray();
         }
+        if(!is_array($this->data)){
+            $this->data = json_decode($this->data,true);
+        }
+    }
+
+    private function getFieldView($name)
+    {
+        $data = '';
+        if(is_array($this->data[$this->moreInfo[$name]->uuid])){
+            foreach ($this->data[$this->moreInfo[$name]->uuid] as $field){
+                if(!empty($this->moreInfoField[$name][$field]['name'])) {
+                    $data = $data . $this->moreInfoField[$name][$field]['name'];
+                }else{
+                    $data = $data . $field;
+                }
+            }
+        }else{
+            if(!empty($this->moreInfoField[$name][$this->data[$this->moreInfo[$name]->uuid]]['name'])) {
+                $data = $this->moreInfoField[$name][$this->data[$this->moreInfo[$name]->uuid]]['name'];
+            }else{
+                $data = $this->moreInfoField[$name][$this->data[$this->moreInfo[$name]->uuid]]['name'];
+            }
+        }
+        return $data;
     }
 }
