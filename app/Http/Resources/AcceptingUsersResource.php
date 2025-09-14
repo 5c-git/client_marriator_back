@@ -39,7 +39,7 @@ class AcceptingUsersResource extends JsonResource
             'roles' => RoleResource::collection($this->roles),
             'radius' => $this->mapRadius,
             'status' => $this->pivot->accepted,
-            'name' => $this->name,
+            'name' => trim($this->getFieldView('name') . ' ' .$this->getFieldView('lastName'). ' ' .$this->getFieldView('secondName')) ,
             'age' => $this->getFieldView('fieldAge'),
             'country' => $this->getFieldView('fieldCiti'),
             'viewActivities' => $this->getFieldView('fieldView'),
@@ -53,6 +53,9 @@ class AcceptingUsersResource extends JsonResource
             $this->moreInfo['fieldView'] = Fields::where('directory', ViewActivities::class)->first();
             $this->moreInfo['fieldCiti'] = Fields::where('directory', Citizenship::class)->first();
             $this->moreInfo['fieldAge']  = Fields::where('directory', Age::class)->first();
+            $this->moreInfo['name']  = Fields::where('name', 'Имя')->first();
+            $this->moreInfo['lastName']  = Fields::where('name', 'Фамилия')->first();
+            $this->moreInfo['secondName']  = Fields::where('name', 'Отчество')->first();
 
             $this->moreInfoField['fieldView']=ViewActivities::get()->keyBy('uuid')->toArray();
             $this->moreInfoField['fieldCiti']=Citizenship::get()->keyBy('uuid')->toArray();
@@ -66,19 +69,29 @@ class AcceptingUsersResource extends JsonResource
     private function getFieldView($name)
     {
         $data = '';
-        if(is_array($this->data[$this->moreInfo[$name]->uuid])){
-            foreach ($this->data[$this->moreInfo[$name]->uuid] as $field){
-                if(!empty($this->moreInfoField[$name][$field]['name'])) {
-                    $data = $data . $this->moreInfoField[$name][$field]['name'];
-                }else{
-                    $data = $data . $field;
+        if(!empty($this->data[$this->moreInfo[$name]->uuid])) {
+            if (is_array($this->data[$this->moreInfo[$name]->uuid])) {
+                foreach ($this->data[$this->moreInfo[$name]->uuid] as $field) {
+                    if (!empty($this->moreInfoField[$name][$field]['name'])) {
+                        if ($data) {
+                            $data = $data . ', ' . $this->moreInfoField[$name][$field]['name'];
+                        } else {
+                            $data = $data . $this->moreInfoField[$name][$field]['name'];
+                        }
+                    } else {
+                        if ($data) {
+                            $data = $data . ', ' . $field;
+                        } else {
+                            $data = $data . $field;
+                        }
+                    }
                 }
-            }
-        }else{
-            if(!empty($this->moreInfoField[$name][$this->data[$this->moreInfo[$name]->uuid]]['name'])) {
-                $data = $this->moreInfoField[$name][$this->data[$this->moreInfo[$name]->uuid]]['name'];
-            }else{
-                $data = $this->moreInfoField[$name][$this->data[$this->moreInfo[$name]->uuid]]['name'];
+            } else {
+                if (!empty($this->moreInfoField[$name][$this->data[$this->moreInfo[$name]->uuid]]['name'])) {
+                    $data = $this->moreInfoField[$name][$this->data[$this->moreInfo[$name]->uuid]]['name'];
+                } else {
+                    $data = $this->data[$this->moreInfo[$name]->uuid];
+                }
             }
         }
         return $data;
