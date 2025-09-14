@@ -38,7 +38,7 @@ class ShortUserResource extends JsonResource
             'logo' =>  $this->img ? Storage::url($this->img) : null,
             'roles' => RoleResource::collection($this->roles),
             'radius' => $this->mapRadius,
-            'name' => $this->name,
+            'name' => $this->getFieldView('name') . ' ' .$this->getFieldView('lastName'). ' ' .$this->getFieldView('secondName') ,
             'age' => $this->getFieldView('fieldAge'),
             'country' => $this->getFieldView('fieldCiti'),
             'viewActivities' => $this->getFieldView('fieldView'),
@@ -51,6 +51,9 @@ class ShortUserResource extends JsonResource
             $this->moreInfo['fieldView'] = Fields::where('directory', ViewActivities::class)->first();
             $this->moreInfo['fieldCiti'] = Fields::where('directory', Citizenship::class)->first();
             $this->moreInfo['fieldAge']  = Fields::where('directory', Age::class)->first();
+            $this->moreInfo['name']  = Fields::where('name', 'Имя')->first();
+            $this->moreInfo['lastName']  = Fields::where('name', 'Фамилия')->first();
+            $this->moreInfo['secondName']  = Fields::where('name', 'Отчество')->first();
 
             $this->moreInfoField['fieldView']=ViewActivities::get()->keyBy('uuid')->toArray();
             $this->moreInfoField['fieldCiti']=Citizenship::get()->keyBy('uuid')->toArray();
@@ -68,13 +71,13 @@ class ShortUserResource extends JsonResource
             foreach ($this->data[$this->moreInfo[$name]->uuid] as $field){
                 if(!empty($this->moreInfoField[$name][$field]['name'])) {
                     if($data) {
-                        $data = $data . ',' .$this->moreInfoField[$name][$field]['name'];
+                        $data = $data . ', ' .$this->moreInfoField[$name][$field]['name'];
                     }else{
                         $data = $data . $this->moreInfoField[$name][$field]['name'];
                     }
                 }else{
                     if($data) {
-                        $data = $data . ',' . $field;
+                        $data = $data . ', ' . $field;
                     }else{
                         $data = $data . $field;
                     }
