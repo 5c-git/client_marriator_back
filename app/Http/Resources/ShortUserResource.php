@@ -30,12 +30,18 @@ class ShortUserResource extends JsonResource
      */
     public function toArray($request): array
     {
+        $this->getMoreInformation();
         return [
             'id' => $this->id,
             'phone' => $this->phone,
             'email' => $this->email,
             'logo' =>  $this->img ? Storage::url($this->img) : null,
-            'roles' => RoleResource::collection($this->roles)
+            'roles' => RoleResource::collection($this->roles),
+            'radius' => $this->mapRadius,
+            'name' => $this->name,
+            'age' => $this->getFieldView('fieldAge'),
+            'country' => $this->getFieldView('fieldCiti'),
+            'viewActivities' => $this->getFieldView('fieldView'),
         ];
     }
 
