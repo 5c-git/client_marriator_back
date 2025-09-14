@@ -87,7 +87,7 @@ class ShortUserResource extends JsonResource
             if(!empty($this->moreInfoField[$name][$this->data[$this->moreInfo[$name]->uuid]]['name'])) {
                 $data = $this->moreInfoField[$name][$this->data[$this->moreInfo[$name]->uuid]]['name'];
             }else{
-                $data = $this->moreInfoField[$name][$this->data[$this->moreInfo[$name]->uuid]]['name'];
+                $data = $this->data[$this->moreInfo[$name]->uuid];
             }
         }
         return $data;
