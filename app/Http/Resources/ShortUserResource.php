@@ -67,9 +67,17 @@ class ShortUserResource extends JsonResource
         if(is_array($this->data[$this->moreInfo[$name]->uuid])){
             foreach ($this->data[$this->moreInfo[$name]->uuid] as $field){
                 if(!empty($this->moreInfoField[$name][$field]['name'])) {
-                    $data = $data . $this->moreInfoField[$name][$field]['name'];
+                    if($data) {
+                        $data = $data . ',' .$this->moreInfoField[$name][$field]['name'];
+                    }else{
+                        $data = $data . $this->moreInfoField[$name][$field]['name'];
+                    }
                 }else{
-                    $data = $data . $field;
+                    if($data) {
+                        $data = $data . ',' . $field;
+                    }else{
+                        $data = $data . $field;
+                    }
                 }
             }
         }else{
