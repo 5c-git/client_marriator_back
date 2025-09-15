@@ -583,6 +583,7 @@ class SupervisorController extends Controller
         $bid->acceptingUsers()->updateExistingPivot($request->specialistId, [
             'accepted' => BidAcceptingStatusEnum::accepted->value,
         ]);
+        return new SuccessResource();
     }
 
     public function declinedSpecialist(AcceptSpecialistRequest $request)
@@ -591,6 +592,7 @@ class SupervisorController extends Controller
         $bid->acceptingUsers()->updateExistingPivot($request->specialistId, [
             'accepted' => BidAcceptingStatusEnum::declined->value,
         ]);
+        return new SuccessResource();
     }
 
 }
