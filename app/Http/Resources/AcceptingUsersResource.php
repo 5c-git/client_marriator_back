@@ -70,6 +70,7 @@ class AcceptingUsersResource extends JsonResource
 
     private function getFieldView($name)
     {
+        $data = '';
         if(!empty($this->data[$this->moreInfo[$name]->uuid])) {
             if (is_array($this->data[$this->moreInfo[$name]->uuid])) {
                 $data = [];
