@@ -18,7 +18,7 @@ use App\Http\Resources\ShortUserResource;
 class BidResource extends JsonResource
 {
     private int $radiusDefault = 5;
-    private int $radius = 0;
+    private int $radiusBd = 0;
     /**
      * Transform the resource into an array.
      *
@@ -51,14 +51,14 @@ class BidResource extends JsonResource
 
     private function getRadius()
     {
-        if(!$this->radius){
+        if(!$this->radiusBd){
            $radius = Radius::where('default',true)->first();
            if(!$radius) {
-               $this->radius = $this->radiusDefault;
+               $this->radiusBd = $this->radiusDefault;
            }else{
-               $this->radius = $radius->value;
+               $this->radiusBd = $radius->value;
            }
         }
-        return $this->radius;
+        return $this->radiusBd;
     }
 }
