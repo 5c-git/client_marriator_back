@@ -45,12 +45,12 @@ class ConvertTaskRequest extends FormRequest
                             ->exists();
                     }
                     if (!$orderExists) {
-                        $fail('Not your order');
+                        $fail('Order not accepted');
                     }
                 },
             ],
             'supervisorId' => [
-                'required',
+                'sometimes',
                 'int',
                 'exists:users,id',
                 function ($attribute, $value, $fail) {

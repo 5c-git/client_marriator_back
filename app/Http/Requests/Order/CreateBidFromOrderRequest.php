@@ -57,8 +57,8 @@ class CreateBidFromOrderRequest extends FormRequest
                 'required',
                 'integer',
                 function ($attribute, $value, $fail) {
-                    $orderActivitiesIds = Order::where('id',$this->taskId)->first()?->orderActivities?->pluck('id')->toArray();
-                    if (!in_array($value,$orderActivitiesIds)) {
+                    $orderActivitiesIds = Order::where('id',$this->orderId)->first()?->orderActivities?->pluck('id')->toArray();
+                    if (!$orderActivitiesIds || !in_array($value,$orderActivitiesIds)) {
                         $fail('Not correct task Activity id');
                     }
                 },
