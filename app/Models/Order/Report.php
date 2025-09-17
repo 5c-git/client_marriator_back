@@ -1,8 +1,10 @@
 <?php
 namespace App\Models\Order;
 
+use App\Enum\Order\ReportStatusEnum;
 use App\Models\Fields\Directory\Brand;
 use App\Models\Fields\Directory\Project;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -12,15 +14,18 @@ use App\Models\Fields\Directory\ViewActivities;
 
 /**
  * @property int $id
+ * @property int $user_id
+ * @property int $bid_id
  * @property int $order_id
- * @property int $view_activity_id
- * @property int $count
+ * @property int $task_id
  * @property Carbon $date_start
  * @property Carbon $date_end
- * @property bool $need_foto
- * @property array $date_activity
- * @property-read Order $order
- * @property-read ViewActivities $viewActivity
+ * @property ReportStatusEnum $status
+ * @property array $report
+ * @property Order $order
+ * @property Task $task
+ * @property Bid $bid
+ * @property User $user
  *
  */
 class Report extends Model
@@ -31,17 +36,19 @@ class Report extends Model
     public $timestamps = false;
 
     protected $fillable = [
+        'user_id',
+        'bid_id',
         'order_id',
-        'view_activity_id',
-        'count',
+        'task_id',
         'date_start',
         'date_end',
-        'need_foto',
-        'date_activity',
+        'status',
+        'report',
     ];
 
     protected $casts = [
-        'date_activity' => 'json',
+        'status' => ReportStatusEnum::class,
+        'report' => 'json',
         'date_start' => 'datetime',
         'date_end' => 'datetime',
     ];
@@ -51,8 +58,19 @@ class Report extends Model
         return $this->belongsTo(Order::class,'order_id');
     }
 
-    public function viewActivity(): BelongsTo
+    public function task(): BelongsTo
     {
-        return $this->belongsTo(ViewActivities::class, 'view_activity_id');
+        return $this->belongsTo(Task::class,'task_id');
     }
+
+    public function bid(): BelongsTo
+    {
+        return $this->belongsTo(Bid::class,'bid_id');
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class,'user_id');
+    }
+
 }

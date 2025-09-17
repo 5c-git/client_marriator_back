@@ -4,9 +4,11 @@ namespace App\Http\Requests\Order;
 
 use App\Enum\Order\BidAcceptingStatusEnum;
 use App\Enum\Order\OrderStatusEnum;
+use App\Enum\Order\ReportStatusEnum;
 use App\Http\Requests\FormRequest;
 use App\Models\Order\Bid;
 use App\Models\Order\Order;
+use App\Models\Order\Report;
 use App\Models\Order\Task;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -37,15 +39,23 @@ class StartDayRequest extends FormRequest
                 'integer',
                 function ($attribute, $value, $fail) {
                     $user = auth()->user();
+                    $report = Report::query()
+                        ->where('user_id',$user->id)
+                        ->where('bid_id',$value)
+                        ->where('status',ReportStatusEnum::start->value)
+                        ->first();
+                    if($report){
+                        $fail('You have started day for this bid');
+                    }
 
                     $orderExists = Bid::where(function ($query) use ($user,$value) {
                         $query->where(function ($query) use ($user, $value) {
                             $bidsIds = $user->acceptedBids()
-                                ->wherePivot('accepted', BidAcceptingStatusEnum::work)
+                                ->wherePivot('accepted', BidAcceptingStatusEnum::work->value)
                                 ->pluck('bid_id')
                                 ->toArray();
                             $query->whereIn('id', $bidsIds)->where('id', $value)
-                                ->where('status', OrderStatusEnum::accepted);
+                                ->where('status', OrderStatusEnum::accepted->value);
                         })->first();
                     });
 
@@ -53,7 +63,7 @@ class StartDayRequest extends FormRequest
                         $fail('Not your bid');
                     }
                     /** @var Bid $orderExists */
-                    if($orderExists->date_start < Carbon::now() && $orderExists->date_end>Carbon::now()){
+                    if($orderExists->date_start && $orderExists->date_end && $orderExists->date_start->subHour() < Carbon::now() && $orderExists->date_end->addHours(12) > Carbon::now()){
                         $fail('Active date not start or this bid is ended');
                     }
 
@@ -69,8 +79,8 @@ class StartDayRequest extends FormRequest
                             if(
                                 $activity['timeStart'] &&
                                 $activity['timeEnd'] &&
-                                Carbon::parse($activity['timeStart'])->subHour() > Carbon::now() &&
-                                Carbon::parse($activity['timeEnd'])->subHour() < Carbon::now()
+                                Carbon::parse($activity['timeStart'])->subHour() < Carbon::now() &&
+                                Carbon::parse($activity['timeEnd'])->subHour() > Carbon::now()
                             )
                             {
                                 $check = true;
@@ -83,8 +93,8 @@ class StartDayRequest extends FormRequest
                         if(
                             $orderExists->date_start &&
                             $orderExists->date_end &&
-                            Carbon::parse($orderExists->date_start)->subHour() > Carbon::now() &&
-                            Carbon::parse($orderExists->date_end)->subHour() < Carbon::now()
+                            $orderExists->date_start < Carbon::now() &&
+                            $orderExists->date_end > Carbon::now()
                         ){
                             $check = true;
                         }else{

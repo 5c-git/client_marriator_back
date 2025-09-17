@@ -478,7 +478,7 @@ class EloquentOrderRepository implements OrderRepository
             $bid->place_id         = $task->place_id;
             $bid->user_id          = $user->id;
             $bid->accept_user_id   = null;
-            $bid->order_id         = null;
+            $bid->order_id         = $task->order_id;
             $bid->task_id          = $task->id;
             $bid->status           = OrderStatusEnum::new->value;
             $bid->self_employed    = $task->self_employed;

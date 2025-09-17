@@ -137,6 +137,8 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
         Route::middleware([CheckRole::class.':specialist'])->group( function () {
             Route::post('/acceptBid','App\Http\Controllers\UserRoles\SpecialistController@acceptBid')->name('acceptBid');
             Route::post('/rejectBid','App\Http\Controllers\UserRoles\SpecialistController@rejectBid')->name('rejectBid');
+            Route::post('/startDay','App\Http\Controllers\UserRoles\SpecialistController@startDay')->name('startDay');
+            Route::post('/endDay','App\Http\Controllers\UserRoles\SpecialistController@endDay')->name('endDay');
         });
         Route::middleware([CheckRole::class.':supervisor'])->group( function () {
         });

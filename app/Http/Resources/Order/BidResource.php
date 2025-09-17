@@ -4,6 +4,7 @@ namespace App\Http\Resources\Order;
 
 use App\Http\Resources\AcceptingUsersResource;
 use App\Http\Resources\Order\OrderActivitiesResource;
+use App\Http\Resources\StatisticResource;
 use App\Http\Resources\ViewActivityResource;
 use App\Models\Fields\Directory\Radius;
 use Illuminate\Http\Request;
@@ -11,6 +12,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Resources\PlaceResource;
 use App\Http\Resources\ShortUserResource;
+use Illuminate\Support\Facades\DB;
 
 /**
  * @mixin \App\Models\Order\Bid
@@ -46,6 +48,7 @@ class BidResource extends JsonResource
             'task' => new TaskShortResource($this->task),
             'acceptingUsers' => AcceptingUsersResource::collection($this->acceptingUsers),
             'count' => $this->count,
+            'statistic' => $this->getStatistic()
         ];
     }
 
@@ -60,5 +63,14 @@ class BidResource extends JsonResource
            }
         }
         return $this->radiusBd;
+    }
+
+    private function getStatistic(){
+        $statusCounts = DB::table('accept_bid')
+            ->where('bid_id', $this->id)
+            ->groupBy('accepted')
+            ->select('accepted', DB::raw('COUNT(*) as count'))
+            ->get();
+        return StatisticResource::collection($statusCounts);
     }
 }
