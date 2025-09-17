@@ -17,7 +17,7 @@ class StatisticResource extends JsonResource
     public function toArray($request): array
     {
         return [
-            'status' => $this->accepted,
+            'accepted' => $this->accepted,
             'count' => $this->count,
         ];
     }
