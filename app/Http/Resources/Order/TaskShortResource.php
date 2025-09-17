@@ -38,7 +38,7 @@ class TaskShortResource extends JsonResource
 
     private function getStatistic(){
         $statusCounts = DB::table('accept_bid')
-            ->where('order_id', $this->id)
+            ->where('task_id', $this->id)
             ->groupBy('accepted')
             ->select('accepted', DB::raw('COUNT(*) as count'))
             ->get();
