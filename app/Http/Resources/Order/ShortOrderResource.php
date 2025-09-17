@@ -3,7 +3,7 @@
 namespace App\Http\Resources\Order;
 
 use App\Http\Resources\Order\OrderActivitiesResource;
-use App\Http\Resources\StatisticResource;
+use App\Http\Resources\Order\StatisticResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\DB;

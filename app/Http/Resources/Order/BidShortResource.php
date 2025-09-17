@@ -3,7 +3,7 @@
 namespace App\Http\Resources\Order;
 
 use App\Http\Resources\Order\OrderActivitiesResource;
-use App\Http\Resources\StatisticResource;
+use App\Http\Resources\Order\StatisticResource;
 use App\Http\Resources\ViewActivityResource;
 use App\Models\Fields\Directory\Radius;
 use Illuminate\Http\Request;
