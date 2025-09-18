@@ -88,6 +88,8 @@ class SpecialistController extends Controller
     public function startDay(StartDayRequest $request)
     {
         $user = $request->user();
+        /** @var  $dateEnd Carbon */
+        $dateEnd = $request->dateEnd;
         /** @var  $bid Bid */
         $bid = Bid::where('id',$request->bidId)->first();
         $report = new Report();
@@ -97,6 +99,7 @@ class SpecialistController extends Controller
         $report->bid_id = $bid->id;
         $report->date_start = Carbon::now();
         $report->date_end = null;
+        $report->date_auto_close = $dateEnd->addHours(12);
         $report->status = ReportStatusEnum::start->value;
         $report->save();
 

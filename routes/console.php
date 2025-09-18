@@ -10,6 +10,8 @@ Artisan::command('inspire', function () {
 
 Schedule::command('sendUpdateDataUserCommand')->everyMinute();
 Schedule::command('recognition:process')->everyMinute()->withoutOverlapping();
+Schedule::command('endedReportCommand')->everyFiveMinutes()->withoutOverlapping();
+Schedule::command('dellSpecialistFromManagerAndSupervisorCommand')->daily()->withoutOverlapping();
 
 
 

@@ -9,6 +9,7 @@ use App\Models\Fields\Directory\Project;
 use App\Models\Fields\Directory\Place;
 use App\Models\Fields\Directory\ViewActivities;
 use App\Models\Order\Bid;
+use App\Models\Order\Report;
 use App\Models\Order\Task;
 use App\Models\User\Role;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -256,5 +257,10 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Task::class, 'accept_bid', 'user_id', 'bid_id')
             ->withPivot('accepted');
+    }
+
+    public function reports(): HasMany
+    {
+        return $this->hasMany(Report::class);
     }
 }

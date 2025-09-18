@@ -62,10 +62,16 @@ class StartDayRequest extends FormRequest
                     if (!$orderExists) {
                         $fail('Not your bid');
                     }
+
                     /** @var Bid $orderExists */
+                    if($orderExists->date_end) {
+                        $this->dateEnd = $orderExists->date_end->clone();
+                    }
                     if($orderExists->date_start && $orderExists->date_end && $orderExists->date_start->subHour() < Carbon::now() && $orderExists->date_end->addHours(12) > Carbon::now()){
                         $fail('Active date not start or this bid is ended');
                     }
+
+
 
 
                     $check = true;
@@ -83,6 +89,9 @@ class StartDayRequest extends FormRequest
                                 Carbon::parse($activity['timeEnd'])->subHour() > Carbon::now()
                             )
                             {
+                                if($orderExists->date_end) {
+                                    $this->dateEnd = Carbon::parse($activity['timeEnd']);
+                                }
                                 $check = true;
                                 break;
                             }else{

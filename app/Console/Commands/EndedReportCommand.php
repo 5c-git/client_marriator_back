@@ -16,13 +16,16 @@ class EndedReportCommand extends Command
 
     protected $description = '';
 
-
     public function handle(): void
     {
-        $report = Report::query()
+        $reports = Report::query()
             ->where('status',ReportStatusEnum::start->value)
-            ->first();
-
+            ->where('date_end',null)
+            ->where('date_auto_close','<=',Carbon::now())
+            ->get();
+        foreach ($reports as $report){
+            $report->status = ReportStatusEnum::notEnded->value;
+            $report->save();
+        }
     }
-
 }

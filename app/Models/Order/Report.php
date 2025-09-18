@@ -20,6 +20,7 @@ use App\Models\Fields\Directory\ViewActivities;
  * @property int $task_id
  * @property Carbon $date_start
  * @property Carbon $date_end
+ * @property Carbon $date_auto_close
  * @property ReportStatusEnum $status
  * @property array $report
  * @property Order $order
@@ -44,6 +45,7 @@ class Report extends Model
         'date_end',
         'status',
         'report',
+        'date_auto_close'
     ];
 
     protected $casts = [
@@ -51,6 +53,7 @@ class Report extends Model
         'report' => 'json',
         'date_start' => 'datetime',
         'date_end' => 'datetime',
+        'date_auto_close' => 'datetime',
     ];
 
     public function order(): BelongsTo
