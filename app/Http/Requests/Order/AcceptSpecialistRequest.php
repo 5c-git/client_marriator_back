@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Order;
 
+use App\Enum\Order\BidAcceptingStatusEnum;
 use App\Enum\Order\OrderStatusEnum;
 use App\Http\Requests\FormRequest;
 use App\Models\Order\Bid;
@@ -55,6 +56,17 @@ class AcceptSpecialistRequest extends FormRequest
                 'integer',
                 function ($attribute, $value, $fail) {
                     $user = User::where('id',$value)->first();
+                    $check = false;
+                    if ($user->acceptedBids) {
+                        foreach ($user->acceptedBids as $acceptedBid) {
+                            if ($acceptedBid->id === $this->bidId && $acceptedBid->pivot->accepted === BidAcceptingStatusEnum::accepted->value) {
+                                $check = true;
+                            }
+                        }
+                    }
+                    if(!$check){
+                        $fail('Specialist not accepted this bid');
+                    }
                     if($user) {
                         $orderExists = Bid::where(function ($query) use ($user) {
                             $userIdsSupervisor = $user->acceptedBids?->pluck('id')->toArray();
