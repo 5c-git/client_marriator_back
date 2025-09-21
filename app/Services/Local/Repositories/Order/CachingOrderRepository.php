@@ -14,6 +14,7 @@ use App\Http\Requests\Order\CreateTaskActivityRequest;
 use App\Http\Requests\Order\CreateTaskRequest;
 use App\Http\Requests\Order\DeleteOrderActivityRequest;
 use App\Http\Requests\Order\DeleteTaskActivityRequest;
+use App\Http\Requests\Order\GetJobRequest;
 use App\Http\Requests\Order\RepeatOrderRequest;
 use App\Http\Requests\Order\RepeatTaskRequest;
 use App\Http\Requests\Order\UpdateOrderActivityRequest;
@@ -143,6 +144,16 @@ class CachingOrderRepository implements OrderRepository
     public function getBidsByUserSyncDataPaginate(User $user, ?OrderStatusEnum $status): Collection
     {
         return $this->orders->getBidsByUserSyncDataPaginate($user,$status);
+    }
+
+    public function getJobsByUserSyncDataPaginate(User $user, $specialistId = null): Collection
+    {
+        return $this->orders->getJobsByUserSyncDataPaginate($user);
+    }
+
+    public function getJobByUser(GetJobRequest $request): Bid
+    {
+        return $this->orders->getJobByUser($request);
     }
 
     public function getBidByUserSyncData(User $user, ?int $bidId): Bid|null

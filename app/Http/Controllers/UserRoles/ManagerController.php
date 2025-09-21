@@ -15,8 +15,11 @@ use App\Http\Requests\Order\AcceptTaskRequest;
 use App\Http\Requests\Order\CreateBidFromOrderRequest;
 use App\Http\Requests\Order\CreateBidFromTaskRequest;
 use App\Http\Requests\Order\CreateOrderRequest;
+use App\Http\Requests\Order\EndJobRequest;
+use App\Http\Requests\Order\EndSpecialistJobRequest;
 use App\Http\Requests\Order\GetBidRequest;
 use App\Http\Requests\Order\GetBidsRequest;
+use App\Http\Requests\Order\GetJobRequest;
 use App\Http\Requests\Order\GetOrderRequest;
 use App\Http\Requests\Order\GetPlaceForBidRequest;
 use App\Http\Requests\Order\GetViewActivitiesForOrderRequest;
@@ -31,6 +34,7 @@ use App\Http\Resources\AcceptingUsersResource;
 use App\Http\Resources\BrandResource;
 use App\Http\Resources\ErrorResource;
 use App\Http\Resources\Order\BidResource;
+use App\Http\Resources\Order\JobResource;
 use App\Http\Resources\Order\OrderResource;
 use App\Http\Resources\Order\ShortOrderResource;
 use App\Http\Resources\PlaceResource;
@@ -101,6 +105,7 @@ use App\Http\Requests\Order\GetSurepvisorDataRequest;
 use App\Http\Resources\Order\BidShortResource;
 use App\Http\Requests\Order\RepeatTaskRequest;
 use App\Http\Requests\Order\UpdateTaskActivityRequest;
+use mysql_xdevapi\Collection;
 
 class ManagerController extends Controller
 {
@@ -913,13 +918,39 @@ class ManagerController extends Controller
     {
         $bid = Bid::where('id',$request->bidId)->first();
         $bid->acceptingUsers()->updateExistingPivot($request->specialistId, [
-            'accepted' => BidAcceptingStatusEnum::accepted->value,
+            'accepted' => BidAcceptingStatusEnum::work->value,
         ]);
         return new SuccessResource();
     }
 
     public function declinedSpecialist(AcceptSpecialistRequest $request)
     {
+        $bid = Bid::where('id',$request->bidId)->first();
+        $bid->acceptingUsers()->updateExistingPivot($request->specialistId, [
+            'accepted' => BidAcceptingStatusEnum::declined->value,
+        ]);
+        return new SuccessResource();
+    }
+
+    public function getJobs(){
+        $user = Auth::user();
+        $bids = $this->orderRepository->getJobsByUserSyncDataPaginate(
+            $user
+        );
+        $expandedBids = $bids->flatMap(function ($bid) {
+            return $bid->acceptingUsers->map(function ($acceptingUser) use ($bid) {
+                $bid->acceptingUser = $acceptingUser;
+                return $bid;
+            });
+        });
+        return JobResource::collection($expandedBids);
+    }
+
+    public function getJob(GetJobRequest $request){
+        return new JobResource($this->orderRepository->getJobByUser($request));
+    }
+
+    public function endJob(EndSpecialistJobRequest $request){
         $bid = Bid::where('id',$request->bidId)->first();
         $bid->acceptingUsers()->updateExistingPivot($request->specialistId, [
             'accepted' => BidAcceptingStatusEnum::declined->value,

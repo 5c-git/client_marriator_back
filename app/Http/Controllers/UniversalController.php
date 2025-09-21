@@ -15,6 +15,7 @@ use App\Http\Requests\Order\CreateBidFromTaskRequest;
 use App\Http\Requests\Order\EntrustBidRequest;
 use App\Http\Requests\Order\GetBidRequest;
 use App\Http\Requests\Order\GetBidsRequest;
+use App\Http\Requests\Order\GetJobRequest;
 use App\Http\Requests\Order\GetOrderRequest;
 use App\Http\Requests\Order\GetPlaceForBidRequest;
 use App\Http\Requests\Order\GetSpecialistForBisRequest;
@@ -458,9 +459,9 @@ class UniversalController extends Controller
         if(in_array('supervisor',$this->roles)){
             return app(\App\Http\Controllers\UserRoles\SupervisorController::class)->getBids($request);
         }
-        if(in_array('specialist',$this->roles)){
-            return app(\App\Http\Controllers\UserRoles\SpecialistController::class)->getBids($request);
-        }
+//        if(in_array('specialist',$this->roles)){
+//            return app(\App\Http\Controllers\UserRoles\SpecialistController::class)->getBids($request);
+//        }
         return response()->json(['message' => 'Role not allowed.'], 403);
     }
 
@@ -471,9 +472,9 @@ class UniversalController extends Controller
         if(in_array('supervisor',$this->roles)){
             return app(\App\Http\Controllers\UserRoles\SupervisorController::class)->getBid($request);
         }
-        if(in_array('specialist',$this->roles)){
-            return app(\App\Http\Controllers\UserRoles\SpecialistController::class)->getBid($request);
-        }
+//        if(in_array('specialist',$this->roles)){
+//            return app(\App\Http\Controllers\UserRoles\SpecialistController::class)->getBid($request);
+//        }
         return response()->json(['message' => 'Role not allowed.'], 403);
     }
 
@@ -563,6 +564,32 @@ class UniversalController extends Controller
         }
         if(in_array('supervisor',$this->roles)){
             return app(\App\Http\Controllers\UserRoles\SupervisorController::class)->declinedSpecialist($request);
+        }
+        return response()->json(['message' => 'Role not allowed.'], 403);
+    }
+
+    public function getJobs(){
+        if(in_array('manager',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\ManagerController::class)->getJobs();
+        }
+        if(in_array('supervisor',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\SupervisorController::class)->getJobs();
+        }
+        if(in_array('specialist',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\SpecialistController::class)->getJobs();
+        }
+        return response()->json(['message' => 'Role not allowed.'], 403);
+    }
+
+    public function getJob(GetJobRequest $request){
+        if(in_array('manager',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\ManagerController::class)->getJob($request);
+        }
+        if(in_array('supervisor',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\SupervisorController::class)->getJob($request);
+        }
+        if(in_array('specialist',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\SpecialistController::class)->getJob($request);
         }
         return response()->json(['message' => 'Role not allowed.'], 403);
     }

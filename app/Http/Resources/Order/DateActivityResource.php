@@ -22,6 +22,7 @@ class DateActivityResource extends JsonResource
     public function toArray($request): array
     {
         return [
+            'id' => $this['id'],
             'timeStart' => $this['timeStart'],
             'timeEnd' => $this['timeEnd'],
             'places' => $this->getPlaces($this['placeIds']),

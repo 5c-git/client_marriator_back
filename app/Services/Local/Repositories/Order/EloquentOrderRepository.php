@@ -14,6 +14,7 @@ use App\Http\Requests\Order\CreateRequestFromTaskRequest;
 use App\Http\Requests\Order\CreateTaskActivityRequest;
 use App\Http\Requests\Order\DeleteOrderActivityRequest;
 use App\Http\Requests\Order\DeleteTaskActivityRequest;
+use App\Http\Requests\Order\GetJobRequest;
 use App\Http\Requests\Order\RepeatTaskRequest;
 use App\Http\Requests\Order\UpdateOrderActivityRequest;
 use App\Http\Requests\Order\UpdateTaskActivityRequest;
@@ -192,9 +193,10 @@ class EloquentOrderRepository implements OrderRepository
 
     private function processDateActivity(array $dateActivities = []): array
     {
-
-        return array_map(function ($item) {
+        $index = 1;
+        return array_map(function ($item) use (&$index) {
             return [
+                'id' => $index++,
                 'timeStart' => $item['timeStart']??'',
                 'timeEnd' => $item['timeEnd']??'',
                 'placeIds' => $item['placeIds']??[],
@@ -518,6 +520,49 @@ class EloquentOrderRepository implements OrderRepository
                     $query->where('status', $status->value);
                 }
             })->get();
+    }
+
+    public function getJobsByUserSyncDataPaginate(User $user,$specialistId = null): Collection
+    {
+        $userIdsSupervisor = $user->supervisors->pluck('id')->toArray();
+        $userIdsSupervisor[] = $user->id;
+
+        return Bid::query()
+            ->orWhere(function ($query) use ($userIdsSupervisor) {
+                $query->whereIn('user_id', $userIdsSupervisor);
+            })
+            ->orWhere(function ($query) use ($user) {
+                $userIdsSupervisor = $user->acceptedBids?->pluck('id')->toArray();
+                $query->whereIn('id', $userIdsSupervisor);
+            })
+            ->has('acceptingUsers')
+            ->when($specialistId, function ($q) use ($specialistId) {
+                return $q->whereHas('acceptingUsers', function ($query) use ($specialistId) {
+                    $query->where('user_id', $specialistId);
+                });
+            })
+            ->get();
+    }
+
+    public function getJobByUser(GetJobRequest $request): Bid
+    {
+        $userId = $request->specialistId;
+        $bidId  = $request->bidId;
+
+        $bid = Bid::with([
+                'acceptingUsers' => function ($query) use ($userId) {
+                    $query->where('user_id', $userId);
+                }
+            ])
+            ->where('id', $bidId)
+            ->whereHas('acceptingUsers', function ($query) use ($userId) {
+                $query->where('user_id', $userId);
+            })
+            ->first();
+
+        $bid->acceptingUser = $bid->acceptingUsers->first();
+        /** @var Bid $bid  */
+        return $bid;
     }
 
     public function getBidByUserSyncData(User $user, ?int $bidId): Bid|null

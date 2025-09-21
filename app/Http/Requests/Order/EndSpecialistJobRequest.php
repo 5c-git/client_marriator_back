@@ -12,8 +12,9 @@ use Illuminate\Validation\Rule;
 use App\Models\Order\Order;
 /**
  * @property-read int bidId
+ * @property-read int specialistId
  */
-class AcceptSpecialistRequest extends FormRequest
+class EndSpecialistJobRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -51,36 +52,36 @@ class AcceptSpecialistRequest extends FormRequest
                 },
             ],
             'specialistId'=>
-            [
-                'required',
-                'integer',
-                function ($attribute, $value, $fail) {
-                    $user = User::where('id',$value)->first();
-                    $check = false;
-                    if ($user->acceptedBids) {
-                        foreach ($user->acceptedBids as $acceptedBid) {
-                            if ($acceptedBid->id === $this->bidId && $acceptedBid->pivot->accepted === BidAcceptingStatusEnum::consideration->value) {
-                                $check = true;
+                [
+                    'required',
+                    'integer',
+                    function ($attribute, $value, $fail) {
+                        $user = User::where('id',$value)->first();
+                        $check = false;
+                        if ($user->acceptedBids) {
+                            foreach ($user->acceptedBids as $acceptedBid) {
+                                if ($acceptedBid->id === $this->bidId) {
+                                    $check = true;
+                                }
                             }
                         }
-                    }
-                    if(!$check){
-                        $fail('Specialist not accepted this bid');
-                    }
-                    if($user) {
-                        $orderExists = Bid::where(function ($query) use ($user) {
-                            $userIdsSupervisor = $user->acceptedBids?->pluck('id')->toArray();
-                            $query->whereIn('id', $userIdsSupervisor)->where('id', $this->bidId);
-                        })->first();
-
-                        if (!$orderExists) {
-                            $fail('Specialist not accepted for bid');
+                        if(!$check){
+                            $fail('Specialist not accepted this bid');
                         }
-                    }else{
-                        $fail('Specialist not found');
-                    }
-                },
-            ]
+                        if($user) {
+                            $orderExists = Bid::where(function ($query) use ($user) {
+                                $userIdsSupervisor = $user->acceptedBids?->pluck('id')->toArray();
+                                $query->whereIn('id', $userIdsSupervisor)->where('id', $this->bidId);
+                            })->first();
+
+                            if (!$orderExists) {
+                                $fail('Specialist not accepted for bid');
+                            }
+                        }else{
+                            $fail('Specialist not found');
+                        }
+                    },
+                ]
         ];
     }
 }

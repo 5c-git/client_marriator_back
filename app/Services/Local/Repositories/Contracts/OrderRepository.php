@@ -11,6 +11,7 @@ use App\Http\Requests\Order\CreateRequestFromTaskRequest;
 use App\Http\Requests\Order\CreateTaskActivityRequest;
 use App\Http\Requests\Order\DeleteOrderActivityRequest;
 use App\Http\Requests\Order\DeleteTaskActivityRequest;
+use App\Http\Requests\Order\GetJobRequest;
 use App\Http\Requests\Order\UpdateOrderActivityRequest;
 use App\Http\Requests\Order\UpdateTaskActivityRequest;
 use App\Http\Requests\Order\UpdateTaskRequest;
@@ -58,6 +59,8 @@ interface OrderRepository
     public function createBidFromOrder(User $user,int $orderId,int $orderActivityId): Bid;
     public function createBidFromTask(User $user,int $taskId,int $taskActivityId): Bid;
     public function getBidsByUserSyncDataPaginate(User $user,?OrderStatusEnum $status): Collection;
+    public function getJobsByUserSyncDataPaginate(User $user,$specialistId = null): Collection;
+    public function getJobByUser(GetJobRequest $request): Bid;
     public function getBidByUserSyncData(User $user,int|null $bidId): Bid|null;
     public function invoiceBid(int $bidId,?array $specialistIds): bool;
     public function acceptBid(User $user,int $bidId):bool;

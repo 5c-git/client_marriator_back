@@ -16,7 +16,9 @@ use App\Http\Requests\Order\CancelBidRequest;
 use App\Http\Requests\Order\CancelRequestRequest;
 use App\Http\Requests\Order\CreateRequestFromBidRequest;
 use App\Http\Requests\Order\CreateRequestFromTaskRequest;
+use App\Http\Requests\Order\EndSpecialistJobRequest;
 use App\Http\Requests\Order\EntrustBidRequest;
+use App\Http\Requests\Order\GetJobRequest;
 use App\Http\Requests\Order\GetOrderRequest;
 use App\Http\Requests\Order\GetSpecialistForBisRequest;
 use App\Http\Requests\Order\GetTaskRequest;
@@ -37,6 +39,7 @@ use App\Http\Requests\UserData\SetUserImgRequest;
 use App\Http\Resources\BrandResource;
 use App\Http\Resources\CounterpartyResource;
 use App\Http\Resources\ErrorResource;
+use App\Http\Resources\Order\JobResource;
 use App\Http\Resources\Order\OrderResource;
 use App\Http\Resources\Order\RequestResource;
 use App\Http\Resources\Order\ShortOrderResource;
@@ -581,13 +584,39 @@ class SupervisorController extends Controller
     {
         $bid = Bid::where('id',$request->bidId)->first();
         $bid->acceptingUsers()->updateExistingPivot($request->specialistId, [
-            'accepted' => BidAcceptingStatusEnum::accepted->value,
+            'accepted' => BidAcceptingStatusEnum::work->value,
         ]);
         return new SuccessResource();
     }
 
     public function declinedSpecialist(AcceptSpecialistRequest $request)
     {
+        $bid = Bid::where('id',$request->bidId)->first();
+        $bid->acceptingUsers()->updateExistingPivot($request->specialistId, [
+            'accepted' => BidAcceptingStatusEnum::declined->value,
+        ]);
+        return new SuccessResource();
+    }
+
+    public function getJobs(){
+        $user = Auth::user();
+        $bids = $this->orderRepository->getJobsByUserSyncDataPaginate(
+            $user
+        );
+        $expandedBids = $bids->flatMap(function ($bid) {
+            return $bid->acceptingUsers->map(function ($acceptingUser) use ($bid) {
+                $bid->acceptingUser = $acceptingUser;
+                return $bid;
+            });
+        });
+        return JobResource::collection($expandedBids);
+    }
+
+    public function getJob(GetJobRequest $request){
+        return new JobResource($this->orderRepository->getJobByUser($request));
+    }
+
+    public function endJob(EndSpecialistJobRequest $request){
         $bid = Bid::where('id',$request->bidId)->first();
         $bid->acceptingUsers()->updateExistingPivot($request->specialistId, [
             'accepted' => BidAcceptingStatusEnum::declined->value,

@@ -139,6 +139,7 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
             Route::post('/rejectBid','App\Http\Controllers\UserRoles\SpecialistController@rejectBid')->name('rejectBid');
             Route::post('/startDay','App\Http\Controllers\UserRoles\SpecialistController@startDay')->name('startDay');
             Route::post('/endDay','App\Http\Controllers\UserRoles\SpecialistController@endDay')->name('endDay');
+            Route::post('/endJob','App\Http\Controllers\UserRoles\SpecialistController@endJob')->name('endJob');
         });
         Route::middleware([CheckRole::class.':supervisor'])->group( function () {
         });
@@ -200,6 +201,12 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
 
         Route::post('/createBidFromOrder','App\Http\Controllers\UniversalController@createBidFromOrder')->name('createBidFromOrder');
         Route::post('/createBidFromTask','App\Http\Controllers\UniversalController@createBidFromTask')->name('createBidFromTask');
+
+
+
+        Route::get('/getJobs','App\Http\Controllers\UniversalController@getJobs')->name('getJobs');
+        Route::get('/getJob','App\Http\Controllers\UniversalController@getJob')->name('getJob');
+        Route::post('/endSpecialistJob','App\Http\Controllers\UniversalController@endJob')->name('endJob');
 
         Route::group(['prefix' => 'moderation'], function () {
             Route::get('/getProject', 'App\Http\Controllers\UniversalController@getProject')->name('getProject');

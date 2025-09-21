@@ -2,15 +2,19 @@
 
 namespace App\Http\Controllers\UserRoles;
 
+use App\Enum\Order\BidAcceptingStatusEnum;
 use App\Enum\Order\OrderStatusEnum;
 use App\Enum\Order\ReportStatusEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Order\AcceptBidRequest;
+use App\Http\Requests\Order\EndJobRequest;
 use App\Http\Requests\Order\GetBidRequest;
 use App\Http\Requests\Order\GetBidsRequest;
+use App\Http\Requests\Order\GetJobRequest;
 use App\Http\Resources\ErrorResource;
 use App\Http\Resources\Order\BidResource;
 use App\Http\Resources\Order\BidShortResource;
+use App\Http\Resources\Order\JobResource;
 use App\Http\Resources\Order\OrderResource;
 use App\Http\Resources\Order\ShortOrderResource;
 use App\Http\Resources\ProjectResource;
@@ -125,6 +129,36 @@ class SpecialistController extends Controller
             }
         }
 
+        return new SuccessResource();
+    }
+
+    public function getJob(GetJobRequest $request){
+        return new JobResource($this->orderRepository->getJobByUser($request));
+    }
+
+    public function getJobs(){
+        $user = Auth::user();
+        $bids = $this->orderRepository->getJobsByUserSyncDataPaginate(
+            $user,
+            $user->id
+        );
+        $expandedBids = $bids->flatMap(function ($bid,$user) {
+            return $bid->acceptingUsers->map(function ($acceptingUser) use ($bid,$user) {
+                if($acceptingUser->id === $user->id) {
+                    $bid->acceptingUser = $acceptingUser;
+                    return $bid;
+                }
+            });
+        });
+        return JobResource::collection($expandedBids);
+    }
+
+    public function endJob(EndJobRequest $request){
+        $user = Auth::user();
+        $bid = Bid::where('id',$request->bidId)->first();
+        $bid->acceptingUsers()->updateExistingPivot($user->id, [
+            'accepted' => BidAcceptingStatusEnum::declined->value,
+        ]);
         return new SuccessResource();
     }
 }

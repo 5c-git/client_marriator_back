@@ -1,0 +1,66 @@
+<?php
+
+namespace App\Http\Resources\Order;
+
+use App\Http\Resources\AcceptingUsersResource;
+use App\Http\Resources\Order\OrderActivitiesResource;
+use App\Http\Resources\Order\StatisticResource;
+use App\Http\Resources\ViewActivityResource;
+use App\Models\Fields\Directory\Radius;
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
+use App\Http\Resources\PlaceResource;
+use App\Http\Resources\ShortUserResource;
+use Illuminate\Support\Facades\DB;
+
+/**
+ * @mixin \App\Models\Order\Bid
+ */
+class JobResource extends JsonResource
+{
+    private int $radiusDefault = 5;
+    private int $radiusBd = 0;
+    /**
+     * Transform the resource into an array.
+     *
+     * @param Request $request
+     *
+     * @return array
+     */
+    public function toArray($request): array
+    {
+        return [
+            'id' => $this->id,
+            'user' => new ShortUserResource($this->user),
+            'status' => $this->status->value,
+            'selfEmployed' => (bool)$this->self_employed,
+            'place' => new PlaceResource($this->place),
+            'radius' => $this->radius ?? $this->getRadius(),
+            'price' => (float)$this->price,
+            'priceResult' => (float)$this->price*($this->self_employed?0.94:0.87),
+            'viewActivity' => new ViewActivityResource($this->viewActivity),
+            'dateStart' => $this->date_start,
+            'dateEnd' => $this->date_end,
+            'needFoto' => (bool)$this->need_foto,
+            'dateActivity' => DateActivityResource::collection(collect($this->date_activity)),
+            'order' => new ShortOrderResource($this->order),
+            'task' => new TaskShortResource($this->task),
+            'acceptingUser' => new AcceptingUsersResource($this->acceptingUser),
+            'count' => $this->count,
+        ];
+    }
+
+    private function getRadius()
+    {
+        if(!$this->radiusBd){
+            $radius = Radius::where('default',true)->first();
+            if(!$radius) {
+                $this->radiusBd = $this->radiusDefault;
+            }else{
+                $this->radiusBd = $radius->value;
+            }
+        }
+        return $this->radiusBd;
+    }
+}

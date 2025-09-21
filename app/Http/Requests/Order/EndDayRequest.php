@@ -52,7 +52,6 @@ class EndDayRequest extends FormRequest
                     $orderExists = Bid::where(function ($query) use ($user,$value) {
                         $query->where(function ($query) use ($user, $value) {
                             $bidsIds = $user->acceptedBids()
-                                ->wherePivot('accepted', BidAcceptingStatusEnum::work->value)
                                 ->pluck('bid_id')
                                 ->toArray();
                             $query->whereIn('id', $bidsIds)->where('id', $value)
