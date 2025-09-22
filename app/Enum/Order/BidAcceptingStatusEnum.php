@@ -20,8 +20,6 @@ enum BidAcceptingStatusEnum: int
     case consideration = 4;
     case work = 5;
     case canceled = 6;
-    case forPayment = 7;
-    case payment = 8;
 
     public function getStatusName(): string
     {
@@ -33,8 +31,6 @@ enum BidAcceptingStatusEnum: int
             self::consideration => 'На рассмотрении',
             self::work => 'В работе',
             self::canceled => 'Отменено',
-            self::forPayment => 'К оплате',
-            self::payment => 'Оплачено',
         };
     }
 }

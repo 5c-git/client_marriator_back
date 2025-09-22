@@ -17,7 +17,10 @@ enum ReportStatusEnum: int
     case start = 1;
     case end = 2;
     case reported = 3;
-    case notEnded = 4;
+    case accept = 4;
+    case forPay = 5;
+    case paid = 6;
+    case notEnded = 7;
 
     public function getStatusName(): string
     {
@@ -26,6 +29,9 @@ enum ReportStatusEnum: int
             self::start => 'День запущен',
             self::end => 'День завершён',
             self::reported => 'Репорт отправлен',
+            self::accept => 'Принят',
+            self::forPay => 'К оплате',
+            self::paid => 'Оплачено',
             self::notEnded => 'Не окончен',
         };
     }

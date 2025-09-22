@@ -4,12 +4,14 @@ namespace App\Http\Controllers\UserRoles;
 
 use App\Enum\Order\BidAcceptingStatusEnum;
 use App\Enum\Order\OrderStatusEnum;
+use App\Enum\Order\ReportStatusEnum;
 use App\Enum\Role\RoleEnum;
 use App\Enum\User\UserStatusModerationEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ConfirmUserRequest;
 use App\Http\Requests\DelPlaceRequest;
 use App\Http\Requests\Order\AcceptOrderRequest;
+use App\Http\Requests\Order\AcceptReportRequest;
 use App\Http\Requests\Order\AcceptSpecialistRequest;
 use App\Http\Requests\Order\AcceptTaskRequest;
 use App\Http\Requests\Order\CreateBidFromOrderRequest;
@@ -49,6 +51,7 @@ use App\Models\Fields\Directory\ViewActivities;
 use App\Models\Fields\Fields;
 use App\Models\Order\Bid;
 use App\Models\Order\Order;
+use App\Models\Order\Report;
 use App\Models\Order\Task;
 use App\Models\User;
 use App\Services\ApiTokenService\ApiTokenService;
@@ -956,6 +959,27 @@ class ManagerController extends Controller
             'accepted' => BidAcceptingStatusEnum::canceled->value,
         ]);
         return new SuccessResource();
+    }
+
+    public function acceptReport(AcceptReportRequest $request){
+        /** @var  $report Report */
+        $report = Report::where('id',$request->reportId)->first();
+        $report->status = ReportStatusEnum::accept->value;
+        $report->save();
+        return new SuccessResource();
+    }
+
+    public function acceptAllReportJob(AcceptReportRequest $request){
+        $reports = Report::where('bid_id',$request->reportId)->where('user_id',$request->specialistId)->get();
+        foreach ($reports as $report){
+            $report->status = ReportStatusEnum::accept->value;
+            $report->save();
+        }
+        return new SuccessResource();
+    }
+
+    public function payReport(AcceptReportRequest $request){
+
     }
 
 }

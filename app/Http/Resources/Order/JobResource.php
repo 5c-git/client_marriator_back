@@ -7,6 +7,7 @@ use App\Http\Resources\Order\OrderActivitiesResource;
 use App\Http\Resources\Order\StatisticResource;
 use App\Http\Resources\ViewActivityResource;
 use App\Models\Fields\Directory\Radius;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;
@@ -47,6 +48,7 @@ class JobResource extends JsonResource
             'order' => new ShortOrderResource($this->order),
             'task' => new TaskShortResource($this->task),
             'acceptingUser' => new AcceptingUsersResource($this->acceptingUser),
+            'reports' =>  $this->acceptingUser ? ReportResource::collection($this->getReports($this->acceptingUser)) : [],
             'count' => $this->count,
         ];
     }
@@ -62,5 +64,9 @@ class JobResource extends JsonResource
             }
         }
         return $this->radiusBd;
+    }
+
+    private function getReports(User $user){
+        return $user->reports()?->where('bid_id',$this->id)->get();
     }
 }

@@ -121,15 +121,17 @@ class SpecialistController extends Controller
             ->where('status',ReportStatusEnum::start->value)
             ->first();
         $report->status = ReportStatusEnum::end->value;
-        $report->save();
+
         /** @var  $bid Bid */
         $bid = Bid::query()->where('id',$request->bidId)->first();
         if($bid->need_foto && $request->hasFile('reports')){
+            $reportFiles = [];
             foreach ($request->file('reports') as $reportFile){
-                Storage::disk('public')->putFileAs('/source/reports/'.$reportFile->id.'-img', $reportFile, $reportFile->getClientOriginalName(),'public');
+                $reportFiles[] = Storage::disk('public')->putFileAs('/source/reports/'.$reportFile->id.'-img', $reportFile, $reportFile->getClientOriginalName(),'public');
             }
+            $report->report = $reportFiles;
         }
-
+        $report->save();
         return new SuccessResource();
     }
 
