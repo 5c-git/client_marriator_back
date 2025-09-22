@@ -94,7 +94,7 @@ class EntrustBidRequest extends FormRequest
                                     $place->latitude,
                                     $place->longitude,
                                     $user->mapRadius ?: $radius,
-                                    $bid->radius
+                                    $bid->radius ?: $radius
                                 )) {
                                 $userInRadius->push($user);
                             }
