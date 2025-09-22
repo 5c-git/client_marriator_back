@@ -18,6 +18,7 @@ use App\Models\Fields\Directory\ViewActivities;
  * @property int $bid_id
  * @property int $order_id
  * @property int $task_id
+ * @property int|null $dayActivity
  * @property Carbon $date_start
  * @property Carbon $date_end
  * @property Carbon $date_auto_close
@@ -45,7 +46,8 @@ class Report extends Model
         'date_end',
         'status',
         'report',
-        'date_auto_close'
+        'date_auto_close',
+        'dayActivity'
     ];
 
     protected $casts = [

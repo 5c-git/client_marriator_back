@@ -619,7 +619,7 @@ class SupervisorController extends Controller
     public function endJob(EndSpecialistJobRequest $request){
         $bid = Bid::where('id',$request->bidId)->first();
         $bid->acceptingUsers()->updateExistingPivot($request->specialistId, [
-            'accepted' => BidAcceptingStatusEnum::declined->value,
+            'accepted' => BidAcceptingStatusEnum::canceled->value,
         ]);
         return new SuccessResource();
     }

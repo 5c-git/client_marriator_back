@@ -71,7 +71,7 @@ class StartDayRequest extends FormRequest
                         $fail('Active date not start or this bid is ended');
                     }
 
-
+                    $dayNumber = null;
 
 
                     $check = true;
@@ -92,6 +92,7 @@ class StartDayRequest extends FormRequest
                                 if($orderExists->date_end) {
                                     $this->dateEnd = Carbon::parse($activity['timeEnd']);
                                 }
+                                $dayNumber = $activity['id'];
                                 $check = true;
                                 break;
                             }else{
@@ -110,6 +111,8 @@ class StartDayRequest extends FormRequest
                             $check = false;
                         }
                     }
+
+                    $this->dayActivity = $dayNumber;
 
                     if($check === false)
                     {

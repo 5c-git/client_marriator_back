@@ -105,6 +105,7 @@ class SpecialistController extends Controller
         $report->date_end = null;
         $report->date_auto_close = $dateEnd->addHours(12);
         $report->status = ReportStatusEnum::start->value;
+        $report->dayActivity = $request->dayActivity;
         $report->save();
 
         return new SuccessResource();
@@ -157,7 +158,7 @@ class SpecialistController extends Controller
         $user = Auth::user();
         $bid = Bid::where('id',$request->bidId)->first();
         $bid->acceptingUsers()->updateExistingPivot($user->id, [
-            'accepted' => BidAcceptingStatusEnum::declined->value,
+            'accepted' => BidAcceptingStatusEnum::canceled->value,
         ]);
         return new SuccessResource();
     }
