@@ -206,7 +206,7 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
 
         Route::get('/getJobs','App\Http\Controllers\UniversalController@getJobs')->name('getJobs');
         Route::get('/getJob','App\Http\Controllers\UniversalController@getJob')->name('getJob');
-        Route::post('/endSpecialistJob','App\Http\Controllers\UniversalController@endJob')->name('endJob');
+        Route::post('/endSpecialistJob','App\Http\Controllers\UniversalController@endJob')->name('endSpecialistJob');
 
         Route::group(['prefix' => 'moderation'], function () {
             Route::get('/getProject', 'App\Http\Controllers\UniversalController@getProject')->name('getProject');
