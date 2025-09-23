@@ -41,7 +41,7 @@ class AcceptSpecialistRequest extends FormRequest
 
                     $userIdsSupervisor = $user->supervisors->pluck('id')->toArray();
                     $userIdsSupervisor[] = $user->id;
-                    $orderExists = Bid::where(function ($query) use ($user,$value,$userIdsSupervisor) {
+                    $orderExists = Bid::where(function ($query) use ($value,$userIdsSupervisor) {
                         $query->whereIn('user_id', $userIdsSupervisor)->where('id', $value);
                     })->first();
 
@@ -59,7 +59,7 @@ class AcceptSpecialistRequest extends FormRequest
                     $check = false;
                     if ($user->acceptedBids) {
                         foreach ($user->acceptedBids as $acceptedBid) {
-                            if ($acceptedBid->id === $this->bidId && $acceptedBid->pivot->accepted === BidAcceptingStatusEnum::consideration->value) {
+                            if ($acceptedBid->id == $this->bidId && $acceptedBid->pivot->accepted == BidAcceptingStatusEnum::consideration->value) {
                                 $check = true;
                             }
                         }
