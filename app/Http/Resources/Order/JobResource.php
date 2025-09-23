@@ -51,7 +51,6 @@ class JobResource extends JsonResource
             'task' => new TaskShortResource($this->task),
             'acceptingUser' => new AcceptingUsersResource($this->acceptingUser),
             'reports' =>  $this->acceptingUser ? ReportResource::collection($this->getReports($this->acceptingUser)) : [],
-            'count' => $this->count,
         ];
     }
 

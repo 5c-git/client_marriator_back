@@ -10,6 +10,7 @@ use App\Enum\User\UserStatusModerationEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ConfirmUserRequest;
 use App\Http\Requests\DelPlaceRequest;
+use App\Http\Requests\Order\AcceptAllReportRequest;
 use App\Http\Requests\Order\AcceptOrderRequest;
 use App\Http\Requests\Order\AcceptReportRequest;
 use App\Http\Requests\Order\AcceptSpecialistRequest;
@@ -25,6 +26,7 @@ use App\Http\Requests\Order\GetJobRequest;
 use App\Http\Requests\Order\GetOrderRequest;
 use App\Http\Requests\Order\GetPlaceForBidRequest;
 use App\Http\Requests\Order\GetViewActivitiesForOrderRequest;
+use App\Http\Requests\Order\PayReportRequest;
 use App\Http\Requests\PaginatorRequest;
 use App\Http\Requests\SetBrandImgRequest;
 use App\Http\Requests\SetPlaceRequest;
@@ -969,8 +971,8 @@ class ManagerController extends Controller
         return new SuccessResource();
     }
 
-    public function acceptAllReportJob(AcceptReportRequest $request){
-        $reports = Report::where('bid_id',$request->reportId)->where('user_id',$request->specialistId)->get();
+    public function acceptAllReportJob(AcceptAllReportRequest $request){
+        $reports = Report::where('bid_id',$request->bidId)->where('user_id',$request->specialistId)->get();
         foreach ($reports as $report){
             $report->status = ReportStatusEnum::accept->value;
             $report->save();
@@ -978,8 +980,12 @@ class ManagerController extends Controller
         return new SuccessResource();
     }
 
-    public function payReport(AcceptReportRequest $request){
-
+    public function payReport(PayReportRequest $request){
+        /** @var  $report Report */
+        $report = Report::where('id',$request->reportId)->first();
+        $report->status = ReportStatusEnum::forPay->value;
+        $report->save();
+        return new SuccessResource();
     }
 
 }
