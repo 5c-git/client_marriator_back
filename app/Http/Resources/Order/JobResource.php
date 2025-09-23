@@ -40,6 +40,8 @@ class JobResource extends JsonResource
             'radius' => $this->radius ?? $this->getRadius(),
             'price' => (float)$this->price,
             'priceResult' => (float)$this->price*($this->self_employed?0.94:0.87),
+            'income' => 100,
+            'forPay' => 100*($this->self_employed?0.94:0.87),
             'viewActivity' => new ViewActivityResource($this->viewActivity),
             'dateStart' => $this->date_start,
             'dateEnd' => $this->date_end,
