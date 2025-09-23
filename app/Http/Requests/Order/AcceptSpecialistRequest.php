@@ -65,7 +65,7 @@ class AcceptSpecialistRequest extends FormRequest
                         }
                     }
                     if(!$check){
-                        $fail('Specialist not accepted this bid');
+                        $fail('Specialist not accepted this bid 1');
                     }
                     if($user) {
                         $orderExists = Bid::where(function ($query) use ($user) {
@@ -74,7 +74,7 @@ class AcceptSpecialistRequest extends FormRequest
                         })->first();
 
                         if (!$orderExists) {
-                            $fail('Specialist not accepted for bid');
+                            $fail('Specialist not accepted for bid 2');
                         }
                     }else{
                         $fail('Specialist not found');

@@ -40,21 +40,14 @@ class RejectBidRequest extends FormRequest
                     $userIdsSupervisor = $user->supervisors->pluck('id')->toArray();
                     $userIdsSupervisor[] = $user->id;
                     $orderExists = Bid::where(function ($query) use ($user,$value,$userIdsSupervisor) {
-                        $query->whereIn('user_id', $userIdsSupervisor)->where('id', $value)
-                            ->where('status', OrderStatusEnum::notAccepted);
+                        $query->whereIn('user_id', $userIdsSupervisor)->where('id', $value);
                     })
                         ->orWhere(function ($query) use ($user,$value,$userIdsSupervisor) {
-                            $query->whereIn('accept_user_id', $userIdsSupervisor)->where('id', $value)
-                                ->where('status', OrderStatusEnum::notAccepted);
+                            $query->whereIn('accept_user_id', $userIdsSupervisor)->where('id', $value);
                         })
                         ->orWhere(function ($query) use ($user,$value) {
                             $userIdsSupervisor = $user->acceptedBids?->pluck('id')->toArray();
-                            //$userIdsSupervisor = $user->acceptedBids()
-                            //                                ->wherePivot('accepted', false)
-                            //                                ->pluck('bid_id')
-                            //                                ->toArray();
-                            $query->whereIn('id', $userIdsSupervisor)->where('id', $value)
-                                ->where('status', OrderStatusEnum::notAccepted);
+                            $query->whereIn('id', $userIdsSupervisor)->where('id', $value);
                         })->first();
 
                     if (!$orderExists) {
