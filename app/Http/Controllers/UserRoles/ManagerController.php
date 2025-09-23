@@ -925,6 +925,11 @@ class ManagerController extends Controller
         $bid->acceptingUsers()->updateExistingPivot($request->specialistId, [
             'accepted' => BidAcceptingStatusEnum::work->value,
         ]);
+        $count = $bid->acceptingUsers()->count();
+        if (($count + 1) >= $bid->count) {
+            $bid->status = OrderStatusEnum::accepted->value;
+            $bid->save();
+        }
         return new SuccessResource();
     }
 

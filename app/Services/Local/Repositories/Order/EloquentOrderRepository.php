@@ -625,13 +625,9 @@ class EloquentOrderRepository implements OrderRepository
             if($commonIds) {
                 $bid->acceptingUsers()->syncWithoutDetaching(
                     collect($commonIds)->mapWithKeys(function ($id) use ($bid,$commonIds) {
-                        if (count($commonIds) >= $bid->count) {
-                            $bid->status = OrderStatusEnum::accepted->value;
-                            $bid->save();
-                        }
                         return [
                             $id => [
-                                'accepted' => BidAcceptingStatusEnum::accepted->value,
+                                'accepted' => BidAcceptingStatusEnum::consideration->value,
                                 'task_id'  => $bid->task_id,
                                 'order_id' => $bid->order_id,
                                 'user_id_maintainer'  => Auth::id()
@@ -659,17 +655,7 @@ class EloquentOrderRepository implements OrderRepository
                     'order_id' => $bid->order_id
                 ]
             );
-            if($updated) {
-                if (($count + 1) >= $bid->count) {
-                    $bid->status = OrderStatusEnum::accepted->value;
-                    $bid->save();
-                }
-            }
             return (bool)$updated;
-        }
-        if($count >= $bid->count) {
-            $bid->status = OrderStatusEnum::accepted->value;
-            $bid->save();
         }
         return false;
     }
@@ -683,28 +669,18 @@ class EloquentOrderRepository implements OrderRepository
             $updated = $bid->acceptingUsers()->updateExistingPivot(
                 $specialistId,
                 [
-                    'accepted' => BidAcceptingStatusEnum::accepted->value,
+                    'accepted' => BidAcceptingStatusEnum::consideration->value,
                     'task_id' => $bid->task_id,
                     'order_id' => $bid->order_id
                 ]
             );
-            if($updated) {
-                if (($count + 1) >= $bid->count) {
-                    $bid->status = OrderStatusEnum::accepted->value;
-                    $bid->save();
-                }
-            }
             return (bool)$updated;
         } else {
             $bid->acceptingUsers()->attach($specialistId, [
-                'accepted' => BidAcceptingStatusEnum::accepted->value,
+                'accepted' => BidAcceptingStatusEnum::consideration->value,
                 'task_id' => $bid->task_id,
                 'order_id' => $bid->order_id
             ]);
-            if (($count + 1) >= $bid->count) {
-                $bid->status = OrderStatusEnum::accepted->value;
-                $bid->save();
-            }
             return true;
         }
     }
