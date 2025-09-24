@@ -28,6 +28,8 @@ use App\Models\Fields\Directory\ViewActivities;
  * @property Task $task
  * @property Bid $bid
  * @property User $user
+ * @property float $forPay
+ * @property float $income
  *
  */
 class Report extends Model
@@ -47,7 +49,9 @@ class Report extends Model
         'status',
         'report',
         'date_auto_close',
-        'dayActivity'
+        'dayActivity',
+        'forPay',
+        'income'
     ];
 
     protected $casts = [

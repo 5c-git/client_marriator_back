@@ -4,12 +4,15 @@ namespace App\Http\Controllers\UserRoles;
 
 use App\Enum\Order\BidAcceptingStatusEnum;
 use App\Enum\Order\OrderStatusEnum;
+use App\Enum\Order\ReportStatusEnum;
 use App\Enum\Role\RoleEnum;
 use App\Enum\User\SortEnum;
 use App\Enum\User\UserStatusModerationEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ConfirmUserRequest;
+use App\Http\Requests\Order\AcceptAllReportRequest;
 use App\Http\Requests\Order\AcceptBidRequest;
+use App\Http\Requests\Order\AcceptReportRequest;
 use App\Http\Requests\Order\AcceptSpecialistRequest;
 use App\Http\Requests\Order\BidDataRequest;
 use App\Http\Requests\Order\CancelBidRequest;
@@ -24,6 +27,7 @@ use App\Http\Requests\Order\GetSpecialistForBisRequest;
 use App\Http\Requests\Order\GetTaskRequest;
 use App\Http\Requests\Order\GetViewActivitiesForOrderRequest;
 use App\Http\Requests\Order\GetViewActivitiesForTaskRequest;
+use App\Http\Requests\Order\PayReportRequest;
 use App\Http\Requests\PaginatorRequest;
 use App\Http\Requests\SetUserDataRequest;
 use App\Http\Requests\UserData\DeleteCounterpartyRequest;
@@ -57,6 +61,7 @@ use App\Models\Fields\Directory\Radius;
 use App\Models\Fields\Directory\ViewActivities;
 use App\Models\Order\Bid;
 use App\Models\Order\Order;
+use App\Models\Order\Report;
 use App\Models\Order\Task;
 use App\Models\User;
 use App\Services\ApiTokenService\ApiTokenService;
@@ -623,6 +628,50 @@ class SupervisorController extends Controller
             'accepted' => BidAcceptingStatusEnum::canceled->value,
         ]);
         return new SuccessResource();
+    }
+
+    public function acceptReport(AcceptReportRequest $request){
+        /** @var  $report Report */
+        $report = Report::where('id',$request->reportId)->first();
+        $report->status = ReportStatusEnum::accept->value;
+        $report->forPay = $this->getPriceForHour($report);
+        $report->save();
+        return new SuccessResource();
+    }
+
+    public function acceptAllReportJob(AcceptAllReportRequest $request){
+        $reports = Report::where('bid_id',$request->bidId)->where('user_id',$request->specialistId)->get();
+        foreach ($reports as $report){
+            /** @var  $report Report */
+            $report->status = ReportStatusEnum::accept->value;
+            $report->forPay = $this->getPriceForHour($report);
+            $report->save();
+        }
+        return new SuccessResource();
+    }
+
+    public function payReport(PayReportRequest $request){
+        /** @var  $report Report */
+        $report = Report::where('id',$request->reportId)->first();
+        $report->status = ReportStatusEnum::forPay->value;
+        $report->save();
+        return new SuccessResource();
+    }
+
+    private function getPriceForHour(Report $report): float
+    {
+        if ($report->order) {
+            $project = $report->order->user->project->first();
+        } elseif ($report->task) {
+            $project = $report->task->project;
+        }
+        $price = 0;
+        foreach ($project->viewActivities as $viewActivity) {
+            if ($viewActivity->id === $report->bid->view_activity_id) {
+                $price = $viewActivity->pivot->price;
+            }
+        }
+        return $price * round($report->date_start->diffInSeconds($report->date_end) / 3600, 2);
     }
 
 }

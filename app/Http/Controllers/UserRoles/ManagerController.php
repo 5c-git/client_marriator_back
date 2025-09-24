@@ -973,6 +973,7 @@ class ManagerController extends Controller
         /** @var  $report Report */
         $report = Report::where('id',$request->reportId)->first();
         $report->status = ReportStatusEnum::accept->value;
+        $report->forPay = $this->getPriceForHour($report);
         $report->save();
         return new SuccessResource();
     }
@@ -980,7 +981,9 @@ class ManagerController extends Controller
     public function acceptAllReportJob(AcceptAllReportRequest $request){
         $reports = Report::where('bid_id',$request->bidId)->where('user_id',$request->specialistId)->get();
         foreach ($reports as $report){
+            /** @var  $report Report */
             $report->status = ReportStatusEnum::accept->value;
+            $report->forPay = $this->getPriceForHour($report);
             $report->save();
         }
         return new SuccessResource();
@@ -992,6 +995,22 @@ class ManagerController extends Controller
         $report->status = ReportStatusEnum::forPay->value;
         $report->save();
         return new SuccessResource();
+    }
+
+    private function getPriceForHour(Report $report): float
+    {
+        if ($report->order) {
+            $project = $report->order->user->project->first();
+        } elseif ($report->task) {
+            $project = $report->task->project;
+        }
+        $price = 0;
+        foreach ($project->viewActivities as $viewActivity) {
+            if ($viewActivity->id === $report->bid->view_activity_id) {
+                $price = $viewActivity->pivot->price;
+            }
+        }
+        return $price * round($report->date_start->diffInSeconds($report->date_end) / 3600, 2);
     }
 
 }

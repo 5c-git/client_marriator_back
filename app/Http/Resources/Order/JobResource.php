@@ -7,6 +7,7 @@ use App\Http\Resources\Order\OrderActivitiesResource;
 use App\Http\Resources\Order\StatisticResource;
 use App\Http\Resources\ViewActivityResource;
 use App\Models\Fields\Directory\Radius;
+use App\Models\Order\Report;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -39,9 +40,9 @@ class JobResource extends JsonResource
             'place' => new PlaceResource($this->place),
             'radius' => $this->radius ?? $this->getRadius(),
             'price' => (float)($this->price ?? $this->getPrice()),
-            'priceResult' => (float)$this->price*($this->self_employed?0.94:0.87),
-            'income' => 100,
-            'forPay' => 100*($this->self_employed?0.94:0.87),
+            'priceResult' => (float)($this->price ?? $this->getPrice())*($this->self_employed?0.94:0.87),
+            'income' => 0,
+            'forPay' => $this->acceptingUser ? $this->getForPay($this->getReports($this->acceptingUser)) : 0,
             'viewActivity' => new ViewActivityResource($this->viewActivity),
             'dateStart' => $this->date_start,
             'dateEnd' => $this->date_end,
@@ -67,7 +68,8 @@ class JobResource extends JsonResource
         return $this->radiusBd;
     }
 
-    private function getReports(User $user){
+    private function getReports(User $user)
+    {
         return $user->reports()?->where('bid_id',$this->id)->get();
     }
 
@@ -85,5 +87,17 @@ class JobResource extends JsonResource
             }
         }
         return $price;
+    }
+
+    private function getForPay($reports = null): float|int
+    {
+        $forPay = 0;
+        if($reports) {
+            foreach ($reports as $report) {
+                /** @var  $report Report */
+                $forPay += $report->forPay;
+            }
+        }
+        return $forPay;
     }
 }
