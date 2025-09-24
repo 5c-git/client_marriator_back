@@ -74,7 +74,7 @@ class EndDayRequest extends FormRequest
                         if(is_array($orderExists->date_activity)){
                             $dateActivity = $orderExists->date_activity;
                         }else{
-                            $dateActivity = json_decode($orderExists->date_activity);
+                            $dateActivity = json_decode($orderExists->date_activity,true);
                         }
                         foreach ($dateActivity as $activity){
                             if(
