@@ -528,12 +528,8 @@ class EloquentOrderRepository implements OrderRepository
         $userIdsSupervisor[] = $user->id;
 
         return Bid::query()
-            ->orWhere(function ($query) use ($userIdsSupervisor) {
+            ->where(function ($query) use ($userIdsSupervisor) {
                 $query->whereIn('user_id', $userIdsSupervisor);
-            })
-            ->orWhere(function ($query) use ($user) {
-                $userIdsSupervisor = $user->acceptedBids?->pluck('id')->toArray();
-                $query->whereIn('id', $userIdsSupervisor);
             })
             ->has('acceptingUsers')
             ->when($specialistId, function ($q) use ($specialistId) {

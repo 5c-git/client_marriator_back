@@ -70,4 +70,14 @@ class JobResource extends JsonResource
     private function getReports(User $user){
         return $user->reports()?->where('bid_id',$this->id)->get();
     }
+
+    private function getPrice()
+    {
+        if($this->order){
+            $project = $this->order->user->project->first();
+        }elseif($this->task){
+            $project = $this->task->project;
+        }
+        //$project
+    }
 }
