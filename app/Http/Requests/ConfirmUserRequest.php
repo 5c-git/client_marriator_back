@@ -68,71 +68,83 @@ class ConfirmUserRequest extends FormRequest
 
     public function withValidator($validator)
     {
-        $validator->after(function ($validator) {
-            // Если есть ошибки в userId - пропускаем
-            if ($validator->errors()->has('userId')) {
-                return;
-            }
+        if(!$this->confirm) {
+            $validator->after(function ($validator) {
+                // Если есть ошибки в userId - пропускаем
+                if ($validator->errors()->has('userId')) {
+                    return;
+                }
 
-            $user = User::find($this->userId);
-            $userRoles = $user->roles?->pluck('id')->toArray();
+                $user      = User::find($this->userId);
+                $userRoles = $user->roles?->pluck('id')->toArray();
 
-            if (in_array(RoleEnum::client->value,$userRoles)) {
-                $timeFields = [
-                    'change_order', 'cancel_order', 'live_order',
-                ];
-                foreach ($timeFields as $field) {
-                    if (!$this->filled($field)) {
-                        $validator->errors()->add(
-                            $field,
-                            "Field $field required for user role"
-                        );
+                if (in_array(RoleEnum::client->value, $userRoles)) {
+                    $timeFields = [
+                        'change_order',
+                        'cancel_order',
+                        'live_order',
+                    ];
+                    foreach ($timeFields as $field) {
+                        if (!$this->filled($field)) {
+                            $validator->errors()->add(
+                                $field,
+                                "Field $field required for user role"
+                            );
+                        }
                     }
                 }
-            }
 
-            if (in_array(RoleEnum::manager->value,$userRoles)) {
-                $timeFields = [
-                    'change_task', 'cancel_task', 'live_task',
-                    'repeat_bid', 'leave_bid'
-                ];
-                foreach ($timeFields as $field) {
-                    if (!$this->filled($field)) {
-                        $validator->errors()->add(
-                            $field,
-                            "Field $field required for user role"
-                        );
+                if (in_array(RoleEnum::manager->value, $userRoles)) {
+                    $timeFields = [
+                        'change_task',
+                        'cancel_task',
+                        'live_task',
+                        'repeat_bid',
+                        'leave_bid'
+                    ];
+                    foreach ($timeFields as $field) {
+                        if (!$this->filled($field)) {
+                            $validator->errors()->add(
+                                $field,
+                                "Field $field required for user role"
+                            );
+                        }
                     }
                 }
-            }
 
-            if (in_array(RoleEnum::supervisor->value,$userRoles)) {
-                $timeFields = [
-                    'repeat_bid', 'leave_bid', 'refusal_task', 'waiting_task'
-                ];
-                foreach ($timeFields as $field) {
-                    if (!$this->filled($field)) {
-                        $validator->errors()->add(
-                            $field,
-                            "Field $field required for user role"
-                        );
+                if (in_array(RoleEnum::supervisor->value, $userRoles)) {
+                    $timeFields = [
+                        'repeat_bid',
+                        'leave_bid',
+                        'refusal_task',
+                        'waiting_task'
+                    ];
+                    foreach ($timeFields as $field) {
+                        if (!$this->filled($field)) {
+                            $validator->errors()->add(
+                                $field,
+                                "Field $field required for user role"
+                            );
+                        }
                     }
                 }
-            }
 
-            if (in_array(RoleEnum::specialist->value,$userRoles)) {
-                $timeFields = [
-                    'count_wait_bid', 'time_answer_bid', 'notification_start',
-                ];
-                foreach ($timeFields as $field) {
-                    if (!$this->filled($field)) {
-                        $validator->errors()->add(
-                            $field,
-                            "Field $field required for user role"
-                        );
+                if (in_array(RoleEnum::specialist->value, $userRoles)) {
+                    $timeFields = [
+                        'count_wait_bid',
+                        'time_answer_bid',
+                        'notification_start',
+                    ];
+                    foreach ($timeFields as $field) {
+                        if (!$this->filled($field)) {
+                            $validator->errors()->add(
+                                $field,
+                                "Field $field required for user role"
+                            );
+                        }
                     }
                 }
-            }
-        });
+            });
+        }
     }
 }
