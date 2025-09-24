@@ -527,7 +527,7 @@ class EloquentOrderRepository implements OrderRepository
         $userIdsSupervisor = $user->supervisors->pluck('id')->toArray();
         $userIdsSupervisor[] = $user->id;
 
-        return Bid::query()
+        return Bid::query()->with('acceptingUsers')
             ->where(function ($query) use ($userIdsSupervisor) {
                 $query->whereIn('user_id', $userIdsSupervisor);
             })

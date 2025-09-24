@@ -949,8 +949,9 @@ class ManagerController extends Controller
         );
         $expandedBids = $bids->flatMap(function ($bid) {
             return $bid->acceptingUsers->map(function ($acceptingUser) use ($bid) {
-                $bid->acceptingUser = $acceptingUser;
-                return $bid;
+                $newBid = clone $bid;
+                $newBid->acceptingUser = $acceptingUser;
+                return $newBid;
             });
         });
         return JobResource::collection($expandedBids);
