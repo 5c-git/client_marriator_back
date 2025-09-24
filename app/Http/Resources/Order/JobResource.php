@@ -38,7 +38,7 @@ class JobResource extends JsonResource
             'selfEmployed' => (bool)$this->self_employed,
             'place' => new PlaceResource($this->place),
             'radius' => $this->radius ?? $this->getRadius(),
-            'price' => (float)$this->price,
+            'price' => (float)($this->price ?? $this->getPrice()),
             'priceResult' => (float)$this->price*($this->self_employed?0.94:0.87),
             'income' => 100,
             'forPay' => 100*($this->self_employed?0.94:0.87),
@@ -78,6 +78,7 @@ class JobResource extends JsonResource
         }elseif($this->task){
             $project = $this->task->project;
         }
-        //$project
+        $price = $project->viewActivities->where('id',$this->view_activity_id)->pivot->price;
+        return $price;
     }
 }
