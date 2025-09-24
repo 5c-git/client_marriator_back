@@ -68,7 +68,7 @@ class ConfirmUserRequest extends FormRequest
 
     public function withValidator($validator)
     {
-        if(!$this->confirm) {
+        if($this->confirm || !$this->confirm == 0) {
             $validator->after(function ($validator) {
                 // Если есть ошибки в userId - пропускаем
                 if ($validator->errors()->has('userId')) {
