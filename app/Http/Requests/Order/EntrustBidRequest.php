@@ -101,13 +101,13 @@ class EntrustBidRequest extends FormRequest
                         }
                     }
 
-                    $taskExists = Bid::query()
-                        ->where('id', $this->bidId)->first();
-                    if ($taskExists) {
-                        if ($taskExists->count > count($value)) {
-                            $fail('Supervisor count less than necessary need count');
-                        }
-                    }
+//                    $taskExists = Bid::query()
+//                        ->where('id', $this->bidId)->first();
+//                    if ($taskExists) {
+//                        if ($taskExists->count > count($value)) {
+//                            $fail('Supervisor count less than necessary need count');
+//                        }
+//                    }
 
                     $validIds = User::whereIn('id', $value)
                         ->whereHas('roles', fn($q) => $q->where('role_id', RoleEnum::specialist->value))
