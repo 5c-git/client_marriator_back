@@ -78,7 +78,12 @@ class JobResource extends JsonResource
         }elseif($this->task){
             $project = $this->task->project;
         }
-        $price = $project->viewActivities->where('id',$this->view_activity_id)->pivot->price;
+        $price = 0;
+        foreach ($project->viewActivities as $viewActivity){
+            if($viewActivity->id == $this->view_activity_id){
+                $price = $viewActivity->pivot->price;
+            }
+        }
         return $price;
     }
 }
