@@ -56,8 +56,8 @@ class EndDayRequest extends FormRequest
                                 ->toArray();
                             $query->whereIn('id', $bidsIds)->where('id', $value)
                                 ->where('status', OrderStatusEnum::accepted->value);
-                        })->first();
-                    });
+                        });
+                    })->first();
 
                     if (!$orderExists) {
                         $fail('Not your bid');
