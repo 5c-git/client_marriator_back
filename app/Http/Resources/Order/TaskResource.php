@@ -32,7 +32,7 @@ class TaskResource extends JsonResource
             'selfEmployed' => (bool)$this->self_employed,
             'status' => $this->status->value,
             'place' => new PlaceResource($this->place),
-            'project'=> new ProjectResource($this->project),
+            'project'=> $this->project ? new ProjectResource($this->project) : new ProjectResource($this->order->user->project->first()),
             'user' => new ShortUserResource($this->user),
             'acceptUser' => new ShortUserResource($this->acceptUser),
             //'price' => $this->price,
