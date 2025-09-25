@@ -32,7 +32,7 @@ use App\Models\Order\Order;
  * @property-read Collection|Project[] $project
  * @property-read Collection|Place[] $place
  * @property-read Collection|Order[] $acceptedOrders
- * @property-read Collection|Order[] $acceptOrders
+ * @property-read Collection|Order[] $acceptOrder
  * @property-read Collection|Task[] $acceptedTasks
  * @property-read Collection|Task[] $acceptTasks
  * @property-read Collection|Bid[] $acceptedBids
