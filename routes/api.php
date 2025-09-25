@@ -208,6 +208,10 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
         Route::get('/getJob','App\Http\Controllers\UniversalController@getJob')->name('getJob');
         Route::post('/endSpecialistJob','App\Http\Controllers\UniversalController@endJob')->name('endSpecialistJob');
 
+        Route::post('/acceptReport','App\Http\Controllers\UniversalController@acceptReport')->name('acceptReport');
+        Route::post('/acceptAllReportJob','App\Http\Controllers\UniversalController@acceptAllReportJob')->name('acceptAllReportJob');
+        Route::post('/payReport','App\Http\Controllers\UniversalController@payReport')->name('payReport');
+
         Route::group(['prefix' => 'moderation'], function () {
             Route::get('/getProject', 'App\Http\Controllers\UniversalController@getProject')->name('getProject');
             Route::post('/setProject', 'App\Http\Controllers\UniversalController@setProject')->name('setProject');

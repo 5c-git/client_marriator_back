@@ -997,6 +997,11 @@ class ManagerController extends Controller
         return new SuccessResource();
     }
 
+    public function updateReport()
+    {
+
+    }
+
     private function getPriceForHour(Report $report): float
     {
         if ($report->order) {
@@ -1004,13 +1009,19 @@ class ManagerController extends Controller
         } elseif ($report->task) {
             $project = $report->task->project;
         }
-        $price = 0;
-        foreach ($project->viewActivities as $viewActivity) {
-            if ($viewActivity->id === $report->bid->view_activity_id) {
-                $price = $viewActivity->pivot->price;
+        if(!$report->bid->price) {
+            $price = 0;
+            foreach ($project->viewActivities as $viewActivity) {
+                if ($viewActivity->id === $report->bid->view_activity_id) {
+                    $price = $viewActivity->pivot->price;
+                    break;
+                }
             }
+            $price = $price * round($report->date_start->diffInSeconds($report->date_end) / 3600, 2);
+        }else{
+            $price = $report->bid->price;
         }
-        return $price * round($report->date_start->diffInSeconds($report->date_end) / 3600, 2);
+        return $price;
     }
 
 }

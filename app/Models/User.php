@@ -38,6 +38,7 @@ use App\Models\Order\Order;
  * @property-read Collection|Bid[] $acceptedBids
  * @property-read Collection|Bid[] $acceptBids
  * @property-read Collection|User[] $supervisors
+ * @property-read Collection|User[] $manager
  * @property-read Collection|User[] $managerSpecialist
  * @property-read Collection|User[] $supervisorSpecialist
  * @property-read Collection|Counterparty[] $counterparty

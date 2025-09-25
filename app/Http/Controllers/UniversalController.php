@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ConfirmUserRequest;
 use App\Http\Requests\DelPlaceRequest;
+use App\Http\Requests\Order\AcceptAllReportRequest;
 use App\Http\Requests\Order\AcceptOrderRequest;
+use App\Http\Requests\Order\AcceptReportRequest;
 use App\Http\Requests\Order\AcceptSpecialistRequest;
 use App\Http\Requests\Order\AcceptTaskRequest;
 use App\Http\Requests\Order\BidDataRequest;
@@ -22,6 +24,7 @@ use App\Http\Requests\Order\GetSpecialistForBisRequest;
 use App\Http\Requests\Order\GetTaskRequest;
 use App\Http\Requests\Order\GetViewActivitiesForOrderRequest;
 use App\Http\Requests\Order\GetViewActivitiesForTaskRequest;
+use App\Http\Requests\Order\PayReportRequest;
 use App\Http\Requests\PaginatorRequest;
 use App\Http\Requests\SetBrandImgRequest;
 use App\Http\Requests\SetPlaceRequest;
@@ -590,6 +593,36 @@ class UniversalController extends Controller
         }
         if(in_array('specialist',$this->roles)){
             return app(\App\Http\Controllers\UserRoles\SpecialistController::class)->getJob($request);
+        }
+        return response()->json(['message' => 'Role not allowed.'], 403);
+    }
+
+    public function acceptReport(AcceptReportRequest $request){
+        if(in_array('manager',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\ManagerController::class)->acceptReport($request);
+        }
+        if(in_array('supervisor',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\SupervisorController::class)->acceptReport($request);
+        }
+        return response()->json(['message' => 'Role not allowed.'], 403);
+    }
+
+    public function acceptAllReportJob(AcceptAllReportRequest $request){
+        if(in_array('manager',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\ManagerController::class)->acceptAllReportJob($request);
+        }
+        if(in_array('supervisor',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\SupervisorController::class)->acceptAllReportJob($request);
+        }
+        return response()->json(['message' => 'Role not allowed.'], 403);
+    }
+
+    public function payReport(PayReportRequest $request){
+        if(in_array('manager',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\ManagerController::class)->payReport($request);
+        }
+        if(in_array('supervisor',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\SupervisorController::class)->payReport($request);
         }
         return response()->json(['message' => 'Role not allowed.'], 403);
     }
