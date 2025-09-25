@@ -32,7 +32,7 @@ use App\Http\Requests\SetBrandImgRequest;
 use App\Http\Requests\SetPlaceRequest;
 use App\Http\Requests\SetUserDataRequest;
 use App\Http\Requests\UserData\DelManagerRequest;
-use App\Http\Requests\UserData\GetManagerRequest;
+use App\Http\Requests\Order\GetManagerRequest;
 use App\Http\Requests\UserData\SetManagerRequest;
 use App\Http\Resources\AcceptingUsersResource;
 use App\Http\Resources\BrandResource;
