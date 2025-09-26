@@ -2,6 +2,10 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Fields\Directory\Age;
+use App\Models\Fields\Directory\Citizenship;
+use App\Models\Fields\Directory\ViewActivities;
+use App\Models\Fields\Fields;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Http\Resources\ProjectResource;
@@ -15,6 +19,8 @@ use App\Models\Setting;
  */
 class UserResource extends JsonResource
 {
+    private array $moreInfo = [];
+    private array $moreInfoField = [];
     protected array $settings = [];
     /**
      * Transform the resource into an array.
@@ -25,9 +31,10 @@ class UserResource extends JsonResource
      */
     public function toArray($request): array
     {
+        $this->getMoreInformation();
         return [
             'id' => $this->id,
-            'name' => $this->name,
+            'name' => $this->getName(),
             'phone' => $this->phone,
             'email' => $this->email,
             'logo' =>  $this->img ? Storage::url($this->img) : null,
@@ -49,7 +56,7 @@ class UserResource extends JsonResource
             'notification_start' => (int)($this->notification_start ?? $this->getSettings('notification_start')),
             'supervisors' => ShortUserResource::collection($this->supervisors),
             'manager' => ShortUserResource::collection($this->manager),
-            'counterparty' => CounterpartyResource::collection($this->counterparty)
+            'counterparty' => CounterpartyResource::collection($this->counterparty),
         ];
     }
 
@@ -67,5 +74,50 @@ class UserResource extends JsonResource
             $this->settings = $settingsKeyValue;
         }
         return $this->settings[$key] ?? null;
+    }
+
+    private function getMoreInformation()
+    {
+        if(!$this->moreInfo) {
+            $this->moreInfo['name']  = Fields::where('name', 'Имя')->first();
+            $this->moreInfo['lastName']  = Fields::where('name', 'Фамилия')->first();
+            $this->moreInfo['secondName']  = Fields::where('name', 'Отчество')->first();
+        }
+        if(!is_array($this->data)){
+            $this->data = json_decode($this->data,true);
+        }
+    }
+
+    private function getFieldView($name)
+    {
+        $data = '';
+        if(!empty($this->data[$this->moreInfo[$name]->uuid])) {
+            if (is_array($this->data[$this->moreInfo[$name]->uuid])) {
+                $data = [];
+                foreach ($this->data[$this->moreInfo[$name]->uuid] as $field) {
+                    if (!empty($this->moreInfoField[$name][$field]['name'])) {
+                        $data[] = $this->moreInfoField[$name][$field]['name'];
+                    } else {
+                        $data[] = $field;
+                    }
+                }
+            } else {
+                if (!empty($this->moreInfoField[$name][$this->data[$this->moreInfo[$name]->uuid]]['name'])) {
+                    $data = $this->moreInfoField[$name][$this->data[$this->moreInfo[$name]->uuid]]['name'];
+                } else {
+                    $data = $this->data[$this->moreInfo[$name]->uuid];
+                }
+            }
+        }
+        return $data;
+    }
+
+    private function getName()
+    {
+        $name = trim($this->getFieldView('name') . ' ' .$this->getFieldView('lastName'). ' ' .$this->getFieldView('secondName'));
+        if(!$name){
+            $name = $this->name;
+        }
+        return $name;
     }
 }
