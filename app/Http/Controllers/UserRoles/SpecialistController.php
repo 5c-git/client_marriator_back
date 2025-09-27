@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\UserRoles;
 
+use App\Enum\Document\DocumentStatusEnum;
+use App\Enum\Document\DocumentStatusSignatureEnum;
 use App\Enum\Order\BidAcceptingStatusEnum;
 use App\Enum\Order\OrderStatusEnum;
 use App\Enum\Order\ReportStatusEnum;
@@ -11,6 +13,7 @@ use App\Http\Requests\Order\EndJobRequest;
 use App\Http\Requests\Order\GetBidRequest;
 use App\Http\Requests\Order\GetBidsRequest;
 use App\Http\Requests\Order\GetJobRequest;
+use App\Http\Requests\Order\PaySpecialistReportRequest;
 use App\Http\Resources\ErrorResource;
 use App\Http\Resources\Order\BidResource;
 use App\Http\Resources\Order\BidShortResource;
@@ -19,6 +22,7 @@ use App\Http\Resources\Order\OrderResource;
 use App\Http\Resources\Order\ShortOrderResource;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\SuccessResource;
+use App\Models\Document\Document;
 use App\Models\Order\Bid;
 use App\Models\Order\Report;
 use App\Models\User;
@@ -26,6 +30,7 @@ use App\Services\ApiTokenService\ApiTokenService;
 use App\Services\Local\Repositories\Contracts\OrderRepository;
 use App\Services\Local\Repositories\Contracts\UserRepository;
 use Carbon\Carbon;
+use Faker\Core\Uuid;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -162,6 +167,24 @@ class SpecialistController extends Controller
         $bid->acceptingUsers()->updateExistingPivot($user->id, [
             'accepted' => BidAcceptingStatusEnum::canceled->value,
         ]);
+        return new SuccessResource();
+    }
+
+    public function payReport(PaySpecialistReportRequest $request){
+        $user = $request->user();
+        $report = Report::where('id',$request->reportId)->first();
+        $report->status = ReportStatusEnum::paid->value;
+        $report->save();
+        //формирование документа на подпись
+        $document = new Document();
+        $document->uuid = Str::uuid();
+        $document->user_id = $user->id;
+        $document->file_path = 'testPath';
+        $document->file_name = 'docForPay_'.Carbon::now()->format('d.m.Y H:i:s').'.pdf';
+        $document->status = DocumentStatusEnum::Signed->value;
+        $document->status_signature = DocumentStatusSignatureEnum::NoSend->value;
+        $document->date_signature = Carbon::now();
+        $document->save();
         return new SuccessResource();
     }
 }

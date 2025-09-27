@@ -27,6 +27,7 @@ use App\Http\Requests\Order\GetOrderRequest;
 use App\Http\Requests\Order\GetPlaceForBidRequest;
 use App\Http\Requests\Order\GetViewActivitiesForOrderRequest;
 use App\Http\Requests\Order\PayReportRequest;
+use App\Http\Requests\Order\UpdateReportRequest;
 use App\Http\Requests\PaginatorRequest;
 use App\Http\Requests\SetBrandImgRequest;
 use App\Http\Requests\SetPlaceRequest;
@@ -40,6 +41,7 @@ use App\Http\Resources\ErrorResource;
 use App\Http\Resources\Order\BidResource;
 use App\Http\Resources\Order\JobResource;
 use App\Http\Resources\Order\OrderResource;
+use App\Http\Resources\Order\ReportResource;
 use App\Http\Resources\Order\ShortOrderResource;
 use App\Http\Resources\PlaceResource;
 use App\Http\Resources\ProjectResource;
@@ -997,9 +999,17 @@ class ManagerController extends Controller
         return new SuccessResource();
     }
 
-    public function updateReport()
+    public function updateReport(UpdateReportRequest $request)
     {
-
+        $report = Report::where('id',$request->reportId)->first();
+        $report->date_start = $request->date_start ?? $report->date_start;
+        $report->date_end = $request->date_end ?? $report->date_end;
+        $report->status = $request->status ?? $report->status;
+        $report->forPay = $this->getPriceForHour($report);
+        $report->forPay = $request->forPay ?? $report->forPay;
+        $report->income = $request->income ?? $report->income;
+        $report->save();
+        return new ReportResource($report);
     }
 
     private function getPriceForHour(Report $report): float

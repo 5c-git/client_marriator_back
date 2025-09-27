@@ -25,6 +25,7 @@ use App\Http\Requests\Order\GetTaskRequest;
 use App\Http\Requests\Order\GetViewActivitiesForOrderRequest;
 use App\Http\Requests\Order\GetViewActivitiesForTaskRequest;
 use App\Http\Requests\Order\PayReportRequest;
+use App\Http\Requests\Order\UpdateReportRequest;
 use App\Http\Requests\PaginatorRequest;
 use App\Http\Requests\SetBrandImgRequest;
 use App\Http\Requests\SetPlaceRequest;
@@ -623,6 +624,16 @@ class UniversalController extends Controller
         }
         if(in_array('supervisor',$this->roles)){
             return app(\App\Http\Controllers\UserRoles\SupervisorController::class)->payReport($request);
+        }
+        return response()->json(['message' => 'Role not allowed.'], 403);
+    }
+
+    public function updateReport(UpdateReportRequest $request){
+        if(in_array('manager',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\ManagerController::class)->updateReport($request);
+        }
+        if(in_array('supervisor',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\SupervisorController::class)->updateReport($request);
         }
         return response()->json(['message' => 'Role not allowed.'], 403);
     }

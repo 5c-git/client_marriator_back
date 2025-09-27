@@ -140,6 +140,7 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
             Route::post('/startDay','App\Http\Controllers\UserRoles\SpecialistController@startDay')->name('startDay');
             Route::post('/endDay','App\Http\Controllers\UserRoles\SpecialistController@endDay')->name('endDay');
             Route::post('/endJob','App\Http\Controllers\UserRoles\SpecialistController@endJob')->name('endJob');
+            Route::post('/payReport','App\Http\Controllers\UserRoles\SpecialistController@payReport')->name('payReport');
         });
         Route::middleware([CheckRole::class.':supervisor'])->group( function () {
         });
@@ -211,6 +212,7 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
         Route::post('/acceptReport','App\Http\Controllers\UniversalController@acceptReport')->name('acceptReport');
         Route::post('/acceptAllReportJob','App\Http\Controllers\UniversalController@acceptAllReportJob')->name('acceptAllReportJob');
         Route::post('/payReport','App\Http\Controllers\UniversalController@payReport')->name('payReport');
+        Route::post('/updateReport','App\Http\Controllers\UniversalController@updateReport')->name('updateReport');
 
         Route::group(['prefix' => 'moderation'], function () {
             Route::get('/getProject', 'App\Http\Controllers\UniversalController@getProject')->name('getProject');

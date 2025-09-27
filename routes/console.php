@@ -12,6 +12,7 @@ Schedule::command('sendUpdateDataUserCommand')->everyMinute();
 Schedule::command('recognition:process')->everyMinute()->withoutOverlapping();
 Schedule::command('endedReportCommand')->everyFiveMinutes()->withoutOverlapping();
 Schedule::command('dellSpecialistFromManagerAndSupervisorCommand')->daily()->withoutOverlapping();
+Schedule::command('closeBidCommand')->hourly()->withoutOverlapping();
 
 
 

@@ -28,6 +28,7 @@ use App\Http\Requests\Order\GetTaskRequest;
 use App\Http\Requests\Order\GetViewActivitiesForOrderRequest;
 use App\Http\Requests\Order\GetViewActivitiesForTaskRequest;
 use App\Http\Requests\Order\PayReportRequest;
+use App\Http\Requests\Order\UpdateReportRequest;
 use App\Http\Requests\PaginatorRequest;
 use App\Http\Requests\SetUserDataRequest;
 use App\Http\Requests\UserData\DeleteCounterpartyRequest;
@@ -45,6 +46,7 @@ use App\Http\Resources\CounterpartyResource;
 use App\Http\Resources\ErrorResource;
 use App\Http\Resources\Order\JobResource;
 use App\Http\Resources\Order\OrderResource;
+use App\Http\Resources\Order\ReportResource;
 use App\Http\Resources\Order\RequestResource;
 use App\Http\Resources\Order\ShortOrderResource;
 use App\Http\Resources\Order\TaskShortResource;
@@ -656,6 +658,19 @@ class SupervisorController extends Controller
         $report->status = ReportStatusEnum::forPay->value;
         $report->save();
         return new SuccessResource();
+    }
+
+    public function updateReport(UpdateReportRequest $request)
+    {
+        $report = Report::where('id',$request->reportId)->first();
+        $report->date_start = $request->date_start ?? $report->date_start;
+        $report->date_end = $request->date_end ?? $report->date_end;
+        $report->status = $request->status ?? $report->status;
+        $report->forPay = $this->getPriceForHour($report);
+        $report->forPay = $request->forPay ?? $report->forPay;
+        $report->income = $request->income ?? $report->income;
+        $report->save();
+        return new ReportResource($report);
     }
 
     private function getPriceForHour(Report $report): float

@@ -3,7 +3,9 @@
 namespace App\Console\Commands;
 
 
+use App\Enum\Order\OrderStatusEnum;
 use App\Enum\Order\ReportStatusEnum;
+use App\Models\Order\Bid;
 use App\Models\Order\Report;
 use App\Services\OneC\OneCServices;
 use Illuminate\Console\Command;
@@ -18,14 +20,17 @@ class CloseBidCommand extends Command
 
     public function handle(): void
     {
-        $reports = Report::query()
-            ->where('status',ReportStatusEnum::start->value)
-            ->where('date_end',null)
-            ->where('date_auto_close','<=',Carbon::now())
+        $bids = Bid::query()
+            ->whereIn('status',[
+                OrderStatusEnum::accepted->value,
+                OrderStatusEnum::new->value,
+                OrderStatusEnum::notAccepted->value
+            ])
+            ->where('date_end','<',Carbon::now()->subHours(12))
             ->get();
-        foreach ($reports as $report){
-            $report->status = ReportStatusEnum::notEnded->value;
-            $report->save();
+        foreach ($bids as $bid){
+            $bid->status = OrderStatusEnum::canceled->value;
+            $bid->save();
         }
     }
 }

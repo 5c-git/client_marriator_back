@@ -46,11 +46,11 @@ class DocumentsController extends Controller
     public function getDocumentSigned(Request $request){
         $user = $request->user();
 
-        $this->createMockData($user->id,DocumentStatusEnum::Signed);
+        $this->createMockData($user->id,DocumentStatusEnum::Signed->value);
 
         $documents = Document::query()
             ->where('user_id',$user->id)
-            ->where('status',DocumentStatusEnum::Signed)
+            ->where('status',DocumentStatusEnum::Signed->value)
             ->get();
         $response = [
             'status' => 'success',
@@ -138,10 +138,10 @@ class DocumentsController extends Controller
 
     public function getDocumentArchive(Request $request){
         $user = $request->user();
-        $this->createMockData($user->id,DocumentStatusEnum::Archive);
+        $this->createMockData($user->id,DocumentStatusEnum::Archive->value);
         $documents = Document::query()
             ->where('user_id',$user->id)
-            ->where('status',DocumentStatusEnum::Archive)
+            ->where('status',DocumentStatusEnum::Archive->value)
             ->orderBy('date_signature')
             ->get();
         $response = [
@@ -177,10 +177,10 @@ class DocumentsController extends Controller
 
     public function getDocumentInquiries(Request $request){
         $user = $request->user();
-        $this->createMockData($user->id,DocumentStatusEnum::Inquiries);
+        $this->createMockData($user->id,DocumentStatusEnum::Inquiries->value);
         $documents = Document::query()
             ->where('user_id',$user->id)
-            ->where('status',DocumentStatusEnum::Inquiries)
+            ->where('status',DocumentStatusEnum::Inquiries->value)
             ->get();
         $response = [
             'status' => 'success',
@@ -377,7 +377,7 @@ class DocumentsController extends Controller
                 'uuid' => $k,
                 'file_path'=>$uuid['path'],
                 'file_name'=>$uuid['name'],
-                'status_signature'=>DocumentStatusSignatureEnum::NoSend,
+                'status_signature'=>DocumentStatusSignatureEnum::NoSend->value,
                 'date_signature'=>Carbon::now()
             ]);
         }
