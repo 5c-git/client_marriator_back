@@ -61,6 +61,7 @@ class EndDayRequest extends FormRequest
 
                     if (!$orderExists) {
                         $fail('Not your bid');
+                        return;
                     }
                     $this->bidObj = $orderExists;
                     /** @var Bid $orderExists */
