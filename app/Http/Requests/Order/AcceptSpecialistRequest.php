@@ -47,6 +47,11 @@ class AcceptSpecialistRequest extends FormRequest
 
                     if (!$orderExists) {
                         $fail('Not your bid or status is not notAccepted');
+                    }else {
+                        $count = $orderExists->acceptingUsers()->count();
+                        if ($count >= $orderExists->count){
+                            $fail('The required number of specialists has already been accepted into the application.');
+                        }
                     }
                 },
             ],
@@ -65,7 +70,7 @@ class AcceptSpecialistRequest extends FormRequest
                         }
                     }
                     if(!$check){
-                        $fail('Specialist not accepted this bid 1');
+                        $fail('Specialist not accepted this bid');
                     }
                     if($user) {
                         $orderExists = Bid::where(function ($query) use ($user) {
@@ -74,7 +79,7 @@ class AcceptSpecialistRequest extends FormRequest
                         })->first();
 
                         if (!$orderExists) {
-                            $fail('Specialist not accepted for bid 2');
+                            $fail('Specialist not accepted for bid');
                         }
                     }else{
                         $fail('Specialist not found');
