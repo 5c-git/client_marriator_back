@@ -148,7 +148,7 @@ class CachingOrderRepository implements OrderRepository
 
     public function getJobsByUserSyncDataPaginate(User $user, $specialistId = null): Collection
     {
-        return $this->orders->getJobsByUserSyncDataPaginate($user);
+        return $this->orders->getJobsByUserSyncDataPaginate($user,$specialistId);
     }
 
     public function getJobByUser(GetJobRequest $request): Bid
