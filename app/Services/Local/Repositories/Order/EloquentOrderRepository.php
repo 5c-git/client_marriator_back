@@ -528,22 +528,23 @@ class EloquentOrderRepository implements OrderRepository
             })->get();
     }
 
-    public function getJobsByUserSyncDataPaginate(User $user,$specialistId = null): Collection
+    public function getJobsByUserSyncDataPaginate(User $user, $specialistId = null): Collection
     {
-        $userIdsSupervisor = $user->supervisors->pluck('id')->toArray();
+        $userIdsSupervisor   = $user->supervisors->pluck('id')->toArray();
         $userIdsSupervisor[] = $user->id;
-
-        return Bid::query()->with('acceptingUsers')
-            ->where(function ($query) use ($userIdsSupervisor) {
+        $bid                 = Bid::query()->with('acceptingUsers')
+            ->has('acceptingUsers');
+        if ($user->id != $specialistId) {
+            $bid = $bid->where(function ($query) use ($userIdsSupervisor) {
                 $query->whereIn('user_id', $userIdsSupervisor);
-            })
-            ->has('acceptingUsers')
-            ->when($specialistId, function ($q) use ($specialistId) {
-                return $q->whereHas('acceptingUsers', function ($query) use ($specialistId) {
-                    $query->where('user_id', $specialistId);
-                });
-            })
-            ->get();
+            });
+        }
+
+        return $bid->when($specialistId, function ($q) use ($specialistId) {
+            return $q->whereHas('acceptingUsers', function ($query) use ($specialistId) {
+                $query->where('user_id', $specialistId);
+            });
+        })->get();
     }
 
     public function getJobByUser(GetJobRequest $request): Bid
