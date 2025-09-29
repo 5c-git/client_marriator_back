@@ -501,7 +501,9 @@ class SupervisorController extends Controller
         $viewActivities = $task->place->project
             ->flatMap(fn($project) => $project->viewActivities)
             ->unique('id');
-        $viewActivities = $viewActivities->where('self_employed', $task->self_employed);
+        if(!$task->self_employed) {
+            $viewActivities = $viewActivities->where('self_employed', false);
+        }
         return ViewActivityResource::collection($viewActivities);
     }
 

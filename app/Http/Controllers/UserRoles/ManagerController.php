@@ -61,6 +61,7 @@ use App\Models\User;
 use App\Services\ApiTokenService\ApiTokenService;
 use App\Services\Local\Repositories\Contracts\OrderRepository;
 use App\Services\Local\Repositories\Contracts\UserRepository;
+use App\Services\Verme\VermeService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -534,9 +535,11 @@ class ManagerController extends Controller
             ->getModerationUsers($arrRoleConfirm)?->where('id',$request->userId)?->first();
         if(!empty($userForModeration)){
             if($request->confirm){
-                $userForModeration->confirmRegister = true;
-                if($request->supervisorIds) {
-                    $userForModeration->supervisors()->sync($request->supervisorIds);
+                if(VermeService::sendUserInfo($user)) {
+                    $userForModeration->confirmRegister = true;
+                    if ($request->supervisorIds) {
+                        $userForModeration->supervisors()->sync($request->supervisorIds);
+                    }
                 }
             }else{
                 $userForModeration->finishRegister = false;
@@ -804,7 +807,9 @@ class ManagerController extends Controller
         $task = Task::where('id',$request->taskId)->first();
         $viewActivities = $task->project->viewActivities
             ->unique('id');
-        $viewActivities = $viewActivities->where('self_employed', $task->self_employed);
+        if(!$task->self_employed) {
+            $viewActivities = $viewActivities->where('self_employed', false);
+        }
         return ViewActivityResource::collection($viewActivities);
     }
 

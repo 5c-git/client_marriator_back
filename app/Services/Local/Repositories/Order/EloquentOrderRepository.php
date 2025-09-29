@@ -80,7 +80,9 @@ class EloquentOrderRepository implements OrderRepository
         $viewActivities = $order->place->project
             ->flatMap(fn($project) => $project->viewActivities)
             ->unique('id');
-        $viewActivities = $viewActivities->where('self_employed', $order->self_employed);
+        if(!$order->self_employed) {
+            $viewActivities = $viewActivities->where('self_employed', false);
+        }
 
         DB::transaction(function () use ($order, $orderRequest) {
             $order->update([
@@ -97,7 +99,9 @@ class EloquentOrderRepository implements OrderRepository
             $viewActivitiesNew = $order->place->project
                 ->flatMap(fn($project) => $project->viewActivities)
                 ->unique('id');
-            $viewActivitiesNew = $viewActivitiesNew->where('self_employed', $order->self_employed);
+            if(!$order->self_employed) {
+                $viewActivitiesNew = $viewActivitiesNew->where('self_employed', false);
+            }
             $result = $viewActivities->diff($viewActivitiesNew->keyBy('id'));
             if($result->isNotEmpty()){
                 OrderActivities::whereIn('id',$result->pluck('id')->toArray())->delete();
@@ -175,7 +179,9 @@ class EloquentOrderRepository implements OrderRepository
 
             $viewActivitiesNew = $task->project->viewActivities
                 ->unique('id');
-            $viewActivitiesNew = $viewActivitiesNew->where('self_employed', $task->self_employed);
+            if(!$task->self_employed) {
+                $viewActivitiesNew = $viewActivitiesNew->where('self_employed', false);
+            }
             $result = $viewActivities->diff($viewActivitiesNew->keyBy('id'));
             if($result->isNotEmpty()){
                 TaskActivity::whereIn('id',$result->pluck('id')->toArray())->delete();

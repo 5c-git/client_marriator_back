@@ -16,6 +16,7 @@ use App\Models\Fields\Directory\RegionOfResidence;
 /**
  * @property int $id
  * @property int $directory_region_of_residence_id
+ * @property int $verme_id
  * @property string $uuid
  * @property string $name
  * @property string $address_kladr
@@ -41,7 +42,8 @@ class Place extends Model implements ModelDirectoryInterface
         'address_kladr',
         'latitude',
         'longitude',
-        'directory_region_of_residence_id'
+        'directory_region_of_residence_id',
+        'verme_id'
     ];
 
     public $timestamps = false;

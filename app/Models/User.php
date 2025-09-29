@@ -27,6 +27,7 @@ use App\Models\Order\Order;
 
 /**
  * @property int $id
+ * @property int $verme_id
  * @property string $uuid
  * @property string $name
  * @property-read Collection|Project[] $project
@@ -89,7 +90,8 @@ class User extends Authenticatable
         'longitude',
         'count_wait_bid',
         'time_answer_bid',
-        'notification_start'
+        'notification_start',
+        'verme_id'
     ];
 
     /**

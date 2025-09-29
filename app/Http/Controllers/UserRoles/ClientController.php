@@ -189,7 +189,9 @@ class ClientController extends Controller
         $viewActivities = $order->place->project
             ->flatMap(fn($project) => $project->viewActivities)
             ->unique('id');
-        $viewActivities = $viewActivities->where('self_employed', $order->self_employed);
+        if(!$order->self_employed) {
+            $viewActivities = $viewActivities->where('self_employed', false);
+        }
         return ViewActivityResource::collection($viewActivities);
     }
 
