@@ -933,7 +933,7 @@ class ManagerController extends Controller
             'accepted' => BidAcceptingStatusEnum::work->value,
         ]);
         $count = $bid->acceptingUsers()->count();
-        if (($count + 1) >= $bid->count) {
+        if ($count >= $bid->count) {
             $bid->status = OrderStatusEnum::accepted->value;
             $bid->save();
         }
