@@ -132,7 +132,7 @@ class SpecialistController extends Controller
         if($bid->need_foto && $request->hasFile('reports')){
             $reportFiles = [];
             foreach ($request->file('reports') as $reportFile){
-                $reportFiles[] = Storage::disk('public')->putFileAs('/source/reports/'.$reportFile->id.'-img', $reportFile, $reportFile->getClientOriginalName(),'public');
+                $reportFiles[] = Storage::disk('public')->putFileAs('/source/reports/'.$user->id.'/'.$report->id, $reportFile, $reportFile->getClientOriginalName(),'public');
             }
             $report->report = $reportFiles;
         }
