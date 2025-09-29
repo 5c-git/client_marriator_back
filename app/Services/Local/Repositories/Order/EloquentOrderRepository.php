@@ -648,7 +648,7 @@ class EloquentOrderRepository implements OrderRepository
     {
         $bid = Bid::query()->where('id', $bidId)->first();
         /** @var Bid $bid  */
-        $count = $bid->acceptingUsers()->count();
+
         if ($bid->acceptingUsers()->where('user_id', $user->id)->exists()) {
             $updated = $bid->acceptingUsers()->updateExistingPivot(
                 $user->id,
@@ -667,7 +667,7 @@ class EloquentOrderRepository implements OrderRepository
     {
         $bid = Bid::query()->where('id', $bidId)->first();
         /** @var Bid $bid  */
-        $count = $bid->acceptingUsers()->count();
+
         if ($bid->acceptingUsers()->where('user_id', $specialistId)->exists()) {
             $updated = $bid->acceptingUsers()->updateExistingPivot(
                 $specialistId,
