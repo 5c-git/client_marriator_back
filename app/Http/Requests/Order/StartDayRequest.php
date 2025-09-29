@@ -61,6 +61,7 @@ class StartDayRequest extends FormRequest
 
                     if (!$orderExists) {
                         $fail('Not your bid');
+                        return;
                     }
 
                     /** @var Bid $orderExists */
