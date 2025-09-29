@@ -150,14 +150,15 @@ class SpecialistController extends Controller
             $user,
             $user->id
         );
-        $expandedBids = $bids->flatMap(function ($bid,$user) {
+        $expandedBids = $bids->flatMap(function ($bid) use ($user) {
             return $bid->acceptingUsers->map(function ($acceptingUser) use ($bid,$user) {
                 if($acceptingUser->id === $user->id) {
-                    $bid->acceptingUser = $acceptingUser;
-                    return $bid;
+                    $newBid = clone $bid;
+                    $newBid->acceptingUser = $acceptingUser;
+                    return $newBid;
                 }
             });
-        });
+        })->filter();
         return JobResource::collection($expandedBids);
     }
 
