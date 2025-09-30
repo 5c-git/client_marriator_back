@@ -126,6 +126,7 @@ class SpecialistController extends Controller
             ->where('status',ReportStatusEnum::start->value)
             ->first();
         $report->status = ReportStatusEnum::end->value;
+        $report->date_end = Carbon::now();
 
         /** @var  $bid Bid */
         $bid = Bid::query()->where('id',$request->bidId)->first();

@@ -14,6 +14,7 @@ use App\Http\Requests\Order\BidDataRequest;
 use App\Http\Requests\Order\CancelBidRequest;
 use App\Http\Requests\Order\CreateBidFromOrderRequest;
 use App\Http\Requests\Order\CreateBidFromTaskRequest;
+use App\Http\Requests\Order\EndSpecialistJobRequest;
 use App\Http\Requests\Order\EntrustBidRequest;
 use App\Http\Requests\Order\GetBidRequest;
 use App\Http\Requests\Order\GetBidsRequest;
@@ -634,6 +635,16 @@ class UniversalController extends Controller
         }
         if(in_array('supervisor',$this->roles)){
             return app(\App\Http\Controllers\UserRoles\SupervisorController::class)->updateReport($request);
+        }
+        return response()->json(['message' => 'Role not allowed.'], 403);
+    }
+
+    public function endJob(EndSpecialistJobRequest $request){
+        if(in_array('manager',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\ManagerController::class)->endJob($request);
+        }
+        if(in_array('supervisor',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\SupervisorController::class)->endJob($request);
         }
         return response()->json(['message' => 'Role not allowed.'], 403);
     }
