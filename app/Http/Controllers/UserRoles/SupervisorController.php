@@ -41,6 +41,7 @@ use App\Http\Requests\UserData\SetCounterpartyRequest;
 use App\Http\Requests\UserData\SetPlaceRequest as SetPlaceModerationRequest;
 use App\Http\Requests\UserData\SetProjectRequest;
 use App\Http\Requests\UserData\SetUserImgRequest;
+use App\Http\Resources\AcceptingUsersResource;
 use App\Http\Resources\BrandResource;
 use App\Http\Resources\CounterpartyResource;
 use App\Http\Resources\ErrorResource;
@@ -551,7 +552,7 @@ class SupervisorController extends Controller
     }
 
     public function getSpecialistForBid(GetSpecialistForBisRequest $request){
-        return ShortUserResource::collection($this->orderRepository->getSpecialistForBid($request->bidId));
+        return AcceptingUsersResource::collection($this->orderRepository->getSpecialistForBid($request->bidId));
     }
 
     public function updateBid(BidDataRequest $request){
