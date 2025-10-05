@@ -665,12 +665,8 @@ class SupervisorController extends Controller
     public function updateReport(UpdateReportRequest $request)
     {
         $report = Report::where('id',$request->reportId)->first();
-        $report->date_start = $request->date_start ?? $report->date_start;
-        $report->date_end = $request->date_end ?? $report->date_end;
-        $report->status = $request->status ?? $report->status;
+        $report->hours = $request->hours;
         $report->forPay = $this->getPriceForHour($report);
-        $report->forPay = $request->forPay ?? $report->forPay;
-        $report->income = $request->income ?? $report->income;
         $report->save();
         return new ReportResource($report);
     }
@@ -690,7 +686,7 @@ class SupervisorController extends Controller
                     break;
                 }
             }
-            $price = $price * round($report->date_start->diffInSeconds($report->date_end) / 3600, 2);
+            $price = $price * $report->hours;
         }else{
             $price = $report->bid->price;
         }

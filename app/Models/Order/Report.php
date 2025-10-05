@@ -19,6 +19,7 @@ use App\Models\Fields\Directory\ViewActivities;
  * @property int $order_id
  * @property int $task_id
  * @property float $coefficient
+ * @property float $hours
  * @property int|null $dayActivity
  * @property Carbon $date_start
  * @property Carbon $date_end
@@ -53,7 +54,8 @@ class Report extends Model
         'dayActivity',
         'forPay',
         'income',
-        'coefficient'
+        'coefficient',
+        'hours'
     ];
 
     protected $casts = [

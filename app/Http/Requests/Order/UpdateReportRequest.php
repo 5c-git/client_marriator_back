@@ -48,18 +48,7 @@ class UpdateReportRequest extends FormRequest
                     }
                 },
             ],
-            'date_start' => 'sometimes|date',
-            'date_end' => 'sometimes|date',
-            'status' => [
-                'sometimes',
-                Rule::in([
-                    ReportStatusEnum::reported->value,
-                    ReportStatusEnum::end->value,
-                    ReportStatusEnum::notEnded->value,
-                ])
-            ],
-            'forPay' => 'sometimes|integer',
-            'income' => 'sometimes|integer',
+            'hours' => 'required|numeric',
         ];
     }
 }

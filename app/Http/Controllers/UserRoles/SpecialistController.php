@@ -127,6 +127,7 @@ class SpecialistController extends Controller
             ->first();
         $report->status = ReportStatusEnum::end->value;
         $report->date_end = Carbon::now();
+        $report->hours = round($report->date_start->diffInSeconds($report->date_end) / 3600, 2);
 
         /** @var  $bid Bid */
         $bid = Bid::query()->where('id',$request->bidId)->first();
