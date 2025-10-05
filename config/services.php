@@ -38,6 +38,12 @@ return [
     'nopaper' => [
         'base_url' => env('NOPAPER_BASE_URL'),
         'api_key' => env('NOPAPER_API_KEY'),
-    ]
+    ],
+
+    'timesheet' => [
+        'url' => env('VERME_API_URL',''),
+        'login' => env('VERME_API_LOGIN',''),
+        'password' => env('VERME_API_PASSWORD',''),
+    ],
 
 ];

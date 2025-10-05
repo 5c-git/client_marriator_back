@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\RoleResource;
 use App\Models\User;
 use App\Models\User\UserRole;
+use App\Services\DocumentServices\RecognitionDocumentService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -352,6 +353,7 @@ class FormController extends Controller
                 $user->save();
                 $apiTokenService = new ApiTokenService($user);
                 $token = $apiTokenService->createToken(['personalArea']);
+                (new RecognitionDocumentService(json_decode($user->data, true),$user->id))->createDocumentForRecognition();
 
                 $response['result']['token'] = $token;
                 $response['status'] = 'success';

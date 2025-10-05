@@ -95,7 +95,7 @@ class JobResource extends JsonResource
         if($reports) {
             foreach ($reports as $report) {
                 /** @var  $report Report */
-                $forPay += $report->forPay;
+                $forPay += $report->forPay * ($report->coefficient ?? 1);
             }
         }
         return $forPay;

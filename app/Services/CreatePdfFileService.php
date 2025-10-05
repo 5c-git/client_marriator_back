@@ -73,7 +73,7 @@ class CreatePdfFileService
 
             switch ($extension) {
                 case 'pdf':
-                    return $file->getRealPath(); // Уже в PDF формате
+                    return [$file->getRealPath(), $file->getClientOriginalName()];
                 case 'doc':
                 case 'docx':
                     $phpWord = IOFactory::load($file->getRealPath());

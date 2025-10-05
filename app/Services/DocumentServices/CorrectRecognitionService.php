@@ -3,6 +3,7 @@ namespace App\Services\DocumentServices;
 
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Client\Response;
+use Illuminate\Support\Facades\Storage;
 
 class CorrectRecognitionService
 {
@@ -29,7 +30,7 @@ class CorrectRecognitionService
     public function uploadImage(int $packageId, string $imagePath): ?int
     {
         $response = Http::withToken($this->token)
-            ->attach('file', file_get_contents($imagePath), basename($imagePath))
+            ->attach('file', Storage::get($imagePath), basename($imagePath))
             ->post("{$this->baseUrl}/api/images/Package/{$packageId}");
 
         return $response->successful()
@@ -52,9 +53,7 @@ class CorrectRecognitionService
     public function getRecognitionResult(int $packageId): ?array
     {
         $response = Http::withToken($this->token)
-            ->get("{$this->baseUrl}/api/packages/{$packageId}", [
-                'allowPartialResults' => true
-            ]);
+            ->get("{$this->baseUrl}/api/packages/{$packageId}");
 
         return $response->successful()
             ? $response->json()

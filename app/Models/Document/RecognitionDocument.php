@@ -2,6 +2,7 @@
 
 namespace App\Models\Document;
 
+use App\Enum\Document\DocumentTypeEnum;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -12,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $id
  * @property string $link
  * @property RecognitionDocumentStatusEnum $status
+ * @property DocumentTypeEnum $file_type
  * @property array|null $data
  * @property int $user_id
  * @property string $file_field
@@ -32,11 +34,13 @@ class RecognitionDocument extends Model
         'user_id',
         'file_field',
         'external_package_id',
+        'file_type'
     ];
 
     protected $casts = [
         'data' => 'json',
         'status' => RecognitionDocumentStatusEnum::class,
+        'file_type' => DocumentTypeEnum::class
     ];
 
     public function user(): BelongsTo
