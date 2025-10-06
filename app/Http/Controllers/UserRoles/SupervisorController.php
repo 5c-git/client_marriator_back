@@ -6,85 +6,70 @@ use App\Enum\Order\BidAcceptingStatusEnum;
 use App\Enum\Order\OrderStatusEnum;
 use App\Enum\Order\ReportStatusEnum;
 use App\Enum\Role\RoleEnum;
-use App\Enum\User\SortEnum;
 use App\Enum\User\UserStatusModerationEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ConfirmUserRequest;
 use App\Http\Requests\Order\AcceptAllReportRequest;
-use App\Http\Requests\Order\AcceptBidRequest;
+use App\Http\Requests\Order\AcceptOrderRequest;
 use App\Http\Requests\Order\AcceptReportRequest;
 use App\Http\Requests\Order\AcceptSpecialistRequest;
-use App\Http\Requests\Order\BidDataRequest;
-use App\Http\Requests\Order\CancelBidRequest;
-use App\Http\Requests\Order\CancelRequestRequest;
-use App\Http\Requests\Order\CreateRequestFromBidRequest;
-use App\Http\Requests\Order\CreateRequestFromTaskRequest;
-use App\Http\Requests\Order\EndSpecialistJobRequest;
-use App\Http\Requests\Order\EntrustBidRequest;
-use App\Http\Requests\Order\GetJobRequest;
-use App\Http\Requests\Order\GetOrderRequest;
-use App\Http\Requests\Order\GetSpecialistForBisRequest;
-use App\Http\Requests\Order\GetTaskRequest;
-use App\Http\Requests\Order\GetViewActivitiesForOrderRequest;
-use App\Http\Requests\Order\GetViewActivitiesForTaskRequest;
-use App\Http\Requests\Order\PayReportRequest;
-use App\Http\Requests\Order\UpdateReportRequest;
-use App\Http\Requests\PaginatorRequest;
-use App\Http\Requests\SetUserDataRequest;
-use App\Http\Requests\UserData\DeleteCounterpartyRequest;
-use App\Http\Requests\UserData\DelPlaceRequest as DelPlaceModerationRequest;
-use App\Http\Requests\UserData\DelProjectRequest;
-use App\Http\Requests\UserData\GetClientRequest;
-use App\Http\Requests\UserData\GetPlaceRequest;
-use App\Http\Requests\UserData\GetProjectRequest;
-use App\Http\Requests\UserData\SetCounterpartyRequest;
-use App\Http\Requests\UserData\SetPlaceRequest as SetPlaceModerationRequest;
-use App\Http\Requests\UserData\SetProjectRequest;
-use App\Http\Requests\UserData\SetUserImgRequest;
-use App\Http\Resources\AcceptingUsersResource;
-use App\Http\Resources\BrandResource;
-use App\Http\Resources\CounterpartyResource;
-use App\Http\Resources\ErrorResource;
-use App\Http\Resources\Order\JobResource;
-use App\Http\Resources\Order\OrderResource;
-use App\Http\Resources\Order\ReportResource;
-use App\Http\Resources\Order\RequestResource;
-use App\Http\Resources\Order\ShortOrderResource;
-use App\Http\Resources\Order\TaskShortResource;
-use App\Http\Resources\ProjectResource;
-use App\Http\Resources\RadiusResponse;
-use App\Http\Resources\ShortUserResource;
-use App\Http\Resources\SuccessResource;
-use App\Http\Resources\UserResource;
-use App\Http\Resources\ViewActivityResource;
-use App\Models\Fields\Directory\Counterparty;
-use App\Models\Fields\Directory\Place;
-use App\Models\Fields\Directory\Project;
-use App\Models\Fields\Directory\Radius;
-use App\Models\Fields\Directory\ViewActivities;
-use App\Models\Order\Bid;
-use App\Models\Order\Order;
-use App\Models\Order\Report;
-use App\Models\Order\Task;
-use App\Models\User;
-use App\Services\ApiTokenService\ApiTokenService;
-use App\Services\Local\Repositories\Contracts\OrderRepository;
-use App\Services\Local\Repositories\Contracts\UserRepository;
-use App\Services\Verme\VermeService;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
-use App\Services\Register\SmsCodeService;
-use App\Http\Resources\PlaceResource;
-use App\Http\Requests\Order\AcceptOrderRequest;
-use App\Http\Resources\Order\TaskResource;
 use App\Http\Requests\Order\AcceptTaskRequest;
 use App\Http\Requests\Order\CreateBidFromOrderRequest;
 use App\Http\Requests\Order\CreateBidFromTaskRequest;
-use App\Http\Resources\Order\BidResource;
-use App\Http\Requests\Order\GetBidsRequest;
+use App\Http\Requests\Order\EndSpecialistJobRequest;
 use App\Http\Requests\Order\GetBidRequest;
+use App\Http\Requests\Order\GetBidsRequest;
+use App\Http\Requests\Order\GetJobRequest;
+use App\Http\Requests\Order\GetOrderRequest;
+use App\Http\Requests\Order\PayReportRequest;
+use App\Http\Requests\Order\UpdateReportRequest;
+use App\Http\Requests\PaginatorRequest;
+use App\Http\Resources\AcceptingUsersResource;
+use App\Http\Resources\ErrorResource;
+use App\Http\Resources\Order\BidResource;
+use App\Http\Resources\Order\JobResource;
+use App\Http\Resources\Order\OrderResource;
+use App\Http\Resources\Order\ReportResource;
+use App\Http\Resources\PlaceResource;
+use App\Http\Resources\ProjectResource;
+use App\Http\Resources\RadiusResponse;
+use App\Http\Resources\SuccessResource;
+use App\Models\Fields\Directory\Place;
+use App\Models\Fields\Directory\Project;
+use App\Models\Fields\Directory\Radius;
+use App\Models\Order\Bid;
+use App\Models\Order\Report;
+use App\Models\Order\Task;
+use App\Models\User;
+use App\Services\Local\Repositories\Contracts\OrderRepository;
+use App\Services\Local\Repositories\Contracts\UserRepository;
+use App\Services\Verme\VermeService;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Resources\UserResource;
+use App\Http\Resources\Order\TaskResource;
+use App\Http\Requests\Order\GetTaskRequest;
+use App\Enum\User\SortEnum;
+use App\Http\Requests\UserData\DelProjectRequest;
+use App\Http\Requests\UserData\GetProjectRequest;
+use App\Http\Requests\UserData\SetProjectRequest;
+use App\Http\Requests\UserData\SetPlaceRequest as SetPlaceModerationRequest;
+use App\Http\Requests\UserData\DelPlaceRequest as DelPlaceModerationRequest;
+use App\Http\Requests\UserData\GetPlaceRequest;
+use App\Http\Requests\Order\EntrustBidRequest;
+use App\Http\Requests\Order\AcceptBidRequest;
+use App\Http\Requests\Order\CancelBidRequest;
+use App\Http\Requests\Order\GetSpecialistForBisRequest;
+use App\Http\Requests\Order\BidDataRequest;
+use App\Http\Requests\UserData\SetUserImgRequest;
+use App\Http\Requests\Order\CreateRequestFromTaskRequest;
+use App\Http\Requests\Order\CreateRequestFromBidRequest;
+use App\Http\Requests\Order\CancelRequestRequest;
+use App\Http\Resources\Order\RequestResource;
+use App\Http\Requests\UserData\GetClientRequest;
+use App\Models\Fields\Directory\Counterparty;
+use App\Http\Resources\CounterpartyResource;
+use App\Http\Requests\UserData\SetCounterpartyRequest;
+use App\Http\Requests\UserData\DeleteCounterpartyRequest;
 use App\Http\Resources\Order\BidShortResource;
 
 class SupervisorController extends Controller
@@ -173,8 +158,10 @@ class SupervisorController extends Controller
             }
         }
         if($checkRole){
-            $project = Project::all();
-            return ProjectResource::collection($project);
+            $projects = $user->counterparty
+                ->flatMap(fn($counterparty) => $counterparty->projects)
+                ->unique('id');
+            return ProjectResource::collection($projects);
         }else{
             return new ErrorResource();
         }
@@ -191,7 +178,16 @@ class SupervisorController extends Controller
             }
         }
         if($checkRole){
-            $user->project()->syncWithoutDetaching($request->projectId);
+            $projects = $user->counterparty
+                ->flatMap(fn($counterparty) => $counterparty->projects)
+                ->unique('id')->pluck('id')->toArray();
+            $projectIds = [];
+            foreach ($request->projectId as $projectOneId){
+                if(in_array($projectOneId,$projects)){
+                    $projectIds[] = $projectOneId;
+                }
+            }
+            $user->project()->syncWithoutDetaching($projectIds);
             return new SuccessResource();
         }else{
             return new ErrorResource();
@@ -384,6 +380,13 @@ class SupervisorController extends Controller
             $userForModeration->count_wait_bid = $request->count_wait_bid ?? null;
             $userForModeration->time_answer_bid = $request->time_answer_bid ?? null;
             $userForModeration->notification_start = $request->notification_start ?? null;
+
+            if($request->phone) {
+                $userForModeration->phone = $request->phone;
+            }
+            if($request->name) {
+                $userForModeration->name = $request->name;
+            }
             $userForModeration->save();
         }
 
@@ -451,7 +454,7 @@ class SupervisorController extends Controller
     {
         $user = $request->user();
         if($this->orderRepository->acceptTask($user,$request->taskId)) {
-           Task::where('id',$request->taskId)->first()->acceptingUsers()->detach();
+            Task::where('id',$request->taskId)->first()->acceptingUsers()->detach();
             return new SuccessResource();
         }else{
             return new ErrorResource();
@@ -500,17 +503,6 @@ class SupervisorController extends Controller
         );
     }
 
-    public function getViewActivitiesForTask(GetViewActivitiesForTaskRequest $request){
-        $task = Task::where('id',$request->taskId)->first();
-        $viewActivities = $task->place->project
-            ->flatMap(fn($project) => $project->viewActivities)
-            ->unique('id');
-        if(!$task->self_employed) {
-            $viewActivities = $viewActivities->where('self_employed', false);
-        }
-        return ViewActivityResource::collection($viewActivities);
-    }
-
     public function invoiceBid(EntrustBidRequest $request): ErrorResource|SuccessResource
     {
         if($request->bidId){
@@ -534,7 +526,7 @@ class SupervisorController extends Controller
     public function instructBid(EntrustBidRequest $request): ErrorResource|SuccessResource
     {
         if($request->bidId){
-            $this->orderRepository->instructBid($request->bidId,$request->input('supervisorIds'));
+            $this->orderRepository->instructBid($request->bidId,$request->input('supervisorId'));
             return new SuccessResource();
         }else{
             return new ErrorResource();
