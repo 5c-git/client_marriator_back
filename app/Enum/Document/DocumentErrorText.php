@@ -24,7 +24,7 @@ enum DocumentErrorText: int
         return match($this)
         {
             self::ErrorUpload => 'Ошибка загрузки файла загрузите новый файл',
-            self::ErrorPhp => 'Ошибка обратитесть в тех поддержку',
+            self::ErrorPhp => 'Ошибка обратитесь в тех поддержку',
         };
     }
 }
