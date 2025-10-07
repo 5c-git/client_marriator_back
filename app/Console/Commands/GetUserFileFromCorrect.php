@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Enum\Document\DocumentErrorText;
 use App\Enum\Document\DocumentTypeEnum;
 use App\Enum\Document\RecognitionDocumentStatusEnum;
 use App\Models\Document\RecognitionDocument;
@@ -45,6 +46,7 @@ class GetUserFileFromCorrect extends Command
                 }
             } catch (\Throwable $e) {
                 $recognitionDocument->status = RecognitionDocumentStatusEnum::failed->value;
+                RecognitionDocumentService::addErrorField($recognitionDocument,DocumentErrorText::ErrorPhp->getUserBinding());
                 $recognitionDocument->save();
             }
         }

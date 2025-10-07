@@ -1,0 +1,30 @@
+<?php
+
+namespace App\Enum\Document;
+use App\Models\Fields\Directory\Place;
+use App\Models\Fields\Directory\Project;
+use ArchTech\Enums\InvokableCases;
+use ArchTech\Enums\Names;
+use ArchTech\Enums\Values;
+use ArchTech\Enums\Options;
+use App\Services\Formatter\Connectors;
+
+enum DocumentErrorText: int
+{
+    use Options;
+    use InvokableCases;
+    use Names;
+    use Values;
+
+    case ErrorUpload = 1;
+    case ErrorPhp = 2;
+
+    public function getUserBinding(): string
+    {
+        return match($this)
+        {
+            self::ErrorUpload => 'Ошибка загрузки файла загрузите новый файл',
+            self::ErrorPhp => 'Ошибка обратитесть в тех поддержку',
+        };
+    }
+}

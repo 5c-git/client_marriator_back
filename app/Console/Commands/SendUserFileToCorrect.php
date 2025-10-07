@@ -2,9 +2,11 @@
 
 namespace App\Console\Commands;
 
+use App\Enum\Document\DocumentErrorText;
 use App\Enum\Document\RecognitionDocumentStatusEnum;
 use App\Models\Document\RecognitionDocument;
 use App\Services\DocumentServices\CorrectRecognitionService;
+use App\Services\DocumentServices\RecognitionDocumentService;
 use Illuminate\Console\Command;
 
 class SendUserFileToCorrect extends Command
@@ -34,11 +36,13 @@ class SendUserFileToCorrect extends Command
                         }
                     } else {
                         $recognitionDocument->status = RecognitionDocumentStatusEnum::failed->value;
+                        RecognitionDocumentService::addErrorField($recognitionDocument,DocumentErrorText::ErrorUpload->getUserBinding());
                     }
                     $recognitionDocument->save();
                 }
             } catch (\Throwable $e) {
                 $recognitionDocument->status = RecognitionDocumentStatusEnum::failed->value;
+                RecognitionDocumentService::addErrorField($recognitionDocument,DocumentErrorText::ErrorPhp->getUserBinding());
                 $recognitionDocument->save();
             }
         }
