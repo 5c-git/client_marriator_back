@@ -16,6 +16,7 @@ use App\Http\Requests\Order\AcceptSpecialistRequest;
 use App\Http\Requests\Order\AcceptTaskRequest;
 use App\Http\Requests\Order\CreateBidFromOrderRequest;
 use App\Http\Requests\Order\CreateBidFromTaskRequest;
+use App\Http\Requests\Order\DeclinedSpecialistRequest;
 use App\Http\Requests\Order\EndSpecialistJobRequest;
 use App\Http\Requests\Order\GetBidRequest;
 use App\Http\Requests\Order\GetBidsRequest;
@@ -591,7 +592,7 @@ class SupervisorController extends Controller
         $bid->acceptingUsers()->updateExistingPivot($request->specialistId, [
             'accepted' => BidAcceptingStatusEnum::work->value,
         ]);
-        $count = $bid->acceptingUsers()->count();
+        $count = $bid->acceptingUsers()->where('accepted',BidAcceptingStatusEnum::work->value)->count();
         if ($count >= $bid->count) {
             $bid->status = OrderStatusEnum::accepted->value;
             $bid->save();
@@ -599,7 +600,7 @@ class SupervisorController extends Controller
         return new SuccessResource();
     }
 
-    public function declinedSpecialist(AcceptSpecialistRequest $request)
+    public function declinedSpecialist(DeclinedSpecialistRequest $request)
     {
         $bid = Bid::where('id',$request->bidId)->first();
         $bid->acceptingUsers()->updateExistingPivot($request->specialistId, [

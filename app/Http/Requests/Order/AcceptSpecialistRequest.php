@@ -43,15 +43,10 @@ class AcceptSpecialistRequest extends FormRequest
                     $userIdsSupervisor[] = $user->id;
                     $orderExists = Bid::where(function ($query) use ($value,$userIdsSupervisor) {
                         $query->whereIn('user_id', $userIdsSupervisor)->where('id', $value);
-                    })->first();
+                    })->where('status',OrderStatusEnum::notAccepted->value)->first();
 
                     if (!$orderExists) {
                         $fail('Not your bid or status is not notAccepted');
-                    }else {
-                        $count = $orderExists->acceptingUsers()->count();
-                        if ($count >= $orderExists->count){
-                            $fail('The required number of specialists has already been accepted into the application.');
-                        }
                     }
                 },
             ],
