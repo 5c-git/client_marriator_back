@@ -41,8 +41,7 @@ class GetJobRequest extends FormRequest
 
                     $orderExists = Bid::query()->where(function ($query) use ($user,$value) {
                         $userIdsSupervisor = $user->acceptedBids?->pluck('id')->toArray();
-                        $query->whereIn('id', $userIdsSupervisor)->where('id', $value)
-                            ->where('status', OrderStatusEnum::notAccepted);
+                        $query->whereIn('id', $userIdsSupervisor)->where('id', $value);
                     })->orWhere(function ($query) use ($user,$value) {
                         $userIdsSupervisor = $user->supervisors->pluck('id')->toArray();
                         $userIdsSupervisor[] = $user->id;
@@ -62,13 +61,22 @@ class GetJobRequest extends FormRequest
                         $user = auth()->user();
                         $roles = $user?->roles?->pluck('id')->toArray();
 
-                        if(
-                            !(in_array(RoleEnum::specialist->value,$roles) && $user->id == $value) &&
-                            !in_array(RoleEnum::supervisor->value,$roles) &&
-                            !in_array(RoleEnum::manager->value,$roles)
-                        ){
+
+                        if($user->id == $value && !in_array(RoleEnum::specialist->value,$roles))
+                        {
                             $fail('Not your job');
                         }
+
+                        if($user->id != $value &&
+                            (
+                                !in_array(RoleEnum::supervisor->value,$roles) &&
+                                !in_array(RoleEnum::manager->value,$roles)
+                            )
+                        )
+                        {
+                            $fail('Not your job');
+                        }
+
 
                         $bid = Bid::with([
                             'acceptingUsers' => function ($query) use ($value) {
