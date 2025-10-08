@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Enum\Document\DocumentErrorText;
+use App\Enum\Document\DocumentFieldTypeEnum;
 use App\Enum\Document\DocumentTypeEnum;
 use App\Enum\Document\RecognitionDocumentStatusEnum;
 use App\Models\Document\RecognitionDocument;
@@ -26,23 +27,38 @@ class GetUserFileFromCorrect extends Command
                 /** @var RecognitionDocument $recognitionDocument */
                 $correct = new CorrectRecognitionService();
                 $resData = $correct->getRecognitionResult($recognitionDocument->external_package_id);
-                if ($resData && !empty($resData["documents"])) {
-                    $docData = [];
-                    foreach ($resData["documents"] as $document) {
-                        $docData['docType'] = $document["docType"];
-                        if (!empty($document["fields"])) {
-                            foreach ($document["fields"] as $field) {
-                                $docData[$field["fieldKey"]] = $field["fieldValue"];
+                if ($resData && !empty($resData['state']) && $resData['state'] === 'Recognized') {
+                    if(!empty($resData["documents"])) {
+                        $docData = [];
+                        foreach ($resData["documents"] as $document) {
+                            $docData['docType'] = $document["docType"];
+                            if (!empty($document["fields"])) {
+                                foreach ($document["fields"] as $field) {
+                                    $docData[$field["fieldKey"]] = $field["fieldValue"];
+                                }
                             }
                         }
+                        $recognitionDocument->data = $docData;
+                        $recognitionDocument->status = RecognitionDocumentStatusEnum::recognized->value;
+                        if (!empty($docData['docType']) && $docTypeEnum = DocumentTypeEnum::getEnumByExternalName(
+                                $docData['docType']
+                            )) {
+                            if($docTypeEnum == DocumentFieldTypeEnum::tryFrom($recognitionDocument->file_field)?->geFieldType()) {
+                                $recognitionDocument->file_type = $docTypeEnum->value;
+                            }else{
+                                $recognitionDocument->status = RecognitionDocumentStatusEnum::failed->value;
+                                RecognitionDocumentService::addErrorField($recognitionDocument,DocumentErrorText::ErrorFileType->getUserBinding());
+                                $recognitionDocument->save();
+                                break;
+                            }
+                        }
+                        $recognitionDocument->save();
+                        RecognitionDocumentService::createUserMoreInformationInfoFromDocument($recognitionDocument);
+                    }else{
+                        $recognitionDocument->status = RecognitionDocumentStatusEnum::failed->value;
+                        RecognitionDocumentService::addErrorField($recognitionDocument,DocumentErrorText::ErrorRecognize->getUserBinding());
+                        $recognitionDocument->save();
                     }
-                    $recognitionDocument->data = $docData;
-                    $recognitionDocument->status = RecognitionDocumentStatusEnum::recognized->value;
-                    if (!empty($docData['docType']) && $docTypeEnum = DocumentTypeEnum::getEnumByExternalName($docData['docType'])) {
-                        $recognitionDocument->file_type = $docTypeEnum->value;
-                    }
-                    $recognitionDocument->save();
-                    RecognitionDocumentService::createUserMoreInformationInfoFromDocument($recognitionDocument);
                 }
             } catch (\Throwable $e) {
                 $recognitionDocument->status = RecognitionDocumentStatusEnum::failed->value;

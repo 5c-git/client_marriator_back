@@ -1,6 +1,7 @@
 <?php
 namespace App\Services\DocumentServices;
 
+use App\Enum\Document\DocumentFieldTypeEnum;
 use App\Enum\Document\DocumentTypeEnum;
 use App\Enum\Document\RecognitionDocumentStatusEnum;
 use App\Models\Document\RecognitionDocument;
@@ -11,21 +12,19 @@ use Illuminate\Http\Client\Response;
 class RecognitionDocumentService
 {
     private array $userData;
+    private array $userFieldForRecognition;
     private int $userId;
-
-    const USER_FIELD_FOR_RECOGNITION = [
-        'c5gAyG7YPWV7RiCx23srwQnYV8bv5U'
-    ];
 
     public function __construct(array $userData, $userId)
     {
+        $this->userFieldForRecognition = DocumentFieldTypeEnum::options();
         $this->userData = $userData;
         $this->userId = $userId;
     }
 
     public function createDocumentForRecognition(): void
     {
-        foreach (self::USER_FIELD_FOR_RECOGNITION as $field){
+        foreach ($this->userFieldForRecognition as $field){
             if(!empty($this->userData[$field])){
                 $url = str_replace(config('app.url'), "", $this->userData[$field]);
                 $recognitionDocument = new RecognitionDocument();
