@@ -259,7 +259,7 @@ class User extends Authenticatable
 
     public function acceptedBids(): BelongsToMany
     {
-        return $this->belongsToMany(Task::class, 'accept_bid', 'user_id', 'bid_id')
+        return $this->belongsToMany(Bid::class, 'accept_bid', 'user_id', 'bid_id')
             ->withPivot('accepted');
     }
 
