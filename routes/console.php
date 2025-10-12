@@ -8,8 +8,7 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote')->hourly();
 
-Schedule::command('sendUpdateDataUserCommand')->everyMinute()->withoutOverlapping();
-Schedule::command('recognition:process')->everyMinute()->withoutOverlapping();
+//Schedule::command('sendUpdateDataUserCommand')->everyMinute()->withoutOverlapping();
 Schedule::command('endedReportCommand')->everyFiveMinutes()->withoutOverlapping();
 Schedule::command('dellSpecialistFromManagerAndSupervisorCommand')->daily()->withoutOverlapping();
 Schedule::command('closeBidCommand')->hourly()->withoutOverlapping();
