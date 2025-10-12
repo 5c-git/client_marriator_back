@@ -29,6 +29,7 @@ class CorrectRecognitionService
 
     public function uploadImage(int $packageId, string $imagePath): ?int
     {
+        $imagePath = str_replace('/storage','',$imagePath);
         $response = Http::withToken($this->token)
             ->attach('file', Storage::get($imagePath), basename($imagePath))
             ->post("{$this->baseUrl}/api/images/Package/{$packageId}");
