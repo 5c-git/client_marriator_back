@@ -31,7 +31,7 @@ class CorrectRecognitionService
     {
         $imagePath = str_replace('/storage','',$imagePath);
         $response = Http::withToken($this->token)
-            ->attach('file', Storage::get($imagePath), basename($imagePath))
+            ->attach('file', Storage::disk('public')->get($imagePath), basename($imagePath))
             ->post("{$this->baseUrl}/api/images/Package/{$packageId}");
 
         return $response->successful()
