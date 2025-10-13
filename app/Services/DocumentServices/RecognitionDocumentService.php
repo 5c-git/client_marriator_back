@@ -72,7 +72,7 @@ class RecognitionDocumentService
                     }
                 }
                 $expansionData[$recognitionDocument->file_field] = $dataForSave;
-                $user->expansionData                             = $expansionData;
+                $user->expansionData                             = json_encode($expansionData);
                 $user->save();
             }
         }
@@ -95,7 +95,7 @@ class RecognitionDocumentService
             }
 
             $errorData[$recognitionDocument->file_field] = $errorText;
-            $user->errorData                             = $errorData;
+            $user->errorData                             = json_encode($errorData);
             $user->save();
         }
 
