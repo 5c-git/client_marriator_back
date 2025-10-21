@@ -20,8 +20,8 @@ class ReportResource extends JsonResource
     public function toArray($request): array
     {
         return [
-            'dateStart' => $this->date_start,
-            'dateEnd' => $this->date_end,
+            'dateStart' => $this->date_start->timezone('Europe/Moscow')->format('Y-m-d\TH:i:sP'),
+            'dateEnd' => $this->date_end->timezone('Europe/Moscow')->format('Y-m-d\TH:i:sP'),
             'report' => $this->report,
             'dayActivityId' => $this->dayActivity,
             'status' => $this->status->value,

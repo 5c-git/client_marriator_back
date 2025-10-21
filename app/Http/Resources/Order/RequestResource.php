@@ -35,8 +35,8 @@ class RequestResource extends JsonResource
             'priceResult' => $this->price*($this->self_employed?0.94:0.87),
             'viewActivity' => new ViewActivityResource($this->viewActivity),
             'count' => $this->count,
-            'dateStart' => $this->date_start,
-            'dateEnd' => $this->date_end,
+            'dateStart' => $this->date_start->timezone('Europe/Moscow')->format('Y-m-d\TH:i:sP'),
+            'dateEnd' => $this->date_end->timezone('Europe/Moscow')->format('Y-m-d\TH:i:sP'),
             'needFoto' => (bool)$this->need_foto,
             'dateActivity' => $this->date_activity,
         ];
