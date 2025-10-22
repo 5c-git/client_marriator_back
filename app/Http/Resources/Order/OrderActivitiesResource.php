@@ -28,8 +28,8 @@ class OrderActivitiesResource extends JsonResource
             'id' => $this->id,
             'viewActivity' => new ViewActivityResource($this->viewActivity),
             'count' => $this->count,
-            'dateStart' => $this->date_start->timezone('Europe/Moscow')->format('Y-m-d\TH:i:sP'),
-            'dateEnd' => $this->date_end->timezone('Europe/Moscow')->format('Y-m-d\TH:i:sP'),
+            'dateStart' => $this->date_start?->timezone('Europe/Moscow')->format('Y-m-d\TH:i:sP'),
+            'dateEnd' => $this->date_end?->timezone('Europe/Moscow')->format('Y-m-d\TH:i:sP'),
             'needFoto' => (bool)$this->need_foto,
             'dateActivity' => DateActivityResource::collection(collect($this->date_activity))
         ];
