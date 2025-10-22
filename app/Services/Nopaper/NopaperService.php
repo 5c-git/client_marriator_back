@@ -13,6 +13,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class NopaperService
 {
@@ -45,22 +46,21 @@ class NopaperService
                     ->where('status',DocumentStatusEnum::Signed->value)
                     ->where('status_signature',DocumentStatusSignatureEnum::NoSend->value)
                     ->get();
-                $files = [
-                    'storage/app/public/source/1.jpg',
-                    'storage/app/public/source/2.jpg',
-                    //'storage/app/public/3.webp',
-                    'storage/app/public/source/4.jpg',
-                    'storage/app/public/source/5.jpg',
-                ];
+
                 foreach ($files as $file) {
-                    $fileContent = base64_encode(file_get_contents($file));
+                    $imagePath = str_replace('/storage','',$file->file_path);
+                    $fileContent = base64_encode(Storage::disk('public')->get($imagePath));
                     $fileData    = [
                         'fileInfo' => [
-                            'fileNameWithExtension' => basename($file),
+                            'fileNameWithExtension' => basename($file->file_path),
                             'filebase64'            => $fileContent
                         ]
                     ];
-                    $this->attachFileToDocument($draftResponse['documentId'], $fileData);
+                    $fileDataResponse = $this->attachFileToDocument($draftResponse['documentId'], $fileData);
+                    if(!empty($fileDataResponse['fileId'])) {
+                        $file->file_id = $fileDataResponse['fileId'];
+                        $file->save();
+                    }
                 }
 
                 if($this->sendDocument($draftResponse['documentId'])){
@@ -102,6 +102,7 @@ class NopaperService
                     ->where('document_id', $document->document_id)
                     ->update([
                         'status_signature' => DocumentStatusSignatureEnum::Signed->value,
+                        'date_signature' => Carbon::now()
                     ]);
                 return ['success'=>true];
             }
@@ -322,13 +323,34 @@ class NopaperService
     /**
      * Получить информацию о документе
      */
-    public function getDocumentInfo(Document $document)
+    public function getDocumentInfo(Document $document): Document
     {
-        $response = Http::withHeaders([
-            'X-Api-Key' => $this->apiKey,
-        ])->get("{$this->baseUrl}/api/v2/external/document/{$document->document_id}");
+        if(!$document->file_path_signed) {
+            $fileData = [
+                'documentFileInfoList' => [
+                    0 => [
+                        'fileId'     => $document->file_id,
+                        'documentId' => $document->document_id
+                    ]
+                ]
+            ];
 
-        return $this->handleResponse($response);
+            $response = Http::withHeaders([
+                'X-Api-Key' => $this->apiKey,
+            ])->post("{$this->baseUrl}/api/v2/external/document/file/list", $fileData);
+
+            $fileData = $this->handleResponse($response);
+            if (!empty($fileData['fileInfoList'])) {
+                $fileContent = $fileData['fileInfoList'][0]['fileBase64'];
+                $fileContent = base64_decode($fileContent);
+                $fileName    = $fileData['fileInfoList'][0]['fileNameWithExtension'];
+                $filePath    = '/source/document/' . $document->user_id . '/signed/' . date('Y-m-d') . '/' . $fileName;
+                Storage::disk('public')->put($filePath, $fileContent, 'public');
+                $document->file_path_signed = $filePath;
+                $document->save();
+            }
+        }
+        return $document;
     }
 
     /**
@@ -336,15 +358,6 @@ class NopaperService
      */
     protected function handleResponse(Response $response)
     {
-        echo "<pre>";
-        var_dump(2);
-        echo "</pre>";
-        echo "<pre>";
-        var_dump($response->status());
-        echo "</pre>";
-        echo "<pre>";
-        var_dump($response->body());
-        echo "</pre>";
         if ($response->successful()) {
             return $response->json();
         }

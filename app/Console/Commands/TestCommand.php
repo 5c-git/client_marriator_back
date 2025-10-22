@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 
 use App\Enum\Order\OrderStatusEnum;
 use App\Enum\Order\ReportStatusEnum;
+use App\Models\Document\Document;
 use App\Models\Order\Bid;
 use App\Models\Order\Report;
 use App\Services\CreatePdfFileService;
@@ -49,11 +50,14 @@ class TestCommand extends Command
         ];
 
         $user = User::query()->where('id',172)->first();
+        $doc = Document::query()->where('id',24)->first();
 //32525
         $nopaper = new NopaperService();
         //$data = $nopaper->checkUserExists($user);
         //$data = $nopaper->sendDocumentsToNopaper($user);
-        $data = $nopaper->confirmSms($user,32525);
+        //$data = $nopaper->confirmSms($user,'000000');
+        //$data = $nopaper->getDocumentInfo($doc);
+
 
 
         echo "<pre>";

@@ -201,7 +201,7 @@ class SpecialistController extends Controller
         $document = Document::query()
             ->where('user_id', $user->id)
             ->where('status', DocumentStatusEnum::Signed->value)
-            ->where('status_signature', DocumentStatusSignatureEnum::Process->value)
+            ->where('status_signature', DocumentStatusSignatureEnum::NoSend->value)
             ->first();
 
         if(!$document && (new NopaperService())->sendDocumentsToNopaper($user)){
