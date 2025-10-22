@@ -8,12 +8,15 @@ use App\Enum\Order\BidAcceptingStatusEnum;
 use App\Enum\Order\OrderStatusEnum;
 use App\Enum\Order\ReportStatusEnum;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Document\GetSignetDocumentRequest;
+use App\Http\Requests\Document\SignedDocumentsSendCodeRequest;
 use App\Http\Requests\Order\AcceptBidRequest;
 use App\Http\Requests\Order\EndJobRequest;
 use App\Http\Requests\Order\GetBidRequest;
 use App\Http\Requests\Order\GetBidsRequest;
 use App\Http\Requests\Order\GetJobRequest;
 use App\Http\Requests\Order\PaySpecialistReportRequest;
+use App\Http\Resources\Document\DocumentResource;
 use App\Http\Resources\ErrorResource;
 use App\Http\Resources\Order\BidResource;
 use App\Http\Resources\Order\BidShortResource;
@@ -29,6 +32,7 @@ use App\Models\User;
 use App\Services\ApiTokenService\ApiTokenService;
 use App\Services\Local\Repositories\Contracts\OrderRepository;
 use App\Services\Local\Repositories\Contracts\UserRepository;
+use App\Services\Nopaper\NopaperService;
 use Carbon\Carbon;
 use Faker\Core\Uuid;
 use Illuminate\Http\Request;
@@ -189,5 +193,57 @@ class SpecialistController extends Controller
         $document->date_signature = Carbon::now();
         $document->save();
         return new SuccessResource();
+    }
+
+    public function signedDocuments(Request $request): ErrorResource|SuccessResource
+    {
+        $user = $request->user();
+        $document = Document::query()
+            ->where('user_id', $user->id)
+            ->where('status', DocumentStatusEnum::Signed->value)
+            ->where('status_signature', DocumentStatusSignatureEnum::Process->value)
+            ->first();
+
+        if(!$document && (new NopaperService())->sendDocumentsToNopaper($user)){
+            return new SuccessResource();
+        }
+        return new ErrorResource();
+    }
+
+    public function signedDocumentsSendCode(SignedDocumentsSendCodeRequest $request): ErrorResource|SuccessResource
+    {
+        $user = $request->user();
+        $dataSendCode = (new NopaperService())->confirmSms($user, $request->code);
+        if(!empty($dataSendCode['success']))
+        {
+            return new SuccessResource();
+        }
+        return new ErrorResource($dataSendCode['message']);
+    }
+
+    public function signedDocumentsRetriesSms(Request $request): SuccessResource|ErrorResource
+    {
+        $user = $request->user();
+        $dataSendCode = (new NopaperService())->retriesSms($user);
+        if(!empty($dataSendCode['success']))
+        {
+            return new SuccessResource();
+        }
+        return new ErrorResource($dataSendCode['message']);
+    }
+
+    public function getSignetDocument(GetSignetDocumentRequest $request): DocumentResource
+    {
+        $user = $request->user();
+        /** @var  $document Document */
+        $document = Document::query()
+            ->where('id', $request->documentId)
+            ->where('user_id', $user->id)
+            ->where('status', DocumentStatusEnum::Signed->value)
+            ->where('status_signature', DocumentStatusSignatureEnum::Signed->value)
+            ->first();
+        $nopaperService = new NopaperService();
+        $documentInfo = $nopaperService->getDocumentInfo($document);
+        return new DocumentResource($documentInfo);
     }
 }

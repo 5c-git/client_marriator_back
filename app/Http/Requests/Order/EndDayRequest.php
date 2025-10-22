@@ -55,8 +55,7 @@ class EndDayRequest extends FormRequest
                             $bidsIds = $user->acceptedBids()
                                 ->pluck('bid_id')
                                 ->toArray();
-                            $query->whereIn('id', $bidsIds)->where('id', $value)
-                                ->where('status', OrderStatusEnum::accepted->value);
+                            $query->whereIn('id', $bidsIds)->where('id', $value);
                         });
                     })->first();
 

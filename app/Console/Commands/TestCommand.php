@@ -25,11 +25,6 @@ class TestCommand extends Command
 
     public function handle(): void
     {
-//        $verme = new VermeService();
-//        $data = $verme->getTimesheets();
-//        echo "<pre>";
-//        var_dump($data);
-//        echo "</pre>";
         //$payload = [
         //            'userPhone' => $userData['phone'],
         //            'email' => $userData['email'],
@@ -48,80 +43,40 @@ class TestCommand extends Command
         //                'birthPlace' => $userData['passport_birth_place'],
         //            ]
         //        ];
-//        $userData = [
-//            'phone'=> 79036650547,
-//            'email'=> 'fifka@mail.ru',
-//        ];
-//
-//        $nopaper = new NopaperService();
-//        $respons = $nopaper->checkUserExists($userData['phone']);
-//        echo "<pre>";
-//        var_dump($respons);
-//        echo "</pre>";
-//        $respons = $nopaper->createUser($userData);
-//        echo "<pre>";
-//        var_dump($respons);
-//        echo "</pre>";
-//        $respons = $nopaper->checkUserExists($userData['phone']);
-//        echo "<pre>";
-//        var_dump($respons);
-//        echo "</pre>";
-        $images = [
-            'storage/app/public/1.jpg',
-            'storage/app/public/2.jpg',
-            //'storage/app/public/3.webp',
-            'storage/app/public/4.jpg',
-            'storage/app/public/5.jpg',
+        $userData = [
+            'phone'=> 79036650547,
+            'email'=> 'fifka@mail.ru',
         ];
-//        $uploadedFile = [];
-//        foreach ($images as $k=>$image){
-//            $uploadedFile[] = new UploadedFile(
-//                $image,
-//                ($k+1).'.jpg' // The original name
-//            );
-//        }
-//        $createFileService = new CreatePdfFileService($uploadedFile,1,767567567,'c5gAyG7YPWV7RiCx23srwQnYV8bv5U');
-        $fileUrl = 'storage/app/public/source/pdf/1/UAc4kjmsjs/[767567567][Документ удостоверяющий личность].pdf';
 
-        $correct = new CorrectRecognitionService();
+        $user = User::query()->where('id',172)->first();
+//32525
+        $nopaper = new NopaperService();
+        //$data = $nopaper->checkUserExists($user);
+        //$data = $nopaper->sendDocumentsToNopaper($user);
+        $data = $nopaper->confirmSms($user,32525);
 
-        //$resData = $correct->getRecognitionResult(3561023);
-        $resData = $correct->getRecognitionResult(3561211);
-        if ($resData && !empty($resData["documents"])) {
-            $dataFile = [];
-            foreach ($resData["documents"] as $document) {
-                $docData = [];
-                foreach ($document["fields"] as $field) {
-                    $docData[$field["fieldKey"]] = $field["fieldValue"];
-                }
-                $dataFile[] = $docData;
-            }
-            echo "<pre>";
-            var_dump($dataFile);
-            echo "</pre>";
-        }
 
-        die();
-
-        $packageId = $correct->createPackage();
         echo "<pre>";
-        var_dump($packageId);
+        var_dump($data);
         echo "</pre>";
-        if ($packageId) {
-            //foreach ($images as $image) {
-                $dataUpload = $correct->uploadImage($packageId, $fileUrl);
-                echo "<pre>";
-                var_dump($dataUpload);
-                echo "</pre>";
-            //}
-            $start = $correct->startRecognition($packageId);
-            echo "<pre>";
-            var_dump($start);
-            echo "</pre>";
-            $get = $correct->getRecognitionResult($packageId);
-            echo "<pre>";
-            var_dump($get);
-            echo "</pre>";
-        }
+        die();
+//        $respons = $nopaper->checkUserExists($user);
+//        echo "<pre>";
+//        var_dump($respons);
+//        echo "</pre>";
+//        die();
+//        $respons = $nopaper->registerUser($user);
+//        echo "<pre>";
+//        var_dump($respons);
+//        echo "</pre>";
+//        die();
+//        $respons = $nopaper->checkUserExists($user->phone);
+//        echo "<pre>";
+//        var_dump($respons);
+//        echo "</pre>";
+
+        $nopaper->sendDocumentsToNopaper($user);
+        //$nopaper->getDocumentInfo(32376);
+
     }
 }

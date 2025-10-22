@@ -30,6 +30,8 @@ use App\Models\Order\Order;
  * @property int $verme_id
  * @property string $uuid
  * @property string $name
+ * @property string $nopaper_guid
+ * @property string $nopaper_certificate_id
  * @property-read Collection|Project[] $project
  * @property-read Collection|Place[] $place
  * @property-read Collection|Order[] $acceptedOrders
@@ -91,7 +93,9 @@ class User extends Authenticatable
         'count_wait_bid',
         'time_answer_bid',
         'notification_start',
-        'verme_id'
+        'verme_id',
+        'nopaper_guid',
+        'nopaper_certificate_id'
     ];
 
     /**

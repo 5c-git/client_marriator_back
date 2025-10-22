@@ -4,6 +4,11 @@ namespace App\Http\Controllers\PersonalArea;
 
 use App\Enum\Document\DocumentStatusSignatureEnum;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ErrorResource;
+use App\Http\Resources\SuccessResource;
+use App\Models\Document\RecognitionDocument;
+use App\Models\User;
+use App\Services\Nopaper\NopaperService;
 use App\Services\OneC\OneCServices;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -46,7 +51,7 @@ class DocumentsController extends Controller
     public function getDocumentSigned(Request $request){
         $user = $request->user();
 
-        $this->createMockData($user->id,DocumentStatusEnum::Signed->value);
+        //$this->createMockData($user->id,DocumentStatusEnum::Signed->value);
 
         $documents = Document::query()
             ->where('user_id',$user->id)
@@ -63,6 +68,17 @@ class DocumentsController extends Controller
             ];
         }
         return response()->json($response, 200);
+    }
+
+    public function signedDocument(Request $request){
+        $user = $request->user();
+        /** @var User $user */
+        if(!empty($user->nopaper_guid) && !empty($user->nopaper_certificate_id)) {
+            //(new NopaperService())
+            return new SuccessResource();
+        }else{
+            return new ErrorResource();
+        }
     }
 
     /**

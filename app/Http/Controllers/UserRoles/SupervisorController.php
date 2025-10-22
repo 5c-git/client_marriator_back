@@ -44,6 +44,7 @@ use App\Models\Order\Task;
 use App\Models\User;
 use App\Services\Local\Repositories\Contracts\OrderRepository;
 use App\Services\Local\Repositories\Contracts\UserRepository;
+use App\Services\Nopaper\NopaperService;
 use App\Services\Verme\VermeService;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\UserResource;
@@ -388,6 +389,7 @@ class SupervisorController extends Controller
             if($request->name) {
                 $userForModeration->name = $request->name;
             }
+            (new NopaperService())->checkUserExists($userForModeration);
             $userForModeration->save();
         }
 
@@ -593,7 +595,13 @@ class SupervisorController extends Controller
             'accepted' => BidAcceptingStatusEnum::work->value,
         ]);
         $count = $bid->acceptingUsers()->where('accepted',BidAcceptingStatusEnum::work->value)->count();
-        if ($count >= $bid->count) {
+        $countAll = $bid->acceptingUsers()->whereIn('accepted',[
+            BidAcceptingStatusEnum::work->value,
+            BidAcceptingStatusEnum::accepted->value,
+            BidAcceptingStatusEnum::notAccepted->value,
+            BidAcceptingStatusEnum::consideration->value,
+        ])->count();
+        if ($count >= $bid->count || $countAll < $bid->count) {
             $bid->status = OrderStatusEnum::accepted->value;
             $bid->save();
         }

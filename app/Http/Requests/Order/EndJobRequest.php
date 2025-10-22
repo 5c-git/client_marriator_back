@@ -47,8 +47,7 @@ class EndJobRequest extends FormRequest
                                 ->wherePivot('accepted', BidAcceptingStatusEnum::work->value)
                                 ->pluck('bid_id')
                                 ->toArray();
-                            $query->whereIn('id', $bidsIds)->where('id', $value)
-                                ->where('status', OrderStatusEnum::accepted->value);
+                            $query->whereIn('id', $bidsIds)->where('id', $value);
                         })->first();
                     });
 

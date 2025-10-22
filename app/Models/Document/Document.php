@@ -19,7 +19,8 @@ class Document extends Model
         'file_name',
         'status',
         'status_signature',
-        'date_signature'
+        'date_signature',
+        'document_id'
     ];
 
     protected $casts = [

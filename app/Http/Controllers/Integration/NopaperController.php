@@ -89,28 +89,6 @@ class NopaperController extends Controller
     }
 
     /**
-     * Проверка статуса документа
-     */
-    public function checkDocumentStatus($documentId)
-    {
-        try {
-            $documentInfo = $this->nopaperService->getDocumentInfo($documentId);
-
-            return response()->json([
-                'success' => true,
-                'status' => $documentInfo['documentStatus'],
-                'document' => $documentInfo
-            ]);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Ошибка при получении статуса документа: ' . $e->getMessage()
-            ], 500);
-        }
-    }
-
-    /**
      * Получение списка документов с фильтрами
      */
     public function getDocumentsList(Request $request)
