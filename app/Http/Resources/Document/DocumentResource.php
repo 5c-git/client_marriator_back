@@ -27,7 +27,7 @@ class DocumentResource extends JsonResource
             'file_name' => $this->file_name,
             'status' => $this->status,
             'status_signature' => $this->status_signature,
-            'date_signature' => $this->date_signature?->timezone('Europe/Moscow')->format('Y-m-d\TH:i:sP'),
+            'date_signature' => $this->date_signature,
             'file_path_signed' => $this->file_path_signed?Storage::url($this->file_path_signed):null
         ];
     }
