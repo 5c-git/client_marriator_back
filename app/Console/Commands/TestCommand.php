@@ -26,6 +26,10 @@ class TestCommand extends Command
 
     public function handle(): void
     {
+        echo "<pre>";
+        var_dump(Carbon::now());
+        echo "</pre>";
+        die();
         //$payload = [
         //            'userPhone' => $userData['phone'],
         //            'email' => $userData['email'],
