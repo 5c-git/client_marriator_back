@@ -326,6 +326,14 @@ class NopaperService
     public function getDocumentInfo(Document $document): Document
     {
         if(!$document->file_path_signed) {
+//            $response = Http::withHeaders([
+//                'X-Api-Key' => $this->apiKey,
+//            ])->get("{$this->baseUrl}/api/v2/external/document/".$document->document_id."/file-info/list");
+//
+//            echo "<pre>";
+//            var_dump($response->json());
+//            echo "</pre>";
+//            die();
             $fileData = [
                 'documentFileInfoList' => [
                     0 => [

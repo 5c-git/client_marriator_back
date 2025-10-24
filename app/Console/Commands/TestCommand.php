@@ -56,7 +56,7 @@ class TestCommand extends Command
         //$data = $nopaper->checkUserExists($user);
         //$data = $nopaper->sendDocumentsToNopaper($user);
         //$data = $nopaper->confirmSms($user,'000000');
-        //$data = $nopaper->getDocumentInfo($doc);
+        $data = $nopaper->getDocumentInfo($doc);
 
 
 
