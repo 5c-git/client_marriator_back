@@ -978,7 +978,13 @@ class ManagerController extends Controller
     }
 
     public function acceptAllReportJob(AcceptAllReportRequest $request){
-        $reports = Report::where('bid_id',$request->bidId)->where('user_id',$request->specialistId)->get();
+        $reports = Report::where('bid_id',$request->bidId)
+            ->whereIn('status',[
+                ReportStatusEnum::reported->value,
+                ReportStatusEnum::notEnded->value,
+                ReportStatusEnum::end->value,
+            ])
+            ->where('user_id',$request->specialistId)->get();
         foreach ($reports as $report){
             /** @var  $report Report */
             $report->status = ReportStatusEnum::accept->value;
