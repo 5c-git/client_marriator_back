@@ -24,8 +24,8 @@ class DateActivityResource extends JsonResource
     {
         return [
             'id' => $this['id']?? null,
-            'timeStart' => $this['timeStart']?Carbon::parse($this['timeStart'])->timezone('Europe/Moscow')->format('Y-m-d\TH:i:sP'):null,
-            'timeEnd' => $this['timeEnd']?Carbon::parse($this['timeEnd'])->timezone('Europe/Moscow')->format('Y-m-d\TH:i:sP'):null,
+            'timeStart' => $this['timeStart'],
+            'timeEnd' => $this['timeEnd'],
             'places' => $this->getPlaces($this['placeIds']),
         ];
     }
