@@ -182,11 +182,10 @@ class SpecialistController extends Controller
         $report = Report::where('id',$request->reportId)->first();
         $report->status = ReportStatusEnum::paid->value;
         $report->save();
-        //формирование документа на подпись
         $document = new Document();
         $document->uuid = Str::uuid();
         $document->user_id = $user->id;
-        $document->file_path = 'testPath';
+        $document->file_path = 'source/userImg/92/0zBLRLjoayNBUuwy0uNf.jpeg';
         $document->file_name = 'docForPay_'.Carbon::now()->format('d.m.Y H:i:s').'.pdf';
         $document->status = DocumentStatusEnum::Signed->value;
         $document->status_signature = DocumentStatusSignatureEnum::NoSend->value;
