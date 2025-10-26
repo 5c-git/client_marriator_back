@@ -140,7 +140,13 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
             Route::post('/startDay','App\Http\Controllers\UserRoles\SpecialistController@startDay')->name('startDay');
             Route::post('/endDay','App\Http\Controllers\UserRoles\SpecialistController@endDay')->name('endDay');
             Route::post('/endJob','App\Http\Controllers\UserRoles\SpecialistController@endJob')->name('endJob');
-            Route::post('/payReport','App\Http\Controllers\UserRoles\SpecialistController@payReport')->name('payReport');
+
+            Route::group(['prefix' => 'signedDocument'], function () {
+                Route::post('', 'App\Http\Controllers\UserRoles\SpecialistController@signedDocuments')->name('signedDocuments');
+                Route::post('/SendCode', 'App\Http\Controllers\UserRoles\SpecialistController@signedDocumentsSendCode')->name('signedDocumentsSendCode');
+                Route::post('/RetriesSms', 'App\Http\Controllers\UserRoles\SpecialistController@signedDocumentsRetriesSms')->name('signedDocumentsRetriesSms');
+                Route::get('', 'App\Http\Controllers\UserRoles\SpecialistController@getSignetDocument')->name('getSignetDocument');
+            });
         });
         Route::middleware([CheckRole::class.':supervisor'])->group( function () {
         });
