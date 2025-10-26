@@ -49,7 +49,7 @@ class TestCommand extends Command
         //                'birthPlace' => $userData['passport_birth_place'],
         //            ]
         //        ];
-        $user = User::query()->where('id',172)->first();
+        $user = User::query()->first();
         $document = new Document();
         $document->uuid = Str::uuid();
         $document->user_id = $user->id;
