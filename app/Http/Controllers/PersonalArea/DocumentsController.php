@@ -63,8 +63,9 @@ class DocumentsController extends Controller
         ];
         foreach ($documents as $k=>$document){
             $response['result'][$k] = [
-                'uuid' => $document->uuid,
+                'id' => $document->id,
                 'name' => $document->file_name,
+                'status_signature' => $document->status_signature->value,
             ];
         }
         return response()->json($response, 200);

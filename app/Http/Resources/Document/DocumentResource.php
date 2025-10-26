@@ -25,8 +25,7 @@ class DocumentResource extends JsonResource
             'id' => $this->id,
             'file_path' => $this->file_path?Storage::url($this->file_path):null,
             'file_name' => $this->file_name,
-            'status' => $this->status,
-            'status_signature' => $this->status_signature,
+            'status_signature' => $this->status_signature->value,
             'date_signature' => $this->date_signature,
             'file_path_signed' => $this->file_path_signed?Storage::url($this->file_path_signed):null
         ];

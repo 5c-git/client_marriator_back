@@ -143,8 +143,8 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
 
             Route::group(['prefix' => 'signedDocument'], function () {
                 Route::post('', 'App\Http\Controllers\UserRoles\SpecialistController@signedDocuments')->name('signedDocuments');
-                Route::post('/SendCode', 'App\Http\Controllers\UserRoles\SpecialistController@signedDocumentsSendCode')->name('signedDocumentsSendCode');
-                Route::post('/RetriesSms', 'App\Http\Controllers\UserRoles\SpecialistController@signedDocumentsRetriesSms')->name('signedDocumentsRetriesSms');
+                Route::post('/sendCode', 'App\Http\Controllers\UserRoles\SpecialistController@signedDocumentsSendCode')->name('signedDocumentsSendCode');
+                Route::post('/retriesSms', 'App\Http\Controllers\UserRoles\SpecialistController@signedDocumentsRetriesSms')->name('signedDocumentsRetriesSms');
                 Route::get('', 'App\Http\Controllers\UserRoles\SpecialistController@getSignetDocument')->name('getSignetDocument');
             });
         });
