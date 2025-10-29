@@ -203,7 +203,7 @@ class SpecialistController extends Controller
             ->where('status_signature', DocumentStatusSignatureEnum::NoSend->value)
             ->first();
 
-        if(!$document && (new NopaperService())->sendDocumentsToNopaper($user)){
+        if($document && (new NopaperService())->sendDocumentsToNopaper($user)){
             return new SuccessResource();
         }
         return new ErrorResource();
