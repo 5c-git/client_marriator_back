@@ -359,7 +359,7 @@ class NopaperService
                     $fileContent = $fileData['fileInfoList'][0]['fileBase64'];
                     $fileContent = base64_decode($fileContent);
                     $fileName    = $fileData['fileInfoList'][0]['fileNameWithExtension'];
-                    $filePath    = '/source/document/' . $document->user_id . '/signed/' . date(
+                    $filePath    = 'source/document/' . $document->user_id . '/signed/' . date(
                             'Y-m-d'
                         ) . '/' . $fileName;
                     Storage::disk('public')->put($filePath, $fileContent, 'public');
