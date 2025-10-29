@@ -140,6 +140,7 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
             Route::post('/startDay','App\Http\Controllers\UserRoles\SpecialistController@startDay')->name('startDay');
             Route::post('/endDay','App\Http\Controllers\UserRoles\SpecialistController@endDay')->name('endDay');
             Route::post('/endJob','App\Http\Controllers\UserRoles\SpecialistController@endJob')->name('endJob');
+            Route::post('/payReportSpecialist','App\Http\Controllers\UserRoles\SpecialistController@payReport')->name('payReportSpecialist');
 
             Route::group(['prefix' => 'signedDocument'], function () {
                 Route::post('', 'App\Http\Controllers\UserRoles\SpecialistController@signedDocuments')->name('signedDocuments');
