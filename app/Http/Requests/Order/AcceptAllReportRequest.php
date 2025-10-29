@@ -60,7 +60,7 @@ class AcceptAllReportRequest extends FormRequest
                         $check = false;
                         if ($user->acceptedBids) {
                             foreach ($user->acceptedBids as $acceptedBid) {
-                                if ($acceptedBid->id === $this->bidId) {
+                                if ($acceptedBid->id == $this->bidId) {
                                     $check = true;
                                 }
                             }

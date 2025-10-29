@@ -50,6 +50,7 @@ class NopaperService
                 foreach ($files as $file) {
                     $imagePath = str_replace('/storage','',$file->file_path);
                     $fileContent = base64_encode(Storage::disk('public')->get($imagePath));
+                    //$fileContent = base64_encode(file_get_contents('storage/app/public/source/document/172/signed/2025-10-22/5.pdf'));
                     $fileData    = [
                         'fileInfo' => [
                             'fileNameWithExtension' => basename($file->file_path),
@@ -212,11 +213,11 @@ class NopaperService
             'X-Api-Key' => $this->apiKey,
             'Accept' => 'application/json',
             'Content-Type' => 'application/json',
-        ])->post("{$this->baseUrl}/api/v2/external/certificate/pay-control/pc-sms".'?userGuid='.$userGuid.'&responsiblePartyForAcceptanceAct=1');
+        ])->post("{$this->baseUrl}/api/v2/external/certificate/pay-control/pc-sms".'?userGuid='.$userGuid.'&responsiblePartyForAcceptanceAct=2');
         return $this->handleResponse($response);
     }
 
-    private function approveSignature(string $certificateId): array
+    private function approveSignature(string $certificateId)
     {
         sleep(1);
         $response = Http::withHeaders([
@@ -242,7 +243,7 @@ class NopaperService
             if(!$user->nopaper_guid || !$user->nopaper_certificate_id) {
                 $certificateId = $this->createSignature($dataRegister['userGuid']);
                 if(!empty($certificateId['certificateId'])) {
-                    //$this->approveSignature($certificateId['certificateId']);
+                    $this->approveSignature($certificateId['certificateId']);
                     $user->nopaper_certificate_id = $certificateId['certificateId'];
                     $user->nopaper_guid = $dataRegister['userGuid'];
                     $user->save();
@@ -256,7 +257,7 @@ class NopaperService
         if($this->registerUser($user)){
             $certificateId = $this->createSignature($user->nopaper_guid);
             if(!empty($certificateId['certificateId'])) {
-                //$this->approveSignature($certificateId['certificateId']);
+                $this->approveSignature($certificateId['certificateId']);
                 $user->nopaper_certificate_id = $certificateId['certificateId'];
                 $user->save();
                 return true;
@@ -326,36 +327,45 @@ class NopaperService
     public function getDocumentInfo(Document $document): Document
     {
         if(!$document->file_path_signed) {
-//            $response = Http::withHeaders([
-//                'X-Api-Key' => $this->apiKey,
-//            ])->get("{$this->baseUrl}/api/v2/external/document/".$document->document_id."/file-info/list");
-//
-//            echo "<pre>";
-//            var_dump($response->json());
-//            echo "</pre>";
-//            die();
-            $fileData = [
-                'documentFileInfoList' => [
-                    0 => [
-                        'fileId'     => $document->file_id,
-                        'documentId' => $document->document_id
-                    ]
-                ]
-            ];
-
+            $fileId = '';
             $response = Http::withHeaders([
                 'X-Api-Key' => $this->apiKey,
-            ])->post("{$this->baseUrl}/api/v2/external/document/file/list", $fileData);
+            ])->get("{$this->baseUrl}/api/v2/external/document/".$document->document_id."/file-info/list");
+            $response = $response->json();
+            if(!empty($response['originFileWithStampList'])){
+                foreach ($response['originFileWithStampList'] as $originFileWithStampList){
+                    if($originFileWithStampList['originalFileId'] == $document->file_id){
+                        $fileId = $originFileWithStampList['fileId'];
+                    }
+                }
+            }
 
-            $fileData = $this->handleResponse($response);
-            if (!empty($fileData['fileInfoList'])) {
-                $fileContent = $fileData['fileInfoList'][0]['fileBase64'];
-                $fileContent = base64_decode($fileContent);
-                $fileName    = $fileData['fileInfoList'][0]['fileNameWithExtension'];
-                $filePath    = '/source/document/' . $document->user_id . '/signed/' . date('Y-m-d') . '/' . $fileName;
-                Storage::disk('public')->put($filePath, $fileContent, 'public');
-                $document->file_path_signed = $filePath;
-                $document->save();
+            if($fileId) {
+                $fileData = [
+                    'documentFileInfoList' => [
+                        0 => [
+                            'fileId' => $fileId,
+                            'documentId' => $document->document_id
+                        ]
+                    ]
+                ];
+
+                $response = Http::withHeaders([
+                    'X-Api-Key' => $this->apiKey,
+                ])->post("{$this->baseUrl}/api/v2/external/document/file/list", $fileData);
+
+                $fileData = $this->handleResponse($response);
+                if (!empty($fileData['fileInfoList'])) {
+                    $fileContent = $fileData['fileInfoList'][0]['fileBase64'];
+                    $fileContent = base64_decode($fileContent);
+                    $fileName    = $fileData['fileInfoList'][0]['fileNameWithExtension'];
+                    $filePath    = '/source/document/' . $document->user_id . '/signed/' . date(
+                            'Y-m-d'
+                        ) . '/' . $fileName;
+                    Storage::disk('public')->put($filePath, $fileContent, 'public');
+                    $document->file_path_signed = $filePath;
+                    $document->save();
+                }
             }
         }
         return $document;
