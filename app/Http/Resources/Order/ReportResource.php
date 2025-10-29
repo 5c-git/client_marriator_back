@@ -20,6 +20,7 @@ class ReportResource extends JsonResource
     public function toArray($request): array
     {
         return [
+            'id' => $this->id,
             'dateStart' => $this->date_start,
             'dateEnd' => $this->date_end,
             'report' => $this->report,
