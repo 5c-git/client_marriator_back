@@ -47,7 +47,8 @@ class PayReportRequest extends FormRequest
                         ReportStatusEnum::accept->value,
                     ])->first();
                     if(!$report){
-                        $fail('Report not found');
+                        $fail('Report not found or status is not accept');
+                        return;
                     }
                     $bid = $report->bid;
                     if (!in_array($bid->user_id, $userIdsSupervisor)) {

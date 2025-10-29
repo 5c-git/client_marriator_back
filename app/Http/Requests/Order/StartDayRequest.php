@@ -70,6 +70,7 @@ class StartDayRequest extends FormRequest
                     }
                     if($orderExists->date_start && $orderExists->date_end && ($orderExists->date_start->subHour() > Carbon::now() || $orderExists->date_end->subHour() < Carbon::now())){
                         $fail('Active date not start or this bid is ended');
+                        return;
                     }
 
                     $dayNumber = null;

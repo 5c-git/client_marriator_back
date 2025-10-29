@@ -65,6 +65,7 @@ class GetJobRequest extends FormRequest
                         if($user->id == $value && !in_array(RoleEnum::specialist->value,$roles))
                         {
                             $fail('Not your job');
+                            return;
                         }
 
                         if($user->id != $value &&
@@ -75,6 +76,7 @@ class GetJobRequest extends FormRequest
                         )
                         {
                             $fail('Not your job');
+                            return;
                         }
 
 

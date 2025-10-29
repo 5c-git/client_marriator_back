@@ -49,35 +49,35 @@ class TestCommand extends Command
         //                'birthPlace' => $userData['passport_birth_place'],
         //            ]
         //        ];
-        $user = User::query()->first();
-        $document = new Document();
-        $document->uuid = Str::uuid();
-        $document->user_id = $user->id;
-        $document->file_path = 'source/userImg/92/0zBLRLjoayNBUuwy0uNf.jpeg';
-        $document->file_name = 'docForPay_'.Carbon::now()->format('d.m.Y H:i:s').'.pdf';
-        $document->status = DocumentStatusEnum::Signed->value;
-        $document->status_signature = DocumentStatusSignatureEnum::NoSend->value;
-        $document->date_signature = Carbon::now();
-        $document->save();
-        $imagePath = str_replace('/storage','',$document->file_path);
-        $fileContent = base64_encode(Storage::disk('public')->get($imagePath));
-        $fileData    = [
-            'fileInfo' => [
-                'fileNameWithExtension' => basename($document->file_path),
-                'filebase64'            => $fileContent
-            ]
-        ];
-        echo "<pre>";
-        var_dump($fileData);
-        echo "</pre>";
-        die();
+//        $user = User::query()->first();
+//        $document = new Document();
+//        $document->uuid = Str::uuid();
+//        $document->user_id = $user->id;
+//        $document->file_path = 'source/userImg/92/0zBLRLjoayNBUuwy0uNf.jpeg';
+//        $document->file_name = 'docForPay_'.Carbon::now()->format('d.m.Y H:i:s').'.pdf';
+//        $document->status = DocumentStatusEnum::Signed->value;
+//        $document->status_signature = DocumentStatusSignatureEnum::NoSend->value;
+//        $document->date_signature = Carbon::now();
+//        $document->save();
+//        $imagePath = str_replace('/storage','',$document->file_path);
+//        $fileContent = base64_encode(Storage::disk('public')->get($imagePath));
+//        $fileData    = [
+//            'fileInfo' => [
+//                'fileNameWithExtension' => basename($document->file_path),
+//                'filebase64'            => $fileContent
+//            ]
+//        ];
+//        echo "<pre>";
+//        var_dump($fileData);
+//        echo "</pre>";
+//        die();
         $userData = [
             'phone'=> 79036650547,
             'email'=> 'fifka@mail.ru',
         ];
 
-        //$user = User::query()->where('id',172)->first();
-        $doc = Document::query()->where('id',24)->first();
+        $user = User::query()->where('id',215)->first();
+        $doc = Document::query()->where('id',79)->first();
 //32525
         $nopaper = new NopaperService();
         //$data = $nopaper->checkUserExists($user);

@@ -67,6 +67,7 @@ class EndSpecialistJobRequest extends FormRequest
                         }
                         if(!$check){
                             $fail('Specialist not accepted this bid');
+                            return;
                         }
                         if($user) {
                             $orderExists = Bid::where(function ($query) use ($user) {

@@ -42,6 +42,7 @@ class DelManagerRequest extends FormRequest
 
                     if(!in_array(RoleEnum::supervisor->value,$roles)){
                         $fail('User not supervisor');
+                        return;
                     }
 
                     if ($value == Auth::id()) {

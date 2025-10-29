@@ -50,6 +50,7 @@ class AcceptReportRequest extends FormRequest
                     ])->first();
                     if(!$report){
                         $fail('Report not found');
+                        return;
                     }
                     $bid = $report->bid;
                     if (!in_array($bid->user_id, $userIdsSupervisor)) {

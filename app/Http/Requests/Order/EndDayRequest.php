@@ -67,6 +67,7 @@ class EndDayRequest extends FormRequest
                     /** @var Bid $orderExists */
                     if($orderExists->date_start && $orderExists->date_end && ($orderExists->date_start->subHour() > Carbon::now() || $orderExists->date_end->addHours(12) < Carbon::now())){
                         $fail('Active date not start or this bid is ended');
+                        return;
                     }
 
 
@@ -115,6 +116,7 @@ class EndDayRequest extends FormRequest
                     if ($this->bidObj && $this->bidObj->need_foto) {
                         if (count($value) === 0) {
                             $fail('The report field is required when bid requires photos.');
+                            return;
                         }
                         foreach ($value as $file) {
                             if (!($file instanceof UploadedFile)) {
