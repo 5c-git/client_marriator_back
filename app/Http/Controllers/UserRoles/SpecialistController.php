@@ -142,7 +142,7 @@ class SpecialistController extends Controller
                     'source/reports/' . $user->id . '/' . $report->id,
                     'public'
                 );
-                $reportFiles[] = $path;
+                $reportFiles[] = Storage::url($path);
             }
             $report->report = $reportFiles;
         }
