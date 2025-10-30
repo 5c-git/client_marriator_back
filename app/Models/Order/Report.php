@@ -4,11 +4,13 @@ namespace App\Models\Order;
 use App\Enum\Order\ReportStatusEnum;
 use App\Models\Fields\Directory\Brand;
 use App\Models\Fields\Directory\Project;
+use App\Models\Fields\Directory\Reasons;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Collection;
 use App\Models\Fields\Directory\ViewActivities;
 
@@ -32,6 +34,7 @@ use App\Models\Fields\Directory\ViewActivities;
  * @property User $user
  * @property float $forPay
  * @property float $income
+ * @property Reasons $reasons
  *
  */
 class Report extends Model
@@ -84,6 +87,17 @@ class Report extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class,'user_id');
+    }
+
+    public function reasons(): BelongsToMany
+    {
+        return $this->belongsToMany(Reasons::class, 'report_reason', 'report_id', 'reason_id')
+            ->withPivot('amount');
+    }
+
+    public function getReasonsAmount(): int
+    {
+        return (int) $this->reasons()->sum('report_reason.amount');
     }
 
 }

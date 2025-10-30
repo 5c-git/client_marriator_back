@@ -317,7 +317,7 @@ class EloquentOrderRepository implements OrderRepository
                 'price' => 0,
                 'income' => 0,
                 'scope_of_services' => 0,
-                'accept_user_id' => $request->supervisorId ?? $user->id,
+                'accept_user_id' => $request->responsibleId ?? $user->id,
                 'specialist_user_id' => null
             ]);
 

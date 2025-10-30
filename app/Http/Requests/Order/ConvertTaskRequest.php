@@ -49,7 +49,7 @@ class ConvertTaskRequest extends FormRequest
                     }
                 },
             ],
-            'supervisorId' => [
+            'responsibleId' => [
                 'sometimes',
                 'int',
                 'exists:users,id',
@@ -57,7 +57,10 @@ class ConvertTaskRequest extends FormRequest
 
                         $validIds = User::where('id', $value)
                             ->whereHas('roles', function ($query) {
-                                $query->where('role_id', RoleEnum::supervisor->value);
+                                $query->whereIn('role_id', [
+                                    RoleEnum::supervisor->value,
+                                    RoleEnum::manager->value
+                                ]);
                             })
                             ->pluck('id')
                             ->toArray();

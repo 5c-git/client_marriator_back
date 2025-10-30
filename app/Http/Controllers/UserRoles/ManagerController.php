@@ -15,6 +15,7 @@ use App\Http\Requests\Order\AcceptOrderRequest;
 use App\Http\Requests\Order\AcceptReportRequest;
 use App\Http\Requests\Order\AcceptSpecialistRequest;
 use App\Http\Requests\Order\AcceptTaskRequest;
+use App\Http\Requests\Order\AddReasonsRequest;
 use App\Http\Requests\Order\CreateBidFromOrderRequest;
 use App\Http\Requests\Order\CreateBidFromTaskRequest;
 use App\Http\Requests\Order\DeclinedSpecialistRequest;
@@ -42,11 +43,13 @@ use App\Http\Resources\Order\ReportResource;
 use App\Http\Resources\PlaceResource;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\RadiusResponse;
+use App\Http\Resources\ReasonsResource;
 use App\Http\Resources\SuccessResource;
 use App\Http\Resources\ViewActivityResource;
 use App\Models\Fields\Directory\Place;
 use App\Models\Fields\Directory\Project;
 use App\Models\Fields\Directory\Radius;
+use App\Models\Fields\Directory\Reasons;
 use App\Models\Order\Bid;
 use App\Models\Order\Report;
 use App\Models\Order\Task;
@@ -1031,6 +1034,20 @@ class ManagerController extends Controller
             $price = $report->bid->price;
         }
         return $price;
+    }
+
+    public function getReasons(){
+        $reasons = Reasons::get();
+        return ReasonsResource::collection($reasons);
+    }
+
+    public function addReasons(AddReasonsRequest $request): SuccessResource
+    {
+        $report = Report::where('id',$request->reportId)->first();
+        $report->reasons()->attach($request->reasonsId, [
+            'amount' => $request->amount
+        ]);
+        return new SuccessResource();
     }
 
 }

@@ -334,6 +334,11 @@ return [
             'url' => 'admin/directory_radius/',
             'icon' => 'fas fa-fw fa-circle',
         ],
+        [
+            'text' => 'Причины штрафа',
+            'url' => 'admin/directory_reasons/',
+            'icon' => 'fas fa-fw fa-exclamation-circle',
+        ],
         // Navbar items:
 //        [
 //            'type' => 'navbar-search',

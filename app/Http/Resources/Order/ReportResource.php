@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Order;
 
+use App\Http\Resources\ReasonsResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -26,7 +27,8 @@ class ReportResource extends JsonResource
             'report' => $this->report,
             'dayActivityId' => $this->dayActivity,
             'status' => $this->status->value,
-            'hours' => $this->hours
+            'hours' => $this->hours,
+            'reasons' => ReasonsResource::collection($this->reasons)
         ];
     }
 }

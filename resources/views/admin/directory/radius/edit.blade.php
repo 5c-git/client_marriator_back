@@ -5,7 +5,7 @@
 @section('content_header')
     <div class="row">
         <div class="col-sm-11">
-            <h1>Поле  {{$edit->id}}</h1>
+            <h1>Радиус поиска  {{$edit->id}}</h1>
         </div>
     </div>
 @stop

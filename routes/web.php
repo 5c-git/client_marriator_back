@@ -300,6 +300,15 @@ Route::group(['prefix' => 'admin'], function () {
             Route::get('/delete/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\RadiusController@delete')->name('radiusDelete');
         });
 
+        Route::group(['prefix' => 'directory_reasons'], function () {
+            Route::get('/create/', 'App\Http\Controllers\Admin\Page\Fields\Directory\ReasonsController@create')->name('reasonsCreate');
+            Route::post('/createAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\ReasonsController@createAjax')->name('reasonsCreateAjax');
+            Route::get('/', 'App\Http\Controllers\Admin\Page\Fields\Directory\ReasonsController@list')->name('reasonsList');
+            Route::get('/edit/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\ReasonsController@edit')->name('reasonsEdit');
+            Route::post('/editAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\ReasonsController@editAjax')->name('reasonsEditAjax');
+            Route::get('/delete/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\ReasonsController@delete')->name('reasonsDelete');
+        });
+
 
         Route::group(['prefix' => 'orderForTest'], function () {
             Route::get('/', 'App\Http\Controllers\Admin\ForTest\OrderController@list')->name('orderTestList');
