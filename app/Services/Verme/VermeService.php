@@ -109,7 +109,7 @@ class VermeService
 
     public static function updateReportStat(Report $report): void
     {
-        $report->coefficient = rand(1,100)/100;
+        $report->coefficient = 1;
         $report->status = ReportStatusEnum::reported->value;
         $report->save();
     }
