@@ -10,6 +10,7 @@ use App\Http\Requests\Order\AcceptOrderRequest;
 use App\Http\Requests\Order\AcceptReportRequest;
 use App\Http\Requests\Order\AcceptSpecialistRequest;
 use App\Http\Requests\Order\AcceptTaskRequest;
+use App\Http\Requests\Order\AddReasonsRequest;
 use App\Http\Requests\Order\BidDataRequest;
 use App\Http\Requests\Order\CancelBidRequest;
 use App\Http\Requests\Order\CreateBidFromOrderRequest;
@@ -645,6 +646,26 @@ class UniversalController extends Controller
         }
         if(in_array('supervisor',$this->roles)){
             return app(\App\Http\Controllers\UserRoles\SupervisorController::class)->endJob($request);
+        }
+        return response()->json(['message' => 'Role not allowed.'], 403);
+    }
+
+    public function getReasons(){
+        if(in_array('manager',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\ManagerController::class)->getReasons();
+        }
+        if(in_array('supervisor',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\SupervisorController::class)->getReasons();
+        }
+        return response()->json(['message' => 'Role not allowed.'], 403);
+    }
+
+    public function addReasons(AddReasonsRequest $request){
+        if(in_array('manager',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\ManagerController::class)->addReasons($request);
+        }
+        if(in_array('supervisor',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\SupervisorController::class)->addReasons($request);
         }
         return response()->json(['message' => 'Role not allowed.'], 403);
     }

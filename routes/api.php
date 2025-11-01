@@ -221,6 +221,9 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
         Route::post('/payReport','App\Http\Controllers\UniversalController@payReport')->name('payReport');
         Route::post('/updateReport','App\Http\Controllers\UniversalController@updateReport')->name('updateReport');
 
+        Route::get('/getReasons','App\Http\Controllers\UniversalController@getReasons')->name('getReasons');
+        Route::post('/addReasons','App\Http\Controllers\UniversalController@addReasons')->name('addReasons');
+
         Route::group(['prefix' => 'moderation'], function () {
             Route::get('/getProject', 'App\Http\Controllers\UniversalController@getProject')->name('getProject');
             Route::post('/setProject', 'App\Http\Controllers\UniversalController@setProject')->name('setProject');
