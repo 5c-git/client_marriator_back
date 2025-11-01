@@ -54,18 +54,15 @@ class ConvertTaskRequest extends FormRequest
                 'int',
                 'exists:users,id',
                 function ($attribute, $value, $fail) {
-
+                        $user = auth()->user();
                         $validIds = User::where('id', $value)
                             ->whereHas('roles', function ($query) {
-                                $query->whereIn('role_id', [
-                                    RoleEnum::supervisor->value,
-                                    RoleEnum::manager->value
-                                ]);
+                                $query->where('role_id', RoleEnum::supervisor->value);
                             })
                             ->pluck('id')
                             ->toArray();
 
-                        if (!empty($validIds)) {
+                        if (empty($validIds) && $user->id != $value) {
                             $fail('Supervisor ids not exist');
                         }
                 }
