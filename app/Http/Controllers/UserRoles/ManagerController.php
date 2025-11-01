@@ -1044,7 +1044,7 @@ class ManagerController extends Controller
     public function addReasons(AddReasonsRequest $request): SuccessResource
     {
         $report = Report::where('id',$request->reportId)->first();
-        $report->reasons()->attach($request->reasonsId, [
+        $report->reasons()->attach($request->reasonId, [
             'amount' => $request->amount
         ]);
         return new SuccessResource();

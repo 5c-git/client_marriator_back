@@ -48,7 +48,7 @@ class AddReasonsRequest extends FormRequest
                     }
                 },
             ],
-            'reasonsId'=> 'required|integer|exists:directory_reasons,id',
+            'reasonId'=> 'required|integer|exists:directory_reasons,id',
             'amount' => 'required|integer'
         ];
     }
