@@ -65,10 +65,8 @@ class ConvertTaskRequest extends FormRequest
                             ->pluck('id')
                             ->toArray();
 
-                        $invalidIds = array_diff($value, $validIds);
-
-                        if (!empty($invalidIds)) {
-                            $fail('Supervisor ids not exist ' . implode(', ', $invalidIds));
+                        if (!empty($validIds)) {
+                            $fail('Supervisor ids not exist');
                         }
                 }
             ],
