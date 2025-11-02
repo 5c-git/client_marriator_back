@@ -31,8 +31,8 @@ class SettingsController extends Controller
                 if (!empty($value)) {
                     $dataSettings[] = [
                         'key'   => $k,
-                        'value' => $value['value'],
-                        'name' => $value['name']
+                        'value' => $value['value']??'',
+                        'name' => $value['name']??''
                     ];
                 }
             }
