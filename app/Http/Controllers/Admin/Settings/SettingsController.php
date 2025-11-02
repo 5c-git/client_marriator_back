@@ -24,19 +24,20 @@ class SettingsController extends Controller
     }
 
     public function save(Request $request){
-        Setting::query()->truncate();
         $dataSettings = [];
-        if(!empty($request->settings) && !empty($request->settings['key']) && !empty($request->settings['value'])){
-            foreach ($request->settings['key'] as $k=>$key){
-                if(!empty($key) && !empty($request->settings['value'][$k])){
-                    $dataSettings[$key] = [
-                        'key' => $key,
-                        'value' => $request->settings['value'][$k],
+        $data = $request->input();
+        if(!empty($data) && !empty($data['settings'])) {
+            foreach ($data['settings'] as $k => $value) {
+                if (!empty($value)) {
+                    $dataSettings[] = [
+                        'key'   => $k,
+                        'value' => $value['value'],
+                        'name' => $value['name']
                     ];
                 }
             }
         }
-        Setting::query()->upsert($dataSettings,['key'],['value']);
+        Setting::upsert($dataSettings,['key'],['value','name']);
         $response['status'] = 'success';
         return response()->json($response, 200);
     }

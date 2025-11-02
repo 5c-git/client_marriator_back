@@ -16,31 +16,29 @@
                     <div class="addItemBlock">
                     @foreach($settings as $k=>$setting)
                     <div class="row form-group addItem">
-                        <label for="error" class="col-sm-2 col-form-label">Настройки</label>
-                        <div class="col-sm-5">
-                            <div class="search-block">
-                                <textarea class="form-control" type="text" name="settings[key][]" placeholder="Ключ">{{$setting->key}}</textarea>
-                            </div>
+                        <div class="col-sm-7">
+                            <textarea type="text" class="form-control" name="settings[{{$setting->key}}][name]" placeholder="название">{{$setting->name}}</textarea>
                         </div>
-                        <div class="col-sm-5">
-                            <textarea type="text" class="form-control" name="settings[value][]" placeholder="Значение">{{$setting->value}}</textarea>
+                        <label for="error" class="col-sm-2 col-form-label">{{$setting->key}}</label>
+                        <div class="col-sm-3">
+                            <textarea type="text" class="form-control" name="settings[{{$setting->key}}][value]" placeholder="Значение">{{$setting->value}}</textarea>
                         </div>
                     </div>
                     @endforeach
-                    <div class="row form-group addItem">
-                        <label for="error" class="col-sm-2 col-form-label">Настройки</label>
+{{--                    <div class="row form-group addItem">--}}
+{{--                        <label for="error" class="col-sm-2 col-form-label">Настройки</label>--}}
 
-                        <div class="col-sm-5">
-                            <div class="search-block">
-                                <textarea class="form-control" type="text" name="settings[key][]" placeholder="Ключ"></textarea>
-                            </div>
-                        </div>
-                        <div class="col-sm-5">
-                            <textarea type="text" class="form-control" name="settings[value][]" placeholder="Значение"></textarea>
-                        </div>
-                    </div>
+{{--                        <div class="col-sm-5">--}}
+{{--                            <div class="search-block">--}}
+{{--                                <textarea class="form-control" type="text" name="settings[key][]" placeholder="Ключ"></textarea>--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
+{{--                        <div class="col-sm-5">--}}
+{{--                            <textarea type="text" class="form-control" name="settings[value][]" placeholder="Значение"></textarea>--}}
+{{--                        </div>--}}
+{{--                    </div>--}}
                     </br>
-                    <button class="btn btn-primary addItemButton">Добавить </button>
+{{--                    <button class="btn btn-primary addItemButton">Добавить </button>--}}
                     </div>
                     <br>
                     <br>
