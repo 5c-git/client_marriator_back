@@ -52,7 +52,7 @@ class UpdateReportRequest extends FormRequest
             'hours' => 'required|numeric',
             'reasons' => 'sometimes|array|min:1',
             'reasons.*.reasonId' => 'required|integer|exists:directory_reasons,id',
-            'reasons.*.amount' => 'required|integer|min:1',
+            'reasons.*.amount' => 'required|integer|min:1'
         ];
     }
 }
