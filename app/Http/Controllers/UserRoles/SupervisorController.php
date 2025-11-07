@@ -651,27 +651,62 @@ class SupervisorController extends Controller
         /** @var  $report Report */
         $report = Report::where('id',$request->reportId)->first();
         $report->status = ReportStatusEnum::accept->value;
+        $report->hours = $request->hours;
         $report->forPay = $this->getPriceForHour($report);
         $report->save();
+
+        $report->reasons()->detach();
+        $syncData = [];
+        if(!empty($request->reasons)) {
+            foreach ($request->reasons as $reason) {
+                $syncData[$reason['reasonId']] = ['amount' => $reason['amount']];
+            }
+        }
+
+        if($syncData){
+            $report->reasons()->syncWithoutDetaching($syncData);
+        }
         return new SuccessResource();
     }
 
     public function acceptAllReportJob(AcceptAllReportRequest $request){
-        $reports = Report::where('bid_id',$request->bidId)->where('user_id',$request->specialistId)->get();
+        $reports = Report::where('bid_id',$request->bidId)
+            ->whereIn('status',[
+                ReportStatusEnum::reported->value,
+                ReportStatusEnum::notEnded->value,
+                ReportStatusEnum::end->value,
+            ])
+            ->where('user_id',$request->specialistId)->get();
+        $dataRequest = [];
+        if(!empty($request->reports)) {
+            foreach ($request->reports as $reportRequest) {
+                $dataRequest[$reportRequest['reportId']] = [
+                    'reasons' => $reportRequest['reasons'],
+                    'hours'   => $reportRequest['hours']
+                ];
+            }
+        }
         foreach ($reports as $report){
             /** @var  $report Report */
             $report->status = ReportStatusEnum::accept->value;
             $report->forPay = $this->getPriceForHour($report);
             $report->save();
-        }
-        return new SuccessResource();
-    }
 
-    public function payReport(PayReportRequest $request){
-        /** @var  $report Report */
-        $report = Report::where('id',$request->reportId)->first();
-        $report->status = ReportStatusEnum::forPay->value;
-        $report->save();
+
+            if(!empty($dataRequest[$report->id])){
+                $report->hours = $dataRequest[$report->id]['hours'];
+                $report->forPay = $this->getPriceForHour($report);
+                $report->save();
+                $report->reasons()->detach();
+                $syncData = [];
+                foreach ($dataRequest[$report->id]['reasons'] as $reason) {
+                    $syncData[$reason['reasonId']] = ['amount' => $reason['amount']];
+                }
+                if($syncData){
+                    $report->reasons()->syncWithoutDetaching($syncData);
+                }
+            }
+        }
         return new SuccessResource();
     }
 
@@ -681,7 +716,26 @@ class SupervisorController extends Controller
         $report->hours = $request->hours;
         $report->forPay = $this->getPriceForHour($report);
         $report->save();
+        $report->reasons()->detach();
+        $syncData = [];
+        if(!empty($request->reasons)) {
+            foreach ($request->reasons as $reason) {
+                $syncData[$reason['reasonId']] = ['amount' => $reason['amount']];
+            }
+        }
+
+        if($syncData){
+            $report->reasons()->syncWithoutDetaching($syncData);
+        }
         return new ReportResource($report);
+    }
+
+    public function payReport(PayReportRequest $request){
+        /** @var  $report Report */
+        $report = Report::where('id',$request->reportId)->first();
+        $report->status = ReportStatusEnum::forPay->value;
+        $report->save();
+        return new SuccessResource();
     }
 
     private function getPriceForHour(Report $report): float

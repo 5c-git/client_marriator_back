@@ -40,6 +40,7 @@ class UpdateReportRequest extends FormRequest
                         ->whereIn('user_id', $userIdsSpecialist)
                         ->whereIn('status', [ReportStatusEnum::reported->value,
                                              ReportStatusEnum::end->value,
+                                             ReportStatusEnum::accept->value,
                                              ReportStatusEnum::notEnded->value,])
                         ->exists();
 
@@ -49,6 +50,9 @@ class UpdateReportRequest extends FormRequest
                 },
             ],
             'hours' => 'required|numeric',
+            'reasons' => 'sometimes|array|min:1',
+            'reasons.*.reasonId' => 'required|integer|exists:directory_reasons,id',
+            'reasons.*.amount' => 'required|integer|min:1',
         ];
     }
 }

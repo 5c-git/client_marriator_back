@@ -222,7 +222,7 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
         Route::post('/updateReport','App\Http\Controllers\UniversalController@updateReport')->name('updateReport');
 
         Route::get('/getReasons','App\Http\Controllers\UniversalController@getReasons')->name('getReasons');
-        Route::post('/addReasons','App\Http\Controllers\UniversalController@addReasons')->name('addReasons');
+       // Route::post('/addReasons','App\Http\Controllers\UniversalController@addReasons')->name('addReasons');
 
         Route::group(['prefix' => 'moderation'], function () {
             Route::get('/getProject', 'App\Http\Controllers\UniversalController@getProject')->name('getProject');

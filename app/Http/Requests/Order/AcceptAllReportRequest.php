@@ -4,12 +4,15 @@ namespace App\Http\Requests\Order;
 
 use App\Enum\Order\BidAcceptingStatusEnum;
 use App\Enum\Order\OrderStatusEnum;
+use App\Enum\Order\ReportStatusEnum;
 use App\Http\Requests\FormRequest;
 use App\Models\Order\Bid;
+use App\Models\Order\Report;
 use App\Models\Order\Task;
 use App\Models\User;
 use Illuminate\Validation\Rule;
 use App\Models\Order\Order;
+
 /**
  * @property-read int bidId
  * @property-read int specialistId
@@ -34,15 +37,15 @@ class AcceptAllReportRequest extends FormRequest
     public function rules()
     {
         return [
-            'bidId' => [
+            'bidId'              => [
                 'required',
                 'integer',
                 function ($attribute, $value, $fail) {
                     $user = auth()->user();
 
-                    $userIdsSupervisor = $user->supervisors->pluck('id')->toArray();
+                    $userIdsSupervisor   = $user->supervisors->pluck('id')->toArray();
                     $userIdsSupervisor[] = $user->id;
-                    $orderExists = Bid::where(function ($query) use ($user,$value,$userIdsSupervisor) {
+                    $orderExists         = Bid::where(function ($query) use ($user, $value, $userIdsSupervisor) {
                         $query->whereIn('user_id', $userIdsSupervisor)->where('id', $value);
                     })->first();
 
@@ -51,12 +54,12 @@ class AcceptAllReportRequest extends FormRequest
                     }
                 },
             ],
-            'specialistId'=>
+            'specialistId'       =>
                 [
                     'required',
                     'integer',
                     function ($attribute, $value, $fail) {
-                        $user = User::where('id',$value)->first();
+                        $user  = User::where('id', $value)->first();
                         $check = false;
                         if ($user->acceptedBids) {
                             foreach ($user->acceptedBids as $acceptedBid) {
@@ -65,11 +68,11 @@ class AcceptAllReportRequest extends FormRequest
                                 }
                             }
                         }
-                        if(!$check){
+                        if (!$check) {
                             $fail('Specialist not accepted this bid');
                             return;
                         }
-                        if($user) {
+                        if ($user) {
                             $orderExists = Bid::where(function ($query) use ($user) {
                                 $userIdsSupervisor = $user->acceptedBids?->pluck('id')->toArray();
                                 $query->whereIn('id', $userIdsSupervisor)->where('id', $this->bidId);
@@ -78,11 +81,39 @@ class AcceptAllReportRequest extends FormRequest
                             if (!$orderExists) {
                                 $fail('Specialist not accepted for bid');
                             }
-                        }else{
+                        } else {
                             $fail('Specialist not found');
                         }
                     },
-                ]
+                ],
+            'reports'            => 'sometimes|array|min:1',
+            'reports.*.reportId' => [
+                'required',
+                'integer',
+                function ($attribute, $value, $fail) {
+                    $user                = auth()->user();
+                    $userIdsSupervisor   = $user->supervisors->pluck('id')->toArray();
+                    $userIdsSupervisor[] = $user->id;
+                    /** @var  $report Report */
+                    $report = Report::where('id', $value)->whereIn('status', [
+                        ReportStatusEnum::reported->value,
+                        ReportStatusEnum::notEnded->value,
+                        ReportStatusEnum::end->value,
+                    ])->with('bid')->first();
+                    if (!$report) {
+                        $fail('Report not found');
+                        return;
+                    }
+                    $bid = $report->bid;
+                    if (!in_array($bid->user_id, $userIdsSupervisor)) {
+                        $fail('Not your specialist report');
+                    }
+                },
+            ],
+            'reports.*.hours' => 'required|numeric',
+            'reports.*.reasons' => 'required|array|min:1',
+            'reports.*.reasons.*.reasonId' => 'required|integer|exists:directory_reasons,id',
+            'reports.*.reasons.*.amount' => 'required|integer|min:1',
         ];
     }
 }
