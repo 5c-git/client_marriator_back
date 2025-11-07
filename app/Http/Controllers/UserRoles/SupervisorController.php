@@ -755,7 +755,7 @@ class SupervisorController extends Controller
             }
             $price = $price * $report->hours;
         }else{
-            $price = $report->bid->price;
+            $price = $report->bid->price * $report->hours;
         }
         return $price;
     }
