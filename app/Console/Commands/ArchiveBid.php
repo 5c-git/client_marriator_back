@@ -17,9 +17,9 @@ use Illuminate\Console\Command;
 use Carbon\Carbon;
 use App\Models\User;
 
-class ArciveOrder extends Command
+class ArchiveBid extends Command
 {
-    protected $signature = 'archiveTask';
+    protected $signature = 'archiveBid';
 
     protected $description = '';
 

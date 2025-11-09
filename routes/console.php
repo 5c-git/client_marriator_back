@@ -17,6 +17,10 @@ Schedule::command('sendUserFileToCorrect')->everyThreeMinutes()->withoutOverlapp
 Schedule::command('getUserFileFromCorrect')->everyThreeMinutes()->withoutOverlapping();
 
 Schedule::command('getUserReportCoefficient')->everyMinute()->withoutOverlapping();
+Schedule::command('archiveBid')->everyThreeMinutes()->withoutOverlapping();
+Schedule::command('archiveTask')->everyThreeMinutes()->withoutOverlapping();
+Schedule::command('archiveOrder')->everyThreeMinutes()->withoutOverlapping();
+Schedule::command('inWorkBid')->everyThreeMinutes()->withoutOverlapping();
 
 
 

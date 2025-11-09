@@ -17,7 +17,7 @@ use Illuminate\Console\Command;
 use Carbon\Carbon;
 use App\Models\User;
 
-class ArciveOrder extends Command
+class ArchiveTask extends Command
 {
     protected $signature = 'archiveTask';
 
