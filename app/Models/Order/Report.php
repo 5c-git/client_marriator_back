@@ -35,6 +35,7 @@ use App\Models\Fields\Directory\ViewActivities;
  * @property float $forPay
  * @property float $income
  * @property Reasons $reasons
+ * @property string $placeholder
  *
  */
 class Report extends Model
@@ -58,7 +59,8 @@ class Report extends Model
         'forPay',
         'income',
         'coefficient',
-        'hours'
+        'hours',
+        'placeholder'
     ];
 
     protected $casts = [

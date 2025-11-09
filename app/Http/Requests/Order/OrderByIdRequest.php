@@ -4,6 +4,8 @@ namespace App\Http\Requests\Order;
 
 use App\Enum\Order\OrderStatusEnum;
 use App\Http\Requests\FormRequest;
+use App\Models\Order\OrderActivities;
+use App\Services\TimeService;
 use Illuminate\Validation\Rule;
 use App\Models\Order\Order;
 
@@ -36,10 +38,11 @@ class OrderByIdRequest extends FormRequest
                 function ($attribute, $value, $fail) {
                     $orderExists = Order::query()->where('id', $value)
                         ->where('user_id', auth()->id())
-                        ->exists();
+                        ->first();
 
                     if (!$orderExists) {
                         $fail('Not your order');
+                        return;
                     }
                 },
             ],

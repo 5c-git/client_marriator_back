@@ -6,7 +6,10 @@ use App\Enum\Order\OrderStatusEnum;
 use App\Enum\Role\RoleEnum;
 use App\Http\Requests\FormRequest;
 use App\Models\Order\Order;
+use App\Models\Order\OrderActivities;
 use App\Models\Order\Task;
+use App\Models\Order\TaskActivity;
+use App\Services\TimeService;
 use Illuminate\Validation\Rule;
 use App\Models\User;
 
@@ -45,10 +48,21 @@ class CancelTaskRequest extends FormRequest
                     $taskExists = Task::query()
                         ->whereIn('user_id', $userIdsSupervisor)
                         ->whereIn('status', [OrderStatusEnum::new->value,OrderStatusEnum::notAccepted->value])
-                        ->exists();
+                        ->first();
 
                     if (!$taskExists) {
                         $fail('Not your task');
+                        return;
+                    }
+
+                    /** @var Task $taskExists */
+                    /** @var TaskActivity $orderActivities */
+                    $orderActivities = $taskExists->taskActivities()
+                        ->orderBy('date_start')
+                        ->first();
+
+                    if(!TimeService::getTimeDifferenceSub($this->user(),'cancel_task',$orderActivities?->date_start)){
+                        $fail('Task activities time start is arrived');
                     }
                 },
             ],

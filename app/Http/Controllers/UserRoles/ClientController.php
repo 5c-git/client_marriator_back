@@ -6,6 +6,7 @@ use App\Enum\Order\OrderStatusEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Order\CreateOrderRequest;
 use App\Http\Requests\Order\GetOrderRequest;
+use App\Http\Requests\Order\OrderByIdCancelRequest;
 use App\Http\Requests\SetBrandImgRequest;
 use App\Http\Requests\SetPlaceRequest;
 use App\Http\Resources\BrandResource;
@@ -170,7 +171,7 @@ class ClientController extends Controller
         );
     }
 
-    public function cancelOrder(OrderByIdRequest $request): ErrorResource|SuccessResource
+    public function cancelOrder(OrderByIdCancelRequest $request): ErrorResource|SuccessResource
     {
         return $this->orderRepository->cancelOrder($request->orderId) ?
             new SuccessResource() :

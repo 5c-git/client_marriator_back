@@ -4,6 +4,9 @@ namespace App\Http\Requests\Order;
 
 use App\Enum\Order\OrderStatusEnum;
 use App\Http\Requests\FormRequest;
+use App\Models\Order\OrderActivities;
+use App\Services\TimeService;
+use Carbon\Carbon;
 use Illuminate\Validation\Rule;
 use App\Models\Order\Order;
 /**
@@ -40,10 +43,21 @@ class AcceptOrderRequest extends FormRequest
                         ->where('id', $value)
                         ->where('status', OrderStatusEnum::notAccepted->value)
                         ->whereIn('place_id', $place)
-                        ->exists();
+                        ->first();
 
                     if (!$orderExists) {
                         $fail('Not your order');
+                        return;
+                    }
+                    /** @var Order $orderExists */
+                    /** @var OrderActivities $orderActivities */
+                    $orderActivities = $orderExists->orderActivities()
+                        ->orderBy('date_end','desc')
+                        ->first();
+
+
+                    if(!$orderActivities->date_end->gt(Carbon::now())){
+                        $fail('Order activities time end is ended');
                     }
                 },
             ],

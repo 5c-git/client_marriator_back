@@ -10,10 +10,12 @@ use App\Enum\Order\ReportStatusEnum;
 use App\Models\Document\Document;
 use App\Models\Order\Bid;
 use App\Models\Order\Report;
+use App\Models\Setting;
 use App\Services\CreatePdfFileService;
 use App\Services\DocumentServices\CorrectRecognitionService;
 use App\Services\Nopaper\NopaperService;
 use App\Services\OneC\OneCServices;
+use App\Services\TimeService;
 use App\Services\Verme\VermeService;
 use Illuminate\Console\Command;
 use Carbon\Carbon;
@@ -30,6 +32,10 @@ class TestCommand extends Command
 
     public function handle(): void
     {
+        echo "<pre>";
+        var_dump(TimeService::getTimeDifferenceAdd(User::first(),'change_order',Carbon::now()->subHours(22)));
+        echo "</pre>";
+        die();
 
         //$payload = [
         //            'userPhone' => $userData['phone'],

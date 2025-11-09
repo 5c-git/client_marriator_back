@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Order;
 
+use App\Enum\Order\OrderStatusEnum;
 use App\Http\Requests\FormRequest;
 use App\Models\Order\Order;
 use Illuminate\Validation\Rule;
@@ -46,6 +47,7 @@ class CreateOrderActivityRequest extends FormRequest
                 function ($attribute, $value, $fail) {
                     $orderExists = Order::query()->where('id', $value)
                         ->where('user_id', auth()->id())
+                        ->where('status', OrderStatusEnum::new->value)
                         ->exists();
 
                     if (!$orderExists) {
