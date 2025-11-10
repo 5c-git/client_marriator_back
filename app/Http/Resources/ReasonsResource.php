@@ -22,10 +22,9 @@ class ReasonsResource extends JsonResource
         $return = [
             'id' => $this->id,
             'value' => $this->name,
+            'amount' => $this->amount,
         ];
-        if(!empty($this->pivot) && !empty($this->pivot->amount)){
-            $return['amount'] = $this->pivot->amount;
-        }
+
         return $return;
     }
 }

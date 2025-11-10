@@ -51,6 +51,7 @@ class ReasonsController extends Controller
         $data = $request->input();
 
         $editObj->name = $data['name'];
+        $editObj->amount = $data['amount'];
 
         $editObj->save();
 
@@ -73,6 +74,7 @@ class ReasonsController extends Controller
 
         $editObj = new $this->objClass();
         $editObj->name = $data['name'];
+        $editObj->amount = $data['amount'];
 
         $editObj->save();
 

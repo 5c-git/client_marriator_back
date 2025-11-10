@@ -13,6 +13,11 @@ class Reasons extends Model
 
     protected $fillable = [
         'name',
+        'amount',
+    ];
+
+    protected $casts = [
+        'amount' => 'integer'
     ];
 
     public $timestamps = false;

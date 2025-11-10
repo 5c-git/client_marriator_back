@@ -10,15 +10,16 @@ use Illuminate\Support\Facades\Log;
 
 class VermeService
 {
-    private string $baseUrl;
-    private string $login;
-    private string $password;
+    protected string $baseUrl;
+    protected array $defaultAuth;
 
     public function __construct()
     {
         $this->baseUrl = config('services.timesheet.url');
-        $this->login = config('services.timesheet.login');
-        $this->password = config('services.timesheet.password');
+        $this->defaultAuth = [
+            'login' => config('services.timesheet.login'),
+            'password' => config('services.timesheet.password')
+        ];
     }
 
     static function sendUserInfo(User $user): bool
@@ -26,92 +27,92 @@ class VermeService
         return true;
     }
 
-    public function getTimesheets()
+    public function getTimesheets(array $filters = [])
     {
-        try {
-
-            $requestData = $this->buildRequestData();
-
-            $response = Http::timeout(30)
-                ->retry(3, 100)
-                ->acceptJson()
-                ->contentType('application/json')
-                ->post($this->baseUrl, $requestData);
-
-            echo "<pre>";
-            var_dump($response->body());
-            echo "</pre>";
-
-            if ($response->failed()) {
-                throw new \Exception('API request failed: ' . $response->status());
-            }
-
-            $responseData = $response->json();
-            Log::info('Timesheet API Response', ['data' => $responseData]);
-
-            return $responseData;
-
-        } catch (\Exception $e) {
-            throw $e;
-        }
-    }
-
-    private function buildRequestData($dto = null): array
-    {
-        $data = [
-            'getTimesheets' => [
-                'headquarter' => [
-                    'code' => 'bnt'
-                ],
-                'start_date' => '2023-01-16',
-                'end_date' => '2023-01-16',
-                'authData' => [
-                    'login' => $this->login,
-                    'password' => $this->password
-                ],
-                'agency'=> [
-                    'code' => '002',
-                    'headquarter' => [
-                        'code' => 'bnt'
-                    ]
-                ]
-            ]
+        $payload = [
+            'getTimesheets' => array_merge([
+                'headquarter' => ['code' => 'bnt'],
+                'start_date' => '2025-04-01',
+                'end_date' => '2025-04-20',
+                'authData' => $this->defaultAuth
+            ], $filters)
         ];
 
-
-
-//        if ($dto->organizationCode || $dto->organizationAltCode) {
-//            $organization = [];
-//
-//            if ($dto->organizationCode) {
-//                $organization['code'] = $dto->organizationCode;
-//            }
-//
-//            if ($dto->organizationAltCode) {
-//                $organization['alt_code'] = $dto->organizationAltCode;
-//            }
-//
-//            $organization['headquarter'] = [
-//                'code' => $dto->isTest ? 'auchan-test' : 'auchan'
-//            ];
-//
-//            $data['getTimesheets']['organization'] = $organization;
-//        }
-//
-//        if ($dto->agencyEmployeeNumber) {
-//            $data['getTimesheets']['agency_employee'] = [
-//                'number' => $dto->agencyEmployeeNumber
-//            ];
-//        }
-
-        return $data;
+        return $this->sendRequest($payload);
     }
 
-    public static function updateReportStat(Report $report): void
+    public function createEmployee(array $employeeData)
     {
-        $report->coefficient = 1;
-        $report->status = ReportStatusEnum::reported->value;
-        $report->save();
+        $payload = [
+            'setAgencyEmployee' => array_merge([
+                'headquarter' => ['code' => 'bnt'],
+                'disableJobHistory' => false,
+                'disableAgencyHistory' => false,
+                'disableOrgHistory' => true,
+                'disableEmployeeEvent' => true,
+                'useBaseJobs' => true,
+                'authData' => $this->defaultAuth
+            ], $employeeData)
+        ];
+
+        return $this->sendRequest($payload, 'POST');
     }
 
+    public function getShifts(array $filters = [])
+    {
+        $payload = [
+            'getOutsourcingShiftsVer2' => array_merge([
+                'timestamp' => now()->toIso8601String(),
+                'amount' => 500,
+                'headquarter' => ['code' => 'bnt'],
+                'agency' => ['code' => 'bnt_agency_msk'],
+                'authData' => $this->defaultAuth
+            ], $filters)
+        ];
+
+        return $this->sendRequest($payload, 'POST');
+    }
+
+    public function assignToShift(array $shiftData)
+    {
+        $payload = [
+            'setOutsourcingShift' => array_merge([
+                'headquarter' => ['code' => 'bnt'],
+                'agency' => [
+                    'code' => 'bnt_agency_msk',
+                    'headquarter' => ['code' => 'bnt']
+                ],
+                'authData' => $this->defaultAuth
+            ], $shiftData)
+        ];
+
+        return $this->sendRequest($payload, 'POST');
+    }
+
+    protected function sendRequest(array $payload, string $method = 'POST')
+    {
+        try {
+            $response = Http::withHeaders([
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
+            ])->timeout(30)->post($this->baseUrl, $payload);
+
+            if (!$response->successful()) {
+                Log::error('API Request failed', [
+                    'status' => $response->status(),
+                    'response' => $response->body(),
+                    'payload' => $payload
+                ]);
+            }
+
+            return $response->json();
+        } catch (\Exception $e) {
+            Log::error('API Request exception', [
+                'message' => $e->getMessage(),
+                'payload' => $payload
+            ]);
+
+            return ['error' => $e->getMessage()];
+        }
+    }
 }

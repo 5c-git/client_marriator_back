@@ -93,13 +93,12 @@ class Report extends Model
 
     public function reasons(): BelongsToMany
     {
-        return $this->belongsToMany(Reasons::class, 'report_reason', 'report_id', 'reason_id')
-            ->withPivot('amount');
+        return $this->belongsToMany(Reasons::class, 'report_reason', 'report_id', 'reason_id');
     }
 
     public function getReasonsAmount(): int
     {
-        return (int) $this->reasons()->sum('report_reason.amount');
+        return (int) ($this->reasons()->sum('directory_reasons.amount') ?? 0);
     }
 
 }

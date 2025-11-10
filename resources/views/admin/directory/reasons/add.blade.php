@@ -22,6 +22,13 @@
         </div>
 
         <div class="form-group row">
+            <label for="amount" class="col-sm-2 col-form-label">Сумма</label>
+            <div class="col-sm-10">
+                <input type="number" class="form-control" name="amount" id="amount">
+            </div>
+        </div>
+
+        <div class="form-group row">
             <div class="col-sm-10">
                 <button type="submit" class="btn btn-success">Сохранить</button>
                 <a href="{{route('reasonsList')}}" style="margin-left: 10px" class="btn btn-secondary btn-md active"

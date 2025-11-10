@@ -46,4 +46,11 @@ return [
         'password' => env('VERME_API_PASSWORD',''),
     ],
 
+    'xFive' => [
+        'base_url' => env('XFIVE_BASE_URL', 'https://api.x5.ru/v1/wop-stage'),
+        'client_id' => env('XFIVE_CLIENT_ID'),
+        'client_secret' => env('XFIVE_CLIENT_SECRET'),
+        'token_url' => env('XFIVE_TOKEN_URL', 'https://keycloak.x5.ru/realms/CSIP/protocol/openid-connect/token'),
+    ]
+
 ];
