@@ -435,35 +435,39 @@ class EloquentOrderRepository implements OrderRepository
     public function createBidFromOrder(User $user, int $orderId, int $orderActivityId): Bid
     {
         $order = Order::where('id', $orderId)->first();
-        $bid = $order->bids?->where('activity_id', $orderActivityId)->first();
-        if (!$bid) {
-            $orderActivities = OrderActivities::where('id', $orderActivityId)->first();
-            $bid             = new Bid();
-            $radius = Radius::where('default',true)->first();
-            if(!$radius) {
-                $bid->radius = 5;
-            }else{
-                $bid->radius = $radius->value;
+        $bids = $order->bids?->where('activity_id', $orderActivityId)->get();
+        if (!$bids) {
+            foreach ($bids as $bid){
+                $bid->status = OrderStatusEnum::archive->value;
+                $bid->save();
             }
-            $bid->place_id         = $order->place_id;
-            $bid->user_id          = $user->id;
-            $bid->accept_user_id   = null;
-            $bid->order_id         = $order->id;
-            $bid->task_id          = null;
-            $bid->status           = OrderStatusEnum::new->value;
-            $bid->self_employed    = $order->self_employed;
-            $bid->price            = null;
-            $bid->view_activity_id = $orderActivities->view_activity_id;
-            $bid->count            = $orderActivities->count;
-            $bid->date_start       = $orderActivities->date_start;
-            $bid->date_end         = $orderActivities->date_end;
-            $bid->need_foto        = $orderActivities->need_foto;
-            $bid->date_activity    = $orderActivities->date_activity;
-            $bid->activity_id      = $orderActivityId;
-
-
-            $bid->save();
         }
+
+        $orderActivities = OrderActivities::where('id', $orderActivityId)->first();
+        $bid             = new Bid();
+        $radius = Radius::where('default',true)->first();
+        if(!$radius) {
+            $bid->radius = 5;
+        }else{
+            $bid->radius = $radius->value;
+        }
+        $bid->place_id         = $order->place_id;
+        $bid->user_id          = $user->id;
+        $bid->accept_user_id   = null;
+        $bid->order_id         = $order->id;
+        $bid->task_id          = null;
+        $bid->status           = OrderStatusEnum::new->value;
+        $bid->self_employed    = $order->self_employed;
+        $bid->price            = null;
+        $bid->view_activity_id = $orderActivities->view_activity_id;
+        $bid->count            = $orderActivities->count;
+        $bid->date_start       = $orderActivities->date_start;
+        $bid->date_end         = $orderActivities->date_end;
+        $bid->need_foto        = $orderActivities->need_foto;
+        $bid->date_activity    = $orderActivities->date_activity;
+        $bid->activity_id      = $orderActivityId;
+
+        $bid->save();
 
         return $bid;
     }
@@ -471,40 +475,44 @@ class EloquentOrderRepository implements OrderRepository
     public function createBidFromTask(User $user, int $taskId, int $taskActivityId): Bid
     {
         $task = Task::where('id', $taskId)->first();
-        $bid = $task->bid?->where('activity_id', $taskActivityId)->first();
-        if (!$bid) {
-            $taskActivities = TaskActivity::where('id', $taskActivityId)->first();
-            $bid            = new Bid();
+        $bids = $task->bid?->where('activity_id', $taskActivityId)->get();
 
-            $radius = Radius::where('default',true)->first();
-            if(!$radius) {
-                $bid->radius = 5;
-            }else{
-                $bid->radius = $radius->value;
+        if (!$bids) {
+            foreach ($bids as $bid) {
+                $bid->status = OrderStatusEnum::archive->value;
+                $bid->save();
             }
-
-            $bid->place_id         = $task->place_id;
-            $bid->user_id          = $user->id;
-            $bid->accept_user_id   = null;
-            $bid->order_id         = $task->order_id;
-            $bid->task_id          = $task->id;
-            $bid->status           = OrderStatusEnum::new->value;
-            $bid->self_employed    = $task->self_employed;
-            $bid->price            = null;
-            $bid->view_activity_id = $taskActivities->view_activity_id;
-            $bid->count            = $taskActivities->count;
-            $bid->date_start       = $taskActivities->date_start;
-            $bid->date_end         = $taskActivities->date_end;
-            $bid->need_foto        = $taskActivities->need_foto;
-            $bid->date_activity    = $taskActivities->date_activity;
-            $bid->activity_id      = $taskActivityId;
-
-
-            $bid->save();
         }
 
-        return $bid;
+        $taskActivities = TaskActivity::where('id', $taskActivityId)->first();
+        $bid            = new Bid();
 
+        $radius = Radius::where('default', true)->first();
+        if (!$radius) {
+            $bid->radius = 5;
+        } else {
+            $bid->radius = $radius->value;
+        }
+
+        $bid->place_id         = $task->place_id;
+        $bid->user_id          = $user->id;
+        $bid->accept_user_id   = null;
+        $bid->order_id         = $task->order_id;
+        $bid->task_id          = $task->id;
+        $bid->status           = OrderStatusEnum::new->value;
+        $bid->self_employed    = $task->self_employed;
+        $bid->price            = null;
+        $bid->view_activity_id = $taskActivities->view_activity_id;
+        $bid->count            = $taskActivities->count;
+        $bid->date_start       = $taskActivities->date_start;
+        $bid->date_end         = $taskActivities->date_end;
+        $bid->need_foto        = $taskActivities->need_foto;
+        $bid->date_activity    = $taskActivities->date_activity;
+        $bid->activity_id      = $taskActivityId;
+
+        $bid->save();
+
+        return $bid;
     }
 
     public function getBidsByUserSyncDataPaginate(User $user, ?OrderStatusEnum $status): Collection

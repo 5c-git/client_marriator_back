@@ -33,9 +33,18 @@ class AddReasonsRequest extends FormRequest
                 'required',
                 function ($attribute, $value, $fail) {
                     $user = auth()->user();
-                    $userIdsSpecialist = $user->managerSpecialist->pluck('id')->toArray();
+
+                    $userIdsSpecialist = $user->managerSpecialist?->pluck('id')?->toArray()??[];
                     $userIdsSpecialist = array_merge($userIdsSpecialist, $user->supervisorSpecialist->pluck('id')->toArray());
+
+                    foreach ($user->supervisors as $supervisor) {
+                        $userIdsSpecialist = array_merge(
+                            $userIdsSpecialist,
+                            $supervisor->supervisorSpecialist?->pluck('id')?->toArray()??[]
+                        );
+                    }
                     $userIdsSpecialist = array_unique($userIdsSpecialist);
+
                     $report = Report::query()->where('id', $value)
                         ->whereIn('user_id', $userIdsSpecialist)
                         ->whereIn('status', [ReportStatusEnum::reported->value,
