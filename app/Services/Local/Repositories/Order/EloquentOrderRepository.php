@@ -650,6 +650,13 @@ class EloquentOrderRepository implements OrderRepository
         /** @var Bid $bid  */
 
         if ($bid->acceptingUsers()->where('user_id', $user->id)->exists()) {
+
+            if(in_array(RoleEnum::manager->value,$bid->user->roles?->pluck('id')->toArray()??[])){
+                $bid->user->managerSpecialist()->syncWithoutDetaching([$user->id]);
+            }elseif(in_array(RoleEnum::supervisor->value,$bid->user->roles?->pluck('id')->toArray()??[])){
+                $bid->user->supervisorSpecialist()->syncWithoutDetaching([$user->id]);
+            }
+
             $updated = $bid->acceptingUsers()->updateExistingPivot(
                 $user->id,
                 [
