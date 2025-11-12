@@ -435,7 +435,7 @@ class EloquentOrderRepository implements OrderRepository
     public function createBidFromOrder(User $user, int $orderId, int $orderActivityId): Bid
     {
         $order = Order::where('id', $orderId)->first();
-        $bids = $order->bids?->where('activity_id', $orderActivityId)->get();
+        $bids = $order->bids?->where('activity_id', $orderActivityId)->first();
         if (!$bids) {
             foreach ($bids as $bid){
                 $bid->status = OrderStatusEnum::archive->value;
@@ -475,7 +475,7 @@ class EloquentOrderRepository implements OrderRepository
     public function createBidFromTask(User $user, int $taskId, int $taskActivityId): Bid
     {
         $task = Task::where('id', $taskId)->first();
-        $bids = $task->bid?->where('activity_id', $taskActivityId)->get();
+        $bids = $task->bid?->where('activity_id', $taskActivityId)->first();
 
         if (!$bids) {
             foreach ($bids as $bid) {
