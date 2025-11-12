@@ -638,7 +638,7 @@ class EloquentOrderRepository implements OrderRepository
                     collect($commonIds)->mapWithKeys(function ($id) use ($bid,$commonIds) {
                         return [
                             $id => [
-                                'accepted' => BidAcceptingStatusEnum::consideration->value,
+                                'accepted' => BidAcceptingStatusEnum::accepted->value,
                                 'task_id'  => $bid->task_id,
                                 'order_id' => $bid->order_id,
                                 'user_id_maintainer'  => Auth::id()
