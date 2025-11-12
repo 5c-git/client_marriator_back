@@ -21,6 +21,7 @@ Schedule::command('archiveBid')->everyThreeMinutes()->withoutOverlapping();
 Schedule::command('archiveTask')->everyThreeMinutes()->withoutOverlapping();
 Schedule::command('archiveOrder')->everyThreeMinutes()->withoutOverlapping();
 Schedule::command('inWorkBid')->everyThreeMinutes()->withoutOverlapping();
+Schedule::command('archiveJob')->everyThreeMinutes()->withoutOverlapping();
 
 
 

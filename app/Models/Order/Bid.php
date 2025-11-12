@@ -33,6 +33,7 @@ use App\Models\Order\OrderActivities;
  * @property bool $self_employed
  * @property Carbon $date_start
  * @property Carbon $date_end
+ * @property Carbon $created_at
  * @property array $date_activity
  * @property bool $need_foto
  * @property OrderStatusEnum $status
@@ -75,6 +76,7 @@ class Bid extends Model
     protected $casts = [
         'status' => OrderStatusEnum::class,
         'date_start' => 'datetime',
+        'created_at' => 'datetime',
         'date_end' => 'datetime',
         'date_activity' => 'json',
     ];

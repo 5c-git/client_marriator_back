@@ -5,7 +5,9 @@ namespace App\Http\Requests\Order;
 use App\Enum\Order\OrderStatusEnum;
 use App\Http\Requests\FormRequest;
 use App\Models\Order\OrderActivities;
+use App\Models\Order\TaskActivity;
 use App\Services\TimeService;
+use Carbon\Carbon;
 use Illuminate\Validation\Rule;
 use App\Models\Order\Order;
 
@@ -43,6 +45,15 @@ class OrderByIdRequest extends FormRequest
                     if (!$orderExists) {
                         $fail('Not your order');
                         return;
+                    }
+
+                    $orderActivities = $orderExists->orderActivities()
+                        ->orderBy('date_end','desc')
+                        ->first();
+
+                    /** @var OrderActivities $orderActivities */
+                    if($orderActivities->date_end?->gt(Carbon::now())){
+                        $fail('Order activities time start is arrived after end of Activities');
                     }
                 },
             ],

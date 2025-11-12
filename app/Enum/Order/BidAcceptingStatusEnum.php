@@ -20,6 +20,7 @@ enum BidAcceptingStatusEnum: int
     case consideration = 4;
     case work = 5;
     case canceled = 6;
+    case archive = 7;
 
     public function getStatusName(): string
     {
@@ -31,6 +32,7 @@ enum BidAcceptingStatusEnum: int
             self::consideration => 'На рассмотрении',
             self::work => 'В работе',
             self::canceled => 'Отменено',
+            self::archive => 'Архив',
         };
     }
 }

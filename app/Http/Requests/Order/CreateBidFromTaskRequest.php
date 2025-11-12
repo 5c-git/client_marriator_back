@@ -4,7 +4,11 @@ namespace App\Http\Requests\Order;
 
 use App\Enum\Order\OrderStatusEnum;
 use App\Http\Requests\FormRequest;
+use App\Models\Order\Bid;
 use App\Models\Order\Task;
+use App\Models\Order\TaskActivity;
+use App\Services\TimeService;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use App\Models\Order\Order;
 /**
@@ -60,6 +64,15 @@ class CreateBidFromTaskRequest extends FormRequest
 
                     if (!$orderExists) {
                         $fail('Not your task');
+                        return;
+                    }
+
+                    $bids = $orderExists->bids?->where('activity_id', $this->orderActivityId);
+                    if ($bids) {
+                        /** @var Bid $bids */
+                        if(!TimeService::getTimeDifferenceAdd($this->user(),'repeat_bid',$bids->created_at)){
+                            $fail('Time before date of create new bid');
+                        }
                     }
                 },
             ],
@@ -68,8 +81,17 @@ class CreateBidFromTaskRequest extends FormRequest
                 'integer',
                 function ($attribute, $value, $fail) {
                     $taskActivitiesIds = Task::where('id',$this->taskId)->first()?->taskActivities?->pluck('id')->toArray();
-                    if (!in_array($value,$taskActivitiesIds)) {
+                    if (!$taskActivitiesIds || !in_array($value,$taskActivitiesIds)) {
                         $fail('Not correct task Activity id');
+                        return;
+                    }
+
+                    $taskActivities = TaskActivity::where('id', $value)
+                        ->first();
+                    /** @var TaskActivity $taskActivities */
+
+                    if(!TimeService::getTimeDifferenceSub($this->user(),'leave_bid',$taskActivities->date_end)){
+                        $fail('Time after date end of activities');
                     }
                 },
             ]
