@@ -620,9 +620,9 @@ class EloquentOrderRepository implements OrderRepository
 
             if($uniqueToSpecialistIds) {
                 $bid->acceptingUsers()->syncWithoutDetaching(
-                    collect($uniqueToSpecialistIds)->mapWithKeys(function ($id) use ($bid) {
+                    collect($uniqueToSpecialistIds)->mapWithKeys(function ($idFirst) use ($bid) {
                         return [
-                            $id => [
+                            $idFirst => [
                                 'accepted' => BidAcceptingStatusEnum::notAccepted->value,
                                 'task_id'  => $bid->task_id,
                                 'order_id' => $bid->order_id,
@@ -635,9 +635,9 @@ class EloquentOrderRepository implements OrderRepository
 
             if($commonIds) {
                 $bid->acceptingUsers()->syncWithoutDetaching(
-                    collect($commonIds)->mapWithKeys(function ($id) use ($bid,$commonIds) {
+                    collect($commonIds)->mapWithKeys(function ($idTwo) use ($bid) {
                         return [
-                            $id => [
+                            $idTwo => [
                                 'accepted' => BidAcceptingStatusEnum::work->value,
                                 'task_id'  => $bid->task_id,
                                 'order_id' => $bid->order_id,
