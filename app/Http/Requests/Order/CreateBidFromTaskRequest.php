@@ -67,7 +67,7 @@ class CreateBidFromTaskRequest extends FormRequest
                         return;
                     }
 
-                    $bids = $orderExists->bids?->where('activity_id', $this->orderActivityId);
+                    $bids = $orderExists->bids?->where('activity_id', $this->orderActivityId)->first();
                     if ($bids) {
                         /** @var Bid $bids */
                         if(!TimeService::getTimeDifferenceAdd($this->user(),'repeat_bid',$bids->created_at)){
@@ -86,8 +86,7 @@ class CreateBidFromTaskRequest extends FormRequest
                         return;
                     }
 
-                    $taskActivities = TaskActivity::where('id', $value)
-                        ->first();
+                    $taskActivities = TaskActivity::where('id', $value)->first();
                     /** @var TaskActivity $taskActivities */
 
                     if(!TimeService::getTimeDifferenceSub($this->user(),'leave_bid',$taskActivities->date_end)){

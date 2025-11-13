@@ -57,7 +57,7 @@ class CreateBidFromOrderRequest extends FormRequest
                         return;
                     }
 
-                    $bids = $orderExists->bids?->where('activity_id', $this->orderActivityId);
+                    $bids = $orderExists->bids?->where('activity_id', $this->orderActivityId)->first();
                     if ($bids) {
                         /** @var Bid $bids */
                         if(!TimeService::getTimeDifferenceAdd($this->user(),'repeat_bid',$bids->created_at)){
