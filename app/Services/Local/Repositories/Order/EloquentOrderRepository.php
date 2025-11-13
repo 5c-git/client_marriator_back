@@ -618,6 +618,7 @@ class EloquentOrderRepository implements OrderRepository
 
             $uniqueToSpecialistIds = array_diff($specialistIds, $specialistIdsFromRelated);
 
+
             if($uniqueToSpecialistIds) {
                 $bid->acceptingUsers()->syncWithoutDetaching(
                     collect($uniqueToSpecialistIds)->mapWithKeys(function ($idFirst) use ($bid) {

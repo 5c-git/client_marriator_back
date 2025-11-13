@@ -30,8 +30,8 @@ class InWorkBid extends Command
             ->with('user')->inRandomOrder()->limit(10)->get();
 
         foreach ($orders as $order){
-            $order->status = OrderStatusEnum::accepted->value;
-            $order->save();
+            //$order->status = OrderStatusEnum::accepted->value;
+            //$order->save();
         }
     }
 }
