@@ -26,7 +26,7 @@ class DellSpecialistFromManagerAndSupervisorCommand extends Command
         $inactiveUserIds = User::whereHas('roles', function($query) {
             $query->where('id', RoleEnum::specialist->value);
         })->whereDoesntHave('reports', function($query) use ($cutoffDate) {
-            $query->where('date_start', '>=', $cutoffDate);
+            $query->where('date_start', '<=', $cutoffDate);
         })->pluck('id');
 
         if ($inactiveUserIds->isEmpty()) {
