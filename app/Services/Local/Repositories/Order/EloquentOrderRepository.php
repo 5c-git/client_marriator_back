@@ -646,6 +646,9 @@ class EloquentOrderRepository implements OrderRepository
                         ];
                     })->toArray()
                 );
+                if($bid->count <= count($commonIds)){
+                    $bid->status = OrderStatusEnum::accepted->value;
+                }
             }
             $bid->save();
         }
