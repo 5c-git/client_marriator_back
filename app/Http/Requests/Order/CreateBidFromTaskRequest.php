@@ -70,7 +70,7 @@ class CreateBidFromTaskRequest extends FormRequest
                     $bids = $orderExists->bids?->where('activity_id', $this->orderActivityId)->first();
                     if ($bids) {
                         /** @var Bid $bids */
-                        if(!TimeService::getTimeDifferenceAdd($this->user(),'repeat_bid',$bids->created_at)){
+                        if(TimeService::getTimeDifferenceAdd($this->user(),'repeat_bid',$bids->created_at)){
                             $fail('Time before date of create new bid');
                         }
                     }
@@ -89,7 +89,7 @@ class CreateBidFromTaskRequest extends FormRequest
                     $taskActivities = TaskActivity::where('id', $value)->first();
                     /** @var TaskActivity $taskActivities */
 
-                    if(!TimeService::getTimeDifferenceSub($this->user(),'leave_bid',$taskActivities->date_end)){
+                    if(TimeService::getTimeDifferenceSub($this->user(),'leave_bid',$taskActivities->date_end)){
                         $fail('Time after date end of activities');
                     }
                 },

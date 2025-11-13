@@ -21,7 +21,7 @@ class DellSpecialistFromManagerAndSupervisorCommand extends Command
 
     public function handle(): void
     {
-        $cutoffDate = Carbon::now()->subDays(Setting::getValue('Podumati'));
+        $cutoffDate = Carbon::now()->subDays(Setting::getValue('waiting_task'));
 
         $inactiveUserIds = User::whereHas('roles', function($query) {
             $query->where('id', RoleEnum::specialist->value);

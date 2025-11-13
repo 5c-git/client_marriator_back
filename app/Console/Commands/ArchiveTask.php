@@ -48,6 +48,12 @@ class ArchiveTask extends Command
             if($timeAfterPeriod?->gt(Carbon::now())){
                 $order->status = OrderStatusEnum::archive->value;
                 $order->save();
+                if($order->bid){
+                    foreach ($order->bid as $bid){
+                        $bid->status = OrderStatusEnum::archive->value;
+                        $bid->save();
+                    }
+                }
             }
         }
     }

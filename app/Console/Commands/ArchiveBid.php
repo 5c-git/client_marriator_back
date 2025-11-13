@@ -25,27 +25,27 @@ class ArchiveBid extends Command
 
     public function handle(): void
     {
-        $orders = Bid::where('date_end', '<', now())
-        ->with('user')->inRandomOrder()->limit(10)->get();
-
-        $value = Setting::getValue('leave_bid');
-        foreach ($orders as $order){
-            /** @var Bid $order */
-            if(!empty($order->user->leave_bid)){
-                $defaultValue = $order->user->leave_bid;
-            }else{
-                $defaultValue = $value;
-            }
-
-            $timeToSubtract = Carbon::parse($defaultValue);
-
-            $timeAfterPeriod = $order->date_end->addHours($timeToSubtract->hour)
-                ->addMinutes($timeToSubtract->minute);
-
-            if($timeAfterPeriod?->gt(Carbon::now())){
-                $order->status = OrderStatusEnum::archive->value;
-                $order->save();
-            }
-        }
+//        $orders = Bid::where('date_end', '<', now())
+//        ->with('user')->inRandomOrder()->limit(10)->get();
+//
+//        $value = Setting::getValue('leave_bid');
+//        foreach ($orders as $order){
+//            /** @var Bid $order */
+//            if(!empty($order->user->leave_bid)){
+//                $defaultValue = $order->user->leave_bid;
+//            }else{
+//                $defaultValue = $value;
+//            }
+//
+//            $timeToSubtract = Carbon::parse($defaultValue);
+//
+//            $timeAfterPeriod = $order->date_end->addHours($timeToSubtract->hour)
+//                ->addMinutes($timeToSubtract->minute);
+//
+//            if($timeAfterPeriod?->gt(Carbon::now())){
+//                $order->status = OrderStatusEnum::archive->value;
+//                $order->save();
+//            }
+//        }
     }
 }
