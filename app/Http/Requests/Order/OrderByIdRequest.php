@@ -50,9 +50,13 @@ class OrderByIdRequest extends FormRequest
                     $orderActivities = $orderExists->orderActivities()
                         ->orderBy('date_end','desc')
                         ->first();
+                    if(!$orderActivities){
+                        $fail('order activities not exist');
+                        return;
+                    }
 
                     /** @var OrderActivities $orderActivities */
-                    if($orderActivities->date_end?->gt(Carbon::now())){
+                    if(!$orderActivities->date_end?->gt(Carbon::now())){
                         $fail('Order activities time start is arrived after end of Activities');
                     }
                 },
