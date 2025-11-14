@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Order;
 
+use App\Enum\Order\BidAcceptingStatusEnum;
 use App\Enum\Order\OrderStatusEnum;
 use App\Enum\Role\RoleEnum;
 use App\Http\Requests\FormRequest;
@@ -75,6 +76,9 @@ class EntrustBidRequest extends FormRequest
                         $users = User::whereJsonContains('data->' . $fieldView->uuid, $bid->viewActivity->uuid)
                             ->whereIn('data->' . $fieldStat->uuid, $status)
                             ->whereIn('id', $value)
+                            ->whereDoesntHave('acceptedBids', function ($query) {
+                                $query->wherePivot('accepted', BidAcceptingStatusEnum::notAccepted->value);
+                            })
                             ->get();
 
                         $userInRadius = collect();

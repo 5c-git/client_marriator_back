@@ -113,6 +113,7 @@ class AcceptAllReportRequest extends FormRequest
             'reports.*.hours' => 'required|numeric',
             'reports.*.reasons' => 'required|array|min:1',
             'reports.*.reasons.*.reasonId' => 'required|integer|exists:directory_reasons,id',
+            'reports.*.reasons.*.count' => 'required|integer|min:1',
         ];
     }
 }

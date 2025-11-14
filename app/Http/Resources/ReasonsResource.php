@@ -25,6 +25,10 @@ class ReasonsResource extends JsonResource
             'amount' => $this->amount,
         ];
 
+        if(!empty($this->pivot) && !empty($this->pivot->count)){
+            $return['count'] = $this->pivot->count;
+        }
+
         return $return;
     }
 }

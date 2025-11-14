@@ -983,7 +983,7 @@ class ManagerController extends Controller
         $syncData = [];
         if(!empty($request->reasons)) {
             foreach ($request->reasons as $reason) {
-                $syncData[] = $reason['reasonId'];
+                $syncData[$reason['reasonId']] = ['count' => $reason['count']];
             }
         }
 
@@ -1024,7 +1024,7 @@ class ManagerController extends Controller
                 $report->reasons()->detach();
                 $syncData = [];
                 foreach ($dataRequest[$report->id]['reasons'] as $reason) {
-                    $syncData[] = $reason['reasonId'];
+                    $syncData[$reason['reasonId']] = ['count' => $reason['count']];
                 }
                 if($syncData){
                     $report->reasons()->syncWithoutDetaching($syncData);
@@ -1044,7 +1044,7 @@ class ManagerController extends Controller
         $syncData = [];
         if(!empty($request->reasons)) {
             foreach ($request->reasons as $reason) {
-                $syncData[] = $reason['reasonId'];
+                $syncData[$reason['reasonId']] = ['count' => $reason['count']];
             }
         }
 

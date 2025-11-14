@@ -730,6 +730,9 @@ class EloquentOrderRepository implements OrderRepository
         if($fieldView && $bid->viewActivity && $place) {
             $users = User::whereJsonContains('data->'.$fieldView->uuid, $bid->viewActivity->uuid)
                 ->whereIn('data->'.$fieldStat->uuid, $status)
+                ->whereDoesntHave('acceptedBids', function ($query) {
+                    $query->wherePivot('accepted', BidAcceptingStatusEnum::notAccepted->value);
+                })
                 ->get();
 
             $userInRadius = collect();
