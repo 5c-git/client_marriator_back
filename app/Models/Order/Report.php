@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Collection;
 use App\Models\Fields\Directory\ViewActivities;
+use Illuminate\Support\Facades\DB;
 
 /**
  * @property int $id
@@ -93,12 +94,15 @@ class Report extends Model
 
     public function reasons(): BelongsToMany
     {
-        return $this->belongsToMany(Reasons::class, 'report_reason', 'report_id', 'reason_id');
+        return $this->belongsToMany(Reasons::class, 'report_reason', 'report_id', 'reason_id')
+            ->withPivot('count');
     }
 
     public function getReasonsAmount(): int
     {
-        return (int) ($this->reasons()->sum('directory_reasons.amount') ?? 0);
+        return (int) ($this->reasons()->getQuery()->sum(
+            DB::raw('directory_reasons.amount * report_reason.count')
+        ) ?? 0);
     }
 
 }

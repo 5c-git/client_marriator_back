@@ -57,7 +57,6 @@ use App\Models\User;
 use App\Services\Local\Repositories\Contracts\OrderRepository;
 use App\Services\Local\Repositories\Contracts\UserRepository;
 use App\Services\Nopaper\NopaperService;
-use App\Services\Verme\VermeService;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\UserResource;
 use App\Http\Requests\Order\ConvertTaskRequest;
@@ -523,7 +522,7 @@ class ManagerController extends Controller
             ->getModerationUsers($arrRoleConfirm)?->where('id',$request->userId)?->first();
         if(!empty($userForModeration)){
             if($request->confirm){
-                if(VermeService::sendUserInfo($user)) {
+                if(true) {
                     $userForModeration->confirmRegister = true;
                     if ($request->supervisorIds) {
                         $userForModeration->supervisors()->sync($request->supervisorIds);

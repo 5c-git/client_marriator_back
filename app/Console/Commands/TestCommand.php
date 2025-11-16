@@ -16,7 +16,6 @@ use App\Services\DocumentServices\CorrectRecognitionService;
 use App\Services\Nopaper\NopaperService;
 use App\Services\OneC\OneCServices;
 use App\Services\TimeService;
-use App\Services\Verme\VermeService;
 use Illuminate\Console\Command;
 use Carbon\Carbon;
 use App\Models\User;

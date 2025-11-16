@@ -51,6 +51,15 @@ return [
         'client_id' => env('XFIVE_CLIENT_ID'),
         'client_secret' => env('XFIVE_CLIENT_SECRET'),
         'token_url' => env('XFIVE_TOKEN_URL', 'https://keycloak.x5.ru/realms/CSIP/protocol/openid-connect/token'),
+    ],
+
+    'timeBook' => [
+        'base_url' => env('TIMEBOOK_BASE_URL', 'https://integration-test.timebook.ru/erpi'),
+        'login' => env('TIMEBOOK_LOGIN'),
+        'password' => env('TIMEBOOK_PASSWORD'),
+        'access_token' => env('TIMEBOOK_ACCESS_TOKEN'),
     ]
+
+
 
 ];
