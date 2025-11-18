@@ -56,8 +56,10 @@ class AcceptOrderRequest extends FormRequest
                         ->first();
 
 
-                    if(!$orderActivities->date_end->gt(Carbon::now())){
-                        $fail('Order activities time end is ended');
+                    if($orderActivities) {
+                        if (!$orderActivities->date_end->gt(Carbon::now())) {
+                            $fail('Order activities time end is ended');
+                        }
                     }
                 },
             ],

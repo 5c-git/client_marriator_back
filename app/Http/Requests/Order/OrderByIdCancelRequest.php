@@ -54,8 +54,14 @@ class OrderByIdCancelRequest extends FormRequest
                         ->orderBy('date_start')
                         ->first();
 
-                    if(!TimeService::getTimeDifferenceSub($this->user(),'cancel_order',$orderActivities?->date_start)){
-                        $fail('Order activities time start is arrived');
+                    if($orderActivities) {
+                        if (!TimeService::getTimeDifferenceSub(
+                            $this->user(),
+                            'cancel_order',
+                            $orderActivities?->date_start
+                        )) {
+                            $fail('Order activities time start is arrived');
+                        }
                     }
 
                 },

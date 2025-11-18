@@ -61,8 +61,14 @@ class CancelTaskRequest extends FormRequest
                         ->orderBy('date_start')
                         ->first();
 
-                    if(!TimeService::getTimeDifferenceSub($this->user(),'cancel_task',$orderActivities?->date_start)){
-                        $fail('Task activities time start is arrived');
+                    if($orderActivities) {
+                        if (!TimeService::getTimeDifferenceSub(
+                            $this->user(),
+                            'cancel_task',
+                            $orderActivities?->date_start
+                        )) {
+                            $fail('Task activities time start is arrived');
+                        }
                     }
                 },
             ],

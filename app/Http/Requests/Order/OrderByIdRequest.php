@@ -56,8 +56,10 @@ class OrderByIdRequest extends FormRequest
                     }
 
                     /** @var OrderActivities $orderActivities */
-                    if(!$orderActivities->date_end?->gt(Carbon::now())){
-                        $fail('Order activities time start is arrived after end of Activities');
+                    if($orderActivities) {
+                        if (!$orderActivities->date_end?->gt(Carbon::now())) {
+                            $fail('Order activities time start is arrived after end of Activities');
+                        }
                     }
                 },
             ],
