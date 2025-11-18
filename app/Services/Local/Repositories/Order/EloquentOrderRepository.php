@@ -228,11 +228,24 @@ class EloquentOrderRepository implements OrderRepository
 
     public function cancelOrder(int $orderId): bool
     {
-        return (bool)Order::query()
-            ->where('id',$orderId)
-            ->update(
-                ['status'=>OrderStatusEnum::canceled->value]
-            );
+        /** @var Order $order  */
+        $order = Order::query()->where('id',$orderId)->first();
+        $order->status = OrderStatusEnum::canceled->value;
+        $order->save();
+        if($order->bids){
+            foreach ($order->bids as $bid){
+                $bid->status = OrderStatusEnum::canceled->value;
+                $bid->save();
+            }
+        }
+
+        if($order->tasks){
+            foreach ($order->tasks as $tasks){
+                $tasks->status = OrderStatusEnum::canceled->value;
+                $tasks->save();
+            }
+        }
+        return true;
     }
 
     public function sendOrder(int $orderId): bool
@@ -417,6 +430,13 @@ class EloquentOrderRepository implements OrderRepository
         $task = Task::query()->where('id',$taskId)->first();
         $task->status = OrderStatusEnum::canceled->value;
         $task->save();
+        /** @var Task $task  */
+        if($task->bid){
+            foreach ($task->bid as $bid){
+                $bid->status = OrderStatusEnum::canceled->value;
+                $bid->save();
+            }
+        }
         return true;
     }
 

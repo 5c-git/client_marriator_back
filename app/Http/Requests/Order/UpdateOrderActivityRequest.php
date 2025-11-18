@@ -58,21 +58,21 @@ class UpdateOrderActivityRequest extends FormRequest
                         return;
                     }
 
-                    /** @var Order $orderExists */
-                    /** @var OrderActivities $orderActivities */
-                    $orderActivities = $orderExists->orderActivities()
-                        ->orderBy('date_start')
-                        ->first();
-
-                    if($orderActivities) {
-                        if (!TimeService::getTimeDifferenceSub(
-                            $this->user(),
-                            'change_order',
-                            $orderActivities?->date_start
-                        )) {
-                            $fail('Order activities time start is arrived after change order');
-                        }
-                    }
+//                    /** @var Order $orderExists */
+//                    /** @var OrderActivities $orderActivities */
+//                    $orderActivities = $orderExists->orderActivities()
+//                        ->orderBy('date_start')
+//                        ->first();
+//
+//                    if($orderActivities) {
+//                        if (!TimeService::getTimeDifferenceSub(
+//                            $this->user(),
+//                            'change_order',
+//                            $orderActivities?->date_start
+//                        )) {
+//                            $fail('Order activities time start is arrived after change order');
+//                        }
+//                    }
                 },
             ],
         ];

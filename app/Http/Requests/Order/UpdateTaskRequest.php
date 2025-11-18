@@ -81,21 +81,21 @@ class UpdateTaskRequest extends FormRequest
                         return;
                     }
 
-                    /** @var Task $orderExists */
-                    /** @var TaskActivity $orderActivities */
-                    $orderActivities = $orderExists->taskActivities()
-                        ->orderBy('date_start')
-                        ->first();
-
-                    if($orderActivities) {
-                        if (!TimeService::getTimeDifferenceSub(
-                            $this->user(),
-                            'change_task',
-                            $orderActivities?->date_start
-                        )) {
-                            $fail('Task activities time start is arrived after change task');
-                        }
-                    }
+//                    /** @var Task $orderExists */
+//                    /** @var TaskActivity $orderActivities */
+//                    $orderActivities = $orderExists->taskActivities()
+//                        ->orderBy('date_start')
+//                        ->first();
+//
+//                    if($orderActivities) {
+//                        if (!TimeService::getTimeDifferenceSub(
+//                            $this->user(),
+//                            'change_task',
+//                            $orderActivities?->date_start
+//                        )) {
+//                            $fail('Task activities time start is arrived after change task');
+//                        }
+//                    }
                 },
             ],
         ];
