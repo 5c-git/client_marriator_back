@@ -65,8 +65,14 @@ class UpdateOrderRequest extends FormRequest
                         ->orderBy('date_start')
                         ->first();
 
-                    if(!TimeService::getTimeDifferenceSub($this->user(),'change_order',$orderActivities?->date_start)){
-                        $fail('Order activities time start is arrived after change order');
+                    if($orderActivities) {
+                        if (!TimeService::getTimeDifferenceSub(
+                            $this->user(),
+                            'change_order',
+                            $orderActivities?->date_start
+                        )) {
+                            $fail('Order activities time start is arrived after change order');
+                        }
                     }
                 },
             ],

@@ -285,4 +285,52 @@ class XFiveService
     {
         return $this->makeRequest('get', '/staff/stells/v2');
     }
+
+    /**
+     * Изменение работника на задании
+     */
+    public function updateTaskStaff(array $data): array
+    {
+        return $this->makeRequest('post', '/task/staff/v1', $data);
+    }
+
+    /**
+     * Отклик работника на задании
+     */
+    public function taskStaffFeedback(array $data): array
+    {
+        return $this->makeRequest('post', '/task/staff/feedback/v1', $data);
+    }
+
+    /**
+     * Изменение оценки магазина на задании поставщиком
+     */
+    public function updateTaskPvpScore(array $data): array
+    {
+        return $this->makeRequest('post', '/task/pvpscore/v1', $data);
+    }
+
+    /**
+     * Прикрепление/удаление чека с задания
+     */
+    public function updateTaskSmzPay(array $data): array
+    {
+        return $this->makeRequest('post', '/task/pay/update/v1', $data);
+    }
+
+    /**
+     * Получить статусы откликов работника
+     */
+    public function getTaskStaffStatuses(): array
+    {
+        return $this->makeRequest('get', '/task/staff/statuses/v1');
+    }
+
+    /**
+     * Получить причины победы/проигрыша в конкурсе
+     */
+    public function getTaskReasons(): array
+    {
+        return $this->makeRequest('get', '/task/reasons/v1');
+    }
 }
