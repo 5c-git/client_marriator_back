@@ -78,7 +78,7 @@ class EntrustBidRequest extends FormRequest
                             ->whereIn('data->' . $fieldStat->uuid, $status)
                             ->whereIn('id', $value)
                             ->whereDoesntHave('acceptedBids', function ($query) {
-                                $query->wherePivot('accepted', BidAcceptingStatusEnum::notAccepted->value);
+                                $query->where('accept_bid.accepted', BidAcceptingStatusEnum::notAccepted->value);
                             })
                             ->get();
 
