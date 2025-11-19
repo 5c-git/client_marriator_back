@@ -50,7 +50,7 @@ class EntrustBidRequest extends FormRequest
                     $taskExists          = Bid::query()
                         ->whereIn('user_id', $userIdsSupervisor)
                         ->where('id', $value)
-                        ->where('status', OrderStatusEnum::new)
+                        ->where('status', OrderStatusEnum::new->value)
                         ->exists();
 
                     if (!$taskExists) {
@@ -62,6 +62,7 @@ class EntrustBidRequest extends FormRequest
                 'required',
                 'array',
                 function ($attribute, $value, $fail) {
+                    /** @var  $bid Bid */
                     $bid      = Bid::query()->where('id', $this->bidId)->first();
                     $place    = $bid->place;
                     $status   = [];
