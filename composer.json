@@ -8,6 +8,7 @@
         "php": "^8.2",
         "ext-imagick": "*",
         "archtechx/enums": "^1.0",
+        "barryvdh/laravel-dompdf": "^3.1",
         "darkaonline/l5-swagger": "^8.6",
         "dompdf/dompdf": "^3.0",
         "jeroennoten/laravel-adminlte": "^3.11",

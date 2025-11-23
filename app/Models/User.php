@@ -30,6 +30,7 @@ use App\Models\Order\Order;
  * @property int $verme_id
  * @property string $uuid
  * @property string $name
+ * @property string $email
  * @property string $nopaper_guid
  * @property string $nopaper_certificate_id
  * @property-read Collection|Project[] $project

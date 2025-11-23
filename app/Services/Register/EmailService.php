@@ -2,6 +2,9 @@
 
 namespace App\Services\Register;
 
+use App\Mail\ApplicationApproved;
+use App\Models\User;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpWord\IOFactory;
@@ -13,8 +16,15 @@ use Illuminate\Support\Str;
 
 class EmailService
 {
-    static function sendCode(string $email, string $code){
+    public static function sendCode(string $email, string $code){
         return true;
+    }
+
+    public static function sendConfirmUserModeration(User $user): void
+    {
+        Mail::to($user->email)->send(
+            new ApplicationApproved($user)
+        );
     }
 
 }

@@ -48,6 +48,7 @@ use App\Models\User;
 use App\Services\Local\Repositories\Contracts\OrderRepository;
 use App\Services\Local\Repositories\Contracts\UserRepository;
 use App\Services\Nopaper\NopaperService;
+use App\Services\Register\EmailService;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\UserResource;
 use App\Http\Resources\Order\TaskResource;
@@ -392,6 +393,7 @@ class SupervisorController extends Controller
                 $userForModeration->name = $request->name;
             }
             (new NopaperService())->checkUserExists($userForModeration);
+            EmailService::sendConfirmUserModeration($userForModeration);
             $userForModeration->save();
         }
 

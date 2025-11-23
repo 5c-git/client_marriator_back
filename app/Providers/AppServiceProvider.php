@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Services\DocumentCreator\PdfCreatorService;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Passport\Passport;
 use App\Models\User;
@@ -14,7 +15,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(PdfCreatorService::class, function ($app) {
+            return new PdfCreatorService();
+        });
     }
 
     /**

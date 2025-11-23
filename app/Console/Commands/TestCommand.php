@@ -15,6 +15,8 @@ use App\Services\CreatePdfFileService;
 use App\Services\DocumentServices\CorrectRecognitionService;
 use App\Services\Nopaper\NopaperService;
 use App\Services\OneC\OneCServices;
+use App\Services\DocumentCreator\PdfCreatorService;
+use App\Services\Register\EmailService;
 use App\Services\TimeService;
 use Illuminate\Console\Command;
 use Carbon\Carbon;
@@ -31,9 +33,17 @@ class TestCommand extends Command
 
     public function handle(): void
     {
-        echo "<pre>";
-        var_dump(TimeService::getTimeDifferenceAdd(User::first(),'change_order',Carbon::now()->subHours(22)));
-        echo "</pre>";
+//        $user = User::query()->where('id',215)->first();
+//        $data = [
+//            'user'=>$user
+//        ];
+//        (new PdfCreatorService())->savePdf(
+//            'document.test',
+//        $data,
+//            '/source/documentCreator/'.$user->id.'/'.Carbon::now().'/nameTest.pdf'
+//        );
+        //EmailService::sendConfirmUserModeration(User::query()->where('id',215)->first());
+
         die();
 
         //$payload = [
