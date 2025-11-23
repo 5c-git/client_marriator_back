@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\UserData;
+namespace App\Http\Requests\Order;
 
 use App\Http\Requests\FormRequest;
 use App\Enum\Role\RoleEnum;
