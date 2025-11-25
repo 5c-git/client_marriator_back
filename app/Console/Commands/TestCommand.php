@@ -33,15 +33,15 @@ class TestCommand extends Command
 
     public function handle(): void
     {
-//        $user = User::query()->where('id',215)->first();
-//        $data = [
-//            'user'=>$user
-//        ];
-//        (new PdfCreatorService())->savePdf(
-//            'document.test',
-//        $data,
-//            '/source/documentCreator/'.$user->id.'/'.Carbon::now().'/nameTest.pdf'
-//        );
+        $user = User::query()->where('id',215)->first();
+        $data = [
+            'user'=>$user
+        ];
+        (new PdfCreatorService())->savePdf(
+            'document.test',
+        $data,
+            '/source/documentCreator/'.$user->id.'/'.Carbon::now().'/nameTest.pdf'
+        );
         //EmailService::sendConfirmUserModeration(User::query()->where('id',215)->first());
 
         die();

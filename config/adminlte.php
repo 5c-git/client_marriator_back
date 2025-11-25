@@ -306,37 +306,37 @@ return [
         ],
         [
             'text' => 'Норматив учета',
-            'url' => 'admin/directory_standard/',
+            'url' => 'admin/directories/directory_standard/',
             'icon' => 'fas fa-fw fa-cube',
         ],
         [
             'text' => 'Проекты',
-            'url' => 'admin/directory_project/',
+            'url' => 'admin/directories/directory_project/',
             'icon' => 'fas fa-fw fa-briefcase',
         ],
         [
             'text' => 'Места проведения',
-            'url' => 'admin/directory_place/',
+            'url' => 'admin/directories/directory_place/',
             'icon' => 'fas fa-fw fa-map-marker',
         ],
         [
             'text' => 'Бренды',
-            'url' => 'admin/directory_brand/',
+            'url' => 'admin/directories/directory_brand/',
             'icon' => 'fas fa-fw fa-university',
         ],
         [
             'text' => 'Контрагенты',
-            'url' => 'admin/directory_counterparty/',
+            'url' => 'admin/directories/directory_counterparty/',
             'icon' => 'fas fa-fw fa-user-secret',
         ],
         [
             'text' => 'Радиус поиска',
-            'url' => 'admin/directory_radius/',
+            'url' => 'admin/directories/directory_radius/',
             'icon' => 'fas fa-fw fa-circle',
         ],
         [
             'text' => 'Причины штрафа',
-            'url' => 'admin/directory_reasons/',
+            'url' => 'admin/directories/directory_reasons/',
             'icon' => 'fas fa-fw fa-exclamation-circle',
         ],
         // Navbar items:
@@ -385,91 +385,91 @@ return [
                 [
                     'text' => 'Справочники',
                     'icon' => 'fas fa-fw fa-address-book',
-                    'url' => '#',
+                    'url' => 'admin/directories/',
                     'submenu' => [
                         [
                             'text' => 'Города',
-                            'url' => 'admin/directory_country/',
+                            'url' => 'admin/directories/directory_country/',
                         ],
                         [
                             'text' => 'Банки',
-                            'url' => 'admin/directory_bank/',
+                            'url' => 'admin/directories/directory_bank/',
                         ],
                         [
                             'text' => 'Направления деятельности',
-                            'url' => 'admin/directory_activities/',
+                            'url' => 'admin/directories/directory_activities/',
                         ],
                         [
                             'text' => 'Налоговый статус',
-                            'url' => 'admin/directory_tax_status/',
+                            'url' => 'admin/directories/directory_tax_status/',
                         ],
                         [
                             'text' => 'Гражданство',
-                            'url' => 'admin/directory_citizenship/',
+                            'url' => 'admin/directories/directory_citizenship/',
                         ],
                         [
                             'text' => 'Разрешение на проживание на территории РФ',
-                            'url' => 'admin/directory_residence/',
+                            'url' => 'admin/directories/directory_residence/',
                         ],
                         [
                             'text' => 'Регион проживания',
-                            'url' => 'admin/directory_region_of_residence/',
+                            'url' => 'admin/directories/directory_region_of_residence/',
                         ],
                         [
                             'text' => 'Территория поиска предложений',
-                            'url' => 'admin/directory_offer_search/',
+                            'url' => 'admin/directories/directory_offer_search/',
                         ],
                         [
                             'text' => 'Виды деятельности',
-                            'url' => 'admin/directory_view_activities/',
+                            'url' => 'admin/directories/directory_view_activities/',
                         ],
                         [
                             'text' => 'Вес, кг.',
-                            'url' => 'admin/directory_weight/',
+                            'url' => 'admin/directories/directory_weight/',
                         ],
                         [
                             'text' => 'Рост, см.',
-                            'url' => 'admin/directory_height/',
+                            'url' => 'admin/directories/directory_height/',
                         ],
                         [
                             'text' => 'Размер обуви',
-                            'url' => 'admin/directory_shoe_size/',
+                            'url' => 'admin/directories/directory_shoe_size/',
                         ],
                         [
                             'text' => 'Размер одежды',
-                            'url' => 'admin/directory_clothing_size/',
+                            'url' => 'admin/directories/directory_clothing_size/',
                         ],
                         [
                             'text' => 'Цвет волос',
-                            'url' => 'admin/directory_hair_color/',
+                            'url' => 'admin/directories/directory_hair_color/',
                         ],
                         [
                             'text' => 'Длина волос',
-                            'url' => 'admin/directory_hair_length/',
+                            'url' => 'admin/directories/directory_hair_length/',
                         ],
                         [
                             'text' => 'Пол',
-                            'url' => 'admin/directory_gender/',
+                            'url' => 'admin/directories/directory_gender/',
                         ],
                         [
                             'text' => 'Мессенджеры',
-                            'url' => 'admin/directory_messengers/',
+                            'url' => 'admin/directories/directory_messengers/',
                         ],
                         [
                             'text' => 'Документы',
-                            'url' => 'admin/directory_documentation/',
+                            'url' => 'admin/directories/directory_documentation/',
                         ],
                         [
                             'text' => 'Организации',
-                            'url' => 'admin/directory_organization/',
+                            'url' => 'admin/directories/directory_organization/',
                         ],
                         [
                             'text' => 'Возраст',
-                            'url' => 'admin/directory_age/',
+                            'url' => 'admin/directories/directory_age/',
                         ],
                         [
                             'text' => 'Статус мед книжки',
-                            'url' => 'admin/directory_medical_book/',
+                            'url' => 'admin/directories/directory_medical_book/',
                         ]
                     ],
                 ],
@@ -509,6 +509,17 @@ return [
             'text' => 'Заявки',
             'url'  => 'admin/bidForTest/',
             'icon' => 'fas fa-fw fa-bug',
+        ],
+        [
+            'text' => 'Документы',
+            'icon' => 'fas fa-fw fa-book',
+            'submenu' => [
+                [
+                    'text' => 'Test',
+                    'icon' => 'fas fa-fw fa-book',
+                    'url' => 'admin/documents/test',
+                ],
+            ],
         ],
 //        ['header' => 'labels'],
 //        [

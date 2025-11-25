@@ -552,6 +552,128 @@ $(document).ready(function () {
     })
 
 
+    if ($('.contentHiden').length) {
+
+        const iframe = document.getElementById('summernote-frame');
+        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+
+        // Загружаем HTML в iframe
+        iframeDoc.open();
+        iframeDoc.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <link href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
+                    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+                    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+                    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.20.0/codemirror.css">
+                    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.20.0/theme/monokai.css">
+                    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.20.0/codemirror.js"></script>
+                    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.20.0/mode/xml/xml.js"></script>
+                    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/codemirror/2.36.0/formatting.js"></script>
+                    <link href="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote.min.css" rel="stylesheet">
+                    <script src="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote.min.js" ></script>
+                </head>
+                <body>
+                    <div id="summernote"></div>
+                    <div id="contentHtmlIframe" style="display:none">` + $('.contentHiden').html() + `</div>
+                    <script>
+                        $(document).ready(function() {
+                            function decodeHtml(html) {
+                                const textArea = document.createElement('textarea');
+                                textArea.innerHTML = html;
+                                return textArea.value;
+                            }
+                            $('#summernote').summernote({
+                                height: 700
+                            });
+
+                            const rawContent = $('#contentHtmlIframe').html();
+                            const decodedContent = decodeHtml(rawContent);
+
+                            $('#summernote').summernote('code', decodedContent);
+                        });
+                    <\/script>
+                </body>
+                </html>
+            `);
+        iframeDoc.close();
+
+        $('.saveHtml').click(function (e) {
+            e.preventDefault();
+
+            const iframe = document.getElementById('summernote-frame');
+            const iframeWindow = iframe.contentWindow;
+            const iframe$ = iframeWindow.$;
+            const summernoteElement = iframe$('#summernote');
+            const finalHtml = summernoteElement.summernote('code');
+            //const finalHtml = $(iframeDoc).find('#summernote').summernote('code');
+            var token = $('input[name="_token"]').val();
+
+            $.ajax({
+                url: '/admin/documents/save',
+                type: "POST",
+                data: {data: finalHtml, _token: token},
+                success: function (data) {
+
+                }
+            });
+        });
+
+        $('.downloadHtml').click(function (e) {
+            e.preventDefault();
+
+            const iframe = document.getElementById('summernote-frame');
+            const iframeWindow = iframe.contentWindow;
+            const iframe$ = iframeWindow.$;
+            const summernoteElement = iframe$('#summernote');
+            const finalHtml = summernoteElement.summernote('code');
+            //const finalHtml = $(iframeDoc).find('#summernote').summernote('code');
+            var token = $('input[name="_token"]').val();
+
+            $.ajax({
+                url: '/admin/documents/download',
+                type: "POST",
+                data: {data: finalHtml, _token: token},
+                xhrFields: {
+                    responseType: 'blob' // Важно: указываем что ожидаем бинарные данные
+                },
+                success: function (data, status, xhr) {
+                    // Получаем имя файла из заголовков
+                    const contentDisposition = xhr.getResponseHeader('content-disposition');
+                    let filename = 'document.pdf';
+
+                    if (contentDisposition) {
+                        const filenameMatch = contentDisposition.match(/filename="(.+)"/);
+                        if (filenameMatch) {
+                            filename = filenameMatch[1];
+                        }
+                    }
+
+                    // Создаем blob из полученных данных
+                    const blob = new Blob([data], { type: 'application/pdf' });
+                    const url = window.URL.createObjectURL(blob);
+
+                    // Создаем временную ссылку для скачивания
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = filename;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+
+                    // Освобождаем память
+                    window.URL.revokeObjectURL(url);
+                },
+                error: function (xhr, status, error) {
+                    console.error('Ошибка:', error);
+                    alert('Ошибка при создании документа');
+                }
+            });
+        });
+    }
+
+
 
 
 
