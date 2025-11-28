@@ -27,7 +27,7 @@ class ArchiveTask extends Command
     {
         $orders = Task::whereHas('taskActivities', function ($query) {
             $query->where('date_end', '<', now());
-        })->with('user')->inRandomOrder()->limit(10)->get();
+        })->where('status','!=',OrderStatusEnum::archive->value)->with('user')->inRandomOrder()->limit(10)->get();
 
         $value = Setting::getValue('live_task');
         foreach ($orders as $order){

@@ -34,6 +34,13 @@ class TestCommand extends Command
     public function handle(): void
     {
         $user = User::query()->where('id',215)->first();
+        $user->email = 'd12341f@tt.tt';
+        $user->save();
+
+        die();
+
+
+
         $data = [
             'user'=>$user
         ];

@@ -25,7 +25,7 @@ class ArciveOrder extends Command
     {
         $orders = Order::whereHas('orderActivities', function ($query) {
             $query->where('date_end', '<', now());
-        })->with('user')->inRandomOrder()->limit(10)->get();
+        })->where('status','!=',OrderStatusEnum::archive->value)->with('user')->inRandomOrder()->limit(10)->get();
 
         $value = Setting::getValue('live_order');
         foreach ($orders as $order){
@@ -45,6 +45,9 @@ class ArciveOrder extends Command
 
             if($timeAfterPeriod?->gt(Carbon::now())){
                 $order->status = OrderStatusEnum::archive->value;
+                $order->save();
+            }else{
+                $order->status = OrderStatusEnum::canceled->value;
                 $order->save();
             }
         }
