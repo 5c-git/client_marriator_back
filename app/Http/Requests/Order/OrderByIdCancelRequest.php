@@ -39,8 +39,8 @@ class OrderByIdCancelRequest extends FormRequest
                     $orderExists = Order::query()->where('id', $value)
                         ->where('user_id', auth()->id())
                         ->whereIn('status', [
-                            OrderStatusEnum::notAccepted->value,
-                            OrderStatusEnum::accepted->value
+                            OrderStatusEnum::new->value,
+                            OrderStatusEnum::notAccepted->value
                         ])
                         ->first();
 
