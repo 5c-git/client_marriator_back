@@ -54,6 +54,9 @@ class ArchiveTask extends Command
                         $bid->save();
                     }
                 }
+            }else{
+                $order->status = OrderStatusEnum::canceled->value;
+                $order->save();
             }
         }
     }
