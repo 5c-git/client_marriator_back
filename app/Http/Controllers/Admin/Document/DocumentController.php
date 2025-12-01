@@ -36,7 +36,7 @@ class DocumentController extends Controller
         $dataOld = File::get(resource_path('views/document/test.blade.php'));
         $filePath = resource_path('views/document/test.blade.php');
         File::put($filePath, html_entity_decode($request->data));
-        $user = User::query()->where('id',215)->first();
+        $user = User::query()->where('id')->first();
         $data = [
             'user'=>$user
         ];
