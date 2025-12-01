@@ -264,7 +264,7 @@ class EloquentOrderRepository implements OrderRepository
         return Order::query()
             ->where(function ($query) use ($status, $place) {
                 $query->when($status, fn($q) => $q->where('status', $status->value))
-                    ->when($place, fn($q) => $q->whereIn('place_id', $place))
+                    ->whereIn('place_id', $place)
                     ->whereNotIn('status',[OrderStatusEnum::accepted->value,OrderStatusEnum::new->value])
                     ->has('orderActivities');
             })
@@ -287,7 +287,7 @@ class EloquentOrderRepository implements OrderRepository
         if($orderId) {
             return Order
                 ::where(function ($query) use ($place, $orderId) {
-                    $query->when($place, fn($q) => $q->whereIn('place_id', $place))
+                    $query->whereIn('place_id', $place)
                         ->where('status', '!=', OrderStatusEnum::accepted->value)
                         ->where('id', $orderId)
                         ->has('orderActivities');
