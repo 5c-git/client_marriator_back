@@ -41,7 +41,7 @@ class BidDataRequest extends FormRequest
                         ->orWhere(function ($query) use ($user,$value,$userIdsSupervisor) {
                             $query->whereIn('accept_user_id', $userIdsSupervisor);
                         })
-                        ->whereIn('status', [OrderStatusEnum::new->value,OrderStatusEnum::notAccepted->value])
+                        ->whereIn('status', [OrderStatusEnum::new->value])
                         ->exists();
 
                     if (!$taskExists) {
