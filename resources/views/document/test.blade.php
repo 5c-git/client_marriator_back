@@ -1,5 +1,5 @@
 <meta charset="utf-8">
-    <title>Счет №123 для {{ $user->email }}</title>
+    <title>Счет №123 для {{ $user->email??'' }}</title>
     <style>
         body { font-family: DejaVu Sans, sans-serif; }
         .header { text-align: center; margin-bottom: 30px; }
