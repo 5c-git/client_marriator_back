@@ -40,7 +40,11 @@ class DeleteTaskActivityRequest extends FormRequest
                     $userIdsSupervisor[] = $user->id;
                     $orderExists = Task::query()->where('id', $value)
                         ->whereIn('user_id', $userIdsSupervisor)
-                        ->where('status',OrderStatusEnum::new->value)
+                        ->whereIn('status', [
+                                OrderStatusEnum::new->value,
+                                OrderStatusEnum::notAccepted->value,
+                            ]
+                        )
                         ->first();
 
                     if (!$orderExists) {

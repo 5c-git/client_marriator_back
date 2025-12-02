@@ -50,7 +50,11 @@ class UpdateOrderActivityRequest extends FormRequest
                 function ($attribute, $value, $fail) {
                     $orderExists = Order::query()->where('id', $value)
                         ->where('user_id', auth()->id())
-                        ->where('status', OrderStatusEnum::new->value)
+                        ->whereIn('status', [
+                                OrderStatusEnum::new->value,
+                                OrderStatusEnum::notAccepted->value,
+                            ]
+                        )
                         ->first();
 
                     if (!$orderExists) {
