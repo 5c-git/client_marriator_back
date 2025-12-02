@@ -40,7 +40,8 @@ class OrderByIdCancelRequest extends FormRequest
                         ->where('user_id', auth()->id())
                         ->whereIn('status', [
                             OrderStatusEnum::new->value,
-                            OrderStatusEnum::notAccepted->value
+                            OrderStatusEnum::notAccepted->value,
+                            OrderStatusEnum::accepted->value,
                         ])
                         ->first();
 
