@@ -29,13 +29,13 @@ class DocumentController extends Controller
 
     public function save(Request $request){
         $filePath = resource_path('views/document/test.blade.php');
-        File::put($filePath, html_entity_decode($request->data));
+        File::put($filePath, html_entity_decode($this->getPreData().$request->data));
     }
 
     public function checkDocument(Request $request){
         $dataOld = File::get(resource_path('views/document/test.blade.php'));
         $filePath = resource_path('views/document/test.blade.php');
-        File::put($filePath, html_entity_decode($request->data));
+        File::put($filePath, html_entity_decode($this->getPreData().$request->data));
         $user = User::query()->where('id')->first();
         $data = [
             'user'=>$user
@@ -47,6 +47,11 @@ class DocumentController extends Controller
         $filePath = resource_path('views/document/test.blade.php');
         File::put($filePath, $dataOld);
         return $dataReturn;
+    }
+
+    private function getPreData()
+    {
+        return "<style>body {font-family: 'DejaVu Sans', sans-serif;}</style>";
     }
 
 }

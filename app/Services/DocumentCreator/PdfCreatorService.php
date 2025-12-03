@@ -38,6 +38,7 @@ class PdfCreatorService
         $pdf = Pdf::loadView($template, $data);
         $pdf->setPaper('A4', 'portrait');
         $pdf->setOption('defaultFont', 'DejaVu Sans');
+        $pdf->setOption('charset', 'UTF-8');
         return $pdf;
     }
 }

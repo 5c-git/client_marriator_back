@@ -551,8 +551,24 @@ $(document).ready(function () {
         });
     })
 
+    if($('#tiny').length) {
+        $('textarea#tiny').tinymce({
+            height: 500,
+            api_key: 'd02y0bifamhbuertly987s2uoet865uhsarjw78k0qtk44yi',
+            menubar: false,
+            plugins: [
+                'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+                'anchor', 'searchreplace', 'visualblocks', 'fullscreen',
+                'insertdatetime', 'media', 'table', 'code', 'help', 'wordcount'
+            ],
+            toolbar: 'undo redo | blocks | bold italic backcolor | ' +
+                'alignleft aligncenter alignright alignjustify | ' +
+                'bullist numlist outdent indent | removeformat | help'
+        });
+    }
 
-    if ($('.contentHiden').length) {
+
+    if ($('.contentHiden1').length) {
 
         const iframe = document.getElementById('summernote-frame');
         const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
