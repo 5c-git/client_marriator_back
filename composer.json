@@ -19,7 +19,8 @@
         "mpdf/mpdf": "^8.2",
         "phpoffice/phpword": "^1.2",
         "setasign/fpdf": "^1.8",
-        "setasign/fpdi": "^2.6"
+        "setasign/fpdi": "^2.6",
+        "tinymce/tinymce": "^8.2"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

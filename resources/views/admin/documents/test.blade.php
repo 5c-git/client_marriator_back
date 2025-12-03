@@ -12,23 +12,15 @@
         integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
         crossorigin="anonymous"
     ></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tinymce/tinymce-jquery@2/dist/tinymce-jquery.min.js"></script>
-{{--    <script src="https://cdn.jsdelivr.net/npm/@tinymce/tinymce-jquery@2/dist/tinymce-jquery.min.js"></script>--}}
-{{--    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>--}}
-{{--    <script src="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote.min.js" ></script>--}}
-    <div class="container-fluid">
-        @csrf
-        <div>
-            <textarea id="tiny">{!! $data !!}</textarea>
-        </div>
-        <br>
-        <button type="submit" class="btn btn-success saveHtml">Сохранить</button>
-        <button type="submit" class="btn btn-success downloadHtml">Скачать pdf</button>
-        <script>
+    <script src="{{ asset('vendor/tinymce/tinymce/tinymce.min.js') }}" referrerpolicy="origin" crossorigin="anonymous"></script>
+    <script>
+        $(document).ready(function () {
+
             if($('#tiny').length) {
-                $('textarea#tiny').tinymce({
+                tinymce.init({
+                    selector: 'textarea#tiny',
                     height: 700,
-                    api_key: 'sl4p43nmar9kjziclksqdn11eft7isc58jxfdgnx4xnhh30v',
+                    license_key: 'gpl',
                     menubar: false,
                     plugins: [
                         "advlist", "anchor", "autolink", "charmap", "code", "fullscreen",
@@ -111,10 +103,16 @@
                     }
                 });
             });
-        </script>
-{{--        <span class="contentHiden" style="display:none"> {!! $data !!}</span>--}}
-{{--        <iframe id="summernote-frame" style="width: 100%; height: 700px; border: 1px solid #ccc;"></iframe>--}}
-
+        });
+    </script>
+    <div class="container-fluid">
+        @csrf
+        <div>
+            <textarea id="tiny">{!! $data !!}</textarea>
+        </div>
+        <br>
+        <button type="submit" class="btn btn-success saveHtml">Сохранить</button>
+        <button type="submit" class="btn btn-success downloadHtml">Скачать pdf</button>
     </div>
 @stop
 @section('js')
