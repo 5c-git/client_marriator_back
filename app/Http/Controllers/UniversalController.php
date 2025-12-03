@@ -64,7 +64,7 @@ class UniversalController extends Controller
         $this->roles = $user->roles?->pluck('name')->toArray();
     }
 
-    public function getBrand(Request $request){
+    public function getBrand(){
         if(in_array('client',$this->roles)){
             return app(\App\Http\Controllers\UserRoles\ClientController::class)->getBrand();
         }
