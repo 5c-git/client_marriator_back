@@ -66,10 +66,10 @@ class UniversalController extends Controller
 
     public function getBrand(Request $request){
         if(in_array('client',$this->roles)){
-            return app(\App\Http\Controllers\UserRoles\ClientController::class)->getBrand($request);
+            return app(\App\Http\Controllers\UserRoles\ClientController::class)->getBrand();
         }
         if(in_array('manager',$this->roles)){
-            return app(\App\Http\Controllers\UserRoles\ManagerController::class)->getBrand($request);
+            return app(\App\Http\Controllers\UserRoles\ManagerController::class)->getBrand();
         }
         return response()->json(['message' => 'Role not allowed.'], 403);
     }
