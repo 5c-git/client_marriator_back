@@ -52,7 +52,7 @@ class UpdateTaskActivityRequest extends FormRequest
                 function ($attribute, $value, $fail) {
                     $user = auth()->user();
                     $userIdsSupervisor = $user->managerSpecialist->pluck('id')->toArray();
-                    $userIdsSupervisor[] = $user->supe;
+                    $userIdsSupervisor[] = $user->id;
                     $orderExists = Task::query()->where('id', $value)
                         ->whereIn('user_id', $userIdsSupervisor)
                         ->whereIn('status', [
