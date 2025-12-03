@@ -28,7 +28,7 @@
             if($('#tiny').length) {
                 $('textarea#tiny').tinymce({
                     height: 700,
-                    api_key: 'd02y0bifamhbuertly987s2uoet865uhsarjw78k0qtk44yi',
+                    api_key: 'sl4p43nmar9kjziclksqdn11eft7isc58jxfdgnx4xnhh30v',
                     menubar: false,
                     plugins: [
                         "advlist", "anchor", "autolink", "charmap", "code", "fullscreen",
