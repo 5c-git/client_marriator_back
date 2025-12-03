@@ -51,7 +51,7 @@ class RepeatOrderRequest extends FormRequest
                         ->first();
 
                     if($orderActivities) {
-                        if (!TimeService::getTimeDifferenceSub(
+                        if (TimeService::getTimeDifferenceSub(
                             $this->user(),
                             'change_order',
                             $orderActivities?->date_start
