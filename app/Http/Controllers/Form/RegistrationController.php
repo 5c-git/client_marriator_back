@@ -122,7 +122,7 @@ class RegistrationController extends Controller
             $response['result']['code'] = $smsCodeService->createCode();
             $response['status'] = $smsCodeService->status;
 
-            return response()->json($response,200);
+            return response()->json($response);
         }
     }
 
