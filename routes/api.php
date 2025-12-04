@@ -4,10 +4,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\CheckIntegration;
 use App\Http\Middleware\CheckRole;
-
+Route::post('/sendPhone/', 'App\Http\Controllers\Form\RegistrationController@sendPhone')->name('sendPhone');
 Route::group(["middleware" => 'throttle:100,1'], function () {
     Route::get('/getUserByHash/','App\Http\Controllers\Form\RegistrationController@getUserByHash')->name('getUserByHash');
-    Route::post('/sendPhone/', 'App\Http\Controllers\Form\RegistrationController@sendPhone')->name('sendPhone');
+    //Route::post('/sendPhone/', 'App\Http\Controllers\Form\RegistrationController@sendPhone')->name('sendPhone');
     Route::get('/login', function () {
         return response()->json(['message' => 'Unauthenticated.'], 401);
     })->name('login');
