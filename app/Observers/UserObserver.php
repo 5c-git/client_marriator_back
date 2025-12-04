@@ -85,9 +85,6 @@ class UserObserver
         if($data){
             $this->saveDataUpdates($data, $user);
         }
-
-        die();
-
     }
 
     private function dataFormater(array $oldData,array $newData): array
