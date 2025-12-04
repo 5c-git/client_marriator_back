@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\CheckIntegration;
 use App\Http\Middleware\CheckRole;
 Route::post('/sendPhone/', 'App\Http\Controllers\Form\RegistrationController@sendPhone')->name('sendPhone');
-Route::group(["middleware" => 'throttle:100,1'], function () {
+Route::group(["middleware" => 'throttle:1000,1'], function () {
     Route::get('/getUserByHash/','App\Http\Controllers\Form\RegistrationController@getUserByHash')->name('getUserByHash');
     //Route::post('/sendPhone/', 'App\Http\Controllers\Form\RegistrationController@sendPhone')->name('sendPhone');
     Route::get('/login', function () {
