@@ -85,6 +85,7 @@ class RegistrationController extends Controller
      */
 
     public function sendPhone(Request $request){
+        $response = [];
         if(empty($request->phone)){
             $response['error'] = 'Поле телефон обязательна для заполнения';
             $response['status'] = 'error';
