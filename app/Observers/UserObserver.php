@@ -55,35 +55,37 @@ class UserObserver
     {
         $newUser = $user->toArray();
         $originalData = $user->getOriginal();
-        $data = [];
-        foreach ($this->userFieldForCheckUpdate as $field){
-            if($newUser[$field] != $originalData[$field]){
-                if(!empty($this->userFieldJson[$field])){
-                    $func = $this->userFieldJson[$field];
-                    if(empty($newUser[$field])){
-                        $newUser[$field] = [];
-                    }else{
-                        $newUser[$field] = json_decode($newUser[$field],true);
-                    }
+        if($newUser->finishRegister == true) {
+            $data = [];
+            foreach ($this->userFieldForCheckUpdate as $field) {
+                if ($newUser[$field] != $originalData[$field]) {
+                    if (!empty($this->userFieldJson[$field])) {
+                        $func = $this->userFieldJson[$field];
+                        if (empty($newUser[$field])) {
+                            $newUser[$field] = [];
+                        } else {
+                            $newUser[$field] = json_decode($newUser[$field], true);
+                        }
 
-                    if(empty($originalData[$field])){
-                        $originalData[$field] = [];
-                    }else{
-                        $originalData[$field] = json_decode($originalData[$field],true);
+                        if (empty($originalData[$field])) {
+                            $originalData[$field] = [];
+                        } else {
+                            $originalData[$field] = json_decode($originalData[$field], true);
+                        }
+                        $data = array_merge($this->$func($originalData[$field], $newUser[$field]), $data);
+                    } else {
+                        $data[] = [
+                            'key' => $field,
+                            'new' => $newUser[$field],
+                            'old' => $originalData[$field],
+                        ];
                     }
-                    $data = array_merge($this->$func($originalData[$field],$newUser[$field]),$data);
-                }else{
-                    $data[] = [
-                        'key' => $field,
-                        'new' => $newUser[$field],
-                        'old' => $originalData[$field],
-                    ];
                 }
             }
-        }
 
-        if($data){
-            $this->saveDataUpdates($data, $user);
+            if ($data) {
+                $this->saveDataUpdates($data, $user);
+            }
         }
     }
 
