@@ -19,5 +19,4 @@ class UserUpdates extends Model
         'oldData',
         'status',
     ];
-    public $timestamps = false;
 }

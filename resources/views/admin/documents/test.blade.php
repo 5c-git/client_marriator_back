@@ -25,9 +25,9 @@
                     plugins: [
                         "advlist", "anchor", "autolink", "charmap", "code", "fullscreen",
                         "help", "image", "insertdatetime", "link", "lists", "media",
-                        "preview", "searchreplace", "table", "visualblocks",
+                        "preview", "searchreplace", "table", "visualblocks", "importword",
                     ],
-                    toolbar: "undo redo | styles | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image",
+                    toolbar: "undo redo | styles | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | importword",
                 });
             }
             $('.saveHtml').click(function (e) {

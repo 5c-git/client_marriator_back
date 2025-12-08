@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Services\DocumentCreator\PdfCreatorService;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Passport\Passport;
 use App\Models\User;
@@ -39,5 +40,14 @@ class AppServiceProvider extends ServiceProvider
             'checkPin' => 'Проверка пина',
             'restorePin' => 'Восстановление пина',
         ]);
+
+        Blade::extend(function ($value) {
+            $pattern = '/\{\{\s*\$(\w+)\s*\}\}/';
+
+            return preg_replace_callback($pattern, function ($matches) {
+                $varName = $matches[1];
+                return "<?php echo e(\$$varName ?? ''); ?>";
+            }, $value);
+        });
     }
 }

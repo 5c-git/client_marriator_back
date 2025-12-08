@@ -1,5 +1,7 @@
 <?php
 
+use App\Enum\Document\DocumentTemplates\DocumentTemplatesEnum;
+
 return [
 
     /*
@@ -513,11 +515,20 @@ return [
         [
             'text' => 'Документы',
             'icon' => 'fas fa-fw fa-book',
+            'url' => 'admin/documents/',
             'submenu' => [
                 [
                     'text' => 'Test',
                     'icon' => 'fas fa-fw fa-book',
                     'url' => 'admin/documents/test',
+                ],[
+                    'text' => 'Details',
+                    'icon' => 'fas fa-fw fa-book',
+                    'url' => 'admin/documents/'.DocumentTemplatesEnum::details->name,
+                ],[
+                    'text' => 'Payment',
+                    'icon' => 'fas fa-fw fa-book',
+                    'url' => 'admin/documents/'.DocumentTemplatesEnum::payment->name,
                 ],
             ],
         ],

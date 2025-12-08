@@ -4,5 +4,5 @@
 <p>vd</p>
 <p>vdv и нет </p>
 <p> </p>
-<p>{{$nameee}}</p>
+<p>{{$name}}</p>
 <p> </p>

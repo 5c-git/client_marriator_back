@@ -2,19 +2,25 @@
 
 namespace App\Services\PVP\TimeBook;
 
+use App\Services\PVP\PVPAbstract;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Redis;
 
-class TimeBookService
+class TimeBookService extends PVPAbstract
 {
     private string $baseUrl;
     private string $token;
-    private bool $isAuthenticated = false;
 
     public function __construct()
     {
-        $this->baseUrl = config('timebook.base_url');
-        $this->token = config('timebook.access_token');
+        $this->baseUrl = config('services.timeBook.base_url');
+        if(Redis::exists('services.timeBook.access_token')){
+            $this->token = Redis::get('services.timeBook.access_token');
+        }else{
+            $this->authenticate();
+        }
+        parent::__construct();
     }
 
     /**
@@ -24,16 +30,13 @@ class TimeBookService
     {
         try {
             $response = Http::post("{$this->baseUrl}/auth", [
-                'login' => config('timebook.login'),
-                'password' => config('timebook.password'),
+                'login' => config('services.timeBook.login'),
+                'password' => config('services.timeBook.password'),
             ]);
 
             if ($response->successful()) {
                 $data = $response->json();
                 $this->token = $data['access_token'];
-                $this->isAuthenticated = true;
-
-                // Сохраняем токен в .env или кэш
                 $this->updateTokenInConfig($this->token);
 
                 return true;
@@ -50,12 +53,12 @@ class TimeBookService
     /**
      * Создание организации
      */
-    public function createOrganization(OrganizationDto $dto): ?string
+    public function createOrganization(array $dto): ?string
     {
-        $response = $this->request('post', '/organizations/', [
-            'guid' => $dto->guid,
-            'name' => $dto->name,
-            'serial_number' => $dto->serialNumber,
+        $response = $this->request('post', '/organizations', [
+            'guid' => $dto['guid'],
+            'name' => $dto['name'],
+            'serial_number' => $dto['serialNumber'],
         ]);
 
         return $response ? $response['guid'] : null;
@@ -64,7 +67,7 @@ class TimeBookService
     /**
      * Создание должности
      */
-    public function createStaffPosition(StaffPositionDto $dto): ?string
+    public function createStaffPosition(array $dto): ?string
     {
         $response = $this->request('post', '/staff-positions/', [
             'guid' => $dto->guid,
@@ -181,10 +184,9 @@ class TimeBookService
      */
     private function request(string $method, string $endpoint, array $data = [])
     {
-        if (!$this->isAuthenticated && !$this->authenticate()) {
-            throw new \Exception('Failed to authenticate with Timebook API');
-        }
-
+        echo "<pre>";
+        var_dump($this->token);
+        echo "</pre>";
         try {
             $response = Http::withHeaders([
                 'X-Access-Token' => $this->token,
@@ -194,7 +196,6 @@ class TimeBookService
                 return $response->json();
             }
 
-            // Если токен протух, пробуем аутентифицироваться заново
             if ($response->status() === 401) {
                 if ($this->authenticate()) {
                     $response = Http::withHeaders([
@@ -206,19 +207,12 @@ class TimeBookService
                     }
                 }
             }
-
-            Log::error('Timebook API request failed', [
-                'endpoint' => $endpoint,
-                'status' => $response->status(),
-                'response' => $response->body(),
-            ]);
+            echo "<pre>";
+            var_dump($response->body());
+            echo "</pre>";
 
             return null;
         } catch (\Exception $e) {
-            Log::error('Timebook API request error', [
-                'endpoint' => $endpoint,
-                'error' => $e->getMessage(),
-            ]);
             return null;
         }
     }
@@ -228,21 +222,6 @@ class TimeBookService
      */
     private function updateTokenInConfig(string $token): void
     {
-        // Здесь можно реализовать сохранение токена в БД или кэш
-        // Для примера сохраняем в файл .env
-        $path = base_path('.env');
-        $env = file_get_contents($path);
-
-        if (str_contains($env, 'TIMEBOOK_ACCESS_TOKEN')) {
-            $env = preg_replace(
-                '/TIMEBOOK_ACCESS_TOKEN=.*/',
-                "TIMEBOOK_ACCESS_TOKEN={$token}",
-                $env
-            );
-        } else {
-            $env .= "\nTIMEBOOK_ACCESS_TOKEN={$token}";
-        }
-
-        file_put_contents($path, $env);
+        Redis::set('services.timeBook.access_token',$token);
     }
 }

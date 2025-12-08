@@ -2,10 +2,15 @@
 
 namespace App\Services\PVP\XFive;
 
+use App\Enum\Document\DocumentTypeEnum;
+use App\Models\Document\RecognitionDocument;
+use App\Models\User;
+use App\Services\PVP\PVPAbstract;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 
-class XFiveService
+class XFiveService  extends PVPAbstract
 {
     private string $baseUrl;
     private string $clientId;
@@ -18,6 +23,7 @@ class XFiveService
         $this->clientId = config('services.xFive.client_id');
         $this->clientSecret = config('services.xFive.client_secret');
         $this->tokenUrl = config('services.xFive.token_url');
+        parent::__construct();
     }
 
     /**
@@ -31,6 +37,13 @@ class XFiveService
                 'client_id' => $this->clientId,
                 'client_secret' => $this->clientSecret,
             ]);
+            echo "<pre>";
+            var_dump($response->status());
+            echo "</pre>";
+
+            echo "<pre>";
+            var_dump($response->body());
+            echo "</pre>";
 
             if (!$response->successful()) {
                 return '';
@@ -51,6 +64,13 @@ class XFiveService
             'Authorization' => 'Bearer ' . $token,
             'Accept' => 'application/json',
         ])->{$method}($this->baseUrl . $endpoint, $data);
+        echo "<pre>";
+        var_dump($response->status());
+        echo "</pre>";
+
+        echo "<pre>";
+        var_dump($response->body());
+        echo "</pre>";
 
         if (!$response->successful()) {
             return [];
@@ -332,5 +352,50 @@ class XFiveService
     public function getTaskReasons(): array
     {
         return $this->makeRequest('get', '/task/reasons/v1');
+    }
+
+    public function registerUser(User $user)
+    {
+        $document = RecognitionDocument::query()
+            ->where('user_id',$user->id)
+            ->where('file_type',DocumentTypeEnum::Passport->value)
+            ->orderBy('id','desc')
+            ->first();
+        /** @var RecognitionDocument $document */
+
+        if ($document) {
+            if(!empty($document->data['Sex']))
+            {
+                if($document->data['Sex'] == 'МУЖ') {
+                    $sex = 1;
+                }else{
+                    $sex = 2;
+                }
+            }
+            $payload = [
+                'mob1'   => $user->phone,
+                'mob2'   => $user->phone,
+                'name2'  => $document->data['FirstName'] ?? '',
+                'name1'  => $document->data['LastName'] ?? '',
+                'pervp'  => $user->id,
+                'secid'  => 1,
+                'gender' => $sex ?? 1,
+            ];
+        } else {
+            return false;
+        }
+
+        if(!empty($payload)){
+            $dataRegister = $this->createStaff($payload);
+            echo "<pre>";
+            var_dump($dataRegister);
+            echo "</pre>";
+//            if($dataRegister && !empty($dataRegister['userGuid'])){
+//                $user->nopaper_guid = $dataRegister['userGuid'];
+//                $user->save();
+//                return true;
+//            }
+        }
+        return false;
     }
 }

@@ -332,6 +332,12 @@ Route::group(['prefix' => 'admin'], function () {
             Route::get('/test', 'App\Http\Controllers\Admin\Document\DocumentController@index')->name('documentTest');
             Route::post('/save', 'App\Http\Controllers\Admin\Document\DocumentController@save')->name('documentTestSave');
             Route::post('/download', 'App\Http\Controllers\Admin\Document\DocumentController@checkDocument')->name('checkDocument');
+            Route::get('/create/{templateType}', 'App\Http\Controllers\Admin\Document\DocumentController@create')->name('documentsCreate');
+            Route::post('/createAjax/', 'App\Http\Controllers\Admin\Document\DocumentController@createAjax')->name('documentsCreateAjax');
+            Route::get('/{templateType}', 'App\Http\Controllers\Admin\Document\DocumentController@list')->name('documentsList');
+            Route::get('/edit/{id}/', 'App\Http\Controllers\Admin\Document\DocumentController@edit')->name('documentsEdit');
+            Route::post('/editAjax/', 'App\Http\Controllers\Admin\Document\DocumentController@editAjax')->name('documentsEditAjax');
+            Route::get('/delete/{id}', 'App\Http\Controllers\Admin\Document\DocumentController@delete')->name('documentsDelete');
         });
 
     });

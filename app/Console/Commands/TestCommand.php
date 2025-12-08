@@ -16,6 +16,9 @@ use App\Services\DocumentServices\CorrectRecognitionService;
 use App\Services\Nopaper\NopaperService;
 use App\Services\OneC\OneCServices;
 use App\Services\DocumentCreator\PdfCreatorService;
+use App\Services\PVP\TimeBook\TimeBookService;
+use App\Services\PVP\Verme\VermeService;
+use App\Services\PVP\XFive\XFiveService;
 use App\Services\Register\EmailService;
 use App\Services\TimeService;
 use Illuminate\Console\Command;
@@ -33,11 +36,77 @@ class TestCommand extends Command
 
     public function handle(): void
     {
+
+
+        $service = new VermeService();
         $user = User::query()->where('id',215)->first();
-        $user->email = 'd12341f@tt.tt';
+
+        $data = $service->registerUser($user);
+        echo "<pre>";
+        var_dump($data);
+        echo "</pre>";
+        die();
+
+
+
+
+
+
+
+
+
+
+
+
+
+        $user = User::query()->where('id',215)->first();
+
+
+
+
+        $service = new XFiveService();
+        $data = [
+            'inn'=>'1231231',
+            'snils'=>'123123123',
+            'pervp'=>'31231'
+        ];
+        $service->registerUser($user);
+
+
+
+        die();
+
+
+        $user = User::query()->where('id',215)->first();
+        $user->email = 'd1234fvdfv1f@tt.tt';
+        $user->data = '{"1": {"testitem": ["c0e077b8-d11d-11eb-85fa-6cb3110f7042"]}, "2": {"gov": "42463204-236a-11ef-8627-6cb3110f7041", "nalogstatus": "nalogstatus_fiz_lico"}, "3": {"2Vr2TFKPAmY12FHtnyqWr2Sngg9F6s": null, "2xC9RxW86VOvK1tlENocp26QDwJNQ1": null, "3tslFpWgadwSvvmDXQ6rvvc3aTfd47": "size52-54", "7nNCUNdoVpAy5x1gXYp6jgvrvxOSqm": "8746b32d-07e6-4c53-8e6b-7952da6f91ec", "87ONZiY1OqKYKiTsrKZ5q1y0KsuH2n": "6add2c03-fd57-463c-b85c-a1a761727d4c", "HP2kvziquWyhpAPv9UmhlkRaIISQWz": "a360f7bf-110f-41b5-89a1-a5b30228b27f", "MZ562TBT1VVWW7nYNJcPG4BlBFRXSc": "http://preprod.marriator-api.fivecorners.ru/storage/source/pdf/215/qr8CFgPPTp/[79152142632][Водительское удостоверение].pdf", "TA8vxv9JUcfHTtYC1Q3nFiZ4kWgULT": null, "bdM1RtrjFrn9STfGT3GG8AiU9NtqR2": "4416f6be-3ab8-11dc-8519-000423ba5914", "nCbrHGJ11nqZrAcBzMhQgJUsK5aJ4y": "http://preprod.marriator-api.fivecorners.ru/storage/source/pdf/215/DQ0oT2w5GN/[79152142632][Медицинский допуск к управлению ТС].pdf", "qFq7ZZ6ADUYcAV2f6hDaS35yJ3T65z": "85fd1e0a-3ab5-11dc-8519-000423ba5914"}, "4": {"staticEmail": "testo@mail.ru", "staticPhoto": "http://preprod.marriator-api.fivecorners.ru/storage/source/userImg/215/RtDMHN3XdXAziJSNA2SO.jpeg", "PuGyZOcha8UkkMywTQw2Wa4DcLlD5m": "directory_age_WKEjM9OSoYDngcJoalG68SqoRI0mpS", "QsZI3i3WLzO5rNO2ZJjXBtx9nJBosd": "tes", "R7ydKRH6YRdU85KI2UIql0EDWNyvnr": "directory_documentation_o8Tdo9sL762jqbHpd54aD6KK09sJtr", "X2CSwnQZntQEdPc1Xq5lgeLahytrna": "test", "c5gAyG7YPWV7RiCx23srwQnYV8bv5U": "http://preprod.marriator-api.fivecorners.ru/storage/source/pdf/215/UJD6YswHV7/[79152142632][Документ удостоверяющий личность].pdf", "pnIXSuSWPMsx1T5IVWU7x9SNBZ7Ss4": "mess-Viber", "qfyZsDpYNPdRGxZFdPrbNPZhR5oHI5": false, "unC20BLqzsZbEEGWlnT663EkueUBUi": "male_gender"}}';
+        $user->save();
+        $user->data = '{"1": {"testitem": ["c0e077b8-d11d-11eb-85fa-6cb3110f742"]}, "2": {"gov": "42463204-236a-11ef-8627-6cb3110f741", "nalogstatus": "nalogstatus_fiz_lic"}, "3": {"2Vr2TFKPAmY12FHtnyqWr2Sngg9F6s": null, "2xC9RxW86VOvK1tlENocp26QDwJNQ1": null, "3tslFpWgadwSvvmDXQ6rvvc3aTfd47": "size52-54", "7nNCUNdoVpAy5x1gXYp6jgvrvxOSqm": "8746b32d-07e6-4c53-8e6b-7952da6f91ec", "87ONZiY1OqKYKiTsrKZ5q1y0KsuH2n": "6add2c03-fd57-463c-b85c-a1a761727d4c", "HP2kvziquWyhpAPv9UmhlkRaIISQWz": "a360f7bf-110f-41b5-89a1-a5b30228b27f", "MZ562TBT1VVWW7nYNJcPG4BlBFRXSc": "http://preprod.marriator-api.fivecorners.ru/storage/source/pdf/215/qr8CFgPPTp/[79152142632][Водитеьское удостовее].pdf", "TA8vxv9JUcfHTtYC1Q3nFiZ4kWgULT": null, "bdM1RtrjFrn9STfGT3GG8AiU9NtqR2": "4416f6be-3ab8-11dc-8519-000423ba5914", "nCbrHGJ11nqZrAcBzMhQgJUsK5aJ4y": "http://preprod.marriator-api.fivecorners.ru/storage/source/pdf/215/DQ0oT2w5GN/[79152142632][Медицинский допуск к управлению ТС].pdf", "qFq7ZZ6ADUYcAV2f6hDaS35yJ3T65z": "85fd1e0a-3ab5-11dc-8519-000423ba5914"}, "4": {"staticEmail": "testo@mail.r", "staticPhoto": "http://preprod.marriator-api.fivecorners.ru/storage/source/userImg/215/RtDMHN3XdXAziJSNA2S.jpeg", "PuGyZOcha8UkkMywTQw2Wa4DcLlD5m": "directory_age_WKEjM9OSoYDngcJoalG68SqoRI0mpS", "QsZI3i3WLzO5rNO2ZJjXBtx9nJBosd": "tes", "R7ydKRH6YRdU85KI2UIql0EDWNyvnr": "directory_documentation_o8Tdo9sL762jqbHpd54aD6KK09sJtr", "X2CSwnQZntQEdPc1Xq5lgeLahytrna": "test", "c5gAyG7YPWV7RiCx23srwQnYV8bv5U": "http://preprod.marriator-api.fivecorners.ru/storage/source/pdf/215/UJD6YswHV7/[79152142632][Документ удостоверяющий личность].pdf", "pnIXSuSWPMsx1T5IVWU7x9SNBZ7Ss4": "mess-Viber", "qfyZsDpYNPdRGxZFdPrbNPZhR5oHI5": false, "unC20BLqzsZbEEGWlnT663EkueUBUi": "male_gende"}}';
         $user->save();
 
         die();
+
+
+
+
+
+
+
+        $service = new TimeBookService();
+       $data = $service->createOrganization([
+           'guid' => '550e8400-e29b-41d4-a716-441655440001',
+           'name' => 'name',
+           'serialNumber' => '213'
+       ]);
+        echo "<pre>";
+        var_dump($data);
+        echo "</pre>";
+        die();
+
+
+
+        //
+
 
 
 
@@ -103,7 +172,7 @@ class TestCommand extends Command
         $doc = Document::query()->where('id',79)->first();
 //32525
         $nopaper = new NopaperService();
-        //$data = $nopaper->checkUserExists($user);
+        $data = $nopaper->checkUserExists($user);
         //$data = $nopaper->sendDocumentsToNopaper($user);
         //$data = $nopaper->confirmSms($user,'000000');
         $data = $nopaper->getDocumentInfo($doc);

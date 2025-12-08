@@ -57,7 +57,6 @@ return [
         'base_url' => env('TIMEBOOK_BASE_URL', 'https://integration-test.timebook.ru/erpi'),
         'login' => env('TIMEBOOK_LOGIN'),
         'password' => env('TIMEBOOK_PASSWORD'),
-        'access_token' => env('TIMEBOOK_ACCESS_TOKEN'),
     ]
 
 

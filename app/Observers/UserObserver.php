@@ -55,7 +55,7 @@ class UserObserver
     {
         $newUser = $user->toArray();
         $originalData = $user->getOriginal();
-        if($newUser['finishRegister'] == true) {
+        if($newUser['finishRegister'] == true && $newUser['confirmRegister'] == true) {
             $data = [];
             foreach ($this->userFieldForCheckUpdate as $field) {
                 if ($newUser[$field] != $originalData[$field]) {
@@ -92,34 +92,65 @@ class UserObserver
     private function dataFormater(array $oldData,array $newData): array
     {
         $dataForSave = [];
-        $diff_values = array_diff_assoc($newData, $oldData);
-        foreach ($diff_values as $k=>$value){
-            $dataForSave[] = [
-                'key' => $k,
-                'new' => json_encode($value??[]),
-                'old' => json_encode($oldData[$k]??[]),
-            ];
+        foreach ($oldData as $t=>$oldArr) {
+            $diff_values = $this->array_diff_assoc_recursive($oldArr, $newData[$t]);
+            foreach ($diff_values as $k => $value) {
+                $dataForSave[] = [
+                    'key' => $k,
+                    'new' => json_encode($newData[$t][$k] ?? []),
+                    'old' => json_encode($value ?? []),
+                ];
+            }
         }
         return $dataForSave;
     }
-    private function estateDataFormater(array $oldData,array $newData): array
+
+    private function array_diff_assoc_recursive($array1, $array2) {
+        $difference = [];
+        foreach ($array1 as $key => $value) {
+            if (is_array($value)) {
+                if (!isset($array2[$key]) || !is_array($array2[$key])) {
+                    $difference[$key] = $value;
+                } else {
+                    $new_diff = $this->array_diff_assoc_recursive($value, $array2[$key]);
+                    if (!empty($new_diff)) {
+                        $difference[$key] = $new_diff;
+                    }
+                }
+            } elseif (!array_key_exists($key, $array2) || $array2[$key] !== $value) {
+                $difference[$key] = $value;
+            }
+        }
+        return $difference;
+    }
+
+    private function estateDataFormater(array $oldData, array $newData): array
     {
         $dataForSave = [];
-        $dataForSave[] = [
-            'key' => 'estateData',
-            'new' => json_encode($newData),
-            'old' => json_encode($oldData),
-        ];
+        foreach ($oldData as $k => $data) {
+            if ($data != $newData[$k]) {
+                $dataForSave[] = [
+                    'key' => 'estateData',
+                    'new' => json_encode($newData),
+                    'old' => json_encode($oldData),
+                ];
+            }
+        }
         return $dataForSave;
     }
-    private function requisitesDataFormater(array $oldData,array $newData): array
+
+    private function requisitesDataFormater(array $oldData, array $newData): array
     {
         $dataForSave = [];
-        $dataForSave[] = [
-            'key' => 'requisitesData',
-            'new' => json_encode($newData),
-            'old' => json_encode($oldData),
-        ];
+        foreach ($oldData as $k => $data) {
+            if ($data != $newData[$k]) {
+                $dataForSave[] = [
+                    'key' => 'requisitesData',
+                    'new' => json_encode($newData),
+                    'old' => json_encode($oldData),
+                ];
+            }
+        }
         return $dataForSave;
     }
 
