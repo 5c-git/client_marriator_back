@@ -736,11 +736,19 @@ class ManagerController extends Controller
 
     public function getSurepvisorData(GetSurepvisorDataRequest $request){
         $user = $request->user();
+        $task = Task::query()
+            ->where('user_id',$user->id)
+            ->first();
         $supervisorUsers = $user->supervisors()
             ->whereHas('roles', function ($query) {
                 $query->where('name', RoleEnum::supervisor->name);
             })
+            ->whereHas('project', function ($query) use ($task) {
+                $query->where('id', $task->project_id);
+            })
             ->get();
+
+
         return ShortUserResource::collection($supervisorUsers);
     }
 

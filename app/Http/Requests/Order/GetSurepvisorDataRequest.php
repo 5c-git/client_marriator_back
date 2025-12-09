@@ -5,6 +5,7 @@ namespace App\Http\Requests\Order;
 use App\Enum\Order\OrderStatusEnum;
 use App\Http\Requests\FormRequest;
 use App\Models\Order\Bid;
+use App\Models\Order\Task;
 use Illuminate\Validation\Rule;
 
 /**
@@ -33,22 +34,16 @@ class GetSurepvisorDataRequest extends FormRequest
             'taskId' => [
                 'required',
                 'integer',
-//                function ($attribute, $value, $fail) {
-//                    $user = auth()->user();
-//                    $userIdsSupervisor = $user->supervisors->pluck('id')->toArray();
-//                    $userIdsSupervisor[] = $user->id;
-//                    $taskExists = Bid::query()
-//                        ->whereIn('user_id',$userIdsSupervisor)
-//                        ->orWhere(function ($query) use ($user,$value,$userIdsSupervisor) {
-//                            $query->whereIn('accept_user_id', $userIdsSupervisor);
-//                        })
-//                        ->whereIn('status', [OrderStatusEnum::accepted])
-//                        ->exists();
-//
-//                    if (!$taskExists) {
-//                        $fail('Not your task');
-//                    }
-//                },
+                function ($attribute, $value, $fail) {
+                    $user = auth()->user();
+                    $taskExists = Task::query()
+                        ->where('user_id',$user->id)
+                        ->exists();
+
+                    if (!$taskExists) {
+                        $fail('Not your task');
+                    }
+                },
             ],
         ];
     }
