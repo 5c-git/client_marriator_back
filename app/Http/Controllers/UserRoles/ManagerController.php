@@ -743,9 +743,9 @@ class ManagerController extends Controller
             ->whereHas('roles', function ($query) {
                 $query->where('name', RoleEnum::supervisor->name);
             })
-            ->whereHas('project', function ($query) use ($task) {
-                $query->where('id', $task->project_id);
-            })
+//            ->whereHas('project', function ($query) use ($task) {
+//                $query->where('id', $task->project_id);
+//            })
             ->get();
 
 
