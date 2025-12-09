@@ -28,6 +28,20 @@
         </div>
 
         <div class="form-group row">
+            <label for="date_start" class="col-sm-2 col-form-label">Date start</label>
+            <div class="col-sm-10">
+                <input type="date" class="form-control" name="date_start" id="date_start" required>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="date_end" class="col-sm-2 col-form-label">Date end</label>
+            <div class="col-sm-10">
+                <input type="date" class="form-control" name="date_end" id="date_end" required>
+            </div>
+        </div>
+
+        <div class="form-group row">
             <label for="select" class="col-sm-2 col-form-label">Привязка Мест проведения</label>
             <div class="col-sm-10">
                 <div class="row addItemSelect">

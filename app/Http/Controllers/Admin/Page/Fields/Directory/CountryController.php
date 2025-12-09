@@ -79,7 +79,7 @@ class CountryController extends Controller
         $country->save();
 
 
-        $response['url'] = '/admin/directory_country/edit/'.$country->id;
+        $response['url'] = '/admin/directories/directory_country/edit/'.$country->id;
 
         $response['status'] = 'success';
 
@@ -125,7 +125,7 @@ class CountryController extends Controller
         $country->save();
 
         $response['status'] = 'success';
-        $response['url'] = '/admin/directory_country/edit/' . $country->id;
+        $response['url'] = '/admin/directories/directory_country/edit/' . $country->id;
 
         return response()->json($response);
     }

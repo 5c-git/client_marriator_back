@@ -79,7 +79,7 @@ class BankController extends Controller
         $bank->save();
 
 
-        $response['url'] = '/admin/directory_bank/edit/'.$bank->id;
+        $response['url'] = '/admin/directories/directory_bank/edit/'.$bank->id;
 
         $response['status'] = 'success';
 
@@ -127,7 +127,7 @@ class BankController extends Controller
         $bank->save();
 
         $response['status'] = 'success';
-        $response['url'] = '/admin/directory_bank/edit/' . $bank->id;
+        $response['url'] = '/admin/directories/directory_bank/edit/' . $bank->id;
 
         return response()->json($response);
     }

@@ -76,7 +76,7 @@ class BrandController extends Controller
         $editObj->save();
 
 
-        $response['url'] = '/admin/directory_'.$this->view.'/edit/'.$editObj->id;
+        $response['url'] = '/admin/directories/directory_'.$this->view.'/edit/'.$editObj->id;
 
         $response['status'] = 'success';
 
@@ -107,7 +107,7 @@ class BrandController extends Controller
         }
 
         $response['status'] = 'success';
-        $response['url'] = '/admin/directory_' . $this->view . '/edit/' . $editObj->id;
+        $response['url'] = '/admin/directories/directory_' . $this->view . '/edit/' . $editObj->id;
 
         return response()->json($response);
     }

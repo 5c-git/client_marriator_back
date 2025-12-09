@@ -4,10 +4,12 @@ namespace App\Http\Requests\Order;
 
 use App\Enum\Order\OrderStatusEnum;
 use App\Http\Requests\FormRequest;
+use App\Models\Fields\Directory\Project;
 use App\Models\Order\Order;
 use App\Models\Order\Task;
 use App\Models\Order\TaskActivity;
 use App\Services\TimeService;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
@@ -31,21 +33,6 @@ class UpdateTaskActivityRequest extends FormRequest
     public function rules()
     {
         return [
-            'taskActivity' => 'required|exists:task_activities,id',
-            'viewActivityId' => 'sometimes|exists:directory_view_activities,id',
-            'count' => 'sometimes|integer|min:1',
-            'dateStart' => 'sometimes|date|after:now',
-            'dateEnd' => 'sometimes|date|after:dateStart',
-            'needFoto' => 'sometimes|boolean',
-
-            'dateActivity' => 'sometimes|array|min:1',
-            'dateActivity.*.timeStart' => 'required|date|after:now',
-            'dateActivity.*.timeEnd' => 'required|date|after:timeStart',
-            'dateActivity.*.placeIds' => 'sometimes|array|min:1',
-            'dateActivity.*.placeIds.*' => [
-                'required',
-                Rule::exists('directory_place', 'id'),
-            ],
             'taskId' => [
                 'required',
                 'integer',
@@ -83,6 +70,55 @@ class UpdateTaskActivityRequest extends FormRequest
 //                        }
 //                    }
                 },
+            ],
+            'taskActivity' => 'required|exists:task_activities,id',
+            'viewActivityId' => 'sometimes|exists:directory_view_activities,id',
+            'count' => 'sometimes|integer|min:1',
+            'dateStart' => [
+                'sometimes',
+                'date',
+                'after:now',
+                function ($attribute, $value, $fail) {
+                    $task = Task::query()->where('id', $this->taskId)->first();
+                    /** @var  $project Project */
+                    $project = $task->project ? $task->project : $task->order->user->project->first();
+                    if ($project && $project->date_start) {
+                        $dateStart = Carbon::parse($value);
+                        $projectDateStart = Carbon::parse($project->date_start);
+
+                        if ($dateStart->lt($projectDateStart)) {
+                            $fail('The activity start date must be after or equal to the project start date.');
+                        }
+                    }
+                }
+            ],
+            'dateEnd' => [
+                'sometimes',
+                'date',
+                'after:dateStart',
+                function ($attribute, $value, $fail) {
+                    $task = Task::query()->where('id', $this->taskId)->first();
+                    /** @var  $project Project */
+                    $project = $task->project ? $task->project : $task->order->user->project->first();
+                    if ($project && $project->date_end) {
+                        $dateEnd = Carbon::parse($value);
+                        $projectDateEnd = Carbon::parse($project->date_end);
+
+                        if ($dateEnd->gt($projectDateEnd)) {
+                            $fail('The activity end date must be before or equal to the project end date.');
+                        }
+                    }
+                }
+            ],
+            'needFoto' => 'sometimes|boolean',
+
+            'dateActivity' => 'sometimes|array|min:1',
+            'dateActivity.*.timeStart' => 'required|date|after:now',
+            'dateActivity.*.timeEnd' => 'required|date|after:timeStart|before_or_equal:dateEnd',
+            'dateActivity.*.placeIds' => 'sometimes|array|min:1',
+            'dateActivity.*.placeIds.*' => [
+                'required',
+                Rule::exists('directory_place', 'id'),
             ],
         ];
     }

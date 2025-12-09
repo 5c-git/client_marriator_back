@@ -16,6 +16,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property int $id
  * @property string $uuid
  * @property string $name
+ * @property Carbon $date_start
+ * @property Carbon $date_end
  * @property-read Collection|Counterparty[] $counterparties
  * @property-read Collection|Place[] $places
  * @property-read Collection|ViewActivities[] $viewActivities
@@ -34,6 +36,13 @@ class Project extends Model implements ModelDirectoryInterface
     protected $fillable = [
         'uuid',
         'name',
+        'date_start',
+        'date_end',
+    ];
+
+    protected $casts = [
+        'date_start' => 'datetime',
+        'date_end' => 'datetime',
     ];
 
     public $timestamps = false;

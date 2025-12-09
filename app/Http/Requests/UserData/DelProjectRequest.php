@@ -46,6 +46,12 @@ class DelProjectRequest extends FormRequest
                 'required',
                 'integer',
                 'exists:directory_project,id',
+                function ($attribute, $value, $fail) {
+                    $user = User::where('id',$this->userId)->first();
+                    if($user->project->count()<=1) {
+                        $fail('You cant delete the last project for this user');
+                    }
+                }
             ],
         ];
     }

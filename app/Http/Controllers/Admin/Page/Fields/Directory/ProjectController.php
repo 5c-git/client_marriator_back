@@ -60,6 +60,8 @@ class ProjectController extends Controller
 
         $editObj->name = $data['name'];
         $editObj->uuid = $data['uuid'];
+        $editObj->date_start = $data['date_start'];
+        $editObj->date_end = $data['date_end'];
 
         $viewActivities = [];
         if (!empty($data['viewActivities'])) {
@@ -90,7 +92,7 @@ class ProjectController extends Controller
         $editObj->brands()->sync($brands);
 
 
-        $response['url'] = '/admin/directory_'.$this->view.'/edit/'.$editObj->id;
+        $response['url'] = '/admin/directories/directory_'.$this->view.'/edit/'.$editObj->id;
 
         $response['status'] = 'success';
 
@@ -139,6 +141,8 @@ class ProjectController extends Controller
         $editObj = new Project();
         $editObj->name = $data['name'];
         $editObj->uuid = $data['uuid'];
+        $editObj->date_start = $data['date_start'];
+        $editObj->date_end = $data['date_end'];
         $editObj->save();
         $editObj->viewActivities()->sync($viewActivities);
         $editObj->places()->sync($place);
@@ -147,7 +151,7 @@ class ProjectController extends Controller
 
 
         $response['status'] = 'success';
-        $response['url'] = '/admin/directory_' . $this->view . '/edit/' . $editObj->id;
+        $response['url'] = '/admin/directories/directory_' . $this->view . '/edit/' . $editObj->id;
 
         return response()->json($response);
     }

@@ -70,7 +70,7 @@ class CounterpartyController extends Controller
         $editObj->save();
         $editObj->brands()->sync($brand);
 
-        $response['url'] = '/admin/directory_'.$this->view.'/edit/'.$editObj->id;
+        $response['url'] = '/admin/directories/directory_'.$this->view.'/edit/'.$editObj->id;
 
         $response['status'] = 'success';
 
@@ -107,7 +107,7 @@ class CounterpartyController extends Controller
         $editObj->brands()->sync($brand);
 
         $response['status'] = 'success';
-        $response['url'] = '/admin/directory_' . $this->view . '/edit/' . $editObj->id;
+        $response['url'] = '/admin/directories/directory_' . $this->view . '/edit/' . $editObj->id;
 
         return response()->json($response);
     }

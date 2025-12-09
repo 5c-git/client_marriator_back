@@ -119,7 +119,7 @@ class ActivitiesController extends Controller
         $editObj->save();
 
 
-        $response['url'] = '/admin/directory_'.$this->view.'/edit/'.$editObj->id;
+        $response['url'] = '/admin/directories/directory_'.$this->view.'/edit/'.$editObj->id;
 
         $response['status'] = 'success';
 
@@ -184,7 +184,7 @@ class ActivitiesController extends Controller
         }
 
         $response['status'] = 'success';
-        $response['url'] = '/admin/directory_'.$this->view.'/edit/' . $editObj->id;
+        $response['url'] = '/admin/directories/directory_'.$this->view.'/edit/' . $editObj->id;
 
         return response()->json($response);
     }
