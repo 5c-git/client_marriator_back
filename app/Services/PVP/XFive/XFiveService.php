@@ -31,7 +31,7 @@ class XFiveService  extends PVPAbstract
      */
     private function getAccessToken(): string
     {
-        return Cache::remember('wop_access_token', 3500, function () {
+
             $response = Http::asForm()->post($this->tokenUrl, [
                 'grant_type' => 'client_credentials',
                 'client_id' => $this->clientId,
@@ -54,7 +54,7 @@ class XFiveService  extends PVPAbstract
             }
 
             return $response->json()['access_token'];
-        });
+
     }
 
     /**
