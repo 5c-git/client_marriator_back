@@ -13,8 +13,25 @@ class PVPService
 
     }
 
-    public function get(){
-        $this->pvp->get();
+    private function get(){
+        return $this->pvp->getData();
+    }
+
+    public function startLoad(){
+        $loadDataPvp = $this->get();
+
+    }
+
+    private function saveData(array $orders){
+
+    }
+
+    static function getServiceObject($namePvp): ?self
+    {
+        if(class_exists($namePvp)) {
+            return new self(new $namePvp());
+        }
+        return null;
     }
 
 }

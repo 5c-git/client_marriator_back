@@ -13,6 +13,7 @@ abstract class PVPAbstract
 
     }
 
-    //abstract function get();
+    abstract public function getData();
+    abstract protected function dataFormater($data): array;
 
 }

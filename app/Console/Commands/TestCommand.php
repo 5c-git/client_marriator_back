@@ -8,6 +8,7 @@ use App\Enum\Document\DocumentStatusSignatureEnum;
 use App\Enum\Order\OrderStatusEnum;
 use App\Enum\Order\ReportStatusEnum;
 use App\Models\Document\Document;
+use App\Models\Document\RecognitionDocument;
 use App\Models\Order\Bid;
 use App\Models\Order\Report;
 use App\Models\Setting;
@@ -36,6 +37,21 @@ class TestCommand extends Command
 
     public function handle(): void
     {
+
+        $service = new VermeService();
+        $user = User::query()->where('id',215)->first();
+
+        $data = $service->getShifts();
+        echo "<pre>";
+        var_dump($data);
+        echo "</pre>";
+        die();
+
+        $ff= RecognitionDocument::first();
+        echo "<pre>";
+        var_dump($ff->user_id);
+        echo "</pre>";
+        die();
         $user = User::query()->where('id',215)->first();
         $service = new XFiveService();
         $data = [
@@ -46,15 +62,6 @@ class TestCommand extends Command
         $service->registerUser($user);
         die();
 
-
-        $service = new VermeService();
-        $user = User::query()->where('id',215)->first();
-
-        $data = $service->getShifts();
-        echo "<pre>";
-        var_dump($data);
-        echo "</pre>";
-        die();
 
 
 

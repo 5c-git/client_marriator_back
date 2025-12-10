@@ -402,4 +402,14 @@ class XFiveService  extends PVPAbstract
         }
         return false;
     }
+
+    public function getData(): array
+    {
+        return $this->dataFormater($this->getTasks((int)date('d'), (int)date('m'), (int)date('Y')));
+    }
+
+    protected function dataFormater($data): array
+    {
+        return $data;
+    }
 }

@@ -65,8 +65,8 @@ class VermeService  extends PVPAbstract
     {
         $payload = [
             'getOutsourcingShiftsVer2' => array_merge([
-                //'timestamp' => now()->toIso8601String(),
-                'amount' => 1,
+                //'timestamp' => now()->subDay(),
+                'amount' => 3,
                 'headquarter' => ['code' => 'bnt'],
                 //'agency' => ['code' => 'bnt_agency_msk'],
                 'authData' => $this->defaultAuth
@@ -98,7 +98,7 @@ class VermeService  extends PVPAbstract
             $response = Http::withHeaders([
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
-            ])->timeout(30)->post($this->baseUrl, $payload);
+            ])->timeout(3000)->post($this->baseUrl, $payload);
 
             if (!$response->successful()) {
                 Log::error('API Request failed', [
@@ -107,13 +107,6 @@ class VermeService  extends PVPAbstract
                     'payload' => $payload
                 ]);
             }
-            echo "<pre>";
-            var_dump($response->status());
-            echo "</pre>";
-
-            echo "<pre>";
-            var_dump($response->body());
-            echo "</pre>";
 
             return $response->json();
         } catch (\Exception $e) {
@@ -194,8 +187,66 @@ class VermeService  extends PVPAbstract
         }
 
         $data = $this->createEmployee($employeeData);
-        echo "<pre>";
-        var_dump($data);
-        echo "</pre>";
+    }
+
+    public function getData(): array
+    {
+        return $this->dataFormater($this->getShifts(['booking_availability_status'=>'available']));
+    }
+
+    protected function dataFormater($data): array
+    {
+        return $data;
+
+        //{
+        //            "guid": "b485b29e-3ba8-4060-a298-1ca1ecebb55f",
+        //            "state": "accept",
+        //            "start": "2025-01-21T20:00:00+00:00",
+        //            "end": "2025-01-22T05:00:00+00:00",
+        //            "worktime": 480,
+        //            "agency": {
+        //                "code": "other"
+        //            },
+        //            "organization": {
+        //                "code": "048",
+        //                "alt_code": "50006343"
+        //            },
+        //            "job": {
+        //                "code": "20000036"
+        //            },
+        //            "department": {
+        //                "code": "50152036",
+        //                "name": "048_Фрукты/ Овощи (215)"
+        //            },
+        //            "booking_availability_status": "unavailable",
+        //            "agency_employee": null,
+        //            "dt_change": "2025-01-21T04:21:26.808345+00:00"
+        //        },
+        //        {
+        //            "guid": "5d0adcad-7350-4ecb-a5aa-cd95367e8d7e",
+        //            "state": "accept",
+        //            "start": "2025-01-21T20:00:00+00:00",
+        //            "end": "2025-01-22T05:00:00+00:00",
+        //            "worktime": 480,
+        //            "agency": {
+        //                "code": "other"
+        //            },
+        //            "organization": {
+        //                "code": "048",
+        //                "alt_code": "50006343"
+        //            },
+        //            "job": {
+        //                "code": "20000036"
+        //            },
+        //            "department": {
+        //                "code": "50152038",
+        //                "name": "048_Молочная продукция (155)"
+        //            },
+        //            "booking_availability_status": "unavailable",
+        //            "agency_employee": null,
+        //            "dt_change": "2025-01-21T04:21:39.575014+00:00"
+        //        }
+
+
     }
 }

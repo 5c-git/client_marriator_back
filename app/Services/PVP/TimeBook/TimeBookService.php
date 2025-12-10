@@ -224,4 +224,14 @@ class TimeBookService extends PVPAbstract
     {
         Redis::set('services.timeBook.access_token',$token);
     }
+
+    public function getData(): array
+    {
+        return $this->dataFormater($this->getDemands([]));
+    }
+
+    protected function dataFormater($data): array
+    {
+        return $data;
+    }
 }
