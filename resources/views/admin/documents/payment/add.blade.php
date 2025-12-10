@@ -160,7 +160,7 @@
                 </br>
                 </br>
                 <button type="submit" class="btn btn-success">Сохранить</button>
-                <a href="{{route('documentsList',$edit->type->name)}}" style="margin-left: 10px" class="btn btn-secondary btn-md active" role="button" aria-pressed="true">Вернуться</a>
+                <a href="{{route('documentsList',$docEnum->name)}}" style="margin-left: 10px" class="btn btn-secondary btn-md active" role="button" aria-pressed="true">Вернуться</a>
             </div>
         </div>
 
