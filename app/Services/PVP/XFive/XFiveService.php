@@ -44,6 +44,10 @@ class XFiveService  extends PVPAbstract
             echo "<pre>";
             var_dump($response->body());
             echo "</pre>";
+            echo "<pre>";
+            var_dump(1);
+            echo "</pre>";
+            die();
 
             if (!$response->successful()) {
                 return '';
