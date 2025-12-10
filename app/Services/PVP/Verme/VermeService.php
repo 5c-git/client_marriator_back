@@ -65,10 +65,10 @@ class VermeService  extends PVPAbstract
     {
         $payload = [
             'getOutsourcingShiftsVer2' => array_merge([
-                'timestamp' => now()->toIso8601String(),
-                'amount' => 500,
+                //'timestamp' => now()->toIso8601String(),
+                'amount' => 1,
                 'headquarter' => ['code' => 'bnt'],
-                'agency' => ['code' => 'bnt_agency_msk'],
+                //'agency' => ['code' => 'bnt_agency_msk'],
                 'authData' => $this->defaultAuth
             ], $filters)
         ];
