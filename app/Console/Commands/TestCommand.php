@@ -37,6 +37,15 @@ class TestCommand extends Command
 
     public function handle(): void
     {
+        $user = User::query()->where('id',215)->first();
+        $service = new XFiveService();
+        $data = [
+            'inn'=>'1231231',
+            'snils'=>'123123123',
+            'pervp'=>'31231'
+        ];
+        $service->registerUser($user);
+        die();
 
         $service = new VermeService();
         $user = User::query()->where('id',215)->first();
