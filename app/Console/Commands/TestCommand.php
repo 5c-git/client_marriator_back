@@ -45,7 +45,10 @@ class TestCommand extends Command
             'snils'=>'123123123',
             'pervp'=>'31231'
         ];
-        $service->registerUser($user);
+        $data = $service->registerUser($user);
+        echo "<pre>";
+        var_dump($data);
+        echo "</pre>";
         die();
 
         $service = new VermeService();
