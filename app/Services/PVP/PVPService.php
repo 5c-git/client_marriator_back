@@ -3,10 +3,12 @@
 namespace App\Services\PVP;
 
 use App\Enum\Order\OrderStatusEnum;
+use App\Enum\Role\RoleEnum;
 use App\Models\Fields\Directory\Place;
 use App\Models\Fields\Directory\ViewActivities;
 use App\Models\Order\Order;
 use App\Models\Order\OrderActivities;
+use App\Models\User;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
@@ -30,11 +32,13 @@ class PVPService
                 $place = $this->getPlace($prefix, (string)$item["place"]);
                 $job   = $this->getJob($prefix, (string)$item["job"]);
 
+
                 if (!empty($place) && !empty($job)) {
+                    $user = $this->getUser($place);
                     $newOrder                = new Order();
                     $newOrder->place_id      = $place->id;
                     $newOrder->external_id   = $item['externalId'];
-                    $newOrder->user_id       = $item['userId'];
+                    $newOrder->user_id       = $user->id;
                     $newOrder->self_employed = $item['selfEmployed'];
                     $newOrder->status        = OrderStatusEnum::notAccepted->value;
                     $newOrder->save();
@@ -53,6 +57,26 @@ class PVPService
                 }
             }
         }
+    }
+
+    public function getUser(Place $place): User
+    {
+         $project = $place->project?->first();
+         if($project){
+             $user = User::whereHas('project', function ($query) use ($project) {
+                 $query->where('projects.id', $project->id);
+             })
+                 ->whereHas('roles', function ($query) {
+                     $query->where('name', RoleEnum::client->name);
+                 })
+                 ->first();
+         }else{
+             $user = User::whereHas('roles', function ($query) {
+                     $query->where('name', RoleEnum::client->name);
+                 })
+                 ->first();
+         }
+         return $user;
     }
 
     public function getPlace(string $prefix, string $place): ?Place

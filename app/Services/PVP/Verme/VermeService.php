@@ -65,8 +65,8 @@ class VermeService  extends PVPAbstract
     {
         $payload = [
             'getOutsourcingShiftsVer2' => array_merge([
-                //'timestamp' => now()->subDay(),
-                'amount' => 2,
+                'timestamp' => now()->subDay(),
+                'amount' => 5,
                 'headquarter' => ['code' => 'bnt'],
                 //'agency' => ['code' => 'bnt_agency_msk'],
                 'authData' => $this->defaultAuth
@@ -202,7 +202,6 @@ class VermeService  extends PVPAbstract
                 if ($dataShift['state'] != 'delete') {
                     $array                 = [];
                     $array['place']        = $dataShift['organization']['code'];
-                    $array['userId']       = $this->getDefaultUserId();
                     $array['selfEmployed'] = true;
                     $array['dateStart']    = Carbon::parse($dataShift['start']);
                     $array['end']          = Carbon::parse($dataShift['end']);
@@ -218,10 +217,5 @@ class VermeService  extends PVPAbstract
     public function getPrefix():string
     {
         return 'v_';
-    }
-
-    public function getDefaultUserId():int
-    {
-        return 1;
     }
 }
