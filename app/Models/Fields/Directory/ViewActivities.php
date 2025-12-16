@@ -30,7 +30,8 @@ class ViewActivities extends Model implements ModelDirectoryInterface
         'type',
         'parentFields',
         'self_employed',
-        'traveling'
+        'traveling',
+        'external_id'
     ];
 
     public $timestamps = false;

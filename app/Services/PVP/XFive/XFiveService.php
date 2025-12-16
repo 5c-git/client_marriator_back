@@ -401,4 +401,14 @@ class XFiveService  extends PVPAbstract
     {
         return $data;
     }
+
+    public function getPrefix():string
+    {
+        return 'x_';
+    }
+
+    public function getDefaultUserId():int
+    {
+        return 1;
+    }
 }

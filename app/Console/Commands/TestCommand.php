@@ -17,6 +17,7 @@ use App\Services\DocumentServices\CorrectRecognitionService;
 use App\Services\Nopaper\NopaperService;
 use App\Services\OneC\OneCServices;
 use App\Services\DocumentCreator\PdfCreatorService;
+use App\Services\PVP\PVPService;
 use App\Services\PVP\TimeBook\TimeBookService;
 use App\Services\PVP\Verme\VermeService;
 use App\Services\PVP\XFive\XFiveService;
@@ -37,6 +38,12 @@ class TestCommand extends Command
 
     public function handle(): void
     {
+        $pvpService = new PVPService(new VermeService());
+        $pvpService->startLoad();
+
+        die();
+
+
        $r = RecognitionDocument::query()->first();
         $user = User::query()->where('id',$r->user_id)->first();
         $service = new XFiveService();
@@ -51,14 +58,6 @@ class TestCommand extends Command
         echo "</pre>";
         die();
 
-        $service = new VermeService();
-        $user = User::query()->where('id',215)->first();
-
-        $data = $service->getShifts();
-        echo "<pre>";
-        var_dump($data);
-        echo "</pre>";
-        die();
 
         $ff= RecognitionDocument::first();
         echo "<pre>";

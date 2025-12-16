@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property string $uuid
  * @property string $name
  * @property string $logo
+ * @property string $external_id
  * @property string $description
  * @property-read Collection|Counterparty[] $counterparties
  *
@@ -32,6 +33,7 @@ class Brand extends Model implements ModelDirectoryInterface
         'name',
         'logo',
         'description',
+        'external_id',
     ];
 
     public $timestamps = false;

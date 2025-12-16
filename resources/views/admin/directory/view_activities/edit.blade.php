@@ -38,6 +38,13 @@
         </div>
 
         <div class="form-group row">
+            <label for="external_id" class="col-sm-2 col-form-label">Внешний индификатор</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" value="{{$edit->external_id}}" name="external_id" id="external_id">
+            </div>
+        </div>
+
+        <div class="form-group row">
             <label for="img" class="col-sm-2 col-form-label">Image</label>
             <div class="col-sm-10">
                 <x-adminlte-input-file name="img" id="img" />
