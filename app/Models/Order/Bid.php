@@ -29,6 +29,7 @@ use App\Models\Order\OrderActivities;
  * @property int $view_activity_id
  * @property int $radius
  * @property int $count
+ * @property string $external_id
  * @property float $price
  * @property bool $self_employed
  * @property Carbon $date_start
@@ -70,7 +71,8 @@ class Bid extends Model
         'date_end',
         'need_foto',
         'date_activity',
-        'activity_id'
+        'activity_id',
+        'external_id'
     ];
 
     protected $casts = [

@@ -76,6 +76,7 @@ class ViewActivitiesController extends Controller
         $editObj->detail_name = $data['detail_name'];
         $editObj->detail_text = $data['detail_text'];
         $editObj->link_text = $data['link_text'];
+        $editObj->external_id = $data['external_id'];
         $editObj->link = $data['link'];
         if(!empty($data['self_employed'])) {
             $editObj->self_employed = true;
@@ -163,6 +164,7 @@ class ViewActivitiesController extends Controller
         $editObj->preview_text = $data['preview_text'];
         $editObj->detail_name = $data['detail_name'];
         $editObj->detail_text = $data['detail_text'];
+        $editObj->external_id = $data['external_id'];
         $editObj->link_text = $data['link_text'];
         $editObj->link = $data['link'];
         if(!empty($data['self_employed'])) {

@@ -22,6 +22,7 @@ use App\Models\Order\Task;
  * @property int $place_id
  * @property int $user_id
  * @property int $accept_user_id
+ * @property int $external_id
  * @property bool $self_employed
  * @property OrderStatusEnum $status
  * @property-read User $user
@@ -45,7 +46,8 @@ class Order extends Model
         'user_id',
         'self_employed',
         'status',
-        'accept_user_id'
+        'accept_user_id',
+        'external_id',
     ];
 
     protected $casts = [

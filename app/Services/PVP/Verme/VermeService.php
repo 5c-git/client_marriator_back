@@ -66,7 +66,7 @@ class VermeService  extends PVPAbstract
         $payload = [
             'getOutsourcingShiftsVer2' => array_merge([
                 //'timestamp' => now()->subDay(),
-                'amount' => 3,
+                'amount' => 2,
                 'headquarter' => ['code' => 'bnt'],
                 //'agency' => ['code' => 'bnt_agency_msk'],
                 'authData' => $this->defaultAuth
@@ -191,62 +191,37 @@ class VermeService  extends PVPAbstract
 
     public function getData(): array
     {
-        return $this->dataFormater($this->getShifts(['booking_availability_status'=>'available']));
+        return $this->dataFormater($this->getShifts(['state'=>'accept']));
     }
 
     protected function dataFormater($data): array
     {
-        return $data;
+        $returnArray = [];
+        if(!empty($data['shifts_list'])){
+            foreach ($data['shifts_list'] as $dataShift) {
+                if ($dataShift['state'] != 'delete') {
+                    $array                 = [];
+                    $array['place']        = $dataShift['organization']['code'];
+                    $array['userId']       = $this->getDefaultUserId();
+                    $array['selfEmployed'] = true;
+                    $array['dateStart']    = Carbon::parse($dataShift['start']);
+                    $array['end']          = Carbon::parse($dataShift['end']);
+                    $array['externalId']   = $dataShift['guid'];
+                    $array['job']          = $dataShift['job']['code'];
+                    $returnArray[]         = $array;
+                }
+            }
+        }
+        return $returnArray;
+    }
 
-        //{
-        //            "guid": "b485b29e-3ba8-4060-a298-1ca1ecebb55f",
-        //            "state": "accept",
-        //            "start": "2025-01-21T20:00:00+00:00",
-        //            "end": "2025-01-22T05:00:00+00:00",
-        //            "worktime": 480,
-        //            "agency": {
-        //                "code": "other"
-        //            },
-        //            "organization": {
-        //                "code": "048",
-        //                "alt_code": "50006343"
-        //            },
-        //            "job": {
-        //                "code": "20000036"
-        //            },
-        //            "department": {
-        //                "code": "50152036",
-        //                "name": "048_Фрукты/ Овощи (215)"
-        //            },
-        //            "booking_availability_status": "unavailable",
-        //            "agency_employee": null,
-        //            "dt_change": "2025-01-21T04:21:26.808345+00:00"
-        //        },
-        //        {
-        //            "guid": "5d0adcad-7350-4ecb-a5aa-cd95367e8d7e",
-        //            "state": "accept",
-        //            "start": "2025-01-21T20:00:00+00:00",
-        //            "end": "2025-01-22T05:00:00+00:00",
-        //            "worktime": 480,
-        //            "agency": {
-        //                "code": "other"
-        //            },
-        //            "organization": {
-        //                "code": "048",
-        //                "alt_code": "50006343"
-        //            },
-        //            "job": {
-        //                "code": "20000036"
-        //            },
-        //            "department": {
-        //                "code": "50152038",
-        //                "name": "048_Молочная продукция (155)"
-        //            },
-        //            "booking_availability_status": "unavailable",
-        //            "agency_employee": null,
-        //            "dt_change": "2025-01-21T04:21:39.575014+00:00"
-        //        }
+    public function getPrefix():string
+    {
+        return 'v_';
+    }
 
-
+    public function getDefaultUserId():int
+    {
+        return 1;
     }
 }

@@ -234,4 +234,14 @@ class TimeBookService extends PVPAbstract
     {
         return $data;
     }
+
+    public function getPrefix():string
+    {
+        return 't_';
+    }
+
+    public function getDefaultUserId():int
+    {
+        return 1;
+    }
 }

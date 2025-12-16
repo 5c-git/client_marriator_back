@@ -331,7 +331,8 @@ class EloquentOrderRepository implements OrderRepository
                 'income' => 0,
                 'scope_of_services' => 0,
                 'accept_user_id' => $request->responsibleId ?? $user->id,
-                'specialist_user_id' => null
+                'specialist_user_id' => null,
+                'external_id' => $order->external_id
             ]);
 
             $task->save();
@@ -472,7 +473,7 @@ class EloquentOrderRepository implements OrderRepository
             $bid->radius = $radius->value;
         }
         $bid->place_id         = $order->place_id;
-        $bid->user_id          = $user->id;
+        $bid->user_id          = $order->accept_user_id;
         $bid->accept_user_id   = null;
         $bid->order_id         = $order->id;
         $bid->task_id          = null;
@@ -486,6 +487,7 @@ class EloquentOrderRepository implements OrderRepository
         $bid->need_foto        = $orderActivities->need_foto;
         $bid->date_activity    = $orderActivities->date_activity;
         $bid->activity_id      = $orderActivityId;
+        $bid->external_id      = $order->external_id;
 
         $bid->save();
 
@@ -515,7 +517,7 @@ class EloquentOrderRepository implements OrderRepository
         }
 
         $bid->place_id         = $task->place_id;
-        $bid->user_id          = $user->id;
+        $bid->user_id          = $task->accept_user_id;
         $bid->accept_user_id   = null;
         $bid->order_id         = $task->order_id;
         $bid->task_id          = $task->id;
@@ -529,6 +531,7 @@ class EloquentOrderRepository implements OrderRepository
         $bid->need_foto        = $taskActivities->need_foto;
         $bid->date_activity    = $taskActivities->date_activity;
         $bid->activity_id      = $taskActivityId;
+        $bid->external_id      = $task->external_id;
 
         $bid->save();
 
@@ -895,6 +898,7 @@ class EloquentOrderRepository implements OrderRepository
         $newTask->income = $task->income;
         $newTask->scope_of_services = $task->scope_of_services;
         $newTask->project_id = $task->project_id;
+        $newTask->external_id = $task->external_id;
         $newTask->save();
         $taskActivitiesOld = $task->taskActivities??[];
         foreach ($taskActivitiesOld as $taskActivityOld) {

@@ -5,6 +5,7 @@ namespace App\Http\Resources\Order;
 use App\Http\Resources\AcceptingUsersResource;
 use App\Http\Resources\Order\OrderActivitiesResource;
 use App\Http\Resources\Order\StatisticResource;
+use App\Http\Resources\ProjectResource;
 use App\Http\Resources\ViewActivityResource;
 use App\Models\Fields\Directory\Radius;
 use Illuminate\Http\Request;
@@ -48,8 +49,15 @@ class BidResource extends JsonResource
             'task' => new TaskShortResource($this->task),
             'acceptingUsers' => AcceptingUsersResource::collection($this->acceptingUsers),
             'count' => $this->count,
-            'statistic' => $this->getStatistic()
+            'statistic' => $this->getStatistic(),
+            'project'=> new ProjectResource($this->getProject()),
         ];
+    }
+
+    private function getProject(){
+        return $this->order?->user?->project?->first()
+            ?? $this->task?->project
+            ?? $this->task?->order?->user?->project?->first();
     }
 
     private function getRadius()

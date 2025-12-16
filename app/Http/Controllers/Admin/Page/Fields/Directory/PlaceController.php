@@ -61,6 +61,7 @@ class PlaceController extends Controller
         $editObj->address_kladr = $data['address_kladr'];
         $editObj->latitude = $data['latitude'];
         $editObj->longitude = $data['longitude'];
+        $editObj->external_id = $data['external_id'];
         $editObj->directory_region_of_residence_id = $data['region'];
 
         $editObj->save();
@@ -90,6 +91,7 @@ class PlaceController extends Controller
         $editObj->address_kladr = $data['address_kladr'];
         $editObj->latitude = $data['latitude'];
         $editObj->longitude = $data['longitude'];
+        $editObj->external_id = $data['external_id'];
         $editObj->directory_region_of_residence_id = $data['region'];
         $editObj->save();
 
