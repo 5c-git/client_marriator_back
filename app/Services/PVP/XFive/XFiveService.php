@@ -31,7 +31,7 @@ class XFiveService  extends PVPAbstract
      */
     private function getAccessToken(): string
     {
-        return Cache::remember('wop_access_token', 3500, function () {
+        //return Cache::remember('wop_access_token', 3500, function () {
             $response = Http::asForm()->post($this->tokenUrl, [
                 'grant_type' => 'client_credentials',
                 'client_id' => $this->clientId,
@@ -43,7 +43,7 @@ class XFiveService  extends PVPAbstract
             }
 
             return $response->json()['access_token'];
-        });
+        //});
     }
 
     /**
@@ -52,14 +52,14 @@ class XFiveService  extends PVPAbstract
     private function makeRequest(string $method, string $endpoint, array $data = []): array
     {
         $token = $this->getAccessToken();
-
+        
         $response = Http::withHeaders([
             'Authorization' => 'Bearer ' . $token,
             'Accept' => 'application/json',
-        ])->{$method}($this->baseUrl . $endpoint, $data);
-        echo "<pre>";
-        var_dump($response->status());
-        echo "</pre>";
+            'Content-Type' => 'application/json'
+        ])
+            ->withBody(json_encode($data), 'application/json')
+            ->{$method}($this->baseUrl . $endpoint);
 
         echo "<pre>";
         var_dump($response->body());
@@ -347,8 +347,21 @@ class XFiveService  extends PVPAbstract
         return $this->makeRequest('get', '/task/reasons/v1');
     }
 
+    /**
+     * Получить причины победы/проигрыша в конкурсе
+     */
+    public function getSectorList(): array
+    {
+        return $this->makeRequest('get', '/sector/list/v1');
+    }
+
     public function registerUser(User $user)
     {
+//        $dataSectors = $this->getSectorList();
+//        echo "<pre>";
+//        var_dump($dataSectors);
+//        echo "</pre>";
+//        die();
         $document = RecognitionDocument::query()
             ->where('user_id',$user->id)
             ->where('file_type',DocumentTypeEnum::Passport->value)
@@ -366,28 +379,40 @@ class XFiveService  extends PVPAbstract
                 }
             }
             $payload = [
-                'mob1'   => $user->phone,
-                'mob2'   => $user->phone,
-                'name2'  => $document->data['FirstName'] ?? '',
+                //'mob1'   => (string)79819876543,
+                'gender' => (string)($sex ?? 1),
                 'name1'  => $document->data['LastName'] ?? '',
-                'pervp'  => $user->id,
-                'secid'  => 1,
-                'gender' => $sex ?? 1,
+                'name2'  => $document->data['FirstName'] ?? '',
+                'mob2'   => (string)79161234567,
+                'pervp'  => (string)$user->id,
+                'secid'  => 54258840,
+
+
+                //'comnt'=>null,
+                //'inn'=>null,
+                //'mob1'=>null,
+                //'name3'=>null,
+                //'nores'=>null,
+                //'snils'=>null,
+                //'begda'=>null,
+                //'inn'    => null,
+                //"begda"  => (int)Carbon::now()->subDays(2)->format('Ymd')
             ];
         } else {
             return false;
         }
+        echo "<pre>";
+        var_dump($payload);
+        echo "</pre>";
 
         if(!empty($payload)){
             $dataRegister = $this->createStaff($payload);
-            echo "<pre>";
-            var_dump($dataRegister);
-            echo "</pre>";
 //            if($dataRegister && !empty($dataRegister['userGuid'])){
 //                $user->nopaper_guid = $dataRegister['userGuid'];
 //                $user->save();
 //                return true;
 //            }
+            return  $dataRegister;
         }
         return false;
     }
