@@ -6,6 +6,7 @@ use App\Models\Document\RecognitionDocument;
 use App\Services\DocumentServices\CorrectRecognitionService;
 use App\Services\PVP\PVPService;
 use App\Services\PVP\TimeBook\TimeBookService;
+use App\Services\PVP\Verme\VermeService;
 use App\Services\PVP\XFive\XFiveService;
 use Illuminate\Console\Command;
 use App\Enum\Document\RecognitionDocumentStatusEnum;

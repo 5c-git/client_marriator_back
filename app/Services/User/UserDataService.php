@@ -2,6 +2,7 @@
 
 namespace App\Services\User;
 
+use App\Enum\Fields\FieldsTypeEnum;
 use App\Models\Fields\Fields;
 use App\Models\User;
 
@@ -61,5 +62,19 @@ class UserDataService
             $name = $this->user->name;
         }
         return $name??'';
+    }
+
+    static function getUserSnils(User $user):?string
+    {
+        $field = Fields::where('type', FieldsTypeEnum::snils->value)->first();
+        if(is_array($user->data)){
+            $data = $user->data;
+        }else{
+            $data = json_decode($user->data,true);
+        }
+        if(!empty($data[$field->uuid])){
+            return $data[$field->uuid];
+        }
+        return null;
     }
 }
