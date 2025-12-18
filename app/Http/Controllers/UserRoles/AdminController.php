@@ -24,6 +24,7 @@ use App\Http\Resources\Order\OrderResource;
 use App\Http\Resources\PlaceResource;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\ShortUserResource;
+use App\Http\Resources\UserForModerationResource;
 use App\Models\Fields\Directory\Counterparty;
 use App\Models\Fields\Directory\Place;
 use App\Models\Fields\Directory\Project;
@@ -361,10 +362,10 @@ class AdminController extends Controller
             $request->input('perPage', 10),
         );
 
-        return UserResource::collection($usersForModeration);
+        return UserForModerationResource::collection($usersForModeration);
     }
 
-    public function getModerationSingleClient(GetClientRequest $request): UserResource
+    public function getModerationSingleClient(GetClientRequest $request): UserForModerationResource
     {
         $user = Auth::user();
         $userRoles = $user->roles?->pluck('id')->toArray();
@@ -387,7 +388,7 @@ class AdminController extends Controller
             $arrRoleConfirm
         );
 
-        return new UserResource($usersForModeration);
+        return new UserForModerationResource($usersForModeration);
     }
 
     public function confirmUserRegister(ConfirmUserRequest $request): SuccessResource

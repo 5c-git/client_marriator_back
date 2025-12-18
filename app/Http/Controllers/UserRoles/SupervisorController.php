@@ -37,6 +37,7 @@ use App\Http\Resources\ProjectResource;
 use App\Http\Resources\RadiusResponse;
 use App\Http\Resources\ReasonsResource;
 use App\Http\Resources\SuccessResource;
+use App\Http\Resources\UserForModerationResource;
 use App\Models\Fields\Directory\Place;
 use App\Models\Fields\Directory\Project;
 use App\Models\Fields\Directory\Radius;
@@ -320,10 +321,10 @@ class SupervisorController extends Controller
             $request->input('perPage', 10),
         );
 
-        return UserResource::collection($usersForModeration);
+        return UserForModerationResource::collection($usersForModeration);
     }
 
-    public function getModerationSingleClient(GetClientRequest $request): UserResource
+    public function getModerationSingleClient(GetClientRequest $request): UserForModerationResource
     {
         $user = Auth::user();
         $userRoles = $user->roles?->pluck('id')->toArray();
@@ -346,7 +347,7 @@ class SupervisorController extends Controller
             $arrRoleConfirm
         );
 
-        return new UserResource($usersForModeration);
+        return new UserForModerationResource($usersForModeration);
     }
 
     public function confirmUserRegister(ConfirmUserRequest $request): SuccessResource
