@@ -27,6 +27,7 @@ use Illuminate\Console\Command;
 use Carbon\Carbon;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -38,6 +39,24 @@ class TestCommand extends Command
 
     public function handle(): void
     {
+//        $user = User::query()->first();
+//        $sourcePath = public_path('nameTest.pdf');
+//        $destinationPath = "source/document/".$user->id."/".date('YmdHis').rand(1000000,9999999).'testDoc.pdf';
+//        $fileContent = File::get($sourcePath);
+//        Storage::disk('public')->put($destinationPath, $fileContent);
+//        $fileUrl = Storage::url($destinationPath);
+//        $doc = new Document();
+//        $doc->uuid = Str::uuid();
+//        $doc->user_id = $user->id;
+//        $doc->file_name = date('YmdHis').rand(1000000,9999999).'testDoc.pdf';
+//        $doc->file_path = $fileUrl;
+//        $doc->status = DocumentStatusEnum::Signed->value;
+//        $doc->status_signature = DocumentStatusSignatureEnum::NoSend->value;
+//        $doc->date_signature = Carbon::now();
+//        $doc->save();
+        die();
+
+
         $pvpService = new PVPService(new VermeService());
         $pvpService->startLoad();
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\PersonalArea;
 
 use App\Enum\Document\DocumentStatusSignatureEnum;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Document\DocumentResource;
 use App\Http\Resources\ErrorResource;
 use App\Http\Resources\SuccessResource;
 use App\Models\Document\RecognitionDocument;
@@ -16,6 +17,9 @@ use App\Models\Document\Document;
 use App\Enum\Document\DocumentStatusEnum;
 use App\Models\Fields\Directory\Organization;
 use App\Models\Certificates;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 
 class DocumentsController extends Controller
@@ -51,25 +55,83 @@ class DocumentsController extends Controller
     public function getDocumentSigned(Request $request){
         $user = $request->user();
 
-        //$this->createMockData($user->id,DocumentStatusEnum::Signed->value);
+        $documents = Document::query()
+            ->where('user_id',$user->id)
+            ->where('status',DocumentStatusEnum::Signed->value)
+            ->where('status_signature','!=',DocumentStatusSignatureEnum::Signed->value)
+            ->get();
+
+        return DocumentResource::collection($documents);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/api/personal/documents/getDocumentArchive/",
+     *     operationId="get archive file data",
+     *     tags={"documents"},
+     *     summary="Получить документы из архива",
+     *     description="Метод для получениея документов из архива",
+     *     @OA\Response(
+     *       response="200",
+     *       description="Успешный запрос",
+     *       @OA\JsonContent(
+     *           @OA\Examples(example="result", value={"status": "success","result":{{"uuid": "1","name": "file name","path": "path"},{"uuid": "2","name": "file name 2", "path": "path"}}},summary="Успех"),
+     *       )
+     *     ),
+     * )
+     */
+
+    public function getDocumentArchive(Request $request){
+        $user = $request->user();
 
         $documents = Document::query()
             ->where('user_id',$user->id)
             ->where('status',DocumentStatusEnum::Signed->value)
+            ->where('status_signature',DocumentStatusSignatureEnum::Signed->value)
             ->get();
-        $response = [
-            'status' => 'success',
-            'result' => []
-        ];
-        foreach ($documents as $k=>$document){
-            $response['result'][$k] = [
-                'id' => $document->id,
-                'name' => $document->file_name,
-                'status_signature' => $document->status_signature->value,
-            ];
-        }
-        return response()->json($response, 200);
+
+        return DocumentResource::collection($documents);
     }
+
+    public function createDocument(Request $request)
+    {
+        $user = $request->user();
+
+        $sourcePath = public_path('nameTest.pdf');
+        $destinationPath = "source/document/".$user->id."/".date('YmdHis').rand(1000000,9999999).'testDoc.pdf';
+        $fileContent = File::get($sourcePath);
+        Storage::disk('public')->put($destinationPath, $fileContent);
+        $fileUrl = Storage::url($destinationPath);
+        $doc = new Document();
+        $doc->uuid = Str::uuid();
+        $doc->user_id = $user->id;
+        $doc->file_name = date('YmdHis').rand(1000000,9999999).'testDoc.pdf';
+        $doc->file_path = $fileUrl;
+        $doc->status = DocumentStatusEnum::Signed->value;
+        $doc->status_signature = DocumentStatusSignatureEnum::NoSend->value;
+        $doc->date_signature = Carbon::now();
+        $doc->save();
+
+        $sourcePath = public_path('nameTest.pdf');
+        $destinationPath = "source/document/".$user->id."/".date('YmdHis').rand(1000000,9999999).'testDoc.pdf';
+        $fileContent = File::get($sourcePath);
+        Storage::disk('public')->put($destinationPath, $fileContent);
+        $fileUrl = Storage::url($destinationPath);
+        $doc = new Document();
+        $doc->uuid = Str::uuid();
+        $doc->user_id = $user->id;
+        $doc->file_name = date('YmdHis').rand(1000000,9999999).'testDoc.pdf';
+        $doc->file_path = $fileUrl;
+        $doc->status = DocumentStatusEnum::Signed->value;
+        $doc->status_signature = DocumentStatusSignatureEnum::NoSend->value;
+        $doc->date_signature = Carbon::now();
+        $doc->save();
+
+
+        return new SuccessResource();
+    }
+
+
 
     public function signedDocument(Request $request){
         $user = $request->user();
@@ -133,45 +195,6 @@ class DocumentsController extends Controller
             'status' => 'success',
             'result' => ['organization'=>$organization->toArray()]
         ];
-        return response()->json($response, 200);
-    }
-
-    /**
-     * @OA\Get(
-     *     path="/api/personal/documents/getDocumentArchive/",
-     *     operationId="get archive file data",
-     *     tags={"documents"},
-     *     summary="Получить документы из архива",
-     *     description="Метод для получениея документов из архива",
-     *     @OA\Response(
-     *       response="200",
-     *       description="Успешный запрос",
-     *       @OA\JsonContent(
-     *           @OA\Examples(example="result", value={"status": "success","result":{{"uuid": "1","name": "file name","path": "path"},{"uuid": "2","name": "file name 2", "path": "path"}}},summary="Успех"),
-     *       )
-     *     ),
-     * )
-     */
-
-    public function getDocumentArchive(Request $request){
-        $user = $request->user();
-        $this->createMockData($user->id,DocumentStatusEnum::Archive->value);
-        $documents = Document::query()
-            ->where('user_id',$user->id)
-            ->where('status',DocumentStatusEnum::Archive->value)
-            ->orderBy('date_signature')
-            ->get();
-        $response = [
-            'status' => 'success',
-            'result' => []
-        ];
-        foreach ($documents as $k=>$document){
-            $response['result'][$k] = [
-                'uuid' => $document->uuid,
-                'name' => $document->file_name,
-                'path' => $document->file_path,
-            ];
-        }
         return response()->json($response, 200);
     }
 
