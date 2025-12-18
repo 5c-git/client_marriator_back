@@ -6,6 +6,7 @@ use App\Enum\Document\DocumentTypeEnum;
 use App\Models\Document\RecognitionDocument;
 use App\Models\User;
 use App\Services\PVP\PVPAbstract;
+use App\Services\User\UserDataService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
@@ -32,17 +33,17 @@ class XFiveService  extends PVPAbstract
     private function getAccessToken(): string
     {
         //return Cache::remember('wop_access_token', 3500, function () {
-            $response = Http::asForm()->post($this->tokenUrl, [
-                'grant_type' => 'client_credentials',
-                'client_id' => $this->clientId,
-                'client_secret' => $this->clientSecret,
-            ]);
+        $response = Http::asForm()->post($this->tokenUrl, [
+            'grant_type' => 'client_credentials',
+            'client_id' => $this->clientId,
+            'client_secret' => $this->clientSecret,
+        ]);
 
-            if (!$response->successful()) {
-                return '';
-            }
+        if (!$response->successful()) {
+            return '';
+        }
 
-            return $response->json()['access_token'];
+        return $response->json()['access_token'];
         //});
     }
 
@@ -52,18 +53,13 @@ class XFiveService  extends PVPAbstract
     private function makeRequest(string $method, string $endpoint, array $data = []): array
     {
         $token = $this->getAccessToken();
-        
+
         $response = Http::withHeaders([
             'Authorization' => 'Bearer ' . $token,
             'Accept' => 'application/json',
             'Content-Type' => 'application/json'
         ])
-            ->withBody(json_encode($data), 'application/json')
-            ->{$method}($this->baseUrl . $endpoint);
-
-        echo "<pre>";
-        var_dump($response->body());
-        echo "</pre>";
+            ->{$method}($this->baseUrl . $endpoint,$data);
 
         if (!$response->successful()) {
             return [];
@@ -254,7 +250,7 @@ class XFiveService  extends PVPAbstract
     /**
      * Запрос изменений
      */
-    public function getChanges(?int $last = 0, ?int $limit = 100, ?int $polling = 5): array
+    public function getChanges(?int $last = 0, ?int $limit = 3, ?int $polling = 5): array
     {
         return $this->makeRequest('get', '/changes/v1', array_filter([
             'last' => $last,
@@ -368,8 +364,9 @@ class XFiveService  extends PVPAbstract
             ->orderBy('id','desc')
             ->first();
         /** @var RecognitionDocument $document */
+        $snils = UserDataService::getUserSnils($user);
 
-        if ($document) {
+        if ($document && !empty($snils)) {
             if(!empty($document->data['Sex']))
             {
                 if($document->data['Sex'] == 'МУЖ') {
@@ -378,41 +375,26 @@ class XFiveService  extends PVPAbstract
                     $sex = 2;
                 }
             }
+            UserDataService::getUserSnils($user);
+
             $payload = [
-                //'mob1'   => (string)79819876543,
                 'gender' => (string)($sex ?? 1),
                 'name1'  => $document->data['LastName'] ?? '',
                 'name2'  => $document->data['FirstName'] ?? '',
                 'mob2'   => (string)79161234567,
                 'pervp'  => (string)$user->id,
                 'secid'  => 54258840,
-
-
-                //'comnt'=>null,
-                //'inn'=>null,
-                //'mob1'=>null,
-                //'name3'=>null,
-                //'nores'=>null,
-                //'snils'=>null,
-                //'begda'=>null,
-                //'inn'    => null,
-                //"begda"  => (int)Carbon::now()->subDays(2)->format('Ymd')
+                'snils'=>$snils,
             ];
         } else {
             return false;
         }
-        echo "<pre>";
-        var_dump($payload);
-        echo "</pre>";
 
         if(!empty($payload)){
             $dataRegister = $this->createStaff($payload);
-//            if($dataRegister && !empty($dataRegister['userGuid'])){
-//                $user->nopaper_guid = $dataRegister['userGuid'];
-//                $user->save();
-//                return true;
-//            }
-            return  $dataRegister;
+            if($dataRegister){
+                return true;
+            }
         }
         return false;
     }
@@ -424,16 +406,26 @@ class XFiveService  extends PVPAbstract
 
     protected function dataFormater($data): array
     {
-        return $data;
+        $returnArray = [];
+        if(!empty($data['task'])){
+            foreach ($data['task'] as $dataShift) {
+                if ($dataShift['state'] != 'delete') {
+                    $array                 = [];
+                    $array['place']        = $dataShift['orgeh'];
+                    $array['selfEmployed'] = true;
+                    $array['dateStart']    = Carbon::parse($dataShift['start']);
+                    $array['end']          = Carbon::parse($dataShift['end']);
+                    $array['externalId']   = $dataShift['taskid'];
+                    $array['job']          = $dataShift['stell'];
+                    $returnArray[]         = $array;
+                }
+            }
+        }
+        return $returnArray;
     }
 
     public function getPrefix():string
     {
         return 'x_';
-    }
-
-    public function getDefaultUserId():int
-    {
-        return 1;
     }
 }

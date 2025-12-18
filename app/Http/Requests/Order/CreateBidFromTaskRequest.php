@@ -47,8 +47,6 @@ class CreateBidFromTaskRequest extends FormRequest
                         $query->whereIn('user_id', $userIdsSupervisor)->where('id', $value)
                             ->whereIn('status', [
                                 OrderStatusEnum::accepted->value,
-                                OrderStatusEnum::new->value,
-                                OrderStatusEnum::notAccepted->value,
                                 ]
                             );
                     })
@@ -56,8 +54,6 @@ class CreateBidFromTaskRequest extends FormRequest
                             $query->whereIn('accept_user_id', $userIdsSupervisor)->where('id', $value)
                                 ->whereIn('status', [
                                     OrderStatusEnum::accepted->value,
-                                    OrderStatusEnum::new->value,
-                                    OrderStatusEnum::notAccepted->value,
                                 ]);
                         })
                         ->first();
