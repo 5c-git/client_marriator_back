@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Order;
 
+use App\Enum\Order\BidAcceptingStatusEnum;
 use App\Http\Resources\AcceptingUsersResource;
 use App\Http\Resources\Order\OrderActivitiesResource;
 use App\Http\Resources\Order\StatisticResource;
@@ -34,7 +35,7 @@ class BidResource extends JsonResource
         return [
             'id' => $this->id,
             'user' => new ShortUserResource($this->user),
-            'status' => $this->status->value,
+            'status' => $this->getActualStatus(),
             'selfEmployed' => (bool)$this->self_employed,
             'place' => new PlaceResource($this->place),
             'radius' => $this->radius ?? $this->getRadius(),
@@ -52,6 +53,43 @@ class BidResource extends JsonResource
             'statistic' => $this->getStatistic(),
             'project'=> new ProjectResource($this->getProject()),
         ];
+    }
+
+    private function getActualStatus(): int
+    {
+        if(!$this->acceptingUsers->count()) {
+            return $this->status->value;
+        }else{
+            $statusW = 0;
+            $statusA = 0;
+            $statusC = 0;
+            foreach ($this->acceptingUsers as $users){
+                if(!empty($users->pivot) && !empty($users->pivot->accepted)){
+                    if($users->pivot->accepted === BidAcceptingStatusEnum::work->value){
+                        $statusW++;
+                        break;
+                    }
+                    if($users->pivot->accepted === BidAcceptingStatusEnum::notAccepted->value){
+                        $statusA++;
+                        break;
+                    }
+                    if($users->pivot->accepted === BidAcceptingStatusEnum::consideration->value){
+                        $statusC++;
+                        break;
+                    }
+                }
+            }
+            if($statusW){
+                return 8;
+            }
+            if($statusC){
+                return 7;
+            }
+            if($statusA){
+                return 7;
+            }
+        }
+        return $this->status->value;
     }
 
     private function getProject(){
