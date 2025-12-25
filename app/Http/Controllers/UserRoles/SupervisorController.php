@@ -368,9 +368,6 @@ class SupervisorController extends Controller
                 if ($request->confirm) {
                     if (true) {
                         $userForModeration->confirmRegister = true;
-                        if ($request->supervisorIds) {
-                            $userForModeration->supervisors()->sync($request->supervisorIds);
-                        }
                     }
                 } else {
                     $userForModeration->finishRegister = false;
