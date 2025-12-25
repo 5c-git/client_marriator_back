@@ -106,7 +106,7 @@ class DocumentsController extends Controller
         $doc->uuid = Str::uuid();
         $doc->user_id = $user->id;
         $doc->file_name = date('YmdHis').rand(1000000,9999999).'testDoc.pdf';
-        $doc->file_path = $fileUrl;
+        $doc->file_path = $destinationPath;
         $doc->status = DocumentStatusEnum::Signed->value;
         $doc->status_signature = DocumentStatusSignatureEnum::NoSend->value;
         $doc->date_signature = Carbon::now();
@@ -121,7 +121,7 @@ class DocumentsController extends Controller
         $doc->uuid = Str::uuid();
         $doc->user_id = $user->id;
         $doc->file_name = date('YmdHis').rand(1000000,9999999).'testDoc.pdf';
-        $doc->file_path = $fileUrl;
+        $doc->file_path = $destinationPath;
         $doc->status = DocumentStatusEnum::Signed->value;
         $doc->status_signature = DocumentStatusSignatureEnum::NoSend->value;
         $doc->date_signature = Carbon::now();
