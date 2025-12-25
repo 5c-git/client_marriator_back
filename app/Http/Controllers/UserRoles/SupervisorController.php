@@ -49,6 +49,7 @@ use App\Models\User;
 use App\Services\Local\Repositories\Contracts\OrderRepository;
 use App\Services\Local\Repositories\Contracts\UserRepository;
 use App\Services\Nopaper\NopaperService;
+use App\Services\PVP\PVPService;
 use App\Services\Register\EmailService;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\UserResource;
@@ -361,17 +362,19 @@ class SupervisorController extends Controller
         $arrRoleConfirm = array_unique($arrRoleConfirm);
 
         $userForModeration = $this->userRepository
-            ->getModerationUsers($arrRoleConfirm)?->where('id',$request->userId)?->first();
+            ->getModerationUsers($request->userId,$arrRoleConfirm);
         if(!empty($userForModeration)){
-            if($request->confirm){
-                if(true) {
-                    $userForModeration->confirmRegister = true;
-                    if ($request->supervisorIds) {
-                        $userForModeration->supervisors()->sync($request->supervisorIds);
+            if(isset($request->confirm)) {
+                if ($request->confirm) {
+                    if (true) {
+                        $userForModeration->confirmRegister = true;
+                        if ($request->supervisorIds) {
+                            $userForModeration->supervisors()->sync($request->supervisorIds);
+                        }
                     }
+                } else {
+                    $userForModeration->finishRegister = false;
                 }
-            }else{
-                $userForModeration->finishRegister = false;
             }
             $userForModeration->change_order = $request->change_order ?? null;
             $userForModeration->cancel_order = $request->cancel_order ?? null;
@@ -596,6 +599,13 @@ class SupervisorController extends Controller
     public function acceptSpecialist(AcceptSpecialistRequest $request)
     {
         $bid = Bid::where('id',$request->bidId)->first();
+        if($bid->external_id) {
+            $userSpec = User::where('id',$request->specialistId)->first();
+            $pvpService = PVPService::getObj($bid->external_type);
+            if($pvpService->assignToShift($userSpec,$bid->external_id) === null){
+                return new ErrorResource();
+            }
+        }
         $bid->acceptingUsers()->updateExistingPivot($request->specialistId, [
             'accepted' => BidAcceptingStatusEnum::work->value,
         ]);

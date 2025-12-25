@@ -6,9 +6,14 @@ use App\Enum\Order\OrderStatusEnum;
 use App\Enum\Role\RoleEnum;
 use App\Models\Fields\Directory\Place;
 use App\Models\Fields\Directory\ViewActivities;
+use App\Models\Order\Bid;
 use App\Models\Order\Order;
 use App\Models\Order\OrderActivities;
+use App\Models\Order\Report;
 use App\Models\User;
+use App\Services\PVP\TimeBook\TimeBookService;
+use App\Services\PVP\Verme\VermeService;
+use App\Services\PVP\XFive\XFiveService;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
@@ -59,6 +64,14 @@ class PVPService
         }
     }
 
+    public function getResultData(User $user,Bid $bid)
+    {
+       $data = $this->pvp->getTimesheets($user,$bid);
+       echo "<pre>";
+       var_dump($data);
+       echo "</pre>";
+    }
+
     public function getUser(Place $place): User
     {
          $project = $place->project?->first();
@@ -89,10 +102,18 @@ class PVPService
         return ViewActivities::where('external_id',$prefix.$job)->first();
     }
 
-
+    public function assignToShift(User $user,string $guid)
+    {
+        return $this->pvp->assignToShift( $user, $guid);
+    }
 
     private function saveData(array $orders){
 
+    }
+
+    public function getDataWork(User $user,Bid $bid)
+    {
+        return $this->pvp->getTimesheets($user,$bid);
     }
 
     static function getServiceObject($namePvp): ?self
@@ -101,6 +122,30 @@ class PVPService
             return new self(new $namePvp());
         }
         return null;
+    }
+
+    static function getObj(int $type): self
+    {
+        $pvp = match ($type) {
+            VermeService::getType() => new VermeService(),
+            XFiveService::getType() => new XFiveService(),
+            TimeBookService::getType() => new TimeBookService(),
+        };
+        return new self($pvp);
+    }
+
+    static function getResultWork(Report $report)
+    {
+       $bid = $report->bid;
+       if(!empty($bid->external_type)){
+           $pvpService = self::getObj($bid->external_type);
+           $dataWork = $pvpService->getDataWork($report->user,$bid);
+
+       }else{
+           $report->pvp = false;
+           $report->save();
+       }
+
     }
 
 }

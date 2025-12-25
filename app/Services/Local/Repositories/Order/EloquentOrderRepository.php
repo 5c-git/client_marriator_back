@@ -332,7 +332,8 @@ class EloquentOrderRepository implements OrderRepository
                 'scope_of_services' => 0,
                 'accept_user_id' => $request->responsibleId ?? $user->id,
                 'specialist_user_id' => null,
-                'external_id' => $order->external_id??null
+                'external_id' => $order->external_id??null,
+                'external_type' => $order->external_type??null
             ]);
 
             $task->save();
@@ -488,6 +489,7 @@ class EloquentOrderRepository implements OrderRepository
         $bid->date_activity    = $orderActivities->date_activity;
         $bid->activity_id      = $orderActivityId;
         $bid->external_id      = $order->external_id??null;
+        $bid->external_type    = $order->external_type??null;
 
         $bid->save();
 
@@ -533,6 +535,7 @@ class EloquentOrderRepository implements OrderRepository
         $bid->date_activity    = $taskActivities->date_activity;
         $bid->activity_id      = $taskActivityId;
         $bid->external_id      = $task->external_id??null;
+        $bid->external_type    = $task->external_type??null;
 
         $bid->save();
 
@@ -900,6 +903,7 @@ class EloquentOrderRepository implements OrderRepository
         $newTask->scope_of_services = $task->scope_of_services;
         $newTask->project_id = $task->project_id;
         $newTask->external_id = $task->external_id??null;
+        $newTask->external_type = $task->external_type??null;
         $newTask->save();
         $taskActivitiesOld = $task->taskActivities??[];
         foreach ($taskActivitiesOld as $taskActivityOld) {

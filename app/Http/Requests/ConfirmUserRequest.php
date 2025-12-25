@@ -9,7 +9,7 @@ use Illuminate\Validation\Rule;
 
 /**
  * @property-read int userId
- * @property-read bool confirm
+ * @property-read bool|null confirm
  */
 class ConfirmUserRequest extends FormRequest
 {
@@ -43,7 +43,7 @@ class ConfirmUserRequest extends FormRequest
                     }
                 }
             ],
-            'confirm' => 'required|boolean',
+            'confirm' => 'sometimes|boolean',
         ];
 
         $timeFields = [

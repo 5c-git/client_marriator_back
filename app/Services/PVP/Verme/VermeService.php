@@ -4,6 +4,7 @@ namespace App\Services\PVP\Verme;
 
 use App\Enum\Document\DocumentTypeEnum;
 use App\Models\Document\RecognitionDocument;
+use App\Models\Order\Bid;
 use App\Models\User;
 use App\Services\PVP\PVPAbstract;
 use Carbon\Carbon;
@@ -30,15 +31,18 @@ class VermeService  extends PVPAbstract
         return true;
     }
 
-    public function getTimesheets(array $filters = [])
+    public function getTimesheets(User $user, Bid $bid)
     {
         $payload = [
-            'getTimesheets' => array_merge([
-                'headquarter' => ['code' => 'bnt'],
-                'start_date' => '2025-04-01',
-                'end_date' => '2025-04-20',
-                'authData' => $this->defaultAuth
-            ], $filters)
+            'getTimesheets' => [
+                'headquarter'     => ['code' => 'bnt'],
+                'start_date'      => $bid->date_start->format('Y-m-d'),
+                'end_date'        => $bid->date_end->format('Y-m-d'),
+                "agency_employee" => [
+                    "number" => (string)$user->id
+                ],
+                'authData'        => $this->defaultAuth
+            ]
         ];
 
         return $this->sendRequest($payload);
@@ -66,7 +70,7 @@ class VermeService  extends PVPAbstract
         $payload = [
             'getOutsourcingShiftsVer2' => array_merge([
                 'timestamp' => now()->subDay(),
-                'amount' => 5,
+                'amount' => 10000,
                 'headquarter' => ['code' => 'bnt'],
                 //'agency' => ['code' => 'bnt_agency_msk'],
                 'authData' => $this->defaultAuth
@@ -76,20 +80,29 @@ class VermeService  extends PVPAbstract
         return $this->sendRequest($payload, 'POST');
     }
 
-    public function assignToShift(array $shiftData)
+    public function assignToShift(User $user,string $guid)
     {
+        $this->registerUser($user);
         $payload = [
-            'setOutsourcingShift' => array_merge([
+            'setOutsourcingShift' => [
                 'headquarter' => ['code' => 'bnt'],
                 'agency' => [
                     'code' => 'bnt_agency_msk',
                     'headquarter' => ['code' => 'bnt']
                 ],
-                'authData' => $this->defaultAuth
-            ], $shiftData)
+                "guid"        => $guid,
+                "employee"    => [
+                    "agency_number" => (string)$user->id
+                ],
+                'authData'    => $this->defaultAuth
+            ]
         ];
 
-        return $this->sendRequest($payload, 'POST');
+        $data = $this->sendRequest($payload, 'POST');
+        if(!empty($data)){
+            return true;
+        }
+        return null;
     }
 
     protected function sendRequest(array $payload, string $method = 'POST')
@@ -100,6 +113,15 @@ class VermeService  extends PVPAbstract
                 'Accept' => 'application/json',
             ])->timeout(3000)->post($this->baseUrl, $payload);
 
+            echo "<pre>";
+            var_dump($response->body());
+            echo "</pre>";
+            echo "<pre>";
+            var_dump(json_decode($response->body(),true));
+            echo "</pre>";
+            echo "<pre>";
+            var_dump($response->status());
+            echo "</pre>";
             if (!$response->successful()) {
                 Log::error('API Request failed', [
                     'status' => $response->status(),
@@ -129,32 +151,6 @@ class VermeService  extends PVPAbstract
         /** @var RecognitionDocument $document */
 
         if ($document) {
-//            if(!empty($document->data['Sex']))
-//            {
-//                if($document->data['Sex'] == 'МУЖ') {
-//                    $sex = 1;
-//                }else{
-//                    $sex = 2;
-//                }
-//            }
-//            $payload = [
-//                'userPhone'           => $user->phone,
-//                'email'               => $user->email,
-//                'name'                => $document->data['FirstName']??'',
-//                'surname'             => $document->data['LastName']??'',
-//                'patronymic'          => $document->data['MiddleName'] ?? null, // Optional field
-//                'isShortTimePassword' => true,
-//                'birthDate'           => $document->data['BirthDate'] ? Carbon::parse($document->data['BirthDate'])->format('Y-m-d') :'',
-//                'gender'              => $sex ?? null,
-//                'passportData'        => [
-//                    'series'               => $document->data['Series']??'',
-//                    'number'               => $document->data['Number']??'',
-//                    'issuedBy'             => $document->data['GivenBy']??'',
-//                    'issuingDate'          => $document->data['GivenDate'] ? Carbon::parse($document->data['GivenDate'])->format('Y-m-d') :'',
-//                    'issuerDepartmentCode' => $document->data['SubdivisionCode']??'',
-//                    'birthPlace'           => $document->data['BirthPlace']??'',
-//                ]
-//            ];
             $sex = 'male';
             if(!empty($document->data['Sex']))
             {
@@ -166,7 +162,7 @@ class VermeService  extends PVPAbstract
             }
 
             $employeeData = [
-                'number' => 'test00000124',
+                'number' => (string)$user->id,
                 'employee' => [
                     'firstname' => $document->data['FirstName']??'',
                     'surname' => $document->data['LastName']??'',
@@ -186,7 +182,7 @@ class VermeService  extends PVPAbstract
             return false;
         }
 
-        $data = $this->createEmployee($employeeData);
+        return $this->createEmployee($employeeData);
     }
 
     public function getData(): array
@@ -196,17 +192,21 @@ class VermeService  extends PVPAbstract
 
     protected function dataFormater($data): array
     {
+        echo "<pre>";
+        var_dump($data);
+        echo "</pre>";
+        die();
         $returnArray = [];
         if(!empty($data['shifts_list'])){
             foreach ($data['shifts_list'] as $dataShift) {
-                if ($dataShift['state'] != 'delete') {
+                if ($dataShift['state'] == 'accept') {
                     $array                 = [];
-                    $array['place']        = $dataShift['organization']['code'];
+                    $array['place']        = '006'??$dataShift['organization']['code'];
                     $array['selfEmployed'] = true;
                     $array['dateStart']    = Carbon::parse($dataShift['start']);
                     $array['end']          = Carbon::parse($dataShift['end']);
                     $array['externalId']   = $dataShift['guid'];
-                    $array['job']          = $dataShift['job']['code'];
+                    $array['job']          = 'service_sng'??$dataShift['job']['code'];
                     $returnArray[]         = $array;
                 }
             }
@@ -217,5 +217,10 @@ class VermeService  extends PVPAbstract
     public function getPrefix():string
     {
         return 'v_';
+    }
+
+    static function getType():int
+    {
+        return 1;
     }
 }

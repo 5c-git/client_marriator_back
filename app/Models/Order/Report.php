@@ -32,6 +32,7 @@ use Illuminate\Support\Facades\DB;
  * @property Order $order
  * @property Task $task
  * @property Bid $bid
+ * @property bool $pvp
  * @property User $user
  * @property float $forPay
  * @property float $income
@@ -61,7 +62,8 @@ class Report extends Model
         'income',
         'coefficient',
         'hours',
-        'placeholder'
+        'placeholder',
+        'pvp'
     ];
 
     protected $casts = [

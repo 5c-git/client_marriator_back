@@ -10,7 +10,7 @@ use Illuminate\Contracts\Pagination\Paginator;
 
 interface UserRepository
 {
-    public function getModerationUsers(array $roles = []): Collection;
+    public function getModerationUsers(int $userId, array $roles = []);
 
     public function getModerationUsersPaginate(array $roles = [],
                                                SortEnum $sort = SortEnum::all,

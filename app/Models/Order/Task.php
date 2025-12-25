@@ -25,6 +25,7 @@ use App\Enum\Order\OrderStatusEnum;
  * @property int $specialist_user_id
  * @property int $order_id
  * @property int $project_id
+ * @property int $external_type
  * @property string $external_id
  * @property int $scope_of_services
  * @property float $price
@@ -61,7 +62,8 @@ class Task extends Model
         'income',
         'scope_of_services',
         'project_id',
-        'external_id'
+        'external_id',
+        'external_type'
     ];
 
     protected $casts = [

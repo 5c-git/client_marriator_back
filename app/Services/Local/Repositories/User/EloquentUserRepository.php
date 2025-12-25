@@ -19,18 +19,19 @@ use Illuminate\Contracts\Pagination\Paginator;
 
 class EloquentUserRepository implements UserRepository
 {
-    public function getModerationUsers(array $roles = []): Collection
+    public function getModerationUsers(int $userId, array $roles = [])
     {
        return User::query()->orderBy('id', 'desc')
-            ->where('confirmRegister',false)
-            ->where('finishRegister',true)
+            //->where('confirmRegister',false)
+            //->where('finishRegister',true)
+            ->where('id',$userId)
             ->with(['roles'])
             ->when($roles, function (Builder $q, array $roles) {
                 $q->whereHas('roles', function ($query) use ($roles)  {
                     $query->whereIn('role_id', $roles);
                 });
             })
-            ->get();
+            ->first();
     }
 
 

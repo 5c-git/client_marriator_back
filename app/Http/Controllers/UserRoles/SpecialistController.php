@@ -115,6 +115,11 @@ class SpecialistController extends Controller
         $report->date_auto_close = $dateEnd->addHours(12);
         $report->status = ReportStatusEnum::start->value;
         $report->dayActivity = $request->dayActivity;
+        if($bid->external_id){
+            $report->pvp = true;
+        }else{
+            $report->pvp = false;
+        }
         $report->save();
 
         return new SuccessResource();

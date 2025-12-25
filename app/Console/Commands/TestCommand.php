@@ -39,6 +39,64 @@ class TestCommand extends Command
 
     public function handle(): void
     {
+        $pvpService = new PVPService(new VermeService());
+        //$pvpService->startLoad();
+
+        $r = RecognitionDocument::query()->first();
+        $user = User::query()->where('id',$r->user_id)->first();
+        $pvpService->assignToShift($user,'cf1946a9-d93b-4fa4-9468-2d1b913fad5f');//a2d2125e-70ec-40ed-83a5-03a2c6494058
+        die();
+        //assignToShift
+//        echo "<pre>";
+//        var_dump(Carbon::parse('20250901080000')->format('Y-m-d H:i:s'));
+//        echo "</pre>";
+//        die();
+//        $service = new TimeBookService();
+//        $data = $service->createOrganization([
+//            'guid' => '550e8400-e29b-41d4-a716-441655440001',
+//            'name' => 'name',
+//            'serialNumber' => '213'
+//        ]);
+//        $data = $service->createSubdivision([
+//            'guid' => '550e8400-e29b-41d4-a716-441655440002',
+//            'name' => 'name',
+//            'serialNumber' => '214',
+//            'organizationGuid' => '550e8400-e29b-41d4-a716-441655440001'
+//        ]);
+//        $data = $service->createStaffPosition([
+//            'guid' => '550e8400-e29b-41d4-a716-441655440003',
+//            'name' => 'name',
+//            'serialNumber' => '215',
+//            'organizationGuid' => '550e8400-e29b-41d4-a716-441655440001'
+//        ]);
+//        echo "<pre>";
+//        var_dump($data);
+//        echo "</pre>";
+//        die();
+
+//        $r = RecognitionDocument::query()->first();
+//        $user = User::query()->where('id',$r->user_id)->first();
+//        $service = new VermeService();
+//        $data = $service->registerUser($user);
+//        echo "<pre>";
+//        var_dump($data);
+//        echo "</pre>";
+//
+//        $data = $service->assignToShift($user,'1c6e8200-1933-4b44-8a65-b35cc7221149');
+//        echo "<pre>";
+//        var_dump($data);
+//        echo "</pre>";
+//        $bid = new Bid();
+//        $bid->external_id = '1c6e8200-1933-4b44-8a65-b35cc7221149';
+//        $bid->date_start = Carbon::parse('2026-01-23 05:00:00');
+//        $bid->date_end = Carbon::parse('2026-01-23 14:00:00');
+//        $pvpService = new PVPService(new VermeService());
+//        $pvpService->getResultData($user,$bid);
+
+
+        die();
+
+
 //        $user = User::query()->first();
 //        $sourcePath = public_path('nameTest.pdf');
 //        $destinationPath = "source/document/".$user->id."/".date('YmdHis').rand(1000000,9999999).'testDoc.pdf';

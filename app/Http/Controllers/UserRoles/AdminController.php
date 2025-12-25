@@ -402,15 +402,17 @@ class AdminController extends Controller
         $arrRoleConfirm = array_unique($arrRoleConfirm);
 
         $userForModeration = $this->userRepository
-            ->getModerationUsers($arrRoleConfirm)?->where('id',$request->userId)?->first();
+            ->getModerationUsers($request->userId,$arrRoleConfirm);
         if(!empty($userForModeration)){
-            if($request->confirm){
-                $userForModeration->confirmRegister = true;
-                if($request->supervisorIds) {
-                    $userForModeration->supervisors()->sync($request->supervisorIds);
+            if(isset($request->confirm)) {
+                if ($request->confirm) {
+                    $userForModeration->confirmRegister = true;
+                    if ($request->supervisorIds) {
+                        $userForModeration->supervisors()->sync($request->supervisorIds);
+                    }
+                } else {
+                    $userForModeration->finishRegister = false;
                 }
-            }else{
-                $userForModeration->finishRegister = false;
             }
             $userForModeration->change_order = $request->change_order ?? null;
             $userForModeration->cancel_order = $request->cancel_order ?? null;

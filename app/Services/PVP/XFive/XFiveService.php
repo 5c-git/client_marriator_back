@@ -306,9 +306,20 @@ class XFiveService  extends PVPAbstract
     /**
      * Отклик работника на задании
      */
-    public function taskStaffFeedback(array $data): array
+    public function assignToShift(User $user,string $guid): ?array
     {
-        return $this->makeRequest('post', '/task/staff/feedback/v1', $data);
+        $this->registerUser($user);
+        $dataUser = $this->findStaff(null,$user->id,null);
+        if(!empty($dataUser) && !empty($dataUser['extid'])) {
+            $data = [
+                "extid"  => $dataUser['extid'],
+                "taskid" => $guid,
+                "estat"  => 5
+            ];
+            return $this->makeRequest('post', '/task/staff/feedback/v1', $data);
+        } else{
+            return null;
+        }
     }
 
     /**
@@ -375,13 +386,12 @@ class XFiveService  extends PVPAbstract
                     $sex = 2;
                 }
             }
-            UserDataService::getUserSnils($user);
 
             $payload = [
                 'gender' => (string)($sex ?? 1),
                 'name1'  => $document->data['LastName'] ?? '',
                 'name2'  => $document->data['FirstName'] ?? '',
-                'mob2'   => (string)79161234567,
+                'mob2'   => (string)$user->phone,
                 'pervp'  => (string)$user->id,
                 'secid'  => 54258840,
                 'snils'=>$snils,
@@ -392,7 +402,7 @@ class XFiveService  extends PVPAbstract
 
         if(!empty($payload)){
             $dataRegister = $this->createStaff($payload);
-            if($dataRegister){
+            if(!empty($dataRegister['action']["id"])){
                 return true;
             }
         }
@@ -401,7 +411,7 @@ class XFiveService  extends PVPAbstract
 
     public function getData(): array
     {
-        return $this->dataFormater($this->getTasks((int)date('d'), (int)date('m'), (int)date('Y')));
+        return $this->dataFormater($this->getTasks((int)date('d')+3, (int)date('m'), (int)date('Y')));
     }
 
     protected function dataFormater($data): array
@@ -409,12 +419,27 @@ class XFiveService  extends PVPAbstract
         $returnArray = [];
         if(!empty($data['task'])){
             foreach ($data['task'] as $dataShift) {
-                if ($dataShift['state'] != 'delete') {
+                if ($dataShift['statu'] != 20 || 1) {
                     $array                 = [];
                     $array['place']        = $dataShift['orgeh'];
                     $array['selfEmployed'] = true;
-                    $array['dateStart']    = Carbon::parse($dataShift['start']);
-                    $array['end']          = Carbon::parse($dataShift['end']);
+                    $addDay = false;
+                    if($dataShift['begtm']>$dataShift['endtm']){
+                        $addDay = true;
+                    }
+                    if(strlen((string)$dataShift['begtm']) <= 5){
+                        $dataShift['begtm'] = '0'.$dataShift['begtm'];
+                    }
+                    if(strlen((string)$dataShift['endtm']) <= 5){
+                        $dataShift['endtm'] = '0'.$dataShift['endtm'];
+                    }
+
+                    $array['dateStart']    = Carbon::parse($dataShift['dttask'].$dataShift['begtm']);
+                    if($addDay) {
+                        $array['end'] = Carbon::parse($dataShift['dttask'] . $dataShift['endtm'])->addDay();
+                    }else{
+                        $array['end'] = Carbon::parse($dataShift['dttask'] . $dataShift['endtm']);
+                    }
                     $array['externalId']   = $dataShift['taskid'];
                     $array['job']          = $dataShift['stell'];
                     $returnArray[]         = $array;
@@ -427,5 +452,10 @@ class XFiveService  extends PVPAbstract
     public function getPrefix():string
     {
         return 'x_';
+    }
+
+    static function getType():int
+    {
+        return 2;
     }
 }

@@ -69,11 +69,11 @@ class TimeBookService extends PVPAbstract
      */
     public function createStaffPosition(array $dto): ?string
     {
-        $response = $this->request('post', '/staff-positions/', [
-            'guid' => $dto->guid,
-            'name' => $dto->name,
-            'serial_number' => $dto->serialNumber,
-            'organization_guid' => $dto->organizationGuid,
+        $response = $this->request('post', '/staff-positions', [
+            'guid' => $dto['guid'],
+            'name' => $dto['name'],
+            'serial_number' => $dto['serialNumber'],
+            'organization_guid' => $dto['organizationGuid'],
         ]);
 
         return $response ? $response['guid'] : null;
@@ -82,13 +82,13 @@ class TimeBookService extends PVPAbstract
     /**
      * Создание объекта
      */
-    public function createSubdivision(string $guid, string $name, string $serialNumber, string $organizationGuid): ?string
+    public function createSubdivision(array $dto): ?string
     {
-        $response = $this->request('post', '/subdivisions/', [
-            'guid' => $guid,
-            'name' => $name,
-            'serial_number' => $serialNumber,
-            'organization_guid' => $organizationGuid,
+        $response = $this->request('post', '/subdivisions', [
+            'guid' => $dto['guid'],
+            'name' => $dto['name'],
+            'serial_number' => $dto['serialNumber'],
+            'organization_guid' => $dto['organizationGuid'],
         ]);
 
         return $response ? $response['guid'] : null;
@@ -184,14 +184,14 @@ class TimeBookService extends PVPAbstract
      */
     private function request(string $method, string $endpoint, array $data = [])
     {
-        echo "<pre>";
-        var_dump($this->token);
-        echo "</pre>";
         try {
             $response = Http::withHeaders([
                 'X-Access-Token' => $this->token,
             ])->$method("{$this->baseUrl}{$endpoint}", $data);
 
+            echo "<pre>";
+            var_dump($response->status());
+            echo "</pre>";
             if ($response->successful()) {
                 return $response->json();
             }
@@ -207,10 +207,6 @@ class TimeBookService extends PVPAbstract
                     }
                 }
             }
-            echo "<pre>";
-            var_dump($response->body());
-            echo "</pre>";
-
             return null;
         } catch (\Exception $e) {
             return null;
@@ -240,7 +236,7 @@ class TimeBookService extends PVPAbstract
         return 't_';
     }
 
-    public function getDefaultUserId():int
+    static function getType():int
     {
         return 1;
     }
