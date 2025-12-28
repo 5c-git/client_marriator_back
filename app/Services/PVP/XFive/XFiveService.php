@@ -33,17 +33,17 @@ class XFiveService  extends PVPAbstract
     private function getAccessToken(): string
     {
         //return Cache::remember('wop_access_token', 3500, function () {
-        $response = Http::asForm()->post($this->tokenUrl, [
-            'grant_type' => 'client_credentials',
-            'client_id' => $this->clientId,
-            'client_secret' => $this->clientSecret,
-        ]);
+            $response = Http::asForm()->post($this->tokenUrl, [
+                'grant_type'    => 'client_credentials',
+                'client_id'     => $this->clientId,
+                'client_secret' => $this->clientSecret,
+            ]);
 
-        if (!$response->successful()) {
-            return '';
-        }
+            if (!$response->successful()) {
+                return '';
+            }
 
-        return $response->json()['access_token'];
+            return $response->json()['access_token'];
         //});
     }
 
@@ -60,7 +60,12 @@ class XFiveService  extends PVPAbstract
             'Content-Type' => 'application/json'
         ])
             ->{$method}($this->baseUrl . $endpoint,$data);
-
+        echo "<pre>";
+        var_dump($response->status());
+        echo "</pre>";
+        echo "<pre>";
+        var_dump($response->body());
+        echo "</pre>";
         if (!$response->successful()) {
             return [];
         }
@@ -123,11 +128,11 @@ class XFiveService  extends PVPAbstract
     /**
      * Реакция на задание
      */
-    public function updateTaskSupplierStatus(int $taskId, int $status): array
+    public function updateTaskSupplierStatus(int $taskId): array
     {
         return $this->makeRequest('post', '/task/supplier/update/v1', [
             'taskid' => $taskId,
-            'statpvp' => $status
+            'statpvp' => 1
         ]);
     }
 
@@ -250,7 +255,7 @@ class XFiveService  extends PVPAbstract
     /**
      * Запрос изменений
      */
-    public function getChanges(?int $last = 0, ?int $limit = 3, ?int $polling = 5): array
+    public function getChanges(?int $last = 0, ?int $limit = 100, ?int $polling = 5): array
     {
         return $this->makeRequest('get', '/changes/v1', array_filter([
             'last' => $last,
@@ -298,23 +303,40 @@ class XFiveService  extends PVPAbstract
     /**
      * Изменение работника на задании
      */
-    public function updateTaskStaff(array $data): array
+    public function assignToShift(User $user,string $guid): ?array
     {
-        return $this->makeRequest('post', '/task/staff/v1', $data);
+        $dataUser = $this->findStaff(null,$user->id,null);
+        if(empty($dataUser['extid'])){
+            $this->registerUser($user);
+            $dataUser = $this->findStaff(null,$user->id,null);
+        }
+        if(!empty($dataUser) && !empty($dataUser['extid'])) {
+            $res = $this->updateTaskSupplierStatus($guid);
+            $data = [
+                "extid"  => $dataUser['extid'],
+                "taskid" => $guid,
+            ];
+            return $this->makeRequest('post', '/task/staff/v1', $data);
+        } else{
+            return null;
+        }
     }
 
     /**
      * Отклик работника на задании
      */
-    public function assignToShift(User $user,string $guid): ?array
+    public function assignToShiftK(User $user,string $guid): ?array
     {
-        $this->registerUser($user);
         $dataUser = $this->findStaff(null,$user->id,null);
+        if(empty($dataUser['extid'])){
+            $this->registerUser($user);
+            $dataUser = $this->findStaff(null,$user->id,null);
+        }
         if(!empty($dataUser) && !empty($dataUser['extid'])) {
             $data = [
                 "extid"  => $dataUser['extid'],
                 "taskid" => $guid,
-                "estat"  => 5
+                "estat"  => 1
             ];
             return $this->makeRequest('post', '/task/staff/feedback/v1', $data);
         } else{
@@ -411,7 +433,7 @@ class XFiveService  extends PVPAbstract
 
     public function getData(): array
     {
-        return $this->dataFormater($this->getTasks((int)date('d')+3, (int)date('m'), (int)date('Y')));
+        return $this->dataFormater($this->getTasks(1, 9, 2025));
     }
 
     protected function dataFormater($data): array
@@ -419,7 +441,7 @@ class XFiveService  extends PVPAbstract
         $returnArray = [];
         if(!empty($data['task'])){
             foreach ($data['task'] as $dataShift) {
-                if ($dataShift['statu'] != 20 || 1) {
+                if (in_array($dataShift['statu'],[7,8,14,15,16,19])) {
                     $array                 = [];
                     $array['place']        = $dataShift['orgeh'];
                     $array['selfEmployed'] = true;
@@ -432,6 +454,12 @@ class XFiveService  extends PVPAbstract
                     }
                     if(strlen((string)$dataShift['endtm']) <= 5){
                         $dataShift['endtm'] = '0'.$dataShift['endtm'];
+                    }
+                    if(strlen((string)$dataShift['begtm'])<6){
+                        $dataShift['begtm'] = str_pad($dataShift['begtm'], 6, '0', STR_PAD_LEFT);
+                    }
+                    if(strlen((string)$dataShift['endtm'])<6){
+                        $dataShift['endtm'] = str_pad($dataShift['endtm'], 6, '0', STR_PAD_LEFT);
                     }
 
                     $array['dateStart']    = Carbon::parse($dataShift['dttask'].$dataShift['begtm']);
