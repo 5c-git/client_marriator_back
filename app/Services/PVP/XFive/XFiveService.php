@@ -60,12 +60,6 @@ class XFiveService  extends PVPAbstract
             'Content-Type' => 'application/json'
         ])
             ->{$method}($this->baseUrl . $endpoint,$data);
-        echo "<pre>";
-        var_dump($response->status());
-        echo "</pre>";
-        echo "<pre>";
-        var_dump($response->body());
-        echo "</pre>";
         if (!$response->successful()) {
             return [];
         }
@@ -303,7 +297,7 @@ class XFiveService  extends PVPAbstract
     /**
      * Изменение работника на задании
      */
-    public function assignToShift(User $user,string $guid): ?array
+    public function assignToShift(User $user,string $guid): ?bool
     {
         $dataUser = $this->findStaff(null,$user->id,null);
         if(empty($dataUser['extid'])){
@@ -312,11 +306,17 @@ class XFiveService  extends PVPAbstract
         }
         if(!empty($dataUser) && !empty($dataUser['extid'])) {
             $res = $this->updateTaskSupplierStatus($guid);
+            sleep(10);
             $data = [
                 "extid"  => $dataUser['extid'],
                 "taskid" => $guid,
             ];
-            return $this->makeRequest('post', '/task/staff/v1', $data);
+            $data = $this->makeRequest('post', '/task/staff/v1', $data);
+            if(!empty($data['action']) && !empty($data['action']["id"])){
+                return true;
+            }else{
+                return null;
+            }
         } else{
             return null;
         }
@@ -387,10 +387,6 @@ class XFiveService  extends PVPAbstract
     public function registerUser(User $user)
     {
 //        $dataSectors = $this->getSectorList();
-//        echo "<pre>";
-//        var_dump($dataSectors);
-//        echo "</pre>";
-//        die();
         $document = RecognitionDocument::query()
             ->where('user_id',$user->id)
             ->where('file_type',DocumentTypeEnum::Passport->value)
@@ -433,7 +429,7 @@ class XFiveService  extends PVPAbstract
 
     public function getData(): array
     {
-        return $this->dataFormater($this->getTasks(1, 9, 2025));
+        return $this->dataFormater($this->getTasks(3, 9, 2025));
     }
 
     protected function dataFormater($data): array
