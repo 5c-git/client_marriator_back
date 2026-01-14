@@ -32,7 +32,8 @@ class UserObserver
         'longitude',
         'count_wait_bid',
         'time_answer_bid',
-        'notification_start'
+        'notification_start',
+        'change_fields'
     ];
 
     private array $userFieldJson = [
@@ -93,12 +94,27 @@ class UserObserver
     {
         $dataForSave = [];
         foreach ($oldData as $t=>$oldArr) {
-            $diff_values = $this->array_diff_assoc_recursive($oldArr, $newData[$t]);
-            foreach ($diff_values as $k => $value) {
+            if(!isset($newData[$t])){
+                $newData[$t] = [];
+            }
+            if(is_array($newData[$t])) {
+                asort($newData[$t]);
+            }
+            if(is_array($oldArr)) {
+                asort($oldArr);
+            }
+            if($newData[$t] != $oldArr){
+                echo "<pre>";
+                var_dump([
+                    'key' => $t,
+                    'new' => is_array($newData[$t])?json_encode($newData[$t] ?? []):$newData[$t],
+                    'old' => is_array($oldArr)?json_encode($oldArr ?? []):$oldArr,
+                ]);
+                echo "</pre>";
                 $dataForSave[] = [
-                    'key' => $k,
-                    'new' => json_encode($newData[$t][$k] ?? []),
-                    'old' => json_encode($value ?? []),
+                    'key' => $t,
+                    'new' => is_array($newData[$t])?json_encode($newData[$t] ?? []):$newData[$t],
+                    'old' => is_array($oldArr)?json_encode($oldArr ?? []):$oldArr,
                 ];
             }
         }
@@ -109,7 +125,7 @@ class UserObserver
         $difference = [];
         foreach ($array1 as $key => $value) {
             if (is_array($value)) {
-                if (!isset($array2[$key]) || !is_array($array2[$key])) {
+                if (!isset($array2[$key]) || !is_array($array2[$key]) || $array2[$key] === $value) {
                     $difference[$key] = $value;
                 } else {
                     $new_diff = $this->array_diff_assoc_recursive($value, $array2[$key]);
@@ -117,8 +133,6 @@ class UserObserver
                         $difference[$key] = $new_diff;
                     }
                 }
-            } elseif (!array_key_exists($key, $array2) || $array2[$key] !== $value) {
-                $difference[$key] = $value;
             }
         }
         return $difference;
