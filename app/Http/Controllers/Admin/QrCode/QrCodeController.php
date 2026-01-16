@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\QrCode;
 
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\Setting;
 use App\Models\User\Role;
@@ -36,7 +37,8 @@ class QrCodeController extends Controller
         $name = [];
         $userFields = [];
         foreach ($request->roles as $role) {
-            $data[(RoleEnum::from($role)?->getUserBinding())::$nameCustom] = (RoleEnum::from($role)?->getUserBinding())::get()->toArray();
+            $data[(RoleEnum::from($role)?->getUserBinding())::$nameCustom] = (RoleEnum::from($role)?->getUserBinding())::where('date_start', '<=', Carbon::now())
+                ->where('date_end', '>=', Carbon::now())->get()->toArray();
             $name[(RoleEnum::from($role)?->getUserBinding())::$nameCustom] = (RoleEnum::from($role)?->getUserBinding())::$nameCustom;
             $userFields[(RoleEnum::from($role)?->getUserBinding())::$nameCustom] = RoleEnum::from($role)?->getUserBindingFunction();
         }
