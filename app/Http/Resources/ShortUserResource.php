@@ -78,7 +78,7 @@ class ShortUserResource extends JsonResource
 
     private function getName()
     {
-        $name = trim($this->getFieldView('name') . ' ' .$this->getFieldView('lastName'). ' ' .$this->getFieldView('secondName'));
+        $name = trim($this->getFieldView('lastName'). ' ' .$this->getFieldView('name'). ' ' .$this->getFieldView('secondName'));
         if(!$name){
             $name = $this->name;
         }
