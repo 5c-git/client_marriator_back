@@ -377,9 +377,11 @@ class EloquentOrderRepository implements OrderRepository
             })
             ->orWhere(function ($query) use ($user,$status) {
                 $userIdsSupervisor = $user->acceptedTasks?->pluck('id')->toArray();
-                $query = $query->whereIn('id', $userIdsSupervisor);
-                if ($status) {
-                    $query->where('status', $status->value);
+                if($userIdsSupervisor) {
+                    $query = $query->whereIn('id', $userIdsSupervisor);
+                    if ($status) {
+                        $query->where('status', $status->value);
+                    }
                 }
             })->get();
     }
@@ -744,6 +746,7 @@ class EloquentOrderRepository implements OrderRepository
 
     public function getSpecialistForBid(int $bidId): Collection
     {
+        /** @var Bid $bid  */
         $bid = Bid::query()->where('id',$bidId)->first();
         $place = $bid->place;
         $status = [];
@@ -757,9 +760,17 @@ class EloquentOrderRepository implements OrderRepository
         if($fieldView && $bid->viewActivity && $place) {
             $users = User::whereJsonContains('data->'.$fieldView->uuid, $bid->viewActivity->uuid)
                 ->whereIn('data->'.$fieldStat->uuid, $status)
-//                ->whereDoesntHave('acceptedBids', function ($query) {
-//                    $query->where('accept_bid.accepted', BidAcceptingStatusEnum::notAccepted->value);
-//                })
+                ->whereDoesntHave('acceptedBids', function ($query) {
+                    $query->where('accept_bid.accepted', BidAcceptingStatusEnum::notAccepted->value);
+                })
+                ->whereDoesntHave('acceptedBids', function ($query) use ($bid) {
+                    $query->where(function ($q) use ($bid) {
+                        $q->where(function ($innerQ) use ($bid) {
+                            $innerQ->where('bids.date_start', '<=', $bid->date_end)
+                                ->where('bids.date_end', '>=', $bid->date_start);
+                        });
+                    });
+                })
                 ->get();
 
             $userInRadius = collect();
