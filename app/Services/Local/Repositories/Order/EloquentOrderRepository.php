@@ -643,25 +643,10 @@ class EloquentOrderRepository implements OrderRepository
             if(in_array(RoleEnum::supervisor->value,$userRoles)){
                 $specialistIdsFromRelated = $user->supervisorSpecialist()->allRelatedIds()->toArray();
             }
+            $specialistIdsFromRelated = array_unique($specialistIdsFromRelated);
             $commonIds = array_intersect($specialistIdsFromRelated, $specialistIds);
 
             $uniqueToSpecialistIds = array_diff($specialistIds, $specialistIdsFromRelated);
-
-
-            if($uniqueToSpecialistIds) {
-                $bid->acceptingUsers()->syncWithoutDetaching(
-                    collect($uniqueToSpecialistIds)->mapWithKeys(function ($idFirst) use ($bid) {
-                        return [
-                            $idFirst => [
-                                'accepted' => BidAcceptingStatusEnum::notAccepted->value,
-                                'task_id'  => $bid->task_id,
-                                'order_id' => $bid->order_id,
-                                'user_id_maintainer'  => Auth::id()
-                            ]
-                        ];
-                    })->toArray()
-                );
-            }
 
             if($commonIds) {
                 $bid->acceptingUsers()->syncWithoutDetaching(
@@ -679,6 +664,21 @@ class EloquentOrderRepository implements OrderRepository
                 if($bid->count <= count($commonIds)){
                     $bid->status = OrderStatusEnum::accepted->value;
                 }
+            }
+
+            if($uniqueToSpecialistIds && $bid->status !== OrderStatusEnum::accepted->value) {
+                $bid->acceptingUsers()->syncWithoutDetaching(
+                    collect($uniqueToSpecialistIds)->mapWithKeys(function ($idFirst) use ($bid) {
+                        return [
+                            $idFirst => [
+                                'accepted' => BidAcceptingStatusEnum::notAccepted->value,
+                                'task_id'  => $bid->task_id,
+                                'order_id' => $bid->order_id,
+                                'user_id_maintainer'  => Auth::id()
+                            ]
+                        ];
+                    })->toArray()
+                );
             }
             $bid->save();
         }
