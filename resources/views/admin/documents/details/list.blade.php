@@ -18,7 +18,8 @@
         $heads = [
         'ID',
         'Название',
-        'Версия',
+        'Дата начала',
+        'Дата конца',
         ['label' => 'Actions', 'no-export' => true, 'width' => 5],
         ];
 
@@ -32,7 +33,7 @@
             </button></a>';
         $btnName = '<a href="'.route('documentsEdit',$listItem->id).'">'.$listItem->name.'</a>';
 
-        $listData[] = [$listItem->id , $btnName, $listItem->version, '<nobr>'.$btnEdit.$btnDelete.'</nobr>'];
+        $listData[] = [$listItem->id , $btnName,$listItem->date_start->format('d.m.Y'),$listItem->date_end->format('d.m.Y'), '<nobr>'.$btnEdit.$btnDelete.'</nobr>'];
         }
 
         $config = [
@@ -40,7 +41,7 @@
         $listData
         ,
         'order' => [[0, 'desc']],
-        'columns' => [null, null,null, ['orderable' => false]],
+        'columns' => [null, null,null,null, ['orderable' => false]],
         ];
     @endphp
 

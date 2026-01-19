@@ -17,15 +17,11 @@ class PdfCreatorService
         return $this->createPdf($template,$data)->download($filename);
     }
 
-    public function savePdf(string $template, array $data, string $filepath): array
+    public function savePdf(string $template, array $data, string $filepath): bool
     {
         $content = $this->getPdfContent($template,$data);
         Storage::disk('public')->put($filepath, $content);
-        return [
-            'path' => $filepath,
-            'url' => Storage::disk('public')->url($filepath),
-            'full_path' => Storage::disk('public')->path($filepath)
-        ];
+        return true;
     }
 
     private function getPdfContent(string $template, array $data): string

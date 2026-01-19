@@ -25,6 +25,7 @@ class EloquentUserRepository implements UserRepository
             //->where('confirmRegister',false)
             //->where('finishRegister',true)
             ->where('id',$userId)
+            ->whereNull('register_hash')
             ->with(['roles'])
             ->when($roles, function (Builder $q, array $roles) {
                 $q->whereHas('roles', function ($query) use ($roles)  {
@@ -38,7 +39,9 @@ class EloquentUserRepository implements UserRepository
     public function getModerationUsersPaginate(array $roles = [],SortEnum $sort = SortEnum::all,UserStatusModerationEnum $status = null,int $page = 1,int $perPage = 10): Paginator
     {
         $userQuery = User::query()
-            ->with(['roles','project','place']);
+            ->where('id','!=',auth()->id())
+            ->with(['roles','project','place'])
+            ->whereNull('register_hash');
         if($roles) {
             $userQuery = $userQuery->when($roles, function (Builder $q, array $roles) {
                 $q->whereHas('roles', function ($query) use ($roles) {
@@ -74,7 +77,8 @@ class EloquentUserRepository implements UserRepository
     public function getModerationUser(int $userId, array $roles = []): User
     {
         $userQuery = User::query()
-            ->with(['roles','project','place']);
+            ->with(['roles','project','place'])
+            ->whereNull('register_hash');
         if($roles) {
             $userQuery = $userQuery->when($roles, function (Builder $q, array $roles) {
                 $q->whereHas('roles', function ($query) use ($roles) {

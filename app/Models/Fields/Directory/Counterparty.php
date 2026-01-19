@@ -19,6 +19,18 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property string $ogrn
  * @property string $legal_address
  * @property string $legal_email
+ * @property string $position
+ * @property string $full_name
+ * @property string $brand_name
+ * @property string $bank_name
+ * @property string $bank_corr_account
+ * @property string $bank_bic
+ * @property string $okpo
+ * @property string $okved
+ * @property string $phone
+ * @property string $web
+ * @property string $bank_account_number
+ * @property string $kpp
  * @property-read Collection|Brand[] $brands
  * @property-read Collection|Project[] $projects
  *
@@ -38,6 +50,18 @@ class Counterparty extends Model implements ModelDirectoryInterface
         'ogrn',
         'legal_address',
         'legal_email',
+        'position',
+        'full_name',
+        'brand_name',
+        'kpp',
+        'bank_name',
+        'bank_account_number',
+        'bank_corr_account',
+        'bank_bic',
+        'okpo',
+        'okved',
+        'phone',
+        'web',
     ];
 
     public $timestamps = false;

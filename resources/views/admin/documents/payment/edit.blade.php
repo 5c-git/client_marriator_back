@@ -33,9 +33,16 @@
         </div>
 
         <div class="form-group row">
-            <label for="version" class="col-sm-2 col-form-label">Версия</label>
+            <label for="date_start" class="col-sm-2 col-form-label">Дата начала</label>
             <div class="col-sm-10">
-                <input type="number" min="-90" max="90" step="any" class="form-control" name="version" id="version" value="{{$edit->version}}" required>
+                <input type="date" class="form-control" name="date_start" id="date_start" value="{{$edit->date_start->format('Y-m-d')}}" required>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="date_end" class="col-sm-2 col-form-label">Дата конца</label>
+            <div class="col-sm-10">
+                <input type="date" class="form-control" name="date_end" id="date_end" value="{{$edit->date_end->format('Y-m-d')}}" required>
             </div>
         </div>
 

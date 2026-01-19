@@ -33,6 +33,7 @@ use App\Models\Order\Order;
  * @property string $email
  * @property string $nopaper_guid
  * @property string $nopaper_certificate_id
+ * @property string $time_book_guid
  * @property-read Collection|Project[] $project
  * @property-read Collection|Place[] $place
  * @property-read Collection|Order[] $acceptedOrders
@@ -96,7 +97,8 @@ class User extends Authenticatable
         'notification_start',
         'verme_id',
         'nopaper_guid',
-        'nopaper_certificate_id'
+        'nopaper_certificate_id',
+        'time_book_guid'
     ];
 
     /**

@@ -59,6 +59,18 @@ class CounterpartyController extends Controller
         $editObj->uuid = $data['uuid'];
         $editObj->inn = $data['inn'];
         $editObj->ogrn = $data['ogrn'];
+        $editObj->position = $data['position'];
+        $editObj->full_name = $data['full_name'];
+        $editObj->brand_name = $data['brand_name'];
+        $editObj->kpp = $data['kpp'];
+        $editObj->bank_bic = $data['bank_bic'];
+        $editObj->okpo = $data['okpo'];
+        $editObj->okved = $data['okved'];
+        $editObj->phone = $data['phone'];
+        $editObj->web = $data['web'];
+        $editObj->bank_corr_account = $data['bank_corr_account'];
+        $editObj->bank_name = $data['bank_name'];
+        $editObj->bank_account_number = $data['bank_account_number'];
         $editObj->legal_address = $data['legal_address'];
         $editObj->legal_email = $data['legal_email'];
 
@@ -101,6 +113,18 @@ class CounterpartyController extends Controller
         $editObj->uuid = $data['uuid'];
         $editObj->inn = $data['inn'];
         $editObj->ogrn = $data['ogrn'];
+        $editObj->web = $data['web'];
+        $editObj->position = $data['position'];
+        $editObj->full_name = $data['full_name'];
+        $editObj->brand_name = $data['brand_name'];
+        $editObj->kpp = $data['kpp'];
+        $editObj->bank_name = $data['bank_name'];
+        $editObj->bank_bic = $data['bank_bic'];
+        $editObj->okpo = $data['okpo'];
+        $editObj->okved = $data['okved'];
+        $editObj->phone = $data['phone'];
+        $editObj->bank_corr_account = $data['bank_corr_account'];
+        $editObj->bank_account_number = $data['bank_account_number'];
         $editObj->legal_address = $data['legal_address'];
         $editObj->legal_email = $data['legal_email'];
         $editObj->save();

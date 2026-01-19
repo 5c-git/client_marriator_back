@@ -20,6 +20,7 @@ class DocumentController extends Controller
 {
 
     private string $view = 'documents';
+    public string $error = '';
     private string $objClass;
 
     /**
@@ -73,7 +74,7 @@ class DocumentController extends Controller
     {
         $edit = $this->objClass::where('id', '=', $request->id)->first();
         if($edit) {
-            $data = File::get(resource_path('views/document/'.$edit->type->name.$edit->version.'.blade.php'));
+            $data = File::get(resource_path('views/document/'.$edit->type->name.$edit->date_start .$edit->date_end.'.blade.php'));
             return view('admin.'.$this->view.'.'.$edit->type->name.'.edit', compact('edit','data'));
         }else{
             return redirect()->back();
@@ -88,12 +89,27 @@ class DocumentController extends Controller
         $data = $request->input();
 
         $editObj->name = $data['name'];
-        $editObj->version = $data['version'];
+        $editObj->date_end = $data['date_end'];
+        $editObj->date_start = $data['date_start'];
         $editObj->type = $data['type'];
         $editObj->template = $data['template'];
+        $editObj->number = $data['number']??null;
+        $editObj->place = $data['place']??null;
+
+        $this->checkData($editObj);
+        $this->checkSpace($editObj);
+        $this->checkSplit($editObj);
+        $this->checkActive($editObj);
+
+        if($this->error){
+            $response['status'] = 'error';
+            $response['message'] = $this->error;
+            return response()->json($response);
+        }
+
         $editObj->save();
 
-        $filename = $editObj->type->name . $editObj->version . '.blade.php';
+        $filename = $editObj->type->name . $editObj->date_start .$editObj->date_end . '.blade.php';
         $path = resource_path('views/document/' . $filename);
         $content = $data['content'];
         File::ensureDirectoryExists(dirname($path));
@@ -119,13 +135,27 @@ class DocumentController extends Controller
 
         $editObj = new $this->objClass();
         $editObj->name = $data['name'];
-        $editObj->version = $data['version'];
+        $editObj->date_end = $data['date_end'];
+        $editObj->date_start = $data['date_start'];
         $editObj->type = $data['type'];
         $editObj->template = $data['template'];
+        $editObj->number = $data['number']??null;
+        $editObj->place = $data['place']??null;
+
+        $this->checkData($editObj);
+        $this->checkSpace($editObj);
+        $this->checkSplit($editObj);
+        $this->checkActive($editObj);
+
+        if($this->error){
+            $response['status'] = 'error';
+            $response['message'] = $this->error;
+            return response()->json($response);
+        }
 
         $editObj->save();
         $editObj = $this->objClass::where('id', '=', $editObj->id)->first();
-        $filename = $editObj->type->name . $editObj->version . '.blade.php';
+        $filename = $editObj->type->name . $editObj->date_start .$editObj->date_end . '.blade.php';
         $path = resource_path('views/document/' . $filename);
         $content = $data['content'];
         File::ensureDirectoryExists(dirname($path));
@@ -135,6 +165,77 @@ class DocumentController extends Controller
         $response['url'] = '/admin/'.$this->view.'/edit/' . $editObj->id;
 
         return response()->json($response);
+    }
+
+    public function checkData(DocumentTemplate $documentTemplate)
+    {
+        if($this->error){
+            return;
+        }
+        if($documentTemplate->date_start >= $documentTemplate->date_end){
+            $this->error = 'Дата конца не должна быть меньше чем дата старта';
+        }
+    }
+
+    public function checkSpace(DocumentTemplate $documentTemplate)
+    {
+        if($this->error){
+            return;
+        }
+        $date = $documentTemplate->date_start->clone();
+        if (
+            DocumentTemplate::query()
+                ->where('type', $documentTemplate->type->value)
+                ->exists() &&
+            (!DocumentTemplate::query()
+                ->where('type', $documentTemplate->type->value)
+                ->where('date_end', $date->subDay())
+                ->exists()
+                &&
+                DocumentTemplate::query()
+                    ->where('type', $documentTemplate->type->value)
+                    ->where('date_end','<=', $date->subDay())
+                    ->exists()
+            )
+        )
+        {
+            $this->error = 'Интервал времени между документами должен отсутствовать';
+        }
+    }
+    public function checkSplit(DocumentTemplate $documentTemplate){
+        if($this->error){
+            return;
+        }
+        if (
+            DocumentTemplate::query()
+                ->where('id','!=',$documentTemplate->id)
+                ->where('type', $documentTemplate->type->value)
+                ->where('date_start','<=', $documentTemplate->date_end)
+                ->where('date_end','>=', $documentTemplate->date_start)
+                ->exists()
+        )
+        {
+            $this->error = 'Интервал времени уже используется';
+        }
+    }
+
+    public function checkActive(DocumentTemplate $documentTemplate){
+        if($this->error){
+            return;
+        }
+        $doc = DocumentTemplate::query()
+            ->where('type', $documentTemplate->type->value)
+            ->where('date_start','<=', Carbon::now())
+            ->where('date_end','>=', Carbon::now())
+            ->first();
+        if (!empty($doc))
+        {
+            if(
+                $doc->id !== $documentTemplate->id &&
+                !$doc->date_end->lt($documentTemplate->date_start)
+            )
+            $this->error = 'Нельзя редактировать и создавать прошедшие документы';
+        }
     }
 
     public function delete(Request $request)

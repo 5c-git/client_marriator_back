@@ -37,7 +37,7 @@ use App\Models\Order\Task;
  * @property-read Collection|Bid[] $bids
  *
  */
-class Order extends Model
+class Order extends Model implements OrderInterface
 {
     use HasFactory;
 

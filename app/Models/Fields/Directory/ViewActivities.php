@@ -6,6 +6,7 @@ use App\Enum\Fields\FieldsTypeEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Fields\Directory\Project;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class ViewActivities extends Model implements ModelDirectoryInterface
@@ -31,7 +32,8 @@ class ViewActivities extends Model implements ModelDirectoryInterface
         'parentFields',
         'self_employed',
         'traveling',
-        'external_id'
+        'external_id',
+        'standard'
     ];
 
     public $timestamps = false;
@@ -86,5 +88,10 @@ class ViewActivities extends Model implements ModelDirectoryInterface
             'view_activities_id',
             'project_id'
         )->withPivot( 'price');
+    }
+
+    public function standart(): BelongsTo
+    {
+        return $this->belongsTo(Standard::class, 'standard','uuid');
     }
 }

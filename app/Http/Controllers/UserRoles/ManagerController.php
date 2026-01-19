@@ -524,6 +524,11 @@ class ManagerController extends Controller
         $userForModeration = $this->userRepository
             ->getModerationUsers($request->userId,$arrRoleConfirm);
         if(!empty($userForModeration)){
+            $checkReg = false;
+            if(!$userForModeration->confirmRegister){
+                $checkReg = true;
+            }
+
             if(isset($request->confirm)) {
                 if ($request->confirm) {
                     if (true) {
@@ -554,7 +559,9 @@ class ManagerController extends Controller
                 $userForModeration->name = $request->name;
             }
             (new NopaperService())->checkUserExists($userForModeration);
-            EmailService::sendConfirmUserModeration($userForModeration);
+            if(!$userForModeration->confirmRegister && $checkReg) {
+                EmailService::sendConfirmUserModeration($userForModeration);
+            }
             $userForModeration->save();
         }
 

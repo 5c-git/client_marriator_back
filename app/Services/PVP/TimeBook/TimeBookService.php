@@ -2,15 +2,24 @@
 
 namespace App\Services\PVP\TimeBook;
 
+use App\Enum\Document\DocumentTypeEnum;
+use App\Models\Document\RecognitionDocument;
+use App\Models\User;
 use App\Services\PVP\PVPAbstract;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Str;
 
 class TimeBookService extends PVPAbstract
 {
     private string $baseUrl;
     private string $token;
+
+    private string $organization = '550e8400-e29b-41d4-a716-441655440001';
+    private string $subdivision = '550e8400-e29b-41d4-a716-441655440002';
+    private string $position = '550e8400-e29b-41d4-a716-441655440003';
 
     public function __construct()
     {
@@ -97,41 +106,87 @@ class TimeBookService extends PVPAbstract
     /**
      * Создание сотрудника
      */
-    public function createEmployee(EmployeeDto $dto): ?string
+    public function createEmployee(User $user): ?string
     {
+        $document = RecognitionDocument::query()
+            ->where('user_id',$user->id)
+            ->where('file_type',DocumentTypeEnum::Passport->value)
+            ->orderBy('id','desc')
+            ->first();
+
+        if ($document) {
+            $sex = 'male';
+            if(!empty($document->data['Sex']))
+            {
+                if($document->data['Sex'] == 'МУЖ') {
+                    $sex = 'male';
+                }else{
+                    $sex = 'female';
+                }
+            }
+
+        } else {
+            return false;
+        }
+
+        $uuid = Str::uuid()->toString();
         $response = $this->request('post', '/employees', [
-            'guid' => $dto->guid,
-            'staff_position_guid' => $dto->staffPositionGuid,
-            'organization_guid' => $dto->organizationGuid,
-            'subdivision_guid' => $dto->subdivisionGuid,
+            'guid' => $uuid,
+            'staff_position_guid' => $this->position,
+            'organization_guid' => $this->organization,
+            'subdivision_guid' => $this->subdivision,
             'natural_person' => [
-                'last_name' => $dto->lastName,
-                'first_name' => $dto->firstName,
-                'second_name' => $dto->secondName,
-                'phone_number' => $dto->phoneNumber,
+                'last_name' => $document->data['LastName']??'',
+                'first_name' => $document->data['FirstName']??'',
+                'second_name' => $document->data['MiddleName']??'',
+                'phone_number' => (string)$user->phone,
             ],
-            'sex' => $dto->sex,
-            'personnel_number' => $dto->personnelNumber,
-            'hiring_date' => $dto->hiringDate,
-            'deleted' => $dto->deleted,
+            'sex' => $sex,
+            'personnel_number' => (string)$user->id,
+            'hiring_date' => $user->created_at->format('Y-m-d'),
+            'deleted' => false,
         ]);
 
-        return $response ? $response['guid'] : null;
+        if(!empty($response['guid'])){
+            $user->time_book_guid = $uuid;
+            $user->save();
+            return true;
+        }
+        return false;
     }
 
     /**
      * Получение смен
      */
-    public function getDemands(array $params): ?array
+    public function getDemands($i = 0): ?array
     {
-        return $this->request('post', '/spec/demands/', $params);
+        $dataRes = [];
+        $params = [
+            'limit' => (50 + (50*$i)),
+            'offset' =>(50*$i),
+            'dateBegin' => Carbon::now()->format('Y-m-d'),
+            'dateEnd' => Carbon::now()->addDays(5)->format('Y-m-d'),
+            'statuses' => ['canceled','requested', 'new', 'assigned', 'wait4answer','deleted'],
+        ];
+        $data    = $this->request('post', '/demands', $params);
+        if (!empty($data['demands'])) {
+            $dataRes = $data['demands'];
+            if (count($data['demands']) >= 50) {
+                $dataRes = array_merge($dataRes, $this->getDemands($i+1));
+            }
+        }
+        return $dataRes;
     }
 
     /**
      * Назначение на смену
      */
-    public function assignToDemand(string $demandKey, string $employeeGuid): bool
+    public function assignToShift(string $demandKey, User $user): ?bool
     {
+        if(!$user->time_book_guid) {
+            $this->createEmployee($user);
+        }
+
         $response = $this->request('post', '/demand_actions', [
             [
                 'demand_key' => $demandKey,
@@ -139,7 +194,7 @@ class TimeBookService extends PVPAbstract
                     [
                         'action' => 'set-performer',
                         'data' => [
-                            'performer_guid' => $employeeGuid,
+                            'performer_guid' => $user->time_book_guid,
                         ],
                         'comment' => null,
                     ],
@@ -147,7 +202,11 @@ class TimeBookService extends PVPAbstract
             ],
         ]);
 
-        return $response !== null;
+        if(!empty($response)){
+            return true;
+        }
+
+        return null;
     }
 
     /**
@@ -189,9 +248,6 @@ class TimeBookService extends PVPAbstract
                 'X-Access-Token' => $this->token,
             ])->$method("{$this->baseUrl}{$endpoint}", $data);
 
-            echo "<pre>";
-            var_dump($response->status());
-            echo "</pre>";
             if ($response->successful()) {
                 return $response->json();
             }
@@ -223,12 +279,156 @@ class TimeBookService extends PVPAbstract
 
     public function getData(): array
     {
-        return $this->dataFormater($this->getDemands([]));
+        return $this->dataFormater($this->getDemands());
     }
 
     protected function dataFormater($data): array
     {
-        return $data;
+        $returnArray = [];
+        foreach ($data as $dataShift) {
+            if ($dataShift['status'] == 'new') {
+                $array                 = [];
+                $array['place']        = $dataShift['unitUuid'];
+                $array['selfEmployed'] = true;
+                $array['dateStart']    = Carbon::parse($dataShift['datetimeBegin']);
+                $array['end']          = Carbon::parse($dataShift['datetimeEnd']);
+                $array['externalId']   = $dataShift['uuid'];
+                $array['job']          = $dataShift['specialityUuid'];
+                $returnArray[]         = $array;
+            }
+        }
+        return $returnArray;
+
+        //{
+        //  "demands": [
+        //    {
+        //      "demandKey": "b57a076a-fd5f-ca1c-28e5-14134sd13s24",
+        //      "uuid": "b57a076a-fd5f-ca1c-28e5-53b2dc852365",
+        //      "status": "assigned",
+        //      "date": "2023-10-03",
+        //      "datetimeBegin": "2023-10-03 10:00:00",
+        //      "datetimeEnd": "2023-10-03 20:00:00",
+        //      "Intervals": [
+        //        {
+        //          "type_uuid": "389b38d3-aba2-4958-e586-6e8513fb63d5",
+        //          "start_time": 36000,
+        //          "end_time": 72000,
+        //          "lunch_time": 3600
+        //        }
+        //      ],
+        //      "fact": [
+        //        {
+        //          "id": 123124,
+        //          "type": "closed",
+        //          "begin": "2023-10-03 10:00:00",
+        //          "end": "2023-10-03 20:00:00"
+        //        }
+        //      ],
+        //      "planFactIntervals": [
+        //        {
+        //          "begin": "2023-10-03 10:00:00",
+        //          "end": "2023-10-03 20:00:00"
+        //        }
+        //      ],
+        //      "contractParamsClarity": {
+        //        "name": "Название связки условий и параметров контракта",
+        //        "conditions": {
+        //          "organization_uuids": [
+        //            "5d3a5e5d-4320-403d-bb96-a783ce4db4af"
+        //          ],
+        //          "service_speciality_uuids": [
+        //            "2c6c9a49-6c6b-4cb6-894f-8c99fb4f51a0"
+        //          ],
+        //          "speciality_uuids": [
+        //            "5d3a5e5d-4320-403d-bb96-a783ce4db4af"
+        //          ]
+        //        },
+        //        "parameters": [
+        //          {
+        //            "type": "document_type_groups",
+        //            "data": {
+        //              "groups": [
+        //                {
+        //                  "employee_citizenship": [
+        //                    "Гражданин РФ"
+        //                  ],
+        //                  "optional_document_types": [
+        //                    "personal_medical_book"
+        //                  ],
+        //                  "required_document_types": [
+        //                    "Паспорт"
+        //                  ]
+        //                },
+        //                {
+        //                  "employee_citizenship": [
+        //                    "Иностранный гражданин"
+        //                  ],
+        //                  "optional_document_types": [
+        //                    "personal_medical_book"
+        //                  ],
+        //                  "required_document_types": [
+        //                    "Паспорт"
+        //                  ]
+        //                }
+        //              ]
+        //            }
+        //          },
+        //          {
+        //            "type": "assigned_employee_restrictions",
+        //            "data": {
+        //              "gender": {
+        //                "type": "male"
+        //              }
+        //            }
+        //          }
+        //        ]
+        //      },
+        //      "unitUuid": "5d3a5e5d-4320-403d-bb96-a783ce4db4af",
+        //      "objectUuids": [
+        //        "6d3s3q56-r125-65fd-bg61-j853fgf1b4af"
+        //      ],
+        //      "specialityUuid": "656051df-f6a9-f21d-a62a-0fac57ddd0a2",
+        //      "userCreatedUuid": "4ba17c1e-a9d2-4578-9613-0c667cc848ed",
+        //      "resources": {
+        //        "units": {
+        //          "5d3a5e5d-4320-403d-bb96-a783ce4db4af": {
+        //            "uuid": "5d3a5e5d-4320-403d-bb96-a783ce4db4af",
+        //            "name": "Торговый зал-123"
+        //          }
+        //        },
+        //        "specialities": {
+        //          "656051df-f6a9-f21d-a62a-0fac57ddd0a2": {
+        //            "uuid": "656051df-f6a9-f21d-a62a-0fac57ddd0a2",
+        //            "name": "Специалист по приему товара"
+        //          }
+        //        },
+        //        "objects": {
+        //          "6d3s3q56-r125-65fd-bg61-j853fgf1b4af": {
+        //            "uuid": "6d3s3q56-r125-65fd-bg61-j853fgf1b4af",
+        //            "title": "Лента-123",
+        //            "latitude": "56.3071320000000000",
+        //            "longitude": "43.9979550000000000",
+        //            "address": "Россия, Москва, Осенний бульвар, 12",
+        //            "timezone": "Europe/Moscow"
+        //          }
+        //        }
+        //      }
+        //    }
+        //  ],
+        //  "employees": {
+        //    "4ba17c1e-a9d2-4578-9613-0c667cc848ed": {
+        //      "uuid": "4ba17c1e-a9d2-4578-9613-0c667cc848ed",
+        //      "natural_person": {
+        //        "uuid": "4ba17c1e-a9d2-4578-9613-0c667cc848ed",
+        //        "last_name": "Иванов",
+        //        "first_name": "Иван",
+        //        "second_name": "Иванович",
+        //        "birth_date": "12.06.1987",
+        //        "phone_number ": "+79969231233"
+        //      }
+        //    }
+        //  }
+        //}
     }
 
     public function getPrefix():string

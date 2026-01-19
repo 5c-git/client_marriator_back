@@ -522,13 +522,22 @@ return [
                     'icon' => 'fas fa-fw fa-book',
                     'url' => 'admin/documents/test',
                 ],[
-                    'text' => 'Details',
+                    'text' => 'Договор',
                     'icon' => 'fas fa-fw fa-book',
                     'url' => 'admin/documents/'.DocumentTemplatesEnum::details->name,
                 ],[
                     'text' => 'Payment',
                     'icon' => 'fas fa-fw fa-book',
                     'url' => 'admin/documents/'.DocumentTemplatesEnum::payment->name,
+                ],[
+                    'text' => 'Договор оферты',
+                    'icon' => 'fas fa-fw fa-book',
+                    'url' => 'admin/documents/'.DocumentTemplatesEnum::offer->name,
+                ],
+                [
+                    'text' => 'Договор оферты для самозанятых',
+                    'icon' => 'fas fa-fw fa-book',
+                    'url' => 'admin/documents/'.DocumentTemplatesEnum::offerSelf->name,
                 ],
             ],
         ],

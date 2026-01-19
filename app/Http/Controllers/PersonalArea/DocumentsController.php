@@ -59,6 +59,7 @@ class DocumentsController extends Controller
             ->where('user_id',$user->id)
             ->where('status',DocumentStatusEnum::Signed->value)
             ->where('status_signature','!=',DocumentStatusSignatureEnum::Signed->value)
+            ->orderBy('id','desc')
             ->get();
 
         return DocumentResource::collection($documents);
@@ -88,6 +89,7 @@ class DocumentsController extends Controller
             ->where('user_id',$user->id)
             ->where('status',DocumentStatusEnum::Signed->value)
             ->where('status_signature',DocumentStatusSignatureEnum::Signed->value)
+            ->orderBy('id','desc')
             ->get();
 
         return DocumentResource::collection($documents);

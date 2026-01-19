@@ -20,6 +20,79 @@
                 <input type="text" class="form-control" name="name" id="name" required>
             </div>
         </div>
+
+        <div class="form-group row">
+            <label for="position" class="col-sm-2 col-form-label">Должность</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" name="position" id="position" required>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="full_name" class="col-sm-2 col-form-label">Полное имя фамилия</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" name="full_name" id="full_name" required>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="brand_name" class="col-sm-2 col-form-label">Бренд</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" name="brand_name" id="brand_name" required>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="kpp" class="col-sm-2 col-form-label">Kpp</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" name="kpp" id="kpp" required>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="bank_name" class="col-sm-2 col-form-label">Имя банка</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" name="bank_name" id="bank_name" required>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="bank_account_number" class="col-sm-2 col-form-label">Номер аккаунта банка</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" name="bank_account_number" id="bank_account_number" required>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="bank_corr_account" class="col-sm-2 col-form-label">Корпоративный счет</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" name="bank_corr_account" id="bank_corr_account" required>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="bank_bic" class="col-sm-2 col-form-label">bic</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" name="bank_bic" id="bank_bic" required>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="okpo" class="col-sm-2 col-form-label">okpo</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" name="okpo" id="okpo" required>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="okved" class="col-sm-2 col-form-label">okved</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" name="okved" id="okved" required>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="phone" class="col-sm-2 col-form-label">Телефон</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" name="phone" id="phone" required>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="web" class="col-sm-2 col-form-label">Корпоративный веб сайт</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" name="web" id="web" required>
+            </div>
+        </div>
         <div class="form-group row">
             <label for="uuid" class="col-sm-2 col-form-label">Uuid</label>
             <div class="col-sm-10">

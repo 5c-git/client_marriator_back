@@ -135,13 +135,23 @@ $(document).ready(function () {
                         class: 'bg-success',
                     })
                 } else {
-                    $(document).Toasts('create', {
-                        title: 'Error',
-                        body: 'Error data set',
-                        autohide: true,
-                        delay: 4000,
-                        class: 'bg-danger',
-                    })
+                    if(data.status == 'error' && data.message){
+                        $(document).Toasts('create', {
+                            title: 'Error',
+                            body: data.message,
+                            autohide: true,
+                            delay: 4000,
+                            class: 'bg-danger',
+                        })
+                    }else {
+                        $(document).Toasts('create', {
+                            title: 'Error',
+                            body: 'Error data set',
+                            autohide: true,
+                            delay: 4000,
+                            class: 'bg-danger',
+                        })
+                    }
                 }
             },
             error: function (request, status, error) {

@@ -50,7 +50,7 @@ use App\Models\Order\OrderActivities;
  *
  */
 
-class Bid extends Model
+class Bid extends Model implements OrderInterface
 {
     use HasFactory;
 

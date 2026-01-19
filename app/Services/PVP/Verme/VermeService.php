@@ -45,7 +45,15 @@ class VermeService  extends PVPAbstract
             ]
         ];
 
-        return $this->sendRequest($payload);
+        return $this->getResultData($this->sendRequest($payload),$bid);
+    }
+
+    public function getResultData(?array $data,bid $bid):array
+    {
+        if(!empty($data)){
+
+        }
+        return [];
     }
 
     public function createEmployee(array $employeeData)
@@ -113,15 +121,6 @@ class VermeService  extends PVPAbstract
                 'Accept' => 'application/json',
             ])->timeout(3000)->post($this->baseUrl, $payload);
 
-            echo "<pre>";
-            var_dump($response->body());
-            echo "</pre>";
-            echo "<pre>";
-            var_dump(json_decode($response->body(),true));
-            echo "</pre>";
-            echo "<pre>";
-            var_dump($response->status());
-            echo "</pre>";
             if (!$response->successful()) {
                 Log::error('API Request failed', [
                     'status' => $response->status(),
@@ -162,6 +161,9 @@ class VermeService  extends PVPAbstract
             }
 
             $employeeData = [
+                'headquarter' => [
+                    'code' => 'bnt'
+                ],
                 'number' => (string)$user->id,
                 'employee' => [
                     'firstname' => $document->data['FirstName']??'',
@@ -175,7 +177,17 @@ class VermeService  extends PVPAbstract
                         'headquarter' => ['code' => 'bnt']
                     ],
                     "recieptDate"=> $user->created_at->format('Y-m-d'),
-                ]
+                ],
+                "useBaseJobs"=> true,
+                //"jobList": [
+                //            {
+                //                "job": {
+                //                    "code": "brigada_base"
+                //                },
+                //                "start": "2025-11-04",
+                //                "end": "2026-11-04"
+                //            }
+                //        ],
             ];
 
         } else {
@@ -192,10 +204,6 @@ class VermeService  extends PVPAbstract
 
     protected function dataFormater($data): array
     {
-        echo "<pre>";
-        var_dump($data);
-        echo "</pre>";
-        die();
         $returnArray = [];
         if(!empty($data['shifts_list'])){
             foreach ($data['shifts_list'] as $dataShift) {

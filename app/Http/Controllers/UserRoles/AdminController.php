@@ -33,6 +33,8 @@ use App\Models\Order\Order;
 use App\Models\User\Role;
 use App\Models\User;
 use App\Services\ApiTokenService\ApiTokenService;
+use App\Services\Nopaper\NopaperService;
+use App\Services\Register\EmailService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -404,9 +406,16 @@ class AdminController extends Controller
         $userForModeration = $this->userRepository
             ->getModerationUsers($request->userId,$arrRoleConfirm);
         if(!empty($userForModeration)){
+            $checkReg = false;
+            if(!$userForModeration->confirmRegister){
+                $checkReg = true;
+            }
+
             if(isset($request->confirm)) {
                 if ($request->confirm) {
-                    $userForModeration->confirmRegister = true;
+                    if (true) {
+                        $userForModeration->confirmRegister = true;
+                    }
                 } else {
                     $userForModeration->finishRegister = false;
                 }
@@ -424,6 +433,17 @@ class AdminController extends Controller
             $userForModeration->count_wait_bid = $request->count_wait_bid ?? null;
             $userForModeration->time_answer_bid = $request->time_answer_bid ?? null;
             $userForModeration->notification_start = $request->notification_start ?? null;
+
+            if($request->phone) {
+                $userForModeration->phone = $request->phone;
+            }
+            if($request->name) {
+                $userForModeration->name = $request->name;
+            }
+            (new NopaperService())->checkUserExists($userForModeration);
+            if(!$userForModeration->confirmRegister && $checkReg) {
+                EmailService::sendConfirmUserModeration($userForModeration);
+            }
             $userForModeration->save();
         }
 

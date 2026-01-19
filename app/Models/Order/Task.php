@@ -44,7 +44,7 @@ use App\Enum\Order\OrderStatusEnum;
  * @property-read Collection|User[] $acceptingUsers
  *
  */
-class Task extends Model
+class Task extends Model implements OrderInterface
 {
     use HasFactory;
 

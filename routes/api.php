@@ -111,7 +111,7 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
             Route::post('/updateOrderActivity','App\Http\Controllers\UserRoles\ClientController@updateOrderActivity')->name('updateOrderActivity');
             Route::post('/deleteOrderActivity','App\Http\Controllers\UserRoles\ClientController@deleteOrderActivity')->name('deleteOrderActivity');
             Route::get('/getViewActivitiesForOrder','App\Http\Controllers\UserRoles\ClientController@getViewActivitiesForOrder')->name('getViewActivitiesForOrder');
-            Route::post('/repeatOrder','App\Http\Controllers\UserRoles\ClientController@repeatOrder')->name('repeatOrder'); ////???????
+            Route::post('/repeatOrder','App\Http\Controllers\UserRoles\ClientController@repeatOrder')->name('repeatOrder');
         });
         Route::middleware([CheckRole::class.':manager'])->group( function () {
             Route::post('/convertTask','App\Http\Controllers\UserRoles\ManagerController@convertTask')->name('convertTask');
@@ -126,7 +126,7 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
             Route::post('/invoiceTask','App\Http\Controllers\UserRoles\ManagerController@invoiceTask')->name('invoiceTask');
             Route::post('/cancelTask','App\Http\Controllers\UserRoles\ManagerController@cancelTask')->name('cancelTask');
             Route::get('/getProjectsForTask','App\Http\Controllers\UserRoles\ManagerController@getProjectForTask')->name('getProjectForTask');
-            Route::post('/repeatTask','App\Http\Controllers\UserRoles\ManagerController@repeatTask')->name('repeatTask'); ///?????????
+            Route::post('/repeatTask','App\Http\Controllers\UserRoles\ManagerController@repeatTask')->name('repeatTask');
             Route::get('/getManager','App\Http\Controllers\UserRoles\ManagerController@getManager')->name('getManager');
             Route::post('/setManagers','App\Http\Controllers\UserRoles\ManagerController@setManagers')->name('setManagers');
             Route::post('/delManager','App\Http\Controllers\UserRoles\ManagerController@delManager')->name('delManager');
@@ -143,6 +143,8 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
             Route::post('/endDay','App\Http\Controllers\UserRoles\SpecialistController@endDay')->name('endDay');
             Route::post('/endJob','App\Http\Controllers\UserRoles\SpecialistController@endJob')->name('endJob');
             Route::post('/payReportSpecialist','App\Http\Controllers\UserRoles\SpecialistController@payReport')->name('payReportSpecialist');
+            Route::get('/getCounterpartiesForSign','App\Http\Controllers\UserRoles\SpecialistController@getCounterpartiesForSign')->name('getCounterpartiesForSign');//???????????????????????
+            Route::post('/signContracts','App\Http\Controllers\UserRoles\SpecialistController@signContracts')->name('signContracts');//????????????????????????????
 
             Route::group(['prefix' => 'signedDocument'], function () {
                 Route::post('', 'App\Http\Controllers\UserRoles\SpecialistController@signedDocuments')->name('signedDocuments');

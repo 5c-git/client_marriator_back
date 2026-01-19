@@ -143,6 +143,23 @@
         </div>
 
         <div class="form-group row">
+            <label for="standard" class="col-sm-2 col-form-label">Норматив учета</label>
+            <div class="col-sm-10">
+                <div class="row">
+                    <div class="col-sm-9">
+                        <x-adminlte-select2 id="standard" name="standard" required>
+                            @foreach($norm as $field)
+                                @if(!empty($field['uuid']))
+                                    <option value="{{$field['uuid']}}">{{$field['name']}}</option>
+                                @endif
+                            @endforeach
+                        </x-adminlte-select2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group row">
             <div class="col-sm-10">
                 <button type="submit" class="btn btn-success">Сохранить</button>
                 <a href="{{route('view_activitiesList')}}" style="margin-left: 10px" class="btn btn-secondary btn-md active"

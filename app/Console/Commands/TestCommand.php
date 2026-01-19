@@ -9,10 +9,14 @@ use App\Enum\Order\OrderStatusEnum;
 use App\Enum\Order\ReportStatusEnum;
 use App\Models\Document\Document;
 use App\Models\Document\RecognitionDocument;
+use App\Models\Fields\Directory\Counterparty;
+use App\Models\Fields\Directory\Project;
 use App\Models\Order\Bid;
+use App\Models\Order\Order;
 use App\Models\Order\Report;
 use App\Models\Setting;
 use App\Services\CreatePdfFileService;
+use App\Services\DocumentCreator\UserDocumentCreatorService;
 use App\Services\DocumentServices\CorrectRecognitionService;
 use App\Services\Nopaper\NopaperService;
 use App\Services\OneC\OneCServices;
@@ -23,6 +27,7 @@ use App\Services\PVP\Verme\VermeService;
 use App\Services\PVP\XFive\XFiveService;
 use App\Services\Register\EmailService;
 use App\Services\TimeService;
+use App\Services\User\DataForDocumentCreatorService;
 use Illuminate\Console\Command;
 use Carbon\Carbon;
 use App\Models\User;
@@ -39,6 +44,91 @@ class TestCommand extends Command
 
     public function handle(): void
     {
+
+        $user = User::where('id',172)->first();
+        $userData = '{"gov": "982d33e2-bee6-453a-992e-11d13fa66fa1", "testitem": ["c0e077b8-d11d-11eb-85fa-6cb3110f704122", "c0e077b8-d11d-11eb-85fa-6cb3110f704121", "c0e077b8-d11d-11eb-85fa-6cb3110f704120", "c0e077b8-d11d-11eb-85fa-6cb3110f704119", "c0e077b8-d11d-11eb-85fa-6cb3110f704118", "c0e077b8-d11d-11eb-85fa-6cb3110f704117", "c0e077b8-d11d-11eb-85fa-6cb3110f704116", "c0e077b8-d11d-11eb-85fa-6cb3110f704115", "c0e077b8-d11d-11eb-85fa-6cb3110f704114", "c0e077b8-d11d-11eb-85fa-6cb3110f704113", "c0e077b8-d11d-11eb-85fa-6cb3110f704112", "c0e077b8-d11d-11eb-85fa-6cb3110f704111", "c0e077b8-d11d-11eb-85fa-6cb3110f704110", "c0e077b8-d11d-11eb-85fa-6cb3110f704109", "c0e077b8-d11d-11eb-85fa-6cb3110f70411", "c0e077b8-d11d-11eb-85fa-6cb3110f7041", "c0e077b8-d11d-11eb-85fa-6cb3110f7040", "c0e077b8-d11d-11eb-85fa-6cb3110f7039", "c0e077b8-d11d-11eb-85fa-6cb3110f7039", "c0e077b8-d11d-11eb-85fa-6cb3110f7038"], "vidideayt": ["directory_view_activities_e7JEmQrGSvQ2JCDJlgTd09jNoiFfGm", "directory_view_activities_AudJFcNa8lg8QJVLmHQjGqXxe4T1ZY", "directory_view_activities_DJZ8mtC9ZcV4H1Fb1w3gGiU9sBLH8u"], "nalogstatus": "nalogstatus_fiz_lico", "staticEmail": "test121@mail.ru", "staticPhoto": "http://preprod.marriator-api.fivecorners.ru/storage/source/userImg/406/iFd0ZnKTlG1da5WiFdAG.jpeg", "2Vr2TFKPAmY12FHtnyqWr2Sngg9F6s": null, "2xC9RxW86VOvK1tlENocp26QDwJNQ2": null, "3tslFpWgadwSvvmDXQ6rvvc3aTfd47": "size44-46", "5nibSuUwMDHHB965TRu8iT4exCxhRN": "a3eddd98-67f3-11eb-85ec-6cb3110f7042", "7nNCUNdoVpAy5x1gXYp6jgvrvxOSqm": "67a2687f-4eff-454e-902f-5759e15ed948", "87ONZiY1OqKYKiTsrKZ5q1y0KsuH2n": "b3014396-3310-49d8-8d8d-4961de6f53ec", "9nuDjP3c3Ule99uIiPArhyE1rssGHF": "111111111111", "HP2kvziquWyhpAPv9UmhlkRaIISQWz": "211d7de5-2c72-46a6-bfa5-9396d08e5a50", "IloSAoeA5hNj6iKQuM3saaBSmw7nvC": "11111111111", "MZ562TBT1VVWW7nYNJcPG4BlBFRXSc": "http://preprod.marriator-api.fivecorners.ru/storage/source/pdf/406/foh4qY4LHU/[79881234455][Водительское удостоверение].pdf", "P93JuDTcWlnJfgOJOmM1VtP9vSVnK8": null, "PuGyZOcha8UkkMywTQw2Wa4DcLlD5m": "directory_age_dobJSzuU94Ta9RitXi4MV2Y7sxhI3G", "QsZI3i3WLzO5rNO2ZJjXBtx9nJBosd": "ТЕСТЕР", "QtbukuJ4ALhNnMCwBQvA9PE5pIu6Zh": false, "R7ydKRH6YRdU85KI2UIql0EDWNyvnr": "directory_documentation_o8Tdo9sL762jqbHpd54aD6KK09sJtr", "TA8vxv9JUcfHTtYC1Q3nFiZ4kWgULT": null, "WJWEOeCGKJMKHNrlDbat5QfuEXXo4a": null, "X2CSwnQZntQEdPc1Xq5lgeLahytrna": "СПЕЦИАЛИСТ", "bdM1RtrjFrn9STfGT3GG8AiU9NtqR2": "4416f6bc-3ab8-11dc-8519-000423ba5914", "c5gAyG7YPWV7RiCx23srwQnYV8bv5U": "http://preprod.marriator-api.fivecorners.ru/storage/source/pdf/406/RDZ5T42P3y/[79881234455][Документ удостоверяющий личность].pdf", "cjQR6vTQzEopYaOmlvFyAKaplVQlh4": "http://preprod.marriator-api.fivecorners.ru/storage/source/pdf/406/UvFGtIv53e/[79881234455][Адрес регистрации].pdf", "n1bZyr8bWZYmCOcT5KFQg1MRqvQzj2": "11111111111111111", "nCbrHGJ11nqZrAcBzMhQgJUsK5aJ4y": "http://preprod.marriator-api.fivecorners.ru/storage/source/pdf/406/EdrKSf4tei/[79881234455][Медицинский допуск к управлению ТС].pdf", "pnIXSuSWPMsx1T5IVWU7x9SNBZ7Ss4": "mess-Telegram", "qFq7ZZ6ADUYcAV2f6hDaS35yJ3T65z": "85fd1e08-3ab5-11dc-8519-000423ba5914", "qfyZsDpYNPdRGxZFdPrbNPZhR5oHI5": false, "unC20BLqzsZbEEGWlnT663EkueUBUi": "female_gender", "vk0wcCKTq7sP67Iybq19sLyJckCZzz": ["territoriya_poiska_predlozhenij_77", "territoriya_poiska_predlozhenij_16"], "xId3LKEIZ1w1hidPtsoEP2jPLvJoCz": false}';
+        $user->data = $userData;
+        $user->save();
+
+        die();
+
+
+
+        $service = new UserDocumentCreatorService();
+        $r = RecognitionDocument::query()->first();
+        $user = User::query()->where('id',$r->user_id)->first();
+        $project = Project::query()->where('id',11)->first();
+        $counterpartyId = $project->counterparties()->first()->id;
+        $counterparty = Counterparty::query()->where('id',$counterpartyId)->first();
+        //$user->project()->sync($project->id);
+        $order = new Order();
+        $order->user_id =$user->id;
+        $result = $service->createContract($user,$counterparty);
+        echo "<pre>";
+        var_dump($result);
+        echo "</pre>";
+        die();
+
+
+
+                $service = new TimeBookService();
+        $data = $service->createOrganization([
+            'guid' => '550e8400-e29b-41d4-a716-441655440004',
+            'name' => 'БИЭНТИ Альянс',
+            'serialNumber' => '216'
+        ]);
+        echo "<pre>";
+        var_dump($data);
+        echo "</pre>";
+        $data = $service->createSubdivision([
+            'guid' => '550e8400-e29b-41d4-a716-441655440005',
+            'name' => 'БИЭНТИ Альянс',
+            'serialNumber' => '217',
+            'organizationGuid' => '550e8400-e29b-41d4-a716-441655440004'
+        ]);
+        echo "<pre>";
+        var_dump($data);
+        echo "</pre>";
+        $data = $service->createStaffPosition([
+            'guid' => '550e8400-e29b-41d4-a716-441655440006',
+            'name' => 'БИЭНТИ Альянс',
+            'serialNumber' => '218',
+            'organizationGuid' => '550e8400-e29b-41d4-a716-441655440004'
+        ]);
+        echo "<pre>";
+        var_dump($data);
+        echo "</pre>";
+        die();
+
+
+        $service = new TimeBookService();
+        //$r = RecognitionDocument::query()->first();
+//        $user = User::query()->where('id',$r->user_id)->first();
+//        $user->time_book_guid = 'bc9b833d-1fa8-4b6a-82b0-868af4f07fc9';
+//        $user->save();
+//        $service->createEmployee($user);
+        $data = $service->getData();
+        echo "<pre>";
+        var_dump($data);
+        echo "</pre>";
+
+
+        die();
+
+        $pvpService = new XFiveService();
+        $user = User::query()->where('email','saida@5corners.ru')->first();
+        //$data = $pvpService->getData();
+        $data = $pvpService->assignToShift($user,112542200);
+        //112542200
+        echo "<pre>";
+        var_dump($data);
+        echo "</pre>";
+        $data = $pvpService->getChanges();
+        echo "<pre>";
+        var_dump($data);
+        echo "</pre>";
+        die();
+
         $pvpService = new PVPService(new VermeService());
         //$pvpService->startLoad();
 

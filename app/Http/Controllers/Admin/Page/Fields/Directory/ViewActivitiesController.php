@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\Page\Fields\Directory;
 
 use App\Enum\Fields\FieldsDirectoryEnum;
 use App\Http\Controllers\Controller;
+use App\Models\Fields\Directory\Standard;
 use App\Models\Fields\Directory\ViewActivities;
 use App\Models\Fields\Fields;
 use Illuminate\Http\Request;
@@ -56,8 +57,9 @@ class ViewActivitiesController extends Controller
                     $fields = array_merge($fields, [$directory=>$arrData]);
                 }
             }
+            $norm = Standard::get()->toArray();
 
-            return view('admin.directory.'.$this->view.'.edit', compact('edit','fields'));
+            return view('admin.directory.'.$this->view.'.edit', compact('edit','fields','norm'));
         }else{
             return redirect()->back();
         }
@@ -78,6 +80,7 @@ class ViewActivitiesController extends Controller
         $editObj->link_text = $data['link_text'];
         $editObj->external_id = $data['external_id'];
         $editObj->link = $data['link'];
+        $editObj->standard = $data['standard'];
         if(!empty($data['self_employed'])) {
             $editObj->self_employed = true;
         }else{
@@ -142,7 +145,7 @@ class ViewActivitiesController extends Controller
     {
         $fields['fields']['value'] = Fields::where('active',true)->get()->toArray();
         $fields['fields']['name'] = 'Простые поля';
-
+        $norm = Standard::get()->toArray();
         foreach (FieldsDirectoryEnum::values() as $directory){
             if($directoryArr=$directory::where('active',true)->get()->toArray()) {
                 $arrData['value'] = $directoryArr;
@@ -151,7 +154,7 @@ class ViewActivitiesController extends Controller
             }
         }
         $uuidDirectoryFields = $this->objClass::$uuid.'_'.Str::random(30);
-        return view('admin.directory.'.$this->view.'.add', compact('uuidDirectoryFields','fields'));
+        return view('admin.directory.'.$this->view.'.add', compact('uuidDirectoryFields','fields','norm'));
     }
 
     public function createAjax(Request $request)
@@ -167,6 +170,7 @@ class ViewActivitiesController extends Controller
         $editObj->external_id = $data['external_id'];
         $editObj->link_text = $data['link_text'];
         $editObj->link = $data['link'];
+        $editObj->standard = $data['standard'];
         if(!empty($data['self_employed'])) {
             $editObj->self_employed = true;
         }else{
