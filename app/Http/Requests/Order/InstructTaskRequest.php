@@ -59,6 +59,10 @@ class InstructTaskRequest extends FormRequest
                 function ($attribute, $value, $fail) {
 
                     $ids = $value;
+                    $user = auth()->user();
+                    if($user->id == $value){
+                        return;
+                    }
 
 
                     $validIds = User::where('id', $ids)
