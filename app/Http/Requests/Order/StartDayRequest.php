@@ -105,8 +105,8 @@ class StartDayRequest extends FormRequest
                         if(
                             $orderExists->date_start &&
                             $orderExists->date_end &&
-                            $orderExists->date_start < Carbon::now() &&
-                            $orderExists->date_end > Carbon::now()
+                            $orderExists->date_start->subHour() < Carbon::now() &&
+                            $orderExists->date_end->addHour() > Carbon::now()
                         ){
                             $check = true;
                         }else{
