@@ -39,8 +39,7 @@ class AcceptBidRequest extends FormRequest
 
                     $orderExists = Bid::where(function ($query) use ($user,$value) {
                             $userIdsSupervisor = $user->acceptedBids?->pluck('id')->toArray();
-                            $query->whereIn('id', $userIdsSupervisor)->where('id', $value)
-                                ->where('status', OrderStatusEnum::notAccepted->value);
+                            $query->whereIn('id', $userIdsSupervisor)->where('id', $value);
                         })->first();
 
                     if (!$orderExists) {
