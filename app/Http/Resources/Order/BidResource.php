@@ -79,14 +79,15 @@ class BidResource extends JsonResource
                     }
                 }
             }
-            if($statusW){
-                return 8;
+
+            if($statusA){
+                return 6;
             }
             if($statusC){
                 return 7;
             }
-            if($statusA){
-                return 6;
+            if($statusW){
+                return 8;
             }
         }
         return $this->status->value;
