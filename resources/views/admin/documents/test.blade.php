@@ -7,6 +7,15 @@
 @stop
 
 @section('content')
+    <p style="margin-bottom:2px">Пример переменных</p>
+//{{$lastName}}
+
+    @foreach($case as $k=>$field)
+        <p style="margin-bottom:2px">{{$field->getInfo()}} = {{'{{$'.$field->name}}}}</p>
+        @endforeach
+        </br>
+        </br>
+        </br>
     <script
         src="https://code.jquery.com/jquery-3.6.0.min.js"
         integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="

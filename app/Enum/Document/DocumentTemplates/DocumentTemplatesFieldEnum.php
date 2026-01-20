@@ -16,10 +16,6 @@ enum DocumentTemplatesFieldEnum: int
     use Names;
     use Values;
 
-    case name = 1;
-    case lastName = 2;
-    case secondName = 3;
-    case totalAmount = 4;
     case additionalAgreementCode = 5;
     case offerAgreementName = 6;
     case offerAgreementRevision = 7;
@@ -94,10 +90,6 @@ enum DocumentTemplatesFieldEnum: int
     {
         return match($this)
         {
-            self::name => 'getName',
-            self::lastName => 'getLastName',
-            self::secondName => 'getSecondName',
-            self::totalAmount => 'getTotalAmount',
             self::additionalAgreementCode => 'getAdditionalAgreementCode',
             self::offerAgreementName => 'getOfferAgreementName',
             self::offerAgreementRevision => 'getOfferAgreementRevision',
@@ -173,10 +165,6 @@ enum DocumentTemplatesFieldEnum: int
     {
         return match($this)
         {
-            self::name => true,
-            self::lastName => true,
-            self::secondName => true,
-            self::totalAmount => false,
             self::additionalAgreementCode => false,
             self::offerAgreementName => false,
             self::offerAgreementRevision => false,
@@ -245,6 +233,81 @@ enum DocumentTemplatesFieldEnum: int
             self::serviceStartDate => true,
             self::serviceEndDate => true,
             self::serviceExecutor => true,
+        };
+    }
+
+    public function getInfo(): string
+    {
+        return match($this)
+        {
+            self::additionalAgreementCode => 'Значение реквизита Код-нумератор Документа Дополнительное соглашение',
+            self::offerAgreementName => 'описание',
+            self::offerAgreementRevision => 'описание',
+            self::offerSigningPlace => 'описание',
+            self::agreementSigningDate => 'описание',
+            self::counterpartyFullName => 'описание',
+            self::signatoryPosition => 'описание',
+            self::signatoryFullName => 'описание',
+            self::signingAuthority => 'описание',
+            self::individualFirstName => 'описание',
+            self::individualGender => 'описание',
+            self::individualBirthDate => 'описание',
+            self::corporateWebsite => 'описание',
+            self::legalAddress => 'описание',
+            self::counterpartyName => 'описание',
+            self::mainBrandName => 'описание',
+            self::counterpartyInn => 'описание',
+            self::counterpartyKpp => 'описание',
+            self::counterpartyOgrn => 'описание',
+            self::mainBankName => 'описание',
+            self::bankAccountNumber => 'описание',
+            self::bankCorrAccount => 'описание',
+            self::bankBic => 'описание',
+            self::counterpartyOkpo => 'описание',
+            self::counterpartyOkved => 'описание',
+            self::counterpartyPhone => 'описание',
+            self::counterpartyEmail => 'описание',
+            self::individualLastName => 'описание',
+            self::individualMiddleName => 'описание',
+            self::passportDetails => 'описание',
+            self::passportIssuer => 'описание',
+            self::registrationAddress => 'описание',
+            self::workPermitDetails => 'описание',
+            self::citizenshipDisplay => 'описание',
+            self::serviceBaseNorm => 'описание',
+            self::incomeWithTax => 'описание',
+            self::identityDocumentType => 'описание',
+            self::specialRequirements => 'описание',
+            self::personalSkills => 'описание',
+            self::signatoryShortName => 'описание',
+            self::individualNameLetters => 'описание',
+            self::individualMobilePhone => 'описание',
+            self::employedContractNumber => 'описание',
+            self::employedOfferName => 'описание',
+            self::employedOfferRevision => 'описание',
+            self::employedSigningBasis => 'описание',
+            self::employedFromDate => 'описание',
+            self::safetyInstructionCode => 'описание',
+            self::currentDate => 'описание',
+            self::specialistFullName => 'описание',
+            self::birthYear => 'описание',
+            self::primaryOfferName => 'описание',
+            self::additionalOfferName => 'описание',
+            self::instructionLocation => 'описание',
+            self::instructorName => 'описание',
+            self::taxReferenceLink => 'описание',
+            self::directorShortName => 'описание',
+            self::requestSequenceNumber => 'описание',
+            self::taxStatusName => 'описание',
+            self::serviceResult => 'описание',
+            self::serviceComposition => 'описание',
+            self::serviceQuality => 'описание',
+            self::serviceTimeliness => 'описание',
+            self::serviceRequirements => 'описание',
+            self::servicePrice => 'описание',
+            self::serviceStartDate => 'описание',
+            self::serviceEndDate => 'описание',
+            self::serviceExecutor => 'описание',
         };
     }
 }

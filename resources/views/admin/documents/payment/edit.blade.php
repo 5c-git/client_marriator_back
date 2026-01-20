@@ -175,13 +175,6 @@
             </div>
         </div>
 
-        @foreach($edit->type->getFields() as $k=>$field)
-            <p style="margin-bottom:2px">{{$k}} = {{$field}}</p>
-        @endforeach
-        </br>
-            </br>
-            </br>
-
     </form>
     <script src="{{ asset('js/custom.js') }}" defer></script>
 

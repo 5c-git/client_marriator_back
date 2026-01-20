@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\Document;
 
 use App\Enum\Document\DocumentTemplates\DocumentTemplatesEnum;
+use App\Enum\Document\DocumentTemplates\DocumentTemplatesFieldEnum;
 use App\Enum\Fields\FieldsDirectoryEnum;
 use App\Http\Controllers\Controller;
 use App\Models\Document\DocumentTemplate;
@@ -35,7 +36,8 @@ class DocumentController extends Controller
 
     public function index(Request $request){
         $data = File::get(resource_path('views/document/test.blade.php'));
-        return view('admin.documents.test', compact('data'));
+        $case = DocumentTemplatesFieldEnum::cases();
+        return view('admin.documents.test', compact('data','case'));
     }
 
     public function save(Request $request){

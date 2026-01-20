@@ -72,9 +72,22 @@ class UserDataService
             $this->user->data = json_decode($this->user->data,true);
         }
         $name = trim($this->getFieldView('name') . ' ' .$this->getFieldView('lastName'). ' ' .$this->getFieldView('secondName'));
-        if(!$name){
-            $name = $this->user->name;
+
+        if(empty($name)) {
+            if (empty($this->passportData)) {
+                $document = RecognitionDocument::query()
+                    ->where('user_id', $this->user->id)
+                    ->where('file_type', DocumentTypeEnum::Passport->value)
+                    ->orderBy('id', 'desc')
+                    ->first();
+                /** @var RecognitionDocument $document */
+                $this->passportData = $document->data;
+            }
+            if(!empty($this->passportData)) {
+                $name =  $this->passportData[Passport::LastName->name].' '.$this->passportData[Passport::FirstName->name].' '.$this->passportData[Passport::MiddleName->name];
+            }
         }
+
         return $name??'';
     }
 
@@ -85,8 +98,19 @@ class UserDataService
             $this->user->data = json_decode($this->user->data,true);
         }
         $name = trim($this->getFieldView('name'));
-        if(!$name){
-            $name = $this->user->name;
+        if(empty($name)) {
+            if (empty($this->passportData)) {
+                $document = RecognitionDocument::query()
+                    ->where('user_id', $this->user->id)
+                    ->where('file_type', DocumentTypeEnum::Passport->value)
+                    ->orderBy('id', 'desc')
+                    ->first();
+                /** @var RecognitionDocument $document */
+                $this->passportData = $document->data;
+            }
+            if(!empty($this->passportData)) {
+                $name =  $this->passportData[Passport::FirstName->name];
+            }
         }
         return $name??'';
     }
@@ -101,8 +125,25 @@ class UserDataService
         $lastName = trim($this->getFieldView('lastName'));
         $secondName = trim($this->getFieldView('secondName'));
         if(!empty($name) && !empty($lastName) && !empty($secondName)){
-            $returnData = $lastName.' '.$name[0].'. '.$secondName[0].'.';
+            $returnData = $lastName.' '.mb_substr($name, 0, 1, 'UTF-8').'. '.mb_substr($secondName, 0, 1, 'UTF-8').'.';
         }
+
+        if(empty($returnData)) {
+            if (empty($this->passportData)) {
+                $document = RecognitionDocument::query()
+                    ->where('user_id', $this->user->id)
+                    ->where('file_type', DocumentTypeEnum::Passport->value)
+                    ->orderBy('id', 'desc')
+                    ->first();
+                /** @var RecognitionDocument $document */
+                $this->passportData = $document->data;
+            }
+            if(!empty($this->passportData)) {
+                $returnData =  $this->passportData[Passport::LastName->name].' '.mb_substr($this->passportData[Passport::FirstName->name], 0, 1, 'UTF-8').'. '.mb_substr($this->passportData[Passport::MiddleName->name], 0, 1, 'UTF-8').'.';
+            }
+        }
+
+
         return $returnData??'';
     }
 
@@ -129,8 +170,24 @@ class UserDataService
         $name = trim($this->getFieldView('name'));
         $secondName = trim($this->getFieldView('secondName'));
         if(!empty($name) && !empty($secondName)){
-            $returnData = $name[0].'. '.$secondName[0].'.';
+            $returnData = mb_substr($name, 0, 1, 'UTF-8').'. '.mb_substr($secondName, 0, 1, 'UTF-8').'.';
         }
+
+        if(empty($returnData)) {
+            if (empty($this->passportData)) {
+                $document = RecognitionDocument::query()
+                    ->where('user_id', $this->user->id)
+                    ->where('file_type', DocumentTypeEnum::Passport->value)
+                    ->orderBy('id', 'desc')
+                    ->first();
+                /** @var RecognitionDocument $document */
+                $this->passportData = $document->data;
+            }
+            if(!empty($this->passportData)) {
+                $returnData =  mb_substr($this->passportData[Passport::FirstName->name], 0, 1, 'UTF-8').'. '.mb_substr($this->passportData[Passport::MiddleName->name], 0, 1, 'UTF-8').'.';
+            }
+        }
+
         return $returnData??'';
     }
 
@@ -144,9 +201,25 @@ class UserDataService
         $secondName = trim($this->getFieldView('secondName'));
         $lastName = trim($this->getFieldView('lastName'));
         if(!empty($lastName) && !empty($name) && !empty($secondName)){
-            $returnData = $lastName.' '.$name[0].'.'.$secondName[0].'.';
+            $returnData = $lastName. ' ' . mb_substr($name, 0, 1, 'UTF-8') . '.'.mb_substr($secondName, 0, 1, 'UTF-8') . '.';
         }
-        return $returnData??'';
+
+        if(empty($returnData)) {
+            if (empty($this->passportData)) {
+                $document = RecognitionDocument::query()
+                    ->where('user_id', $this->user->id)
+                    ->where('file_type', DocumentTypeEnum::Passport->value)
+                    ->orderBy('id', 'desc')
+                    ->first();
+                /** @var RecognitionDocument $document */
+                $this->passportData = $document->data;
+            }
+            if(!empty($this->passportData)) {
+                $returnData =  $this->passportData[Passport::LastName->name].' '.mb_substr($this->passportData[Passport::FirstName->name], 0, 1, 'UTF-8').'. '.mb_substr($this->passportData[Passport::MiddleName->name], 0, 1, 'UTF-8').'.';
+            }
+        }
+
+        return $returnData??'не заполнено';
     }
 
     public function getOnlyLastName(User $user): string
@@ -156,8 +229,19 @@ class UserDataService
             $this->user->data = json_decode($this->user->data,true);
         }
         $name = trim($this->getFieldView('lastName'));
-        if(!$name){
-            $name = $this->user->name;
+        if(empty($name)) {
+            if (empty($this->passportData)) {
+                $document = RecognitionDocument::query()
+                    ->where('user_id', $this->user->id)
+                    ->where('file_type', DocumentTypeEnum::Passport->value)
+                    ->orderBy('id', 'desc')
+                    ->first();
+                /** @var RecognitionDocument $document */
+                $this->passportData = $document->data;
+            }
+            if(!empty($this->passportData)) {
+                $name =  $this->passportData[Passport::LastName->name];
+            }
         }
         return $name??'';
     }
@@ -172,6 +256,23 @@ class UserDataService
         if(!$name){
             $name = $this->user->name;
         }
+
+        if(empty($name)) {
+            if (empty($this->passportData)) {
+                $document = RecognitionDocument::query()
+                    ->where('user_id', $this->user->id)
+                    ->where('file_type', DocumentTypeEnum::Passport->value)
+                    ->orderBy('id', 'desc')
+                    ->first();
+                /** @var RecognitionDocument $document */
+                $this->passportData = $document->data;
+            }
+            if(!empty($this->passportData)) {
+                $name = $this->passportData[Passport::MiddleName->name];
+            }
+        }
+
+
         return $name??'';
     }
 

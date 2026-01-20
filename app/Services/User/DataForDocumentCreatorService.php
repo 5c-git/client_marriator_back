@@ -63,7 +63,7 @@ class DataForDocumentCreatorService
 
     public function getEmployedContractNumber():string
     {
-        return 'не заполнено';
+        return 'не заполнено (employedContractNumber)';
     }
 
     public function getOfferAgreementName():string
@@ -158,7 +158,7 @@ class DataForDocumentCreatorService
 
     public function getSigningAuthority(): string
     {
-        return 'не заполнено';
+        return 'не заполнено (SigningAuthority)';
     }
 
     public function getIndividualFirstName(): string
@@ -288,7 +288,7 @@ class DataForDocumentCreatorService
 
     public function getWorkPermitDetails(): string
     {
-        return 'не заполнено';
+        return 'не заполнено (workPermitDetails)';
     }
 
     public function getCitizenshipDisplay(): string
@@ -328,7 +328,7 @@ class DataForDocumentCreatorService
 
     public function getSpecialRequirements(): string
     {
-        return 'не требуется';
+        return 'не требуется (specialRequirements)';
     }
 
     public function getSignatoryShortName(): string
@@ -348,17 +348,22 @@ class DataForDocumentCreatorService
 
     public function getEmployedSigningBasis(): string
     {
-        return 'не заполнено';
+        return 'не заполнено (employedSigningBasis)';
     }
 
     public function getEmployedFromDate(): string
     {
-        return 'не заполнено';
+        return 'не заполнено (employedFromDate)';
     }
 
     public function getPrimaryOfferName(): string
     {
         return 'не заполнено';
+    }
+
+    public function getPersonalSkills(): string
+    {
+        return 'не заполнено (personalSkills)';
     }
 
     public function getTaxStatusName(): string
@@ -434,6 +439,11 @@ class DataForDocumentCreatorService
     public function getServiceRequirements(): string
     {
         return 'не заполнено';
+    }
+
+    public function getAdditionalOfferName(): string
+    {
+        return 'не заполнено (AdditionalOfferName)';
     }
 
     public function getServicePrice(): string
