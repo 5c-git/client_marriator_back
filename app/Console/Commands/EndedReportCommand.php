@@ -25,6 +25,7 @@ class EndedReportCommand extends Command
             ->get();
         foreach ($reports as $report){
             $report->status = ReportStatusEnum::notEnded->value;
+            $report->date_end = $report->date_auto_close;
             $report->save();
         }
     }
