@@ -7,10 +7,13 @@ use App\Enum\Document\DocumentTemplates\DocumentTemplatesFieldEnum;
 use App\Enum\Fields\FieldsDirectoryEnum;
 use App\Http\Controllers\Controller;
 use App\Models\Document\DocumentTemplate;
+use App\Models\Document\RecognitionDocument;
+use App\Models\Fields\Directory\Counterparty;
 use App\Models\Fields\Directory\HairColor;
 use App\Models\Fields\Fields;
 use App\Models\User;
 use App\Services\DocumentCreator\PdfCreatorService;
+use App\Services\DocumentCreator\UserDocumentCreatorService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\Certificates;
@@ -254,12 +257,12 @@ class DocumentController extends Controller
 
     public function getTestData(): array
     {
-        return [
-            'name'        => 'ТестИмени',
-            'lastName'    => 'ТестФамилии',
-            'secondName'  => 'Тест отчества',
-            'totalAmount' => '00.00',
-        ];
+        $service = new UserDocumentCreatorService();
+        $counterparty = Counterparty::query()->first();
+        $r = RecognitionDocument::query()->first();
+        $user = User::query()->where('id',$r->user_id)->first();
+        [$dataContract,$dataForSave] = $service->getDataForContract($user, $counterparty);
+        return $dataContract;
     }
 
 }

@@ -119,7 +119,7 @@ class UserDocumentCreatorService
         return $data;
     }
 
-    private function getDataForContract(User $user, Counterparty $counterparty): array
+    public function getDataForContract(User $user, Counterparty $counterparty): array
     {
         $userDataService = new DataForDocumentCreatorService($user, $counterparty);
         $data            = [];
