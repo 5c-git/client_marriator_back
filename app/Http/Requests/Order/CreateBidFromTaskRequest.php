@@ -62,8 +62,8 @@ class CreateBidFromTaskRequest extends FormRequest
                         $fail('Not your task');
                         return;
                     }
-
-                    $bids = $orderExists->bids?->where('activity_id', $this->orderActivityId)->first();
+                    /** @var Task $orderExists */
+                    $bids = $orderExists->bid?->where('activity_id', $this->orderActivityId)->first();
                     if ($bids) {
                         /** @var Bid $bids */
                         if(TimeService::getTimeDifferenceAdd($this->user(),'repeat_bid',$bids->created_at)){

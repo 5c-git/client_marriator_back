@@ -56,7 +56,7 @@ class CreateBidFromOrderRequest extends FormRequest
                         $fail('Not your order');
                         return;
                     }
-
+                    /** @var Order $orderExists */
                     $bids = $orderExists->bids?->where('activity_id', $this->orderActivityId)->first();
                     if ($bids) {
                         /** @var Bid $bids */
