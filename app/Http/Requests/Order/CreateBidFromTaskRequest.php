@@ -62,7 +62,9 @@ class CreateBidFromTaskRequest extends FormRequest
                         $fail('Not your task');
                         return;
                     }
+
                     /** @var Task $orderExists */
+                    $count = $orderExists->bid->count();
                     $bids = $orderExists->bid?->where('activity_id', $this->orderActivityId)->first();
                     if ($bids) {
                         /** @var Bid $bids */

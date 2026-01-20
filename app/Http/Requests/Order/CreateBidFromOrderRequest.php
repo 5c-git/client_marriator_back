@@ -57,6 +57,7 @@ class CreateBidFromOrderRequest extends FormRequest
                         return;
                     }
                     /** @var Order $orderExists */
+                    $count = $orderExists->bids->count();
                     $bids = $orderExists->bids?->where('activity_id', $this->orderActivityId)->first();
                     if ($bids) {
                         /** @var Bid $bids */
