@@ -378,6 +378,7 @@ class UserDataService
 
     public function getRegistrationAddress(User $user): string
     {
+        return 'не заполнено (registrationAddress)';
         $this->user = $user;
         if(!is_array($this->user->data)){
             $this->user->data = json_decode($this->user->data,true);

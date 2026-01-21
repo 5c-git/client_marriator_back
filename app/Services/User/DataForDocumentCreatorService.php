@@ -333,7 +333,7 @@ class DataForDocumentCreatorService
 
     public function getSignatoryShortName(): string
     {
-        return $this->userDataService->getShortName($this->user)?? 'не заполнено';
+        return $this->shortenFIO($this->counterparty->full_name)??'не заполнено';
     }
 
     public function getIndividualNameLetters(): string
