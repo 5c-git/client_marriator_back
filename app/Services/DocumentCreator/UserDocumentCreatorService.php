@@ -16,6 +16,7 @@ use App\Models\User;
 use App\Models\User\UserContractData;
 use App\Models\Order\OrderInterface;
 use App\Services\User\DataForDocumentCreatorService;
+use App\Services\User\UserDataService;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 
@@ -58,7 +59,12 @@ class UserDocumentCreatorService
     public function createContract(User $user, Counterparty $counterparty): ?Document
     {
         if (!self::checkSignContract($user, $counterparty)) {
-            $documentTemplate = $this->getDocumentTemplate($this->contract);
+            if(!isset($user->taxStatus)) {
+                $service = new UserDataService();
+                $user->taxStatus = $service->getTaxStatusTemplate($user);
+            }
+            //$this->contract
+            $documentTemplate = $this->getDocumentTemplate($user->taxStatus);
             if ($documentTemplate) {
                 $template     = $this->getTemplateUrl($documentTemplate);
                 [$dataContract,$dataForSave] = $this->getDataForContract($user, $counterparty);

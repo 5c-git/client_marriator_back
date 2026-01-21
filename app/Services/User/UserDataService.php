@@ -3,6 +3,7 @@
 namespace App\Services\User;
 
 use App\Enum\Document\DocumentFieldRecognition\Passport;
+use App\Enum\Document\DocumentTemplates\DocumentTemplatesEnum;
 use App\Enum\Document\DocumentTypeEnum;
 use App\Enum\Fields\FieldsTypeEnum;
 use App\Models\Document\RecognitionDocument;
@@ -158,6 +159,20 @@ class UserDataService
             return 'плательщик налога на профессиональный доход (самозанятый)';
         }else{
             return 'физическое лицо';
+        }
+    }
+
+    public function getTaxStatusTemplate(User $user):DocumentTemplatesEnum
+    {
+        $this->user = $user;
+        if(!is_array($this->user->data)){
+            $this->user->data = json_decode($this->user->data,true);
+        }
+        $taxStatus = trim($this->getFieldView('taxStatus'));
+        if(!empty($taxStatus) && $taxStatus =='Самозанятый'){
+            return DocumentTemplatesEnum::offer;
+        }else{
+            return DocumentTemplatesEnum::offerSelf;
         }
     }
 
