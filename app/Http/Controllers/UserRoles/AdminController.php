@@ -4,7 +4,10 @@ namespace App\Http\Controllers\UserRoles;
 
 use App\Enum\User\SortEnum;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Order\DelManagerRequest;
+use App\Http\Requests\Order\GetManagerRequest;
 use App\Http\Requests\Order\GetOrderRequest;
+use App\Http\Requests\Order\SetManagerRequest;
 use App\Http\Requests\UserData\DeleteCounterpartyRequest;
 use App\Http\Requests\UserData\DelPlaceRequest as DelPlaceModerationRequest;
 use App\Http\Requests\UserData\DelProjectRequest;
@@ -68,182 +71,99 @@ class AdminController extends Controller
     public function setCounterparty(SetCounterpartyRequest $request)
     {
         $user = User::where('id',$request->userId)->first();
-        $userRoles = $user->roles?->pluck('id')->toArray();
-        $checkRole = false;
-        foreach ($userRoles as $userRole){
-            if(in_array($userRole,[RoleEnum::manager->value,RoleEnum::client->value,RoleEnum::specialist->value])){
-                $checkRole = true;
-                break;
-            }
-        }
-        if($checkRole){
-            $user->counterparty()->syncWithoutDetaching($request->counterpartyIds);
-            return new SuccessResource();
-        }else{
-            return new ErrorResource();
-        }
+        $user->counterparty()->syncWithoutDetaching($request->counterpartyIds);
+        return new SuccessResource();
     }
 
-    public function deleteCounterparty(DeleteCounterpartyRequest $request){
-        $user = User::where('id',$request->userId)->first();
-        $userRoles = $user->roles?->pluck('id')->toArray();
-        $checkRole = false;
-        foreach ($userRoles as $userRole){
-            if(in_array($userRole,[RoleEnum::manager->value,RoleEnum::client->value,RoleEnum::specialist->value])){
-                $checkRole = true;
-                break;
-            }
+    public function deleteCounterparty(DeleteCounterpartyRequest $request)
+    {
+        $user = User::where('id', $request->userId)->first();
+        $user->counterparty()->detach($request->counterpartyId);
+        $user = User::where('id', $request->userId)->first();
+        $projectsForCounterparty = $user->counterparty
+            ->flatMap(fn($counterparty) => $counterparty->projects)
+            ->unique('id')->pluck('id')->toArray();
+
+        $projectUser = $user->project?->pluck('id')->toArray();
+        $result      = array_diff($projectUser, $projectsForCounterparty);
+        if ($result) {
+            $user->project()->detach($result);
         }
-        if($checkRole){
-            $user->counterparty()->detach($request->counterpartyId);
 
-            $user = User::where('id',$request->userId)->first();
-            $projectsForCounterparty = $user->counterparty
-                ->flatMap(fn($counterparty) => $counterparty->projects)
-                ->unique('id')->pluck('id')->toArray();
-
-            $projectUser = $user->project?->pluck('id')->toArray();
-            $result = array_diff($projectUser, $projectsForCounterparty);
-            if($result) {
-                $user->project()->detach($result);
-            }
-
-            $user = User::where('id',$request->userId)->first();
-            $placesProject = $user->project
-                ->flatMap(fn($project) => $project->places)
-                ->unique('id')?->pluck('id')->toArray();
-            $places = $user->place?->pluck('id')->toArray();
-            $result = array_diff($places, $placesProject);
-            if($result) {
-                $user->place()->detach($result);
-            }
-
-            return new SuccessResource();
-        }else{
-            return new ErrorResource();
+        $user          = User::where('id', $request->userId)->first();
+        $placesProject = $user->project
+            ->flatMap(fn($project) => $project->places)
+            ->unique('id')?->pluck('id')->toArray();
+        $places        = $user->place?->pluck('id')->toArray();
+        $result        = array_diff($places, $placesProject);
+        if ($result) {
+            $user->place()->detach($result);
         }
+
+        return new SuccessResource();
     }
 
     public function getProject(GetProjectRequest $request){
         $user = User::where('id',$request->userId)->first();
-        $userRoles = $user->roles?->pluck('id')->toArray();
-        $checkRole = false;
-        foreach ($userRoles as $userRole){
-            if(in_array($userRole,[RoleEnum::manager->value,RoleEnum::client->value,RoleEnum::specialist->value])){
-                $checkRole = true;
-                break;
-            }
-        }
-        if($checkRole){
-            $project = Project::all();
-            return ProjectResource::collection($project);
-        }else{
-            return new ErrorResource();
-        }
+        $projects = $user->counterparty
+            ->flatMap(fn($counterparty) => $counterparty->projects)
+            ->unique('id');
+        return ProjectResource::collection($projects);
     }
 
     public function setProject(SetProjectRequest $request){
         $user = User::where('id',$request->userId)->first();
-        $userRoles = $user->roles?->pluck('id')->toArray();
-        $checkRole = false;
-        foreach ($userRoles as $userRole){
-            if(in_array($userRole,[RoleEnum::manager->value,RoleEnum::client->value,RoleEnum::specialist->value])){
-                $checkRole = true;
-                break;
-            }
-        }
-        if($checkRole){
-            $user->project()->syncWithoutDetaching($request->projectId);
-            return new SuccessResource();
-        }else{
-            return new ErrorResource();
-        }
+        $user->project()->syncWithoutDetaching($request->projectId);
+        return new SuccessResource();
     }
 
     public function setUserImg(SetUserImgRequest $request){
         $user = User::where('id',$request->userId)->first();
-        $userRoles = $user->roles?->pluck('id')->toArray();
-        $checkRole = false;
-        foreach ($userRoles as $userRole){
-            if(in_array($userRole,[RoleEnum::manager->value,RoleEnum::client->value,RoleEnum::specialist->value])){
-                $checkRole = true;
-                break;
-            }
-        }
-        if($checkRole){
-            $project = Project::where('id',$request->projectId)->first();
-            $projectLogo = $project?->brands()?->first()?->logo;
-            $user->img = $projectLogo;
-            $user->save();
-            return new SuccessResource();
-        }else{
-            return new ErrorResource();
-        }
+        $project = Project::where('id',$request->projectId)->first();
+        $projectLogo = $project?->brands()?->first()?->logo;
+        $user->img = $projectLogo;
+        $user->save();
+        return new SuccessResource();
     }
 
-    public function delProject(DelProjectRequest $request){
-        $user = User::where('id',$request->userId)->first();
-        $userRoles = $user->roles?->pluck('id')->toArray();
-        $checkRole = false;
-        foreach ($userRoles as $userRole){
-            if(in_array($userRole,[RoleEnum::manager->value,RoleEnum::client->value,RoleEnum::specialist->value])){
-                $checkRole = true;
-                break;
-            }
+    public function delProject(DelProjectRequest $request)
+    {
+        $user = User::where('id', $request->userId)->first();
+        $user->project()->detach($request->projectId);
+        $user          = User::where('id', $request->userId)->first();
+        $placesProject = $user->project
+            ->flatMap(fn($project) => $project->places)
+            ->unique('id')?->pluck('id')->toArray();
+        $places        = $user->place?->pluck('id')->toArray();
+        $result        = array_diff($places, $placesProject);
+        if ($result) {
+            $user->place()->detach($result);
         }
-        if($checkRole){
-            $user->project()->detach($request->projectId);
-            $user = User::where('id',$request->userId)->first();
-            $placesProject = $user->project
-                ->flatMap(fn($project) => $project->places)
-                ->unique('id')?->pluck('id')->toArray();
-            $places = $user->place?->pluck('id')->toArray();
-            $result = array_diff($places, $placesProject);
-            if($result) {
-                $user->place()->detach($result);
-            }
-            return new UserResource($user->fresh());
-        }else{
-            return new ErrorResource();
-        }
+        return new UserResource($user->fresh());
     }
 
     public function getPlaceModeration(GetPlaceRequest $request)
     {
         $user = User::where('id',$request->userId)->first();
-        $userRoles = $user->roles?->pluck('id')->toArray();
-        if(in_array($userRoles[0],[RoleEnum::manager->value,RoleEnum::client->value,RoleEnum::specialist->value])){
-            $places = $user->project
-                ->flatMap(fn($project) => $project->places)
-                ->unique('id');
-            return PlaceResource::collection($places);
-        }
-        if($userRoles[0] == RoleEnum::recruiter->value){
-            $places = Place::all();
-            return PlaceResource::collection($places);
-        }
-        return new ErrorResource();
+        $places = $user->project
+            ->flatMap(fn($project) => $project->places)
+            ->unique('id');
+        return PlaceResource::collection($places);
     }
 
     public function setPlaceModeration(SetPlaceModerationRequest $request): SuccessResource
     {
-        $user = User::where('id',$request->userId)->first();
-        $userRoles = $user->roles?->pluck('id')->toArray();
-        $placeForUser = [];
-        if(in_array($userRoles[0],[RoleEnum::manager->value,RoleEnum::client->value,RoleEnum::specialist->value])) {
-            $placesProject = $user->project
-                ->flatMap(fn($project) => $project->places)
-                ->unique('id')?->pluck('id')->toArray();
-            foreach ($request->placeId as $place) {
-                if (in_array($place, $placesProject)) {
-                    $placeForUser[] = $place;
-                }
+        $user          = User::where('id', $request->userId)->first();
+        $placeForUser  = [];
+        $placesProject = $user->project
+            ->flatMap(fn($project) => $project->places)
+            ->unique('id')?->pluck('id')->toArray();
+        foreach ($request->placeId as $place) {
+            if (in_array($place, $placesProject)) {
+                $placeForUser[] = $place;
             }
         }
-        if($userRoles[0] == RoleEnum::recruiter->value){
-            $placeForUser = $request->placeId;
-        }
-        if($placeForUser){
+        if ($placeForUser) {
             $user->place()->syncWithoutDetaching($placeForUser);
         }
         return new SuccessResource();
@@ -251,80 +171,60 @@ class AdminController extends Controller
 
     public function getUserSurepvisorData(GetSurepvisorRequest $request){
         $user = User::where('id',$request->userId)->first();
-        $userRoles = $user->roles?->pluck('id')->toArray();
-        $checkRole = false;
-        foreach ($userRoles as $userRole){
-            if(in_array($userRole,[RoleEnum::manager->value])){
-                $checkRole = true;
-                break;
-            }
-        }
-        $supervisorUsers = collect();
-        if($checkRole) {
-            $user = $request->user();
-            $supervisorUsers = $user->supervisors;
-        }
+        $supervisorUsers = $user->supervisors;
         return ShortUserResource::collection($supervisorUsers);
     }
 
-    public function getSurepvisors(GetSurepvisorRequest $request){
-        $user = User::where('id',$request->userId)->first();
-        $userRoles = $user->roles?->pluck('id')->toArray();
-        $checkRole = false;
-        foreach ($userRoles as $userRole){
-            if(in_array($userRole,[RoleEnum::manager->value])){
-                $checkRole = true;
-                break;
-            }
+    public function getSurepvisors(GetSurepvisorRequest $request)
+    {
+        $user  = User::where('id', $request->userId)->first();
+        $deleteSuperVisor = $user->supervisors?->pluck('id')->toArray();
+        $users            = User::whereHas('roles', function ($query) {
+            $query->where('role_id', RoleEnum::supervisor->value);
+        });
+        if ($deleteSuperVisor) {
+            $users = $users->whereNotIn('id', $deleteSuperVisor);
         }
-        $users = collect();
-        if($checkRole) {
-            $deleteSuperVisor = $user->supervisors?->pluck('id')->toArray();
-            $users = User::whereHas('roles', function ($query) {
-                $query->where('role_id', RoleEnum::supervisor->value);
-            });
-            if($deleteSuperVisor) {
-                $users = $users->whereNotIn('id', $deleteSuperVisor);
-            }
-            $users = $users->where('confirmRegister', true)->where('finishRegister', true)->get();
-        }
+        $users = $users->where('confirmRegister', true)->where('finishRegister', true)->get();
+
         return ShortUserResource::collection($users);
     }
 
     public function setSurepvisors(SetSurepvisorsRequest $request){
         $user = User::where('id',$request->userId)->first();
-        $userRoles = $user->roles?->pluck('id')->toArray();
-        $checkRole = false;
-        foreach ($userRoles as $userRole){
-            if(in_array($userRole,[RoleEnum::manager->value])){
-                $checkRole = true;
-                break;
-            }
-        }
-        if($checkRole) {
-            $user = $request->user();
-            $user->supervisors()->syncWithoutDetaching($request->surepvisorIds);
-            return new SuccessResource();
-        }
-        return new ErrorResource();
+        $user->supervisors()->syncWithoutDetaching($request->surepvisorIds);
+        return new SuccessResource();
     }
 
     public function delSurepvisor(DelSurepvisorRequest $request){
         $user = User::where('id',$request->userId)->first();
-        $userRoles = $user->roles?->pluck('id')->toArray();
-        $checkRole = false;
-        foreach ($userRoles as $userRole){
-            if(in_array($userRole,[RoleEnum::manager->value])){
-                $checkRole = true;
-                break;
-            }
+        $user->supervisors()->detach($request->surepvisorId);
+        return new SuccessResource();
+    }
+
+    public function getManager(GetManagerRequest $request){
+        $user = User::where('id',$request->userId)->first();
+        $deleteManager = $user->manager?->pluck('id')->toArray();
+        $users = User::whereHas('roles', function ($query) {
+            $query->where('role_id', RoleEnum::manager->value);
+        });
+        if($deleteManager) {
+            $users = $users->whereNotIn('id', $deleteManager);
         }
-        if($checkRole) {
-            $user = $request->user();
-            $user->supervisors()->detach($request->surepvisorId);
-            return new SuccessResource();
-        }
-        return new ErrorResource();
+        $users = $users->where('confirmRegister', true)->where('finishRegister', true)->get();
+        return ShortUserResource::collection($users);
+    }
+
+    public function setManagers(SetManagerRequest $request){
+        $user = User::where('id',$request->userId)->first();
+        $user->manager()->syncWithoutDetaching($request->managerIds);
+        return new SuccessResource();
+    }
+
+    public function delManager(DelManagerRequest $request){
+        $user = User::where('id',$request->userId)->first();
+        $user->manager()->detach($request->managerId);
+        return new SuccessResource();
     }
 
     public function delPlaceModeration(DelPlaceModerationRequest $request): SuccessResource

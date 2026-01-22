@@ -121,6 +121,9 @@ class UsersController extends Controller
         $user->name = $data['name'];
         $user->email = $data['email'];
         $user->phone = $data['phone'];
+        if($data['pin']) {
+            $user->pin = $data['pin'];
+        }
 
         if($data['roles']) {
             $user->roles()->sync($data['roles']);
@@ -130,6 +133,7 @@ class UsersController extends Controller
 
         if(!empty($data['confirmRegister'])){
             $user->confirmRegister = true;
+            $user->finishRegister = true;
         }else{
             $user->confirmRegister = false;
         }
@@ -152,7 +156,10 @@ class UsersController extends Controller
 
         $user['name'] = $data['name'];
         $user['email'] = $data['email'];
-        $user->phone = $data['phone'];
+        $user['phone'] = $data['phone'];
+        if($data['pin']) {
+            $user['pin'] = $data['pin'];
+        }
 
         //$user['email_verified_at'] = Carbon::now();
 

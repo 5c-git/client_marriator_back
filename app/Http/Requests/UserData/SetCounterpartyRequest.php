@@ -46,6 +46,16 @@ class SetCounterpartyRequest extends FormRequest
             'counterpartyIds.*' => [
                 'integer',
                 Rule::exists('directory_counterparty', 'id'),
+                function ($attribute, $value, $fail) {
+                    /** @var  $user User */
+                    $user = Auth::user();
+                    if ($user->counterparty) {
+                        $counterparty = $user->counterparty->where('id', $value)->first();
+                        if (!$counterparty) {
+                            $fail('Not your counterparty id');
+                        }
+                    }
+                }
             ],
         ];
     }

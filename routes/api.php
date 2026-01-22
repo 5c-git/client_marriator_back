@@ -127,9 +127,6 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
             Route::post('/cancelTask','App\Http\Controllers\UserRoles\ManagerController@cancelTask')->name('cancelTask');
             Route::get('/getProjectsForTask','App\Http\Controllers\UserRoles\ManagerController@getProjectForTask')->name('getProjectForTask');
             Route::post('/repeatTask','App\Http\Controllers\UserRoles\ManagerController@repeatTask')->name('repeatTask');
-            Route::get('/getManager','App\Http\Controllers\UserRoles\ManagerController@getManager')->name('getManager');
-            Route::post('/setManagers','App\Http\Controllers\UserRoles\ManagerController@setManagers')->name('setManagers');
-            Route::post('/delManager','App\Http\Controllers\UserRoles\ManagerController@delManager')->name('delManager');
         });
         Route::middleware([CheckRole::class.':recruiter'])->group( function () {
             Route::get('/request/getRequests','App\Http\Controllers\UserRoles\RecruiterController@getRequests')->name('getRequests');
@@ -156,6 +153,9 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
         Route::middleware([CheckRole::class.':supervisor'])->group( function () {
         });
         Route::middleware([CheckRole::class.':admin'])->group( function () {
+            Route::get('/getManager','App\Http\Controllers\UserRoles\ManagerController@getManager')->name('getManager');
+            Route::post('/setManagers','App\Http\Controllers\UserRoles\ManagerController@setManagers')->name('setManagers');
+            Route::post('/delManager','App\Http\Controllers\UserRoles\ManagerController@delManager')->name('delManager');
 
             //Route::post('/moderation/confirmUserRegister','App\Http\Controllers\UserRoles\ManagerController@confirmUserRegister')->name('confirmUserRegister');
 

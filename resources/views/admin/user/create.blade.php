@@ -23,15 +23,28 @@
             </div>
         </div>
         <div class="form-group row">
+            <label for="phone" class="col-sm-2 col-form-label">Телефон</label>
+            <div class="col-sm-10">
+                <input type="tel" class="form-control" name="phone" id="phone" required>
+            </div>
+        </div>
+        <div class="form-group row">
             <label for="inputPassword" class="col-sm-2 col-form-label">Password</label>
             <div class="col-sm-10">
                 <input type="password" required class="form-control" id="inputPassword" name="password" placeholder="Password">
             </div>
         </div>
+
         <div class="form-group row">
             <label for="inputPasswordConfirm" class="col-sm-2 col-form-label">Confirm Password</label>
             <div class="col-sm-10">
                 <input type="password" required class="form-control" id="inputPasswordConfirm" name="confirmPassword" placeholder="Confirm Password">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="pin" class="col-sm-2 col-form-label">Pin</label>
+            <div class="col-sm-10">
+                <input type="number" class="form-control" id="pin" name="pin" placeholder="pin">
             </div>
         </div>
         <div class="form-group row">

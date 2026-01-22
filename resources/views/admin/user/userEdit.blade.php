@@ -53,6 +53,12 @@
                 <input type="password" class="form-control" id="inputPasswordConfirm" name="confirmPassword" placeholder="Confirm Password">
             </div>
         </div>
+        <div class="form-group row">
+            <label for="pin" class="col-sm-2 col-form-label">Pin</label>
+            <div class="col-sm-10">
+                <input type="number" class="form-control" id="pin" name="pin" placeholder="pin" value="{{$user->pin}}">
+            </div>
+        </div>
 
 
         <div class="form-group row">

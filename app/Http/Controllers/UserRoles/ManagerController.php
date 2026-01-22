@@ -118,7 +118,9 @@ class ManagerController extends Controller
     }
 
     public function getCounterparty(){
-        return CounterpartyResource::collection(Counterparty::get());
+        /** @var  $user User */
+        $user = Auth::user();
+        return CounterpartyResource::collection($user->counterparty);
     }
 
     public function setCounterparty(SetCounterpartyRequest $request)

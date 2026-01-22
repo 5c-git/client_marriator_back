@@ -91,6 +91,17 @@ class QrCodeController extends Controller
 
             $user->roles()->sync($request->roles);
 
+            $user = User::find($user->id);
+            $projects = $user->project()->with('counterparties')->get();
+            $counterpartyIds = collect();
+            foreach ($projects as $project) {
+                $counterpartyIds = $counterpartyIds->merge(
+                    $project->counterparties->pluck('id')
+                );
+            }
+            $counterpartyIds = $counterpartyIds->unique();
+            $user->counterparty()->syncWithoutDetaching($counterpartyIds->toArray());
+
             $response = ['status'=>'success','data'=>['url'=> env('FRONT_URL', '').'/signin/client/phone?hash='.$user->register_hash]];
         }else{
             $response = ['status'=>'error','error_message'=>'Пользователь с такими данными уже существует'];
