@@ -39,7 +39,7 @@ enum DocumentTemplatesEnum: int
         return match($this)
         {
             self::payment => 'payment',
-            self::detailsFiz => 'details',
+            self::detailsFiz => 'detailsFiz',
             self::offer => 'offer',
             self::offerSelf => 'offerSelf',
             self::detailsSelf => 'detailsSelf',
