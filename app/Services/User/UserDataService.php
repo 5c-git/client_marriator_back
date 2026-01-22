@@ -170,9 +170,9 @@ class UserDataService
         }
         $taxStatus = trim($this->getFieldView('taxStatus'));
         if(!empty($taxStatus) && $taxStatus =='Самозанятый'){
-            return DocumentTemplatesEnum::offer;
+            return DocumentTemplatesEnum::detailsSelf;
         }else{
-            return DocumentTemplatesEnum::offerSelf;
+            return DocumentTemplatesEnum::detailsFiz;
         }
     }
 
