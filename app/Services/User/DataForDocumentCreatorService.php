@@ -278,7 +278,7 @@ class DataForDocumentCreatorService
 
     public function getPassportIssuer(): string
     {
-        return $this->userDataService->getPassportDetails($this->user)??'не заполнено';
+        return $this->userDataService->getPassportIssuer($this->user)??'не заполнено';
     }
 
     public function getRegistrationAddress(): string

@@ -17,18 +17,20 @@ enum DocumentTemplatesEnum: int
     use Values;
 
     case payment = 1;
-    case details = 2;
+    case detailsFiz = 2;
     case offer = 3;
     case offerSelf = 4;
+    case detailsSelf = 5;
 
     public function getName(): string
     {
         return match($this)
         {
             self::payment => 'Платежный документ',
-            self::details => 'Договор',
+            self::detailsFiz => 'Договор для физ лица',
             self::offer => 'Договор оферты',
             self::offerSelf => 'Договор оферты для самозанятых',
+            self::detailsSelf => 'Договор для самозанятых',
         };
     }
 
@@ -37,9 +39,10 @@ enum DocumentTemplatesEnum: int
         return match($this)
         {
             self::payment => 'payment',
-            self::details => 'details',
+            self::detailsFiz => 'details',
             self::offer => 'offer',
             self::offerSelf => 'offerSelf',
+            self::detailsSelf => 'detailsSelf',
         };
     }
 
@@ -53,7 +56,7 @@ enum DocumentTemplatesEnum: int
                 'Отчество' => '{{$secondName}}',
                 'Итоговая сумма' => '{{$totalAmount}}',
             ],
-            self::details => [
+            self::detailsFiz => [
                 'Имя' => '{{$name}}',
                 'Фамилия' => '{{$lastName}}',
                 'Отчество' => '{{$secondName}}',
@@ -66,6 +69,12 @@ enum DocumentTemplatesEnum: int
                 'Итоговая сумма' => '{{$totalAmount}}',
             ],
             self::offerSelf => [
+                'Имя' => '{{$name}}',
+                'Фамилия' => '{{$lastName}}',
+                'Отчество' => '{{$secondName}}',
+                'Итоговая сумма' => '{{$totalAmount}}',
+            ],
+            self::detailsSelf => [
                 'Имя' => '{{$name}}',
                 'Фамилия' => '{{$lastName}}',
                 'Отчество' => '{{$secondName}}',

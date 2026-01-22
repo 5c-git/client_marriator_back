@@ -66,7 +66,7 @@ class UserDataService
         return $data;
     }
 
-    public function getName(User $user): string
+    public function getName(User $user): ?string
     {
         $this->user = $user;
         if(!is_array($this->user->data)){
@@ -89,10 +89,10 @@ class UserDataService
             }
         }
 
-        return $name??'';
+        return $name??null;
     }
 
-    public function getOnlyName(User $user): string
+    public function getOnlyName(User $user): ?string
     {
         $this->user = $user;
         if(!is_array($this->user->data)){
@@ -113,10 +113,10 @@ class UserDataService
                 $name =  $this->passportData[Passport::FirstName->name];
             }
         }
-        return $name??'';
+        return $name??null;
     }
 
-    public function getShortName(User $user): string
+    public function getShortName(User $user): ?string
     {
         $this->user = $user;
         if(!is_array($this->user->data)){
@@ -145,7 +145,7 @@ class UserDataService
         }
 
 
-        return $returnData??'';
+        return $returnData??null;
     }
 
     public function getTaxStatusName(User $user):string
@@ -176,7 +176,7 @@ class UserDataService
         }
     }
 
-    public function getShortNameOnliLaters(User $user): string
+    public function getShortNameOnliLaters(User $user): ?string
     {
         $this->user = $user;
         if(!is_array($this->user->data)){
@@ -203,7 +203,7 @@ class UserDataService
             }
         }
 
-        return $returnData??'';
+        return $returnData??null;
     }
 
     public function getShortNameOnliLatersWithLastName(User $user): string
@@ -237,7 +237,7 @@ class UserDataService
         return $returnData??'не заполнено';
     }
 
-    public function getOnlyLastName(User $user): string
+    public function getOnlyLastName(User $user): ?string
     {
         $this->user = $user;
         if(!is_array($this->user->data)){
@@ -258,10 +258,10 @@ class UserDataService
                 $name =  $this->passportData[Passport::LastName->name];
             }
         }
-        return $name??'';
+        return $name??null;
     }
 
-    public function getOnlySecondName(User $user): string
+    public function getOnlySecondName(User $user): ?string
     {
         $this->user = $user;
         if(!is_array($this->user->data)){
@@ -288,20 +288,20 @@ class UserDataService
         }
 
 
-        return $name??'';
+        return $name??null;
     }
 
-    public function getGender(User $user): string
+    public function getGender(User $user): ?string
     {
         $this->user = $user;
         if(!is_array($this->user->data)){
             $this->user->data = json_decode($this->user->data,true);
         }
         $gender = trim($this->getFieldView('gender'));
-        return $gender??'';
+        return $gender??null;
     }
 
-    public function getBirthDate(User $user): string
+    public function getBirthDate(User $user): ?string
     {
         $this->user = $user;
         if(empty($this->passportData)){
@@ -316,10 +316,10 @@ class UserDataService
         if(!empty($this->passportData)){
             return $this->passportData[Passport::BirthDate->name];
         }
-        return '';
+        return null;
     }
 
-    public function getBirthDateYear(User $user): string
+    public function getBirthDateYear(User $user): ?string
     {
         $this->user = $user;
         if(empty($this->passportData)){
@@ -334,10 +334,10 @@ class UserDataService
         if(!empty($this->passportData) && !empty($this->passportData[Passport::BirthDate->name])){
             return Carbon::parse($this->passportData[Passport::BirthDate->name])->format('Y');
         }
-        return '';
+        return null;
     }
 
-    public function getPassportDetails(User $user): string
+    public function getPassportDetails(User $user): ?string
     {
         $this->user = $user;
         if(empty($this->passportData)){
@@ -350,9 +350,9 @@ class UserDataService
             $this->passportData = $document->data;
         }
         if(!empty($this->passportData)){
-            return $this->passportData[Passport::Series->name].' '.$this->passportData[Passport::Number->name].' '.$this->passportData[Passport::GivenDate->name];
+            return $this->passportData[Passport::Series->name].' '.$this->passportData[Passport::Number->name];
         }
-        return '';
+        return null;
     }
 
     public function getIsHavePassport(User $user): bool
@@ -373,7 +373,7 @@ class UserDataService
         return false;
     }
 
-    public function getPassportIssuer(User $user): string
+    public function getPassportIssuer(User $user): ?string
     {
         $this->user = $user;
         if(empty($this->passportData)){
@@ -388,10 +388,10 @@ class UserDataService
         if(!empty($this->passportData)){
             return $this->passportData[Passport::GivenBy->name];
         }
-        return '';
+        return null;
     }
 
-    public function getRegistrationAddress(User $user): string
+    public function getRegistrationAddress(User $user): ?string
     {
         return 'не заполнено (registrationAddress)';
         $this->user = $user;
@@ -399,7 +399,7 @@ class UserDataService
             $this->user->data = json_decode($this->user->data,true);
         }
         $address = trim($this->getFieldView('addressReg'));
-        return $address??'';
+        return $address??null;
     }
 
     static function getUserSnils(User $user):?string

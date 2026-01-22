@@ -522,9 +522,14 @@ return [
                     'icon' => 'fas fa-fw fa-book',
                     'url' => 'admin/documents/test',
                 ],[
-                    'text' => 'Договор',
+                    'text' => 'Договор для физ лиц',
                     'icon' => 'fas fa-fw fa-book',
-                    'url' => 'admin/documents/'.DocumentTemplatesEnum::details->name,
+                    'url' => 'admin/documents/'.DocumentTemplatesEnum::detailsFiz->name,
+                ],
+                [
+                    'text' => 'Договор для самозанятых',
+                    'icon' => 'fas fa-fw fa-book',
+                    'url' => 'admin/documents/'.DocumentTemplatesEnum::detailsSelf->name,
                 ],[
                     'text' => 'Payment',
                     'icon' => 'fas fa-fw fa-book',

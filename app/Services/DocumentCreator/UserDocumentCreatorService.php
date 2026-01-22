@@ -24,7 +24,7 @@ use Illuminate\Support\Str;
 class UserDocumentCreatorService
 {
 
-    private DocumentTemplatesEnum $contract = DocumentTemplatesEnum::details;
+    private DocumentTemplatesEnum $contract = DocumentTemplatesEnum::detailsFiz;
     private DocumentTemplatesEnum $invoice = DocumentTemplatesEnum::payment;
 
     public PdfCreatorService $pdfService;
