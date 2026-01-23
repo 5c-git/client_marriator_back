@@ -73,7 +73,7 @@
                             "help", "image", "insertdatetime", "link", "lists", "media",
                             "preview", "searchreplace", "table", "visualblocks", "importword",
                         ],
-                        toolbar: "undo redo | styles | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | importword",
+                        toolbar: "undo redo | styles | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | importword | table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol",
                     });
                 }
                 $('.saveHtml').click(function (e) {
