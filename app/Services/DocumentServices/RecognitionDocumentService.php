@@ -49,7 +49,9 @@ class RecognitionDocumentService
                 $counterpartyId = [];
                 $organization = Organization::whereIn('uuid',$this->userData[$this->fieldOrganization->uuid])->get();
                 foreach ($organization as $item){
-                    $counterpartyId[] = $item->counterparty_id;
+                    if($item->counterparty_id) {
+                        $counterpartyId[] = $item->counterparty_id;
+                    }
                 }
                 $counterparties = null;
                 if(!empty($counterpartyId)){
