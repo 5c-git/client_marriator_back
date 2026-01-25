@@ -359,7 +359,7 @@ class FormController extends Controller
                     $dataForDoc = json_decode($user->data, true);
                 }
                 if(!empty($dataForDoc)) {
-                    (new RecognitionDocumentService($dataForDoc, $user->id))->createDocumentForRecognition();
+                    (new RecognitionDocumentService($dataForDoc, $user))->createDocumentForRecognition();
                 }
                 $response['result']['token'] = $token;
                 $response['status'] = 'success';

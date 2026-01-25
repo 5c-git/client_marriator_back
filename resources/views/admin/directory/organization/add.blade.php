@@ -28,6 +28,27 @@
         </div>
 
         <div class="form-group row">
+            <label for="counterparty_id" class="col-sm-2 col-form-label">Контрагент</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" name="counterparty_id" id="counterparty_id" required>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="counterparty_id" class="col-sm-2 col-form-label">Контрагент</label>
+            <div class="col-sm-10">
+                <div class="row">
+                    <div class="col-sm-9">
+                        <x-adminlte-select2 id="counterparty_id" name="counterparty_id">
+                            @foreach($counterparty as $field)
+                                <option value="{{$field['id']}}">{{$field['name']}}</option>
+                            @endforeach
+                        </x-adminlte-select2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group row">
             <label for="active" class="col-sm-2 col-form-label">Активность</label>
             <div class="offset-sm-2 col-sm-10">
                 <div class="form-check">

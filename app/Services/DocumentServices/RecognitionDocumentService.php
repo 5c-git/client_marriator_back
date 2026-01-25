@@ -5,7 +5,11 @@ use App\Enum\Document\DocumentFieldTypeEnum;
 use App\Enum\Document\DocumentTypeEnum;
 use App\Enum\Document\RecognitionDocumentStatusEnum;
 use App\Models\Document\RecognitionDocument;
+use App\Models\Fields\Directory\Counterparty;
+use App\Models\Fields\Directory\Organization;
+use App\Models\Fields\Fields;
 use App\Models\User;
+use App\Services\DocumentCreator\UserDocumentCreatorService;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Client\Response;
 
@@ -14,12 +18,16 @@ class RecognitionDocumentService
     private array $userData;
     private array $userFieldForRecognition;
     private int $userId;
+    private User $user;
+    private Fields|null $fieldOrganization;
 
-    public function __construct(array $userData, $userId)
+    public function __construct(array $userData,User $user)
     {
         $this->userFieldForRecognition = DocumentFieldTypeEnum::options();
         $this->userData = $userData;
-        $this->userId = $userId;
+        $this->userId = $user->id;
+        $this->user = $user;
+        $this->fieldOrganization = Fields::where('name','Список организаций')->first();
     }
 
     public function createDocumentForRecognition(): void
@@ -33,6 +41,26 @@ class RecognitionDocumentService
                 $recognitionDocument->user_id = $this->userId;
                 $recognitionDocument->file_field = $field;
                 $recognitionDocument->save();
+            }
+        }
+
+        if(!empty($this->fieldOrganization) && !empty($this->userData[$this->fieldOrganization->uuid])){
+            if(is_array($this->userData[$this->fieldOrganization->uuid])){
+                $counterpartyId = [];
+                $organization = Organization::whereIn('uuid',$this->userData[$this->fieldOrganization->uuid])->get();
+                foreach ($organization as $item){
+                    $counterpartyId[] = $item->counterparty_id;
+                }
+                $counterparties = null;
+                if(!empty($counterpartyId)){
+                    $counterparties = Counterparty::whereIn('id',$counterpartyId)->get();
+                }
+                if($counterparties) {
+                    $service = new UserDocumentCreatorService();
+                    foreach ($counterparties as $counterparty) {
+                        $service->createContract($this->user, $counterparty);
+                    }
+                }
             }
         }
     }

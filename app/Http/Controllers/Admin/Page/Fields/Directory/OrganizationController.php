@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\Page\Fields\Directory;
 
 use App\Enum\Fields\FieldsDirectoryEnum;
 use App\Http\Controllers\Controller;
+use App\Models\Fields\Directory\Counterparty;
 use App\Models\Fields\Directory\Organization;
 use App\Models\Fields\Fields;
 use Illuminate\Http\Request;
@@ -34,6 +35,7 @@ class OrganizationController extends Controller
 
     public function edit(Request $request)
     {
+        $counterparty = Counterparty::get()->toArray();
         $edit = $this->objClass::where('id', '=', $request->id)->first();
         if($edit) {
 
@@ -52,7 +54,7 @@ class OrganizationController extends Controller
                 }
             }
 
-            return view('admin.directory.'.$this->view.'.edit', compact('edit','fields'));
+            return view('admin.directory.'.$this->view.'.edit', compact('edit','fields','counterparty'));
         }else{
             return redirect()->back();
         }
@@ -67,6 +69,7 @@ class OrganizationController extends Controller
 
         $editObj->name = $data['name'];
         $editObj->uuid = $data['uuid'];
+        $editObj->counterparty_id = $data['counterparty_id'];
 
         if(!empty($data['parentFields'])) {
             $editObj->parentFields = json_encode($data['parentFields']);
@@ -93,6 +96,8 @@ class OrganizationController extends Controller
 
     public function create()
     {
+        $counterparty = Counterparty::get()->toArray();
+
         $fields['fields']['value'] = Fields::where('active',true)->get()->toArray();
         $fields['fields']['name'] = 'Простые поля';
 
@@ -104,7 +109,7 @@ class OrganizationController extends Controller
             }
         }
         $uuidDirectoryFields = $this->objClass::$uuid.'_'.Str::random(30);
-        return view('admin.directory.'.$this->view.'.add', compact('uuidDirectoryFields','fields'));
+        return view('admin.directory.'.$this->view.'.add', compact('uuidDirectoryFields','fields','counterparty'));
     }
 
     public function createAjax(Request $request)
@@ -114,6 +119,7 @@ class OrganizationController extends Controller
         $editObj = new $this->objClass();
         $editObj->name = $data['name'];
         $editObj->uuid = $data['uuid'];
+        $editObj->counterparty_id = $data['counterparty_id'];
 
         if(!empty($data['active'])) {
             $editObj->active = true;

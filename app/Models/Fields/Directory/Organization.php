@@ -18,7 +18,8 @@ class Organization extends Model implements ModelDirectoryInterface
         'uuid',
         'name',
         'active',
-        'parentFields'
+        'parentFields',
+        'counterparty_id'
     ];
 
     public $timestamps = false;

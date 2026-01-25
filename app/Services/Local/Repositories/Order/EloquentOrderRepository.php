@@ -25,6 +25,7 @@ use App\Models\Order\Order;
 use App\Models\Order\OrderActivities;
 use App\Models\Order\Request;
 use App\Models\User;
+use App\Services\DocumentCreator\UserDocumentCreatorService;
 use App\Services\Local\Repositories\Contracts\OrderRepository;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Support\Collection;
@@ -706,6 +707,13 @@ class EloquentOrderRepository implements OrderRepository
                     'order_id' => $bid->order_id
                 ]
             );
+            if($updated){
+                $counterparty = UserDocumentCreatorService::getCounterpartyByOrder($bid);
+                if($counterparty) {
+                    $service  = new UserDocumentCreatorService();
+                    $service->createContract($user,$counterparty);
+                }
+            }
             return (bool)$updated;
         }
         return false;

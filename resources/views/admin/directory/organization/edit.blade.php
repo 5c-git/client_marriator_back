@@ -37,6 +37,25 @@
             </div>
         </div>
 
+        <div class="form-group row">
+            <label for="counterparty_id" class="col-sm-2 col-form-label">Контрагент</label>
+            <div class="col-sm-10">
+                <div class="row">
+                    <div class="col-sm-9">
+                        <x-adminlte-select2 id="counterparty_id" name="counterparty_id">
+                            @foreach($counterparty as $field)
+                                @if($edit->counterparty_id == $field['id'])
+                                    <option selected value="{{$field['id']}}">{{$field['name']}}</option>
+                                @else
+                                    <option value="{{$field['id']}}">{{$field['name']}}</option>
+                                @endif
+                            @endforeach
+                        </x-adminlte-select2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 
         <div class="form-group row">
             <label for="active" class="col-sm-2 col-form-label">Активность</label>
