@@ -30,6 +30,8 @@ enum RoleEnum: int
             self::manager => Project::class,
             self::recruiter => Place::class,
             self::supervisor => Project::class,
+            self::specialist => Project::class,
+            self::admin => Project::class,
         };
     }
 
@@ -41,6 +43,8 @@ enum RoleEnum: int
             self::manager => 'project',
             self::recruiter => 'place',
             self::supervisor => 'project',
+            self::specialist => 'project',
+            self::admin => 'project',
         };
     }
 
@@ -52,6 +56,8 @@ enum RoleEnum: int
             self::manager => 'Проект',
             self::recruiter => 'Место проведения',
             self::supervisor => 'Проект',
+            self::specialist => 'project',
+            self::admin => 'project',
         };
     }
 
@@ -76,6 +82,7 @@ enum RoleEnum: int
                 self::client->value,
                 self::specialist->value
             ],
+            self::specialist => [],
         };
     }
 }
