@@ -69,12 +69,12 @@ class BidResource extends JsonResource
                         $statusW++;
                         break;
                     }
-                    if($users->pivot->accepted === BidAcceptingStatusEnum::notAccepted->value){
-                        $statusA++;
-                        break;
-                    }
                     if($users->pivot->accepted === BidAcceptingStatusEnum::consideration->value){
                         $statusC++;
+                        break;
+                    }
+                    if($users->pivot->accepted === BidAcceptingStatusEnum::notAccepted->value){
+                        $statusA++;
                         break;
                     }
                 }
