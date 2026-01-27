@@ -24,6 +24,7 @@ use App\Models\Order\Bid;
 use App\Models\Order\Order;
 use App\Models\Order\OrderActivities;
 use App\Models\Order\Request;
+use App\Models\Order\SearchRequest;
 use App\Models\User;
 use App\Services\DocumentCreator\UserDocumentCreatorService;
 use App\Services\Local\Repositories\Contracts\OrderRepository;
@@ -499,6 +500,37 @@ class EloquentOrderRepository implements OrderRepository
         return $bid;
     }
 
+    public function createSearchFromOrder(User $user, int $orderId, int $orderActivityId): SearchRequest
+    {
+        $order = Order::where('id', $orderId)->first();
+        $orderActivities = OrderActivities::where('id', $orderActivityId)->first();
+        $searchRequest             = new SearchRequest();
+        $radius = Radius::where('default',true)->first();
+        if(!$radius) {
+            $searchRequest->radius = 5;
+        }else{
+            $searchRequest->radius = $radius->value;
+        }
+        $searchRequest->place_id         = $order->place_id;
+        $searchRequest->user_id          = $order->accept_user_id;
+        $searchRequest->order_id         = $order->id;
+        $searchRequest->task_id          = null;
+        $searchRequest->status           = 0;
+        $searchRequest->self_employed    = $order->self_employed;
+        $searchRequest->price            = null;
+        $searchRequest->view_activity_id = $orderActivities->view_activity_id;
+        $searchRequest->count            = $orderActivities->count;
+        $searchRequest->date_start       = $orderActivities->date_start;
+        $searchRequest->date_end         = $orderActivities->date_end;
+        $searchRequest->need_foto        = $orderActivities->need_foto;
+        $searchRequest->date_activity    = $orderActivities->date_activity;
+        $searchRequest->activity_id      = $orderActivityId;
+
+        $searchRequest->save();
+
+        return $searchRequest;
+    }
+
     public function createBidFromTask(User $user, int $taskId, int $taskActivityId): Bid
     {
         /** @var  $task Task */
@@ -543,6 +575,41 @@ class EloquentOrderRepository implements OrderRepository
         $bid->save();
 
         return $bid;
+    }
+
+    public function createSearchFromTask(User $user, int $taskId, int $taskActivityId): SearchRequest
+    {
+        /** @var  $task Task */
+        $task = Task::where('id', $taskId)->first();
+
+        $taskActivities = TaskActivity::where('id', $taskActivityId)->first();
+        $searchRequest            = new SearchRequest();
+
+        $radius = Radius::where('default', true)->first();
+        if (!$radius) {
+            $searchRequest->radius = 5;
+        } else {
+            $searchRequest->radius = $radius->value;
+        }
+
+        $searchRequest->place_id         = $task->place_id;
+        $searchRequest->user_id          = $task->accept_user_id??$task->user_id;
+        $searchRequest->order_id         = $task->order_id;
+        $searchRequest->task_id          = $task->id;
+        $searchRequest->status           = 0;
+        $searchRequest->self_employed    = $task->self_employed;
+        $searchRequest->price            = null;
+        $searchRequest->view_activity_id = $taskActivities->view_activity_id;
+        $searchRequest->count            = $taskActivities->count;
+        $searchRequest->date_start       = $taskActivities->date_start;
+        $searchRequest->date_end         = $taskActivities->date_end;
+        $searchRequest->need_foto        = $taskActivities->need_foto;
+        $searchRequest->date_activity    = $taskActivities->date_activity;
+        $searchRequest->activity_id      = $taskActivityId;
+
+        $searchRequest->save();
+
+        return $searchRequest;
     }
 
     public function getBidsByUserSyncDataPaginate(User $user, ?OrderStatusEnum $status): Collection

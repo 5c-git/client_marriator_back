@@ -170,7 +170,13 @@ class SupervisorController extends Controller
             $projects = $user->counterparty
                 ->flatMap(fn($counterparty) => $counterparty->projects)
                 ->unique('id');
-            return ProjectResource::collection($projects);
+            $user = Auth::user();
+            $projectsAdmin = $user->counterparty
+                ->flatMap(fn($counterparty) => $counterparty->projects)
+                ->unique('id');
+
+            $commonProjects = $projects->intersect($projectsAdmin);
+            return ProjectResource::collection($commonProjects);
         }else{
             return new ErrorResource();
         }
@@ -259,7 +265,13 @@ class SupervisorController extends Controller
             $places = $user->project
                 ->flatMap(fn($project) => $project->places)
                 ->unique('id');
-            return PlaceResource::collection($places);
+            $user = Auth::user();
+            $placesAdmin = $user->project
+                ->flatMap(fn($project) => $project->places)
+                ->unique('id');
+
+            $commonPlace = $places->intersect($placesAdmin);
+            return PlaceResource::collection($commonPlace);
         }
         if($userRoles[0] == RoleEnum::recruiter->value){
             $places = Place::all();

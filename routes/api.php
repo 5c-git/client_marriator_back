@@ -250,6 +250,8 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
             Route::post('/setCounterparty','App\Http\Controllers\UniversalController@setCounterparty')->name('setCounterparty');
             Route::post('/deleteCounterparty','App\Http\Controllers\UniversalController@deleteCounterparty')->name('deleteCounterparty');
         });
+
+        Route::get('/getData','App\Http\Controllers\UniversalController@getData')->name('getData');
     });
 
     Route::group(['prefix' => 'settings'], function () {

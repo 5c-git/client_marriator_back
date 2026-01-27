@@ -45,6 +45,8 @@ use App\Http\Requests\UserData\SetPlaceRequest as SetPlaceModerationRequest;
 use App\Http\Requests\UserData\SetProjectRequest;
 use App\Http\Requests\UserData\SetSurepvisorsRequest;
 use App\Http\Requests\UserData\SetUserImgRequest;
+use App\Http\Resources\UserForModerationResource;
+use App\Http\Resources\UserResource;
 use FontLib\Table\Type\glyf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -62,6 +64,11 @@ class UniversalController extends Controller
         }
         $user = Auth::user();
         $this->roles = $user->roles?->pluck('name')->toArray();
+    }
+
+    public function getData(): UserForModerationResource
+    {
+        return new UserForModerationResource(Auth::user());
     }
 
     public function getBrand(){

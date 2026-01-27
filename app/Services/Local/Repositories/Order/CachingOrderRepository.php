@@ -23,6 +23,7 @@ use App\Http\Requests\Order\UpdateTaskRequest;
 use App\Models\Order\Bid;
 use App\Models\Order\Order;
 use App\Models\Order\Request;
+use App\Models\Order\SearchRequest;
 use App\Models\Order\Task;
 use App\Models\Order\TaskActivity;
 use App\Models\User;
@@ -136,9 +137,19 @@ class CachingOrderRepository implements OrderRepository
         return $this->orders->createBidFromOrder($user,$orderId,$orderActivityId);
     }
 
+    public function createSearchFromOrder(User $user, int $orderId, int $orderActivityId): SearchRequest
+    {
+        return $this->orders->createSearchFromOrder($user,$orderId,$orderActivityId);
+    }
+
     public function createBidFromTask(User $user, int $taskId, int $taskActivityId): Bid
     {
         return $this->orders->createBidFromTask($user,$taskId,$taskActivityId);
+    }
+
+    public function createSearchFromTask(User $user, int $taskId, int $taskActivityId): SearchRequest
+    {
+        return $this->orders->createSearchFromTask($user,$taskId,$taskActivityId);
     }
 
     public function getBidsByUserSyncDataPaginate(User $user, ?OrderStatusEnum $status): Collection

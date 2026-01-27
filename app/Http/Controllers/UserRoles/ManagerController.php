@@ -18,6 +18,8 @@ use App\Http\Requests\Order\AcceptTaskRequest;
 use App\Http\Requests\Order\AddReasonsRequest;
 use App\Http\Requests\Order\CreateBidFromOrderRequest;
 use App\Http\Requests\Order\CreateBidFromTaskRequest;
+use App\Http\Requests\Order\CreateSearchFromOrderRequest;
+use App\Http\Requests\Order\CreateSearchFromTaskRequest;
 use App\Http\Requests\Order\DeclinedSpecialistRequest;
 use App\Http\Requests\Order\EndSpecialistJobRequest;
 use App\Http\Requests\Order\GetBidRequest;
@@ -193,10 +195,17 @@ class ManagerController extends Controller
             }
         }
         if($checkRole){
+
             $projects = $user->counterparty
                 ->flatMap(fn($counterparty) => $counterparty->projects)
                 ->unique('id');
-            return ProjectResource::collection($projects);
+            $user = Auth::user();
+            $projectsAdmin = $user->counterparty
+                ->flatMap(fn($counterparty) => $counterparty->projects)
+                ->unique('id');
+
+            $commonProjects = $projects->intersect($projectsAdmin);
+            return ProjectResource::collection($commonProjects);
         }else{
             return new ErrorResource();
         }
@@ -419,7 +428,13 @@ class ManagerController extends Controller
             $places = $user->project
                 ->flatMap(fn($project) => $project->places)
                 ->unique('id');
-            return PlaceResource::collection($places);
+            $user = Auth::user();
+            $placesAdmin = $user->project
+                ->flatMap(fn($project) => $project->places)
+                ->unique('id');
+
+            $commonPlace = $places->intersect($placesAdmin);
+            return PlaceResource::collection($commonPlace);
         }
         if($userRoles[0] == RoleEnum::recruiter->value){
             $places = Place::all();
@@ -804,10 +819,32 @@ class ManagerController extends Controller
         );
     }
 
+    public function createSearchFromOrder(CreateSearchFromOrderRequest $request){
+        $user = $request->user();
+        return new BidResource(
+            $this->orderRepository->createSearchFromOrder(
+                $user,
+                $request->orderId,
+                $request->orderActivityId
+            )
+        );
+    }
+
     public function createBidFromTask(CreateBidFromTaskRequest $request){
         $user = $request->user();
         return new BidResource(
             $this->orderRepository->createBidFromTask(
+                $user,
+                $request->taskId,
+                $request->taskActivityId
+            )
+        );
+    }
+
+    public function createSearchFromTask(CreateSearchFromTaskRequest $request){
+        $user = $request->user();
+        return new BidResource(
+            $this->orderRepository->createSearchFromTask(
                 $user,
                 $request->taskId,
                 $request->taskActivityId

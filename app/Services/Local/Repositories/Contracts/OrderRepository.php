@@ -17,6 +17,7 @@ use App\Http\Requests\Order\UpdateTaskActivityRequest;
 use App\Http\Requests\Order\UpdateTaskRequest;
 use App\Models\Order\Order;
 use App\Models\Order\Request;
+use App\Models\Order\SearchRequest;
 use App\Models\Order\TaskActivity;
 use FontLib\Table\Type\post;
 use Illuminate\Contracts\Pagination\Paginator;
@@ -57,7 +58,9 @@ interface OrderRepository
     public function cancelTask(int $taskId): bool;
     public function acceptTask(User $user,int $taskId): bool;
     public function createBidFromOrder(User $user,int $orderId,int $orderActivityId): Bid;
+    public function createSearchFromOrder(User $user,int $orderId,int $orderActivityId): SearchRequest;
     public function createBidFromTask(User $user,int $taskId,int $taskActivityId): Bid;
+    public function createSearchFromTask(User $user,int $taskId,int $taskActivityId): SearchRequest;
     public function getBidsByUserSyncDataPaginate(User $user,?OrderStatusEnum $status): Collection;
     public function getJobsByUserSyncDataPaginate(User $user,$specialistId = null): Collection;
     public function getJobByUser(GetJobRequest $request): Bid;

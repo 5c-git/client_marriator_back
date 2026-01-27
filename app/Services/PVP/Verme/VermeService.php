@@ -90,7 +90,7 @@ class VermeService  extends PVPAbstract
 
     public function assignToShift(User $user,string $guid)
     {
-        $this->registerUser($user);
+        //$this->registerUser($user);
         $payload = [
             'setOutsourcingShift' => [
                 'headquarter' => ['code' => 'bnt'],
@@ -107,6 +107,9 @@ class VermeService  extends PVPAbstract
         ];
 
         $data = $this->sendRequest($payload, 'POST');
+        echo "<pre>";
+        var_dump($data);
+        echo "</pre>";
         if(!empty($data)){
             return true;
         }
@@ -121,6 +124,12 @@ class VermeService  extends PVPAbstract
                 'Accept' => 'application/json',
             ])->timeout(3000)->post($this->baseUrl, $payload);
 
+            echo "<pre>";
+            var_dump($response->body());
+            echo "</pre>";
+            echo "<pre>";
+            var_dump($response->status());
+            echo "</pre>";
             if (!$response->successful()) {
                 Log::error('API Request failed', [
                     'status' => $response->status(),

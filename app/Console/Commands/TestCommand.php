@@ -44,6 +44,16 @@ class TestCommand extends Command
 
     public function handle(): void
     {
+        $r = RecognitionDocument::query()->first();
+        $user = User::query()->where('id',$r->user_id)->first();
+        $service = new VermeService();
+        //$data = $service->registerUser($user);
+        $data = $service->assignToShift($user,'71ade6e8-bcce-4c1f-ad4d-498a5f55dda8');//a2d2125e-70ec-40ed-83a5-03a2c6494058
+        echo "<pre>";
+        var_dump($data);
+        echo "</pre>";
+        die();
+
         $service = new UserDocumentCreatorService();
         $counterparty = Counterparty::query()->where('id',1)->first();
         $r = RecognitionDocument::query()->first();
