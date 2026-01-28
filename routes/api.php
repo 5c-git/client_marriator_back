@@ -15,7 +15,7 @@ Route::group(["middleware" => 'throttle:1000,1'], function () {
     Route::post('/refreshToken/', 'App\Http\Controllers\PersonalArea\CheckPinController@refreshToken')->name('refreshToken');
 });
 
-Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
+Route::group(["middleware" => ["auth:api"]], function () {
     Route::group(['prefix' => 'personal'], function () {
         Route::get('/getData', 'App\Http\Controllers\UniversalController@getData')->name('getData');
     });
