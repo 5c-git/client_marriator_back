@@ -6,8 +6,10 @@ use App\Enum\Document\DocumentStatusEnum;
 use App\Enum\Document\DocumentStatusSignatureEnum;
 use App\Enum\Document\DocumentTemplates\DocumentTemplatesEnum;
 use App\Enum\Document\DocumentTemplates\DocumentTemplatesFieldEnum;
+use App\Enum\Document\DocumentTypeEnum;
 use App\Models\Document\Document;
 use App\Models\Document\DocumentTemplate;
+use App\Models\Document\RecognitionDocument;
 use App\Models\Fields\Directory\Counterparty;
 use App\Models\Order\Bid;
 use App\Models\Order\Order;
@@ -197,12 +199,19 @@ class UserDocumentCreatorService
 
     static function checkSignContract(User $user, Counterparty $counterparty): bool
     {
-        $userData = UserContractData::query()
-            ->where('user_id', $user->id)
-            ->where('counterparty_id', $counterparty->id)
-            ->where('date_start', '<=', Carbon::now())
-            ->where('date_end', '>=', Carbon::now())
+        $document = RecognitionDocument::query()
+            ->where('user_id',$user->id)
+            ->where('file_type',DocumentTypeEnum::Passport->value)
+            ->orderBy('id','desc')
             ->first();
+        if($document) {
+            $userData = UserContractData::query()
+                ->where('user_id', $user->id)
+                ->where('counterparty_id', $counterparty->id)
+                ->where('date_start', '<=', Carbon::now())
+                ->where('date_end', '>=', Carbon::now())
+                ->first();
+        }
         return !empty($userData);
     }
 
