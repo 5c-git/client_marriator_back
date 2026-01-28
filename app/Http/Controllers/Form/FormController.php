@@ -353,14 +353,6 @@ class FormController extends Controller
                 $user->save();
                 $apiTokenService = new ApiTokenService($user);
                 $token = $apiTokenService->createToken(['personalArea']);
-                if(is_array($user->data)){
-                    $dataForDoc = $user->data;
-                }else{
-                    $dataForDoc = json_decode($user->data, true);
-                }
-                if(!empty($dataForDoc)) {
-                    (new RecognitionDocumentService($dataForDoc, $user))->createDocumentForRecognition();
-                }
                 $response['result']['token'] = $token;
                 $response['status'] = 'success';
             }else{

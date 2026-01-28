@@ -821,13 +821,12 @@ class ManagerController extends Controller
 
     public function createSearchFromOrder(CreateSearchFromOrderRequest $request){
         $user = $request->user();
-        return new BidResource(
-            $this->orderRepository->createSearchFromOrder(
-                $user,
-                $request->orderId,
-                $request->orderActivityId
-            )
+        $this->orderRepository->createSearchFromOrder(
+            $user,
+            $request->orderId,
+            $request->orderActivityId
         );
+        return new SuccessResource();
     }
 
     public function createBidFromTask(CreateBidFromTaskRequest $request){
@@ -843,13 +842,12 @@ class ManagerController extends Controller
 
     public function createSearchFromTask(CreateSearchFromTaskRequest $request){
         $user = $request->user();
-        return new BidResource(
-            $this->orderRepository->createSearchFromTask(
-                $user,
-                $request->taskId,
-                $request->taskActivityId
-            )
+        $this->orderRepository->createSearchFromTask(
+            $user,
+            $request->taskId,
+            $request->taskActivityId
         );
+        return new SuccessResource();
     }
 
     public function getViewActivitiesForTask(GetViewActivitiesForTaskRequest $request){

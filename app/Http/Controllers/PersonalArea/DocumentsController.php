@@ -8,7 +8,10 @@ use App\Http\Resources\Document\DocumentResource;
 use App\Http\Resources\ErrorResource;
 use App\Http\Resources\SuccessResource;
 use App\Models\Document\RecognitionDocument;
+use App\Models\Fields\Directory\Counterparty;
 use App\Models\User;
+use App\Models\User\UserContractData;
+use App\Services\DocumentCreator\UserDocumentCreatorService;
 use App\Services\Nopaper\NopaperService;
 use App\Services\OneC\OneCServices;
 use Carbon\Carbon;
@@ -97,39 +100,39 @@ class DocumentsController extends Controller
 
     public function createDocument(Request $request)
     {
-        $user = $request->user();
-
-        $sourcePath = public_path('nameTest.pdf');
-        $destinationPath = "source/document/".$user->id."/".date('YmdHis').rand(1000000,9999999).'testDoc.pdf';
-        $fileContent = File::get($sourcePath);
-        Storage::disk('public')->put($destinationPath, $fileContent);
-        $fileUrl = Storage::url($destinationPath);
-        $doc = new Document();
-        $doc->uuid = Str::uuid();
-        $doc->user_id = $user->id;
-        $doc->file_name = date('YmdHis').rand(1000000,9999999).'testDoc.pdf';
-        $doc->file_path = $destinationPath;
-        $doc->status = DocumentStatusEnum::Signed->value;
-        $doc->status_signature = DocumentStatusSignatureEnum::NoSend->value;
-        $doc->date_signature = Carbon::now();
-        $doc->save();
-
-        $sourcePath = public_path('nameTest.pdf');
-        $destinationPath = "source/document/".$user->id."/".date('YmdHis').rand(1000000,9999999).'testDoc.pdf';
-        $fileContent = File::get($sourcePath);
-        Storage::disk('public')->put($destinationPath, $fileContent);
-        $fileUrl = Storage::url($destinationPath);
-        $doc = new Document();
-        $doc->uuid = Str::uuid();
-        $doc->user_id = $user->id;
-        $doc->file_name = date('YmdHis').rand(1000000,9999999).'testDoc.pdf';
-        $doc->file_path = $destinationPath;
-        $doc->status = DocumentStatusEnum::Signed->value;
-        $doc->status_signature = DocumentStatusSignatureEnum::NoSend->value;
-        $doc->date_signature = Carbon::now();
-        $doc->save();
-
-
+//        $user = $request->user();
+//
+//        $sourcePath = public_path('nameTest.pdf');
+//        $destinationPath = "source/document/".$user->id."/".date('YmdHis').rand(1000000,9999999).'testDoc.pdf';
+//        $fileContent = File::get($sourcePath);
+//        Storage::disk('public')->put($destinationPath, $fileContent);
+//        $fileUrl = Storage::url($destinationPath);
+//        $doc = new Document();
+//        $doc->uuid = Str::uuid();
+//        $doc->user_id = $user->id;
+//        $doc->file_name = date('YmdHis').rand(1000000,9999999).'testDoc.pdf';
+//        $doc->file_path = $destinationPath;
+//        $doc->status = DocumentStatusEnum::Signed->value;
+//        $doc->status_signature = DocumentStatusSignatureEnum::NoSend->value;
+//        $doc->date_signature = Carbon::now();
+//        $doc->save();
+//
+//        $sourcePath = public_path('nameTest.pdf');
+//        $destinationPath = "source/document/".$user->id."/".date('YmdHis').rand(1000000,9999999).'testDoc.pdf';
+//        $fileContent = File::get($sourcePath);
+//        Storage::disk('public')->put($destinationPath, $fileContent);
+//        $fileUrl = Storage::url($destinationPath);
+//        $doc = new Document();
+//        $doc->uuid = Str::uuid();
+//        $doc->user_id = $user->id;
+//        $doc->file_name = date('YmdHis').rand(1000000,9999999).'testDoc.pdf';
+//        $doc->file_path = $destinationPath;
+//        $doc->status = DocumentStatusEnum::Signed->value;
+//        $doc->status_signature = DocumentStatusSignatureEnum::NoSend->value;
+//        $doc->date_signature = Carbon::now();
+//        $doc->save();
+//
+//
         return new SuccessResource();
     }
 
@@ -165,7 +168,18 @@ class DocumentsController extends Controller
 
     public function getDocumentConclude(Request $request){
         $user = $request->user();
-        $organization = Organization::query()->select(['uuid','name'])->where('active',true)->get();
+        $userData = UserContractData::query()
+            ->where('user_id',$user->id)
+            ->where('date_start','<=',Carbon::now())
+            ->where('date_end','>=',Carbon::now())
+            ->get();
+        $counterpartiesIds = [];
+        foreach ($userData as $user){
+            $counterpartiesIds[] = $user->counterparty_id;
+        }
+        $organization = Organization::query()->select(['uuid','name'])->where('active',true)
+            ->whereNotIn('counterparty_id',$counterpartiesIds)
+            ->get();
         $response = [
             'status' => 'success',
             'result' => ['organization'=>$organization->toArray()]
@@ -265,17 +279,45 @@ class DocumentsController extends Controller
      */
 
     public function setConclude(Request $request){
-        $user = $request->user();
+//        $user = $request->user();
+//        $response = [
+//            'status' => 'error',
+//        ];
+//        if(!empty($request->uuid)){
+//            if(is_array($request->uuid)){
+//                if((new OneCServices($user))->setConclude($request->uuid)->status){
+//                    $response = [
+//                        'status' => 'success',
+//                    ];
+//                };
+//            }
+//        }
+//        return response()->json($response, 200);
         $response = [
             'status' => 'error',
         ];
-        if(!empty($request->uuid)){
-            if(is_array($request->uuid)){
-                if((new OneCServices($user))->setConclude($request->uuid)->status){
-                    $response = [
+        $user = $request->user();
+        if(is_array($request->uuid)) {
+            $organizations = Organization::query()->whereIn('uuid', $request->uuid)->get();
+        }else{
+            $organizations = Organization::query()->where('uuid', $request->uuid)->get();
+        }
+        $counterpartyIds = [];
+        foreach ($organizations as $organization){
+            $counterpartyIds[] = $organization->counterparty_id;
+        }
+        $counterparties = Counterparty::query()
+            ->whereIn('id',$counterpartyIds)
+            ->get();
+        $documents = collect();
+        $service = new UserDocumentCreatorService();
+        foreach ($counterparties as $counterparty){
+            $document = $service->createContract($user,$counterparty);
+            if($document){
+                $documents->push($document);
+                $response = [
                         'status' => 'success',
-                    ];
-                };
+                ];
             }
         }
         return response()->json($response, 200);

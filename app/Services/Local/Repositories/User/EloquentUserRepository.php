@@ -2,6 +2,7 @@
 
 namespace App\Services\Local\Repositories\User;
 
+use App\Enum\Role\RoleEnum;
 use App\Enum\User\SortEnum;
 use App\Enum\User\UserStatusModerationEnum;
 use App\Models\User;
@@ -14,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Contracts\Pagination\Paginator;
 
@@ -38,6 +40,10 @@ class EloquentUserRepository implements UserRepository
 
     public function getModerationUsersPaginate(array $roles = [],SortEnum $sort = SortEnum::all,UserStatusModerationEnum $status = null,int $page = 1,int $perPage = 10): Paginator
     {
+        $userAuth = Auth::user();
+        $userRoles = $userAuth->roles?->pluck('id')->toArray();
+
+
         $userQuery = User::query()
             ->where('id','!=',auth()->id())
             ->with(['roles','project','place'])
@@ -51,6 +57,32 @@ class EloquentUserRepository implements UserRepository
         }else{
             $userQuery = $userQuery->where('phone','123');
         }
+
+        if(in_array(RoleEnum::manager->value,$userRoles) || in_array(RoleEnum::supervisor->value,$userRoles)){
+            $userPlaces = $userAuth->place?->pluck('id')->toArray();
+            if(!empty($userPlaces)){
+                $userQuery->whereHas('place', function ($query) use ($userPlaces) {
+                    $query->whereIn('place_id', $userPlaces);
+                });
+            }
+        }
+
+        if(in_array(RoleEnum::manager->value,$userRoles)){
+            $userSupervisors = $userAuth->supervisors?->pluck('id')->toArray();
+            if(!empty($userSupervisors)){
+                $userQuery->where(function($query) use ($userSupervisors) {
+                    $query->whereHas('roles', function($q) {
+                        $q->where('id', RoleEnum::supervisor->value);
+                    })->whereIn('id', $userSupervisors);
+                })->orWhere(function($query) {
+                    $query->whereDoesntHave('roles', function($q) {
+                        $q->where('id', RoleEnum::supervisor->value);
+                    });
+                });
+            }
+        }
+
+
         if($status == UserStatusModerationEnum::archive){
             $userQuery = $userQuery->where('confirmRegister',false)
                 ->where('finishRegister',false);
@@ -76,6 +108,9 @@ class EloquentUserRepository implements UserRepository
 
     public function getModerationUser(int $userId, array $roles = []): User
     {
+
+        $userAuth = Auth::user();
+        $userRoles = $userAuth->roles?->pluck('id')->toArray();
         $userQuery = User::query()
             ->with(['roles','project','place'])
             ->whereNull('register_hash');
@@ -89,6 +124,30 @@ class EloquentUserRepository implements UserRepository
             $userQuery = $userQuery->where('phone','123');
         }
         $userQuery = $userQuery->where('id',$userId);
+
+        if(in_array(RoleEnum::manager->value,$userRoles) || in_array(RoleEnum::supervisor->value,$userRoles)){
+            $userPlaces = $userAuth->place?->pluck('id')->toArray();
+            if(!empty($userPlaces)){
+                $userQuery->whereHas('place', function ($query) use ($userPlaces) {
+                    $query->whereIn('place_id', $userPlaces);
+                });
+            }
+        }
+
+        if(in_array(RoleEnum::manager->value,$userRoles)){
+            $userSupervisors = $userAuth->supervisors?->pluck('id')->toArray();
+            if(!empty($userSupervisors)){
+                $userQuery->where(function($query) use ($userSupervisors) {
+                    $query->whereHas('roles', function($q) {
+                        $q->where('id', RoleEnum::supervisor->value);
+                    })->whereIn('id', $userSupervisors);
+                })->orWhere(function($query) {
+                    $query->whereDoesntHave('roles', function($q) {
+                        $q->where('id', RoleEnum::supervisor->value);
+                    });
+                });
+            }
+        }
 
         return $userQuery->first();
     }

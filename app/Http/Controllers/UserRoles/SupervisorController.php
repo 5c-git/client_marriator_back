@@ -17,6 +17,8 @@ use App\Http\Requests\Order\AcceptTaskRequest;
 use App\Http\Requests\Order\AddReasonsRequest;
 use App\Http\Requests\Order\CreateBidFromOrderRequest;
 use App\Http\Requests\Order\CreateBidFromTaskRequest;
+use App\Http\Requests\Order\CreateSearchFromOrderRequest;
+use App\Http\Requests\Order\CreateSearchFromTaskRequest;
 use App\Http\Requests\Order\DeclinedSpecialistRequest;
 use App\Http\Requests\Order\EndSpecialistJobRequest;
 use App\Http\Requests\Order\GetBidRequest;
@@ -501,6 +503,16 @@ class SupervisorController extends Controller
         );
     }
 
+    public function createSearchFromOrder(CreateSearchFromOrderRequest $request){
+        $user = $request->user();
+        $this->orderRepository->createSearchFromOrder(
+            $user,
+            $request->orderId,
+            $request->orderActivityId
+        );
+        return new SuccessResource();
+    }
+
     public function createBidFromTask(CreateBidFromTaskRequest $request){
         $user = $request->user();
         return new BidResource(
@@ -510,6 +522,16 @@ class SupervisorController extends Controller
                 $request->taskActivityId
             )
         );
+    }
+
+    public function createSearchFromTask(CreateSearchFromTaskRequest $request){
+        $user = $request->user();
+        $this->orderRepository->createSearchFromTask(
+            $user,
+            $request->taskId,
+            $request->taskActivityId
+        );
+        return new SuccessResource();
     }
 
     public function getBids(GetBidsRequest $request)

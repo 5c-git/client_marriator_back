@@ -54,6 +54,22 @@ class GetUserFileFromCorrect extends Command
                         }
                         $recognitionDocument->save();
                         RecognitionDocumentService::createUserMoreInformationInfoFromDocument($recognitionDocument);
+
+                        if(
+                            $recognitionDocument->status === RecognitionDocumentStatusEnum::recognized->value &&
+                            $recognitionDocument->file_type === DocumentTypeEnum::Passport->value
+                        ){
+                            $user = $recognitionDocument->user;
+                            if(is_array($user->data)){
+                                $dataForDoc = $user->data;
+                            }else{
+                                $dataForDoc = json_decode($user->data, true);
+                            }
+                            if(!empty($dataForDoc)) {
+                                (new RecognitionDocumentService($dataForDoc, $user))->createDocumentForRecognition();
+                            }
+                        }
+
                     }else{
                         $recognitionDocument->status = RecognitionDocumentStatusEnum::failed->value;
                         RecognitionDocumentService::addErrorField($recognitionDocument,DocumentErrorText::ErrorRecognize->getUserBinding());
