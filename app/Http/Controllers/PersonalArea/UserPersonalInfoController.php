@@ -7,6 +7,7 @@ use App\Http\Resources\RoleResource;
 use App\Models\Fields\Fields;
 use App\Models\User;
 use App\Services\ApiTokenService\ApiTokenService;
+use App\Services\DocumentServices\RecognitionDocumentService;
 use App\Services\FormBuilderService;
 use App\Services\OneC\OneCServices;
 use Carbon\Carbon;
@@ -264,6 +265,9 @@ class UserPersonalInfoController extends Controller
             }
             $user->errorData = json_encode($userError);
             $user->save();
+            if(!empty($userData)) {
+                (new RecognitionDocumentService($userData, $user))->createDocumentForRecognition();
+            }
 
             $response['status'] = 'success';
         } else {
@@ -820,6 +824,9 @@ class UserPersonalInfoController extends Controller
             $response['result']['step'] = $step;
             $response['result']['type'] = $formDataService->checkStatusForm(true);
             $response['status'] = 'success';
+            if(!empty($userData)) {
+                (new RecognitionDocumentService($userData, $user))->createDocumentForRecognition();
+            }
         }else{
             $response['error'] = 'Поле step не может быть больше 3';
             $response['status'] = 'error';
@@ -891,6 +898,10 @@ class UserPersonalInfoController extends Controller
                 }
             }else{
                 $change_fieldsUser = [];
+            }
+
+            if(!empty($userData)) {
+                (new RecognitionDocumentService($userData, $user))->createDocumentForRecognition();
             }
 
             $change_fieldsUp = array_merge($change_fields,$change_fieldsUser);
