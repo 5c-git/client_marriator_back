@@ -15,6 +15,12 @@ Route::group(["middleware" => 'throttle:1000,1'], function () {
     Route::post('/refreshToken/', 'App\Http\Controllers\PersonalArea\CheckPinController@refreshToken')->name('refreshToken');
 });
 
+Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
+    Route::group(['prefix' => 'personal'], function () {
+        Route::get('/getData', 'App\Http\Controllers\UniversalController@getData')->name('getData');
+    });
+});
+
 Route::group(["middleware" => ["auth:api", "scope:register"]], function () {
     Route::get('/getUserInfo/', 'App\Http\Controllers\Form\FormController@getUserInfo')->name('getUserInfoInReg');
     Route::get('/getForm/', 'App\Http\Controllers\Form\FormController@getForm')->name('getForm');
@@ -251,7 +257,6 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
             Route::post('/deleteCounterparty','App\Http\Controllers\UniversalController@deleteCounterparty')->name('deleteCounterparty');
         });
 
-        Route::get('/getData','App\Http\Controllers\UniversalController@getData')->name('getData');
     });
 
     Route::group(['prefix' => 'settings'], function () {
