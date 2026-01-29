@@ -857,7 +857,7 @@ class ManagerController extends Controller
         if(!$task->self_employed && $viewActivities) {
             $viewActivities = $viewActivities->where('self_employed', false);
         }
-        return ViewActivityResource::collection($viewActivities);
+        return ViewActivityResource::collection($viewActivities??collect());
     }
 
     public function getBids(GetBidsRequest $request)
