@@ -350,6 +350,14 @@ class FormController extends Controller
                 if($user->data && strlen($user->data)>5) {
                     $user->data = json_encode(array_merge(...json_decode($user->data, true)));
                 }
+                if(is_array($user->data)){
+                    $dataForDoc = $user->data;
+                }else{
+                    $dataForDoc = json_decode($user->data, true);
+                }
+                if(!empty($dataForDoc)) {
+                    (new RecognitionDocumentService($dataForDoc, $user))->createDocumentForRecognition();
+                }
                 $user->save();
                 $response['status'] = 'success';
             }else{

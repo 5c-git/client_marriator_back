@@ -66,7 +66,7 @@ class GetUserFileFromCorrect extends Command
                                 $dataForDoc = json_decode($user->data, true);
                             }
                             if(!empty($dataForDoc)) {
-                                (new RecognitionDocumentService($dataForDoc, $user))->createDocumentForRecognition();
+                                (new RecognitionDocumentService($dataForDoc, $user))->createDocument();
                             }
                         }
 

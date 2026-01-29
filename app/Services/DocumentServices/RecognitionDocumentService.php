@@ -43,7 +43,10 @@ class RecognitionDocumentService
                 $recognitionDocument->save();
             }
         }
+    }
 
+    public function createDocument(): void
+    {
         if(!empty($this->fieldOrganization) && !empty($this->userData[$this->fieldOrganization->uuid])){
             if(is_array($this->userData[$this->fieldOrganization->uuid])){
                 $counterpartyId = [];
