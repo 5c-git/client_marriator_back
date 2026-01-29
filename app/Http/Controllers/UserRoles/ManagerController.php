@@ -852,9 +852,9 @@ class ManagerController extends Controller
 
     public function getViewActivitiesForTask(GetViewActivitiesForTaskRequest $request){
         $task = Task::where('id',$request->taskId)->first();
-        $viewActivities = $task->project->viewActivities
+        $viewActivities = $task->project?->viewActivities
             ->unique('id');
-        if(!$task->self_employed) {
+        if(!$task->self_employed && $viewActivities) {
             $viewActivities = $viewActivities->where('self_employed', false);
         }
         return ViewActivityResource::collection($viewActivities);
