@@ -72,7 +72,7 @@ class EloquentUserRepository implements UserRepository
             if(!empty($userSupervisors)){
                 $userQuery->where(function($query) use ($userSupervisors) {
                     $query->whereHas('roles', function($q) {
-                        $q->where('id', RoleEnum::supervisor->value);
+                        $q->where('roles.id', RoleEnum::supervisor->value);
                     })->whereIn('id', $userSupervisors);
                 })->orWhere(function($query) {
                     $query->whereDoesntHave('roles', function($q) {
