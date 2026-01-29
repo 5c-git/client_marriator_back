@@ -29,6 +29,6 @@ class ArchiveJob extends Command
         DB::table('accept_bid')
             ->join('users', 'accept_bid.user_id', '=', 'users.id')
             ->whereRaw('DATE_ADD(accept_bid.created_at, INTERVAL users.time_answer_bid HOUR) > NOW()')
-            ->update(['accept_bid.status' => 7]);
+            ->update(['accept_bid.accepted' => 7]);
     }
 }
