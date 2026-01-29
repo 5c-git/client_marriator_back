@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Page;
 
+use App\Enum\Role\RoleEnum;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\User\UserRole;
@@ -125,17 +126,22 @@ class UsersController extends Controller
             $user->pin = $data['pin'];
         }
 
-        if($data['roles']) {
-            $user->roles()->sync($data['roles']);
-        }else{
-            $user->roles()->detach();
-        }
-
         if(!empty($data['confirmRegister'])){
             $user->confirmRegister = true;
             $user->finishRegister = true;
         }else{
             $user->confirmRegister = false;
+        }
+
+        if($data['roles']) {
+            $userRoles = $user->roles->pluck('id')->toArray();
+            $user->roles()->sync($data['roles']);
+            if(!in_array(RoleEnum::supervisor->value,$userRoles) && in_array(RoleEnum::supervisor->value,$data['roles'])){
+                $user->confirmRegister = false;
+            }
+
+        }else{
+            $user->roles()->detach();
         }
 
         $user->save();
