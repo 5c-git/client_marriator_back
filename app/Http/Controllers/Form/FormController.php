@@ -351,9 +351,6 @@ class FormController extends Controller
                     $user->data = json_encode(array_merge(...json_decode($user->data, true)));
                 }
                 $user->save();
-                $apiTokenService = new ApiTokenService($user);
-                $token = $apiTokenService->createToken(['personalArea']);
-                $response['result']['token'] = $token;
                 $response['status'] = 'success';
             }else{
                 $response['status'] = 'error';

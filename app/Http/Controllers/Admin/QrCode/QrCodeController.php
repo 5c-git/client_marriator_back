@@ -102,7 +102,7 @@ class QrCodeController extends Controller
             $counterpartyIds = $counterpartyIds->unique();
             $user->counterparty()->syncWithoutDetaching($counterpartyIds->toArray());
 
-            $response = ['status'=>'success','data'=>['url'=> env('FRONT_URL', '').'/signin/client/phone?hash='.$user->register_hash]];
+            $response = ['status'=>'success','data'=>['url'=> config('app.front').'/signin/client/phone?hash='.$user->register_hash]];
         }else{
             $response = ['status'=>'error','error_message'=>'Пользователь с такими данными уже существует'];
         }
