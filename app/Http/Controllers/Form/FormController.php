@@ -359,6 +359,9 @@ class FormController extends Controller
                     (new RecognitionDocumentService($dataForDoc, $user))->createDocumentForRecognition();
                 }
                 $user->save();
+                $apiTokenService = new ApiTokenService($user);
+                $token = $apiTokenService->createToken(['personalArea']);
+                $response['result']['token'] = $token;
                 $response['status'] = 'success';
             }else{
                 $response['status'] = 'error';
