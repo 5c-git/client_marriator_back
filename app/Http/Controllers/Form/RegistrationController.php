@@ -184,7 +184,8 @@ class RegistrationController extends Controller
                     $token = $apiTokenService->createToken(['register']);
                     $response['result']['token'] = $token;
                 }else{
-                    //пользователь находится на модерации
+                    $token = $apiTokenService->createToken(['register']);
+                    $response['result']['token'] = $token;
                 }
             }else{
                 $token = $apiTokenService->createToken(['checkPin']);
