@@ -114,22 +114,24 @@ class RecognitionDocumentService
     public static function addErrorField(RecognitionDocument $recognitionDocument,string $errorText){
         /** @var User $user */
         $user = $recognitionDocument->user;
-        if (is_array($user->data)) {
-            $userData = $user->data;
-        } else {
-            $userData = json_decode($user->data, true);
-        }
-
-        if (!empty($userData[$recognitionDocument->file_field])) {
-            if (is_array($user->errorData)) {
-                $errorData = $user->errorData;
+        if($user) {
+            if (is_array($user->data)) {
+                $userData = $user->data;
             } else {
-                $errorData = json_decode($user->errorData, true);
+                $userData = json_decode($user->data, true);
             }
 
-            $errorData[$recognitionDocument->file_field] = $errorText;
-            $user->errorData                             = json_encode($errorData);
-            $user->save();
+            if (!empty($userData[$recognitionDocument->file_field])) {
+                if (is_array($user->errorData)) {
+                    $errorData = $user->errorData;
+                } else {
+                    $errorData = json_decode($user->errorData, true);
+                }
+
+                $errorData[$recognitionDocument->file_field] = $errorText;
+                $user->errorData                             = json_encode($errorData);
+                $user->save();
+            }
         }
 
     }
