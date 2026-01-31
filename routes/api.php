@@ -197,6 +197,9 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
         Route::post('/acceptOrder','App\Http\Controllers\UniversalController@acceptOrder')->name('acceptOrder');
         Route::get('/getTasks','App\Http\Controllers\UniversalController@getTasks')->name('getTasks');
         Route::get('/getTask','App\Http\Controllers\UniversalController@getTask')->name('getTask');
+        Route::post('/createSearchFromOrder','App\Http\Controllers\UniversalController@createSearchFromOrder')->name('createSearchFromOrder');
+        Route::post('/createSearchFromTask','App\Http\Controllers\UniversalController@createSearchFromTask')->name('createSearchFromTask');
+        Route::post('/updateSearch','App\Http\Controllers\UniversalController@updateSearch')->name('updateSearch');
 
 
         Route::get('/getBids','App\Http\Controllers\UniversalController@getBids')->name('getBids');

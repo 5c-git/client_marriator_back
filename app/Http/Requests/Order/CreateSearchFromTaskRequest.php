@@ -5,6 +5,8 @@ namespace App\Http\Requests\Order;
 use App\Enum\Order\OrderStatusEnum;
 use App\Http\Requests\FormRequest;
 use App\Models\Order\Bid;
+use App\Models\Order\OrderActivities;
+use App\Models\Order\SearchRequest;
 use App\Models\Order\Task;
 use App\Models\Order\TaskActivity;
 use App\Services\TimeService;
@@ -64,14 +66,21 @@ class CreateSearchFromTaskRequest extends FormRequest
                     }
 
                     /** @var Task $orderExists */
-                    $count = $orderExists->bid->count();
-                    $bids = $orderExists->bid?->where('activity_id', $this->orderActivityId)->first();
-                    if ($bids) {
-                        /** @var Bid $bids */
-                        if(TimeService::getTimeDifferenceAdd($this->user(),'repeat_bid',$bids->created_at)){
-                            $fail('Time before date of create new bid');
+                    $count = SearchRequest::query()->where('task_id',$value)->count();
+                    $orderActivities = TaskActivity::where('id', $this->taskActivityId)->first();
+                    if($orderActivities){
+                        if($count>=$orderActivities->count){
+//                            $fail('Limit Search request count');
                         }
                     }
+//                    $count = $orderExists->bid->count();
+//                    $bids = $orderExists->bid?->where('activity_id', $this->orderActivityId)->first();
+//                    if ($bids) {
+//                        /** @var Bid $bids */
+//                        if(TimeService::getTimeDifferenceAdd($this->user(),'repeat_bid',$bids->created_at)){
+//                            $fail('Time before date of create new bid');
+//                        }
+//                    }
                 },
             ],
             'taskActivityId' => [

@@ -27,6 +27,7 @@ use App\Http\Requests\Order\GetBidsRequest;
 use App\Http\Requests\Order\GetJobRequest;
 use App\Http\Requests\Order\GetOrderRequest;
 use App\Http\Requests\Order\PayReportRequest;
+use App\Http\Requests\Order\SearchDataRequest;
 use App\Http\Requests\Order\UpdateReportRequest;
 use App\Http\Requests\PaginatorRequest;
 use App\Http\Requests\SetBrandImgRequest;
@@ -40,8 +41,10 @@ use App\Http\Resources\BrandResource;
 use App\Http\Resources\ErrorResource;
 use App\Http\Resources\Order\BidResource;
 use App\Http\Resources\Order\JobResource;
+use App\Http\Resources\Order\OneOrderResource;
 use App\Http\Resources\Order\OrderResource;
 use App\Http\Resources\Order\ReportResource;
+use App\Http\Resources\Order\SearchResource;
 use App\Http\Resources\PlaceResource;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\RadiusResponse;
@@ -55,6 +58,7 @@ use App\Models\Fields\Directory\Radius;
 use App\Models\Fields\Directory\Reasons;
 use App\Models\Order\Bid;
 use App\Models\Order\Report;
+use App\Models\Order\SearchRequest;
 use App\Models\Order\Task;
 use App\Models\User;
 use App\Services\Local\Repositories\Contracts\OrderRepository;
@@ -656,7 +660,7 @@ class ManagerController extends Controller
 
     public function getOrder(GetOrderRequest $request): OrderResource
     {
-        return new OrderResource(
+        return new OneOrderResource(
             $this->orderRepository->getOrderByUserSyncData(
                 $request->user(),
                 $request->input('orderId',null)
@@ -821,12 +825,24 @@ class ManagerController extends Controller
 
     public function createSearchFromOrder(CreateSearchFromOrderRequest $request){
         $user = $request->user();
-        $this->orderRepository->createSearchFromOrder(
+        return new SearchResource($this->orderRepository->createSearchFromOrder(
             $user,
             $request->orderId,
             $request->orderActivityId
-        );
-        return new SuccessResource();
+        ));
+    }
+
+    public function createSearchFromTask(CreateSearchFromTaskRequest $request){
+        $user = $request->user();
+        return new SearchResource($this->orderRepository->createSearchFromTask(
+            $user,
+            $request->taskId,
+            $request->taskActivityId
+        ));
+    }
+
+    public function updateSearch(SearchDataRequest $request){
+        return new SearchResource($this->orderRepository->updateSearch($request));
     }
 
     public function createBidFromTask(CreateBidFromTaskRequest $request){
@@ -838,16 +854,6 @@ class ManagerController extends Controller
                 $request->taskActivityId
             )
         );
-    }
-
-    public function createSearchFromTask(CreateSearchFromTaskRequest $request){
-        $user = $request->user();
-        $this->orderRepository->createSearchFromTask(
-            $user,
-            $request->taskId,
-            $request->taskActivityId
-        );
-        return new SuccessResource();
     }
 
     public function getViewActivitiesForTask(GetViewActivitiesForTaskRequest $request){

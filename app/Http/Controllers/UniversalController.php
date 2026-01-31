@@ -15,6 +15,8 @@ use App\Http\Requests\Order\BidDataRequest;
 use App\Http\Requests\Order\CancelBidRequest;
 use App\Http\Requests\Order\CreateBidFromOrderRequest;
 use App\Http\Requests\Order\CreateBidFromTaskRequest;
+use App\Http\Requests\Order\CreateSearchFromOrderRequest;
+use App\Http\Requests\Order\CreateSearchFromTaskRequest;
 use App\Http\Requests\Order\EndSpecialistJobRequest;
 use App\Http\Requests\Order\EntrustBidRequest;
 use App\Http\Requests\Order\GetBidRequest;
@@ -27,6 +29,7 @@ use App\Http\Requests\Order\GetTaskRequest;
 use App\Http\Requests\Order\GetViewActivitiesForOrderRequest;
 use App\Http\Requests\Order\GetViewActivitiesForTaskRequest;
 use App\Http\Requests\Order\PayReportRequest;
+use App\Http\Requests\Order\SearchDataRequest;
 use App\Http\Requests\Order\UpdateReportRequest;
 use App\Http\Requests\PaginatorRequest;
 use App\Http\Requests\SetBrandImgRequest;
@@ -673,6 +676,36 @@ class UniversalController extends Controller
         }
         if(in_array('supervisor',$this->roles)){
             return app(\App\Http\Controllers\UserRoles\SupervisorController::class)->addReasons($request);
+        }
+        return response()->json(['message' => 'Role not allowed.'], 403);
+    }
+
+    public function createSearchFromOrder(CreateSearchFromOrderRequest $request){
+        if(in_array('manager',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\ManagerController::class)->createSearchFromOrder($request);
+        }
+        if(in_array('supervisor',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\SupervisorController::class)->createSearchFromOrder($request);
+        }
+        return response()->json(['message' => 'Role not allowed.'], 403);
+    }
+
+    public function createSearchFromTask(CreateSearchFromTaskRequest $request){
+        if(in_array('manager',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\ManagerController::class)->createSearchFromTask($request);
+        }
+        if(in_array('supervisor',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\SupervisorController::class)->createSearchFromTask($request);
+        }
+        return response()->json(['message' => 'Role not allowed.'], 403);
+    }
+
+    public function updateSearch(SearchDataRequest $request){
+        if(in_array('manager',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\ManagerController::class)->updateSearch($request);
+        }
+        if(in_array('supervisor',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\SupervisorController::class)->updateSearch($request);
         }
         return response()->json(['message' => 'Role not allowed.'], 403);
     }

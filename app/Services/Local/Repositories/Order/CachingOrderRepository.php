@@ -17,6 +17,7 @@ use App\Http\Requests\Order\DeleteTaskActivityRequest;
 use App\Http\Requests\Order\GetJobRequest;
 use App\Http\Requests\Order\RepeatOrderRequest;
 use App\Http\Requests\Order\RepeatTaskRequest;
+use App\Http\Requests\Order\SearchDataRequest;
 use App\Http\Requests\Order\UpdateOrderActivityRequest;
 use App\Http\Requests\Order\UpdateTaskActivityRequest;
 use App\Http\Requests\Order\UpdateTaskRequest;
@@ -200,6 +201,11 @@ class CachingOrderRepository implements OrderRepository
     public function updateBid(BidDataRequest $bidRequest): Bid
     {
         return $this->orders->updateBid($bidRequest);
+    }
+
+    public function updateSearch(SearchDataRequest $bidRequest): Bid
+    {
+        return $this->orders->updateSearch($bidRequest);
     }
 
     public function createOrderActivity(CreateOrderActivityRequest $request): Order

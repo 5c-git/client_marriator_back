@@ -16,6 +16,7 @@ use App\Http\Requests\Order\DeleteOrderActivityRequest;
 use App\Http\Requests\Order\DeleteTaskActivityRequest;
 use App\Http\Requests\Order\GetJobRequest;
 use App\Http\Requests\Order\RepeatTaskRequest;
+use App\Http\Requests\Order\SearchDataRequest;
 use App\Http\Requests\Order\UpdateOrderActivityRequest;
 use App\Http\Requests\Order\UpdateTaskActivityRequest;
 use App\Http\Requests\Order\UpdateTaskRequest;
@@ -877,6 +878,29 @@ class EloquentOrderRepository implements OrderRepository
     public function updateBid(BidDataRequest $bidRequest): Bid
     {
         $bid = Bid::where('id',$bidRequest->bidId)->first();
+        $radius = Radius::where('default',true)->first();
+        if(!$radius) {
+            if(!$bid->radius) {
+                $bid->radius = 5;
+            }
+        }else{
+            $bid->radius = $radius->value;
+        }
+        $bid->radius = $bidRequest->radius??$bid->radius;
+        $bid->price = $bidRequest->price??$bid->price;
+        $bid->view_activity_id = $bidRequest->viewActivityId ?? $bid->view_activity_id;
+        $bid->count = $bidRequest->count ?? $bid->count;
+        $bid->date_start = $bidRequest->dateStart ?? $bid->date_start;
+        $bid->date_end = $bidRequest->dateEnd ?? $bid->date_end;
+        $bid->need_foto = $bidRequest->needFoto ?? $bid->need_foto;
+        $bid->date_activity = $bidRequest->dateActivity ? $this->processDateActivity($bidRequest->dateActivity) : $bid->date_activity;
+        $bid->save();
+        return $bid;
+    }
+
+    public function updateSearch(SearchDataRequest $bidRequest): Bid
+    {
+        $bid = SearchRequest::where('id',$bidRequest->bidId)->first();
         $radius = Radius::where('default',true)->first();
         if(!$radius) {
             if(!$bid->radius) {

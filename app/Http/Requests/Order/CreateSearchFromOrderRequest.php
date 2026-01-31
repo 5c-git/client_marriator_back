@@ -6,6 +6,7 @@ use App\Enum\Order\OrderStatusEnum;
 use App\Http\Requests\FormRequest;
 use App\Models\Order\Bid;
 use App\Models\Order\OrderActivities;
+use App\Models\Order\SearchRequest;
 use App\Models\Order\Task;
 use App\Models\Order\TaskActivity;
 use App\Services\TimeService;
@@ -57,14 +58,19 @@ class CreateSearchFromOrderRequest extends FormRequest
                         return;
                     }
                     /** @var Order $orderExists */
-                    $count = $orderExists->bids->count();
-                    $bids = $orderExists->bids?->where('activity_id', $this->orderActivityId)->first();
-                    if ($bids) {
-                        /** @var Bid $bids */
-                        if(TimeService::getTimeDifferenceAdd($this->user(),'repeat_bid',$bids->created_at)){
-                            $fail('Time before date of create new bid');
+                    $count = SearchRequest::query()->where('order_id',$value)->count();
+                    $orderActivities = OrderActivities::where('id', $this->orderActivityId)->first();
+                    if($orderActivities){
+                        if($count>=$orderActivities->count){
+//                            $fail('Limit Search request count');
                         }
                     }
+//                    if ($bids) {
+//                        /** @var Bid $bids */
+//                        if(TimeService::getTimeDifferenceAdd($this->user(),'repeat_bid',$bids->created_at)){
+//                            $fail('Time before date of create new bid');
+//                        }
+//                    }
 
                 },
             ],

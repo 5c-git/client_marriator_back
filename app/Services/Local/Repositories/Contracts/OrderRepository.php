@@ -12,6 +12,7 @@ use App\Http\Requests\Order\CreateTaskActivityRequest;
 use App\Http\Requests\Order\DeleteOrderActivityRequest;
 use App\Http\Requests\Order\DeleteTaskActivityRequest;
 use App\Http\Requests\Order\GetJobRequest;
+use App\Http\Requests\Order\SearchDataRequest;
 use App\Http\Requests\Order\UpdateOrderActivityRequest;
 use App\Http\Requests\Order\UpdateTaskActivityRequest;
 use App\Http\Requests\Order\UpdateTaskRequest;
@@ -72,6 +73,7 @@ interface OrderRepository
     public function cancelBid(int $bidId): bool;
     public function getSpecialistForBid(int $bidId): Collection;
     public function updateBid(BidDataRequest $bidRequest): Bid;
+    public function updateSearch(SearchDataRequest $bidRequest): Bid;
     public function createRequestFromTask(CreateRequestFromTaskRequest $request, User $user): Request;
     public function createRequestFromBid(CreateRequestFromBidRequest $request, User $user): Request;
     public function cancelRequest(CancelRequestRequest $request): bool;
