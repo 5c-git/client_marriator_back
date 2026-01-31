@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Order;
 
+use App\Models\Order\Bid;
 use App\Models\Order\SearchRequest;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -33,7 +34,8 @@ class OrderSActivitiesResource extends JsonResource
             'dateEnd' => $this->date_end,
             'needFoto' => (bool)$this->need_foto,
             'dateActivity' => DateActivityResource::collection(collect($this->date_activity)),
-            'countSearch' => SearchRequest::query()->where('activity_id',$this->id)->count()
+            'countSearch' => SearchRequest::query()->where('activity_id',$this->id)->count(),
+            'existBid' => Bid::query()->where('activity_id',$this->id)->exists()
         ];
     }
 }
