@@ -70,7 +70,7 @@ class CreateSearchFromTaskRequest extends FormRequest
                     $orderActivities = TaskActivity::where('id', $this->taskActivityId)->first();
                     if($orderActivities){
                         if($count>=$orderActivities->count){
-//                            $fail('Limit Search request count');
+                            $fail('Limit Search request count');
                         }
                     }
 //                    $count = $orderExists->bid->count();

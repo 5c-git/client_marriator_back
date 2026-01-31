@@ -62,7 +62,7 @@ class CreateSearchFromOrderRequest extends FormRequest
                     $orderActivities = OrderActivities::where('id', $this->orderActivityId)->first();
                     if($orderActivities){
                         if($count>=$orderActivities->count){
-//                            $fail('Limit Search request count');
+                            $fail('Limit Search request count');
                         }
                     }
 //                    if ($bids) {
