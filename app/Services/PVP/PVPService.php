@@ -77,7 +77,7 @@ class PVPService
          $project = $place->project?->first();
          if($project){
              $user = User::whereHas('project', function ($query) use ($project) {
-                 $query->where('projects.id', $project->id);
+                 $query->where('directory_project.id', $project->id);
              })
                  ->whereHas('roles', function ($query) {
                      $query->where('name', RoleEnum::client->name);
