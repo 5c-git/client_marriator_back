@@ -61,8 +61,18 @@ class EloquentUserRepository implements UserRepository
         if(in_array(RoleEnum::manager->value,$userRoles) || in_array(RoleEnum::supervisor->value,$userRoles)){
             $userPlaces = $userAuth->place?->pluck('id')->toArray();
             if(!empty($userPlaces)){
-                $userQuery->whereHas('place', function ($query) use ($userPlaces) {
-                    $query->whereIn('place_id', $userPlaces);
+                $userQuery->where(function($query) use ($userPlaces) {
+                    $query->whereDoesntHave('roles', function($q) {
+                        $q->where('roles.id', RoleEnum::client->value);
+                    });
+
+                    $query->orWhere(function($q) use ($userPlaces) {
+                        $q->whereHas('roles', function($roleQ) {
+                            $roleQ->where('roles.id', RoleEnum::client->value);
+                        })->whereHas('place', function ($query) use ($userPlaces) {
+                            $query->whereIn('place_id', $userPlaces);
+                        });
+                    });
                 });
             }
         }
@@ -71,12 +81,14 @@ class EloquentUserRepository implements UserRepository
             $userSupervisors = $userAuth->supervisors?->pluck('id')->toArray();
             if(!empty($userSupervisors)){
                 $userQuery->where(function($query) use ($userSupervisors) {
-                    $query->whereHas('roles', function($q) {
-                        $q->where('roles.id', RoleEnum::supervisor->value);
-                    })->whereIn('id', $userSupervisors);
-                })->orWhere(function($query) {
                     $query->whereDoesntHave('roles', function($q) {
                         $q->where('roles.id', RoleEnum::supervisor->value);
+                    });
+
+                    $query->orWhere(function($q) use ($userSupervisors) {
+                        $q->whereHas('roles', function($roleQ) {
+                            $roleQ->where('roles.id', RoleEnum::supervisor->value);
+                        })->whereIn('id', $userSupervisors);
                     });
                 });
             }
@@ -128,8 +140,18 @@ class EloquentUserRepository implements UserRepository
         if(in_array(RoleEnum::manager->value,$userRoles) || in_array(RoleEnum::supervisor->value,$userRoles)){
             $userPlaces = $userAuth->place?->pluck('id')->toArray();
             if(!empty($userPlaces)){
-                $userQuery->whereHas('place', function ($query) use ($userPlaces) {
-                    $query->whereIn('place_id', $userPlaces);
+                $userQuery->where(function($query) use ($userPlaces) {
+                    $query->whereDoesntHave('roles', function($q) {
+                        $q->where('roles.id', RoleEnum::client->value);
+                    });
+
+                    $query->orWhere(function($q) use ($userPlaces) {
+                        $q->whereHas('roles', function($roleQ) {
+                            $roleQ->where('roles.id', RoleEnum::client->value);
+                        })->whereHas('place', function ($query) use ($userPlaces) {
+                            $query->whereIn('place_id', $userPlaces);
+                        });
+                    });
                 });
             }
         }
@@ -138,12 +160,14 @@ class EloquentUserRepository implements UserRepository
             $userSupervisors = $userAuth->supervisors?->pluck('id')->toArray();
             if(!empty($userSupervisors)){
                 $userQuery->where(function($query) use ($userSupervisors) {
-                    $query->whereHas('roles', function($q) {
-                        $q->where('roles.id', RoleEnum::supervisor->value);
-                    })->whereIn('id', $userSupervisors);
-                })->orWhere(function($query) {
                     $query->whereDoesntHave('roles', function($q) {
                         $q->where('roles.id', RoleEnum::supervisor->value);
+                    });
+
+                    $query->orWhere(function($q) use ($userSupervisors) {
+                        $q->whereHas('roles', function($roleQ) {
+                            $roleQ->where('roles.id', RoleEnum::supervisor->value);
+                        })->whereIn('id', $userSupervisors);
                     });
                 });
             }
