@@ -159,9 +159,9 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
         Route::middleware([CheckRole::class.':supervisor'])->group( function () {
         });
         Route::middleware([CheckRole::class.':admin'])->group( function () {
-            Route::get('/getManager','App\Http\Controllers\UserRoles\ManagerController@getManager')->name('getManager');
-            Route::post('/setManagers','App\Http\Controllers\UserRoles\ManagerController@setManagers')->name('setManagers');
-            Route::post('/delManager','App\Http\Controllers\UserRoles\ManagerController@delManager')->name('delManager');
+            //Route::get('/getManager','App\Http\Controllers\UserRoles\ManagerController@getManager')->name('getManager'); //toDo: не забыть методы доступны только админу
+            //Route::post('/setManagers','App\Http\Controllers\UserRoles\ManagerController@setManagers')->name('setManagers');
+            //Route::post('/delManager','App\Http\Controllers\UserRoles\ManagerController@delManager')->name('delManager');
 
             //Route::post('/moderation/confirmUserRegister','App\Http\Controllers\UserRoles\ManagerController@confirmUserRegister')->name('confirmUserRegister');
 
@@ -191,6 +191,10 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
           //  Route::get('/getPlace','App\Http\Controllers\UserRoles\ClientController@getPlace')->name('getPlaceClient');
           //  Route::post('/setPlace','App\Http\Controllers\UserRoles\ClientController@setPlace')->name('setPlaceClient');
         });
+
+        Route::get('/getManager','App\Http\Controllers\UniversalController@getManager')->name('getManager');
+        Route::post('/setManagers','App\Http\Controllers\UniversalController@setManagers')->name('setManagers');
+        Route::post('/delManager','App\Http\Controllers\UniversalController@delManager')->name('delManager');
 
         Route::get('/getOrders','App\Http\Controllers\UniversalController@getOrders')->name('getOrders');
         Route::get('/getOrder','App\Http\Controllers\UniversalController@getOrder')->name('getOrder');

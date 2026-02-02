@@ -49,7 +49,8 @@ class SetCounterpartyRequest extends FormRequest
                 function ($attribute, $value, $fail) {
                     /** @var  $user User */
                     $user = Auth::user();
-                    if ($user->counterparty) {
+                    $userRoles = $user->roles?->pluck('id')->toArray();
+                    if ($user->counterparty && !in_array(RoleEnum::admin->value,$userRoles)) {
                         $counterparty = $user->counterparty->where('id', $value)->first();
                         if (!$counterparty) {
                             $fail('Not your counterparty id');

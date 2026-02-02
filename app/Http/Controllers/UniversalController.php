@@ -17,11 +17,13 @@ use App\Http\Requests\Order\CreateBidFromOrderRequest;
 use App\Http\Requests\Order\CreateBidFromTaskRequest;
 use App\Http\Requests\Order\CreateSearchFromOrderRequest;
 use App\Http\Requests\Order\CreateSearchFromTaskRequest;
+use App\Http\Requests\Order\DelManagerRequest;
 use App\Http\Requests\Order\EndSpecialistJobRequest;
 use App\Http\Requests\Order\EntrustBidRequest;
 use App\Http\Requests\Order\GetBidRequest;
 use App\Http\Requests\Order\GetBidsRequest;
 use App\Http\Requests\Order\GetJobRequest;
+use App\Http\Requests\Order\GetManagerRequest;
 use App\Http\Requests\Order\GetOrderRequest;
 use App\Http\Requests\Order\GetPlaceForBidRequest;
 use App\Http\Requests\Order\GetSpecialistForBisRequest;
@@ -30,6 +32,7 @@ use App\Http\Requests\Order\GetViewActivitiesForOrderRequest;
 use App\Http\Requests\Order\GetViewActivitiesForTaskRequest;
 use App\Http\Requests\Order\PayReportRequest;
 use App\Http\Requests\Order\SearchDataRequest;
+use App\Http\Requests\Order\SetManagerRequest;
 use App\Http\Requests\Order\UpdateReportRequest;
 use App\Http\Requests\PaginatorRequest;
 use App\Http\Requests\SetBrandImgRequest;
@@ -374,6 +377,36 @@ class UniversalController extends Controller
         }
         if(in_array('admin',$this->roles)){
             return app(\App\Http\Controllers\UserRoles\AdminController::class)->getSurepvisors($request);
+        }
+        return response()->json(['message' => 'Role not allowed.'], 403);
+    }
+
+    public function getManager(GetManagerRequest $request){
+        if(in_array('manager',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\AdminController::class)->getManager($request);
+        }
+        if(in_array('admin',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\AdminController::class)->getManager($request);
+        }
+        return response()->json(['message' => 'Role not allowed.'], 403);
+    }
+
+    public function setManagers(SetManagerRequest $request){
+        if(in_array('manager',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\AdminController::class)->setManagers($request);
+        }
+        if(in_array('admin',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\AdminController::class)->setManagers($request);
+        }
+        return response()->json(['message' => 'Role not allowed.'], 403);
+    }
+
+    public function delManager(DelManagerRequest $request){
+        if(in_array('manager',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\AdminController::class)->delManager($request);
+        }
+        if(in_array('admin',$this->roles)){
+            return app(\App\Http\Controllers\UserRoles\AdminController::class)->delManager($request);
         }
         return response()->json(['message' => 'Role not allowed.'], 403);
     }
