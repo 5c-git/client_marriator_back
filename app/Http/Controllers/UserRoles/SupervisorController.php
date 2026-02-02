@@ -34,6 +34,7 @@ use App\Http\Resources\ErrorResource;
 use App\Http\Resources\Order\BidResource;
 use App\Http\Resources\Order\JobResource;
 use App\Http\Resources\Order\OneOrderResource;
+use App\Http\Resources\Order\OneTaskResource;
 use App\Http\Resources\Order\OrderResource;
 use App\Http\Resources\Order\ReportResource;
 use App\Http\Resources\Order\SearchResource;
@@ -446,7 +447,7 @@ class SupervisorController extends Controller
         );
     }
 
-    public function getOrder(GetOrderRequest $request): OrderResource
+    public function getOrder(GetOrderRequest $request): OneOrderResource
     {
         return new OneOrderResource(
             $this->orderRepository->getOrderByUserSyncData(
@@ -467,7 +468,7 @@ class SupervisorController extends Controller
     }
 
     public function getTasks(GetTaskRequest $request){
-        return TaskResource::collection(
+        return OneTaskResource::collection(
             $this->orderRepository->getTaskByUserSyncDataPaginate(
                 $request->user(),
                 $request->input('status') ? OrderStatusEnum::from($request->input('status')) : null

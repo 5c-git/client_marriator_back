@@ -42,6 +42,7 @@ use App\Http\Resources\ErrorResource;
 use App\Http\Resources\Order\BidResource;
 use App\Http\Resources\Order\JobResource;
 use App\Http\Resources\Order\OneOrderResource;
+use App\Http\Resources\Order\OneTaskResource;
 use App\Http\Resources\Order\OrderResource;
 use App\Http\Resources\Order\ReportResource;
 use App\Http\Resources\Order\SearchResource;
@@ -658,7 +659,7 @@ class ManagerController extends Controller
         );
     }
 
-    public function getOrder(GetOrderRequest $request): OrderResource
+    public function getOrder(GetOrderRequest $request): OneOrderResource
     {
         return new OneOrderResource(
             $this->orderRepository->getOrderByUserSyncData(
@@ -698,7 +699,7 @@ class ManagerController extends Controller
     }
 
     public function getTask(GetTaskRequest $request){
-        return new TaskResource(
+        return new OneTaskResource(
             $this->orderRepository->getTaskByUserSyncData(
                 $request->user(),
                 $request->input('taskId',null)
