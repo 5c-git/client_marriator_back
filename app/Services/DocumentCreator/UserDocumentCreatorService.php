@@ -60,29 +60,31 @@ class UserDocumentCreatorService
 
     public function createContract(User $user, Counterparty $counterparty): ?Document
     {
-        if (!self::checkSignContract($user, $counterparty)) {
-            if(!isset($user->taxStatus)) {
-                $service = new UserDataService();
-                $user->taxStatus = $service->getTaxStatusTemplate($user);
-            }
-            //$this->contract
-            $documentTemplate = $this->getDocumentTemplate($user->taxStatus);
-            if ($documentTemplate) {
-                $template     = $this->getTemplateUrl($documentTemplate);
-                [$dataContract,$dataForSave] = $this->getDataForContract($user, $counterparty);
-                $filePathPdf  = '/source/documentCreator/' . $user->id . '/' . Carbon::now(
-                    ) . '/' . $this->contract->name . '_for_counterparty_' . $counterparty->id . '.pdf';
-                $this->pdfService->savePdf($template, $dataContract, $filePathPdf);
-                $document                   = new Document();
-                $document->uuid             = Str::uuid();
-                $document->user_id          = $user->id;
-                $document->file_name        = $this->contract->name . '_for_counterparty_' . $counterparty->id . '.pdf';
-                $document->file_path        = $filePathPdf;
-                $document->status           = DocumentStatusEnum::Signed->value;
-                $document->status_signature = DocumentStatusSignatureEnum::NoSend->value;
-                $document->date_signature   = Carbon::now();
-                $document->save();
-                $this->saveDataContract($document, $counterparty, $documentTemplate, $dataForSave);
+        if(self::checkDoc($user)) {
+            if (!self::checkSignContract($user, $counterparty)) {
+                if (!isset($user->taxStatus)) {
+                    $service         = new UserDataService();
+                    $user->taxStatus = $service->getTaxStatusTemplate($user);
+                }
+                //$this->contract
+                $documentTemplate = $this->getDocumentTemplate($user->taxStatus);
+                if ($documentTemplate) {
+                    $template = $this->getTemplateUrl($documentTemplate);
+                    [$dataContract, $dataForSave] = $this->getDataForContract($user, $counterparty);
+                    $filePathPdf = '/source/documentCreator/' . $user->id . '/' . Carbon::now(
+                        ) . '/' . $this->contract->name . '_for_counterparty_' . $counterparty->id . '.pdf';
+                    $this->pdfService->savePdf($template, $dataContract, $filePathPdf);
+                    $document                   = new Document();
+                    $document->uuid             = Str::uuid();
+                    $document->user_id          = $user->id;
+                    $document->file_name        = $this->contract->name . '_for_counterparty_' . $counterparty->id . '.pdf';
+                    $document->file_path        = $filePathPdf;
+                    $document->status           = DocumentStatusEnum::Signed->value;
+                    $document->status_signature = DocumentStatusSignatureEnum::NoSend->value;
+                    $document->date_signature   = Carbon::now();
+                    $document->save();
+                    $this->saveDataContract($document, $counterparty, $documentTemplate, $dataForSave);
+                }
             }
         }
         return $document ?? null;
@@ -211,8 +213,24 @@ class UserDocumentCreatorService
                 ->where('date_start', '<=', Carbon::now())
                 ->where('date_end', '>=', Carbon::now())
                 ->first();
+        }else{
+            return true;
         }
         return !empty($userData);
+    }
+
+    static function checkDoc(User $user): bool
+    {
+        $document = RecognitionDocument::query()
+            ->where('user_id',$user->id)
+            ->where('file_type',DocumentTypeEnum::Passport->value)
+            ->orderBy('id','desc')
+            ->first();
+        /** @var RecognitionDocument $document */
+        if($document && !empty($document->data)) {
+            return true;
+        }
+        return false;
     }
 
     static function checkSignContractByOrder(User $user, OrderInterface $order): bool

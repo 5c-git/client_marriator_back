@@ -103,7 +103,7 @@ class Report extends Model
     public function getReasonsAmount(): int
     {
         return (int) ($this->reasons()->getQuery()->sum(
-            DB::raw('directory_reasons.amount * report_reason.count')
+            DB::raw('(directory_reasons.amount * 1.0) * (report_reason.count * 1.0)')
         ) ?? 0);
     }
 

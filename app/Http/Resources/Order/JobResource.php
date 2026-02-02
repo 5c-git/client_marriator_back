@@ -40,8 +40,8 @@ class JobResource extends JsonResource
             'selfEmployed' => (bool)$this->self_employed,
             'place' => new PlaceResource($this->place),
             'radius' => $this->radius ?? $this->getRadius(),
-            'price' => (float)($this->price ?? $this->getPrice()),
-            'priceResult' => (float)($this->price ?? $this->getPrice())*($this->self_employed?0.94:0.87),
+            'price' => (int)($this->price ?? $this->getPrice()),
+            'priceResult' => (int)($this->price ?? $this->getPrice())*($this->self_employed?0.94:0.87),
             'income' => 0,
             'forPay' => $this->acceptingUser ? $this->getForPay($this->getReports($this->acceptingUser)) : 0,
             'viewActivity' => new ViewActivityResource($this->viewActivity),
@@ -97,7 +97,7 @@ class JobResource extends JsonResource
         return $price;
     }
 
-    private function getForPay($reports = null): float|int
+    private function getForPay($reports = null): int
     {
         $forPay = 0;
         if($reports) {
@@ -106,6 +106,6 @@ class JobResource extends JsonResource
                 $forPay += $report->forPay * ($report->coefficient ?? 1) + $report->getReasonsAmount();
             }
         }
-        return $forPay;
+        return (int)$forPay;
     }
 }

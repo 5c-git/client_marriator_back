@@ -82,7 +82,9 @@ class UserDataService
                     ->orderBy('id', 'desc')
                     ->first();
                 /** @var RecognitionDocument $document */
-                $this->passportData = $document->data;
+                if($document) {
+                    $this->passportData = $document->data;
+                }
             }
             if(!empty($this->passportData)) {
                 $name =  $this->passportData[Passport::LastName->name].' '.$this->passportData[Passport::FirstName->name].' '.$this->passportData[Passport::MiddleName->name];
@@ -107,7 +109,9 @@ class UserDataService
                     ->orderBy('id', 'desc')
                     ->first();
                 /** @var RecognitionDocument $document */
-                $this->passportData = $document->data;
+                if($document) {
+                    $this->passportData = $document->data;
+                }
             }
             if(!empty($this->passportData)) {
                 $name =  $this->passportData[Passport::FirstName->name];
@@ -137,7 +141,9 @@ class UserDataService
                     ->orderBy('id', 'desc')
                     ->first();
                 /** @var RecognitionDocument $document */
-                $this->passportData = $document->data;
+                if($document) {
+                    $this->passportData = $document->data;
+                }
             }
             if(!empty($this->passportData)) {
                 $returnData =  $this->passportData[Passport::LastName->name].' '.mb_substr($this->passportData[Passport::FirstName->name], 0, 1, 'UTF-8').'. '.mb_substr($this->passportData[Passport::MiddleName->name], 0, 1, 'UTF-8').'.';
@@ -196,7 +202,9 @@ class UserDataService
                     ->orderBy('id', 'desc')
                     ->first();
                 /** @var RecognitionDocument $document */
-                $this->passportData = $document->data;
+                if($document) {
+                    $this->passportData = $document->data;
+                }
             }
             if(!empty($this->passportData)) {
                 $returnData =  mb_substr($this->passportData[Passport::FirstName->name], 0, 1, 'UTF-8').'. '.mb_substr($this->passportData[Passport::MiddleName->name], 0, 1, 'UTF-8').'.';
@@ -227,7 +235,9 @@ class UserDataService
                     ->orderBy('id', 'desc')
                     ->first();
                 /** @var RecognitionDocument $document */
-                $this->passportData = $document->data;
+                if($document) {
+                    $this->passportData = $document->data;
+                }
             }
             if(!empty($this->passportData)) {
                 $returnData =  $this->passportData[Passport::LastName->name].' '.mb_substr($this->passportData[Passport::FirstName->name], 0, 1, 'UTF-8').'. '.mb_substr($this->passportData[Passport::MiddleName->name], 0, 1, 'UTF-8').'.';
@@ -252,7 +262,9 @@ class UserDataService
                     ->orderBy('id', 'desc')
                     ->first();
                 /** @var RecognitionDocument $document */
-                $this->passportData = $document->data;
+                if($document) {
+                    $this->passportData = $document->data;
+                }
             }
             if(!empty($this->passportData)) {
                 $name =  $this->passportData[Passport::LastName->name];
@@ -280,7 +292,9 @@ class UserDataService
                     ->orderBy('id', 'desc')
                     ->first();
                 /** @var RecognitionDocument $document */
-                $this->passportData = $document->data;
+                if($document) {
+                    $this->passportData = $document->data;
+                }
             }
             if(!empty($this->passportData)) {
                 $name = $this->passportData[Passport::MiddleName->name];
@@ -311,7 +325,9 @@ class UserDataService
                 ->orderBy('id','desc')
                 ->first();
             /** @var RecognitionDocument $document */
-            $this->passportData = $document->data;
+            if($document) {
+                $this->passportData = $document->data;
+            }
         }
         if(!empty($this->passportData)){
             return $this->passportData[Passport::BirthDate->name];
@@ -329,7 +345,9 @@ class UserDataService
                 ->orderBy('id','desc')
                 ->first();
             /** @var RecognitionDocument $document */
-            $this->passportData = $document->data;
+            if($document) {
+                $this->passportData = $document->data;
+            }
         }
         if(!empty($this->passportData) && !empty($this->passportData[Passport::BirthDate->name])){
             return Carbon::parse($this->passportData[Passport::BirthDate->name])->format('Y');
@@ -347,7 +365,9 @@ class UserDataService
                 ->orderBy('id','desc')
                 ->first();
             /** @var RecognitionDocument $document */
-            $this->passportData = $document->data;
+            if($document) {
+                $this->passportData = $document->data;
+            }
         }
         if(!empty($this->passportData)){
             return $this->passportData[Passport::Series->name].' '.$this->passportData[Passport::Number->name];
@@ -365,7 +385,9 @@ class UserDataService
                 ->orderBy('id','desc')
                 ->first();
             /** @var RecognitionDocument $document */
-            $this->passportData = $document->data;
+            if($document) {
+                $this->passportData = $document->data;
+            }
         }
         if(!empty($this->passportData)){
             return true;
@@ -383,7 +405,9 @@ class UserDataService
                 ->orderBy('id','desc')
                 ->first();
             /** @var RecognitionDocument $document */
-            $this->passportData = $document->data;
+            if($document) {
+                $this->passportData = $document->data;
+            }
         }
         if(!empty($this->passportData)){
             return $this->passportData[Passport::GivenBy->name];
