@@ -220,9 +220,20 @@ class SpecialistController extends Controller
             ->where('status', DocumentStatusEnum::Signed->value)
             ->where('status_signature', DocumentStatusSignatureEnum::NoSend->value)
             ->first();
-
         if ($document && (new NopaperService())->sendDocumentsToNopaper($user)) {
             return new SuccessResource();
+        }else{
+            $document = Document::query()
+                ->where('user_id', $user->id)
+                ->where('status', DocumentStatusEnum::Signed->value)
+                ->where('status_signature', DocumentStatusSignatureEnum::Process->value)
+                ->first();
+            if($document){
+                $dataSendCode = (new NopaperService())->retriesSms($user);
+                if (!empty($dataSendCode['success'])) {
+                    return new SuccessResource();
+                }
+            }
         }
         return new ErrorResource();
     }
