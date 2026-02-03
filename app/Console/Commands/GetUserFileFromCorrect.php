@@ -57,7 +57,7 @@ class GetUserFileFromCorrect extends Command
 
                         if(
                             $recognitionDocument->status === RecognitionDocumentStatusEnum::recognized->value &&
-                            $recognitionDocument->file_type === DocumentFieldTypeEnum::Passport->value
+                            $recognitionDocument->file_type == DocumentTypeEnum::Passport->value
                         ){
                             $user = $recognitionDocument->user;
                             if(is_array($user->data)){
