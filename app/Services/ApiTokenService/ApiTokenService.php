@@ -42,6 +42,7 @@ class ApiTokenService
         ]);
 
         $dataToken = $response->json();
+        $user = null;
 
         if(!empty($dataToken) && !empty($dataToken['access_token'])){
             $token = $dataToken['access_token'];
@@ -58,7 +59,7 @@ class ApiTokenService
             }
         }
 
-        return $dataToken;
+        return [$dataToken,$user];
     }
 
 }
