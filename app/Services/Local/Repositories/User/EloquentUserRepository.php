@@ -74,6 +74,12 @@ class EloquentUserRepository implements UserRepository
                         });
                     });
                 });
+            }else{
+                $userQuery->where(function($query) use ($userPlaces) {
+                    $query->whereDoesntHave('roles', function($q) {
+                        $q->where('roles.id', RoleEnum::client->value);
+                    });
+                });
             }
         }
 
@@ -89,6 +95,12 @@ class EloquentUserRepository implements UserRepository
                         $q->whereHas('roles', function($roleQ) {
                             $roleQ->where('roles.id', RoleEnum::supervisor->value);
                         })->whereIn('id', $userSupervisors);
+                    });
+                });
+            }else{
+                $userQuery->where(function($query) {
+                    $query->whereDoesntHave('roles', function($q) {
+                        $q->where('roles.id', RoleEnum::supervisor->value);
                     });
                 });
             }
@@ -153,6 +165,12 @@ class EloquentUserRepository implements UserRepository
                         });
                     });
                 });
+            }else{
+                $userQuery->where(function($query) use ($userPlaces) {
+                    $query->whereDoesntHave('roles', function($q) {
+                        $q->where('roles.id', RoleEnum::client->value);
+                    });
+                });
             }
         }
 
@@ -168,6 +186,12 @@ class EloquentUserRepository implements UserRepository
                         $q->whereHas('roles', function($roleQ) {
                             $roleQ->where('roles.id', RoleEnum::supervisor->value);
                         })->whereIn('id', $userSupervisors);
+                    });
+                });
+            }else{
+                $userQuery->where(function($query) {
+                    $query->whereDoesntHave('roles', function($q) {
+                        $q->where('roles.id', RoleEnum::supervisor->value);
                     });
                 });
             }
