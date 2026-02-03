@@ -31,20 +31,20 @@ class GetSurepvisorDataRequest extends FormRequest
     public function rules()
     {
         return [
-            'taskId' => [
-                'required',
-                'integer',
-                function ($attribute, $value, $fail) {
-                    $user = auth()->user();
-                    $taskExists = Task::query()
-                        ->where('user_id',$user->id)
-                        ->exists();
-
-                    if (!$taskExists) {
-                        $fail('Not your task');
-                    }
-                },
-            ],
+//            'taskId' => [
+//                'required',
+//                'integer',
+//                function ($attribute, $value, $fail) {
+//                    $user = auth()->user();
+//                    $taskExists = Task::query()
+//                        ->where('user_id',$user->id)
+//                        ->exists();
+//
+//                    if (!$taskExists) {
+//                        $fail('Not your task');
+//                    }
+//                },
+//            ],
         ];
     }
 }
