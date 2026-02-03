@@ -232,6 +232,11 @@ class SpecialistController extends Controller
                 $dataSendCode = (new NopaperService())->retriesSms($user);
                 if (!empty($dataSendCode['success'])) {
                     return new SuccessResource();
+                }else{
+                    $dataSendCode = (new NopaperService())->sendDocumentsToNopaperRetrie($user);
+                    if($dataSendCode){
+                        return new SuccessResource();
+                    }
                 }
             }
         }

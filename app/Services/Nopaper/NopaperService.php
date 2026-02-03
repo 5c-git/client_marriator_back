@@ -81,6 +81,61 @@ class NopaperService
         return false;
     }
 
+    public function sendDocumentsToNopaperRetrie(User $user): bool
+    {
+        if($this->checkUserExists($user)) {
+            $draftData = [
+                'recipientInfoList' => [
+                    [
+                        "userPhone"  => $user->phone,
+                        "actionType" => 1,
+                        "SignType"   => 1,
+                    ]
+                ],
+            ];
+
+            $draftResponse = $this->createDraft($draftData);
+            if(!empty($draftResponse['documentId'])) {
+                $files = Document::query()
+                    ->where('user_id',$user->id)
+                    ->where('status',DocumentStatusEnum::Signed->value)
+                    ->where('status_signature',DocumentStatusSignatureEnum::Process->value)
+                    ->get();
+
+                foreach ($files as $file) {
+                    $imagePath = str_replace('/storage','',$file->file_path);
+                    $fileContent = base64_encode(Storage::disk('public')->get($imagePath));
+                    //$fileContent = base64_encode(file_get_contents('storage/app/public/source/document/172/signed/2025-10-22/5.pdf'));
+                    $fileData    = [
+                        'fileInfo' => [
+                            'fileNameWithExtension' => basename($file->file_path),
+                            'filebase64'            => $fileContent
+                        ]
+                    ];
+                    $fileDataResponse = $this->attachFileToDocument($draftResponse['documentId'], $fileData);
+                    if(!empty($fileDataResponse['fileId'])) {
+                        $file->file_id = $fileDataResponse['fileId'];
+                        $file->save();
+                    }
+                }
+
+                if($this->sendDocument($draftResponse['documentId'])){
+                    Document::query()
+                        ->where('user_id', $user->id)
+                        ->where('status', DocumentStatusEnum::Signed->value)
+                        ->where('status_signature', DocumentStatusSignatureEnum::NoSend->value)
+                        ->update([
+                            'status_signature' => DocumentStatusSignatureEnum::Process->value,
+                            'document_id' => $draftResponse['documentId']
+                        ]);
+                    $this->sendSms($user, $draftResponse['documentId']);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public function confirmSms(User $user, $code): array
     {
         $document = Document::query()
