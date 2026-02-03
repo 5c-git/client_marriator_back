@@ -84,6 +84,7 @@ class NopaperService
     public function sendDocumentsToNopaperRetrie(User $user): bool
     {
         if($this->checkUserExists($user)) {
+            $this->approveSignature($user->nopaper_certificate_id);
             $draftData = [
                 'recipientInfoList' => [
                     [
@@ -298,6 +299,7 @@ class NopaperService
             if(!$user->nopaper_guid || !$user->nopaper_certificate_id) {
                 $certificateId = $this->createSignature($dataRegister['userGuid']);
                 if(!empty($certificateId['certificateId'])) {
+                    sleep(2);
                     $this->approveSignature($certificateId['certificateId']);
                     $user->nopaper_certificate_id = $certificateId['certificateId'];
                     $user->nopaper_guid = $dataRegister['userGuid'];
