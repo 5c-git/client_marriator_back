@@ -57,11 +57,10 @@ class CreateBidFromOrderRequest extends FormRequest
                         return;
                     }
                     /** @var Order $orderExists */
-                    $count = $orderExists->bids->count();
-                    $bids = $orderExists->bids?->where('activity_id', $this->orderActivityId)->first();
+                    $bids = $orderExists->bids?->where('activity_id', $this->orderActivityId)->orderBy('created_at', 'desc')->first();
                     if ($bids) {
                         /** @var Bid $bids */
-                        if(TimeService::getTimeDifferenceAdd($this->user(),'repeat_bid',$bids->created_at)){
+                        if(!TimeService::getTimeDifferenceAdd($this->user(),'repeat_bid',$bids->created_at)){
                             $fail('Time before date of create new bid');
                         }
                     }
