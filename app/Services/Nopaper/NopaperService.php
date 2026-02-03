@@ -123,7 +123,7 @@ class NopaperService
                     Document::query()
                         ->where('user_id', $user->id)
                         ->where('status', DocumentStatusEnum::Signed->value)
-                        ->where('status_signature', DocumentStatusSignatureEnum::NoSend->value)
+                        ->where('status_signature', DocumentStatusSignatureEnum::Process->value)
                         ->update([
                             'status_signature' => DocumentStatusSignatureEnum::Process->value,
                             'document_id' => $draftResponse['documentId']
