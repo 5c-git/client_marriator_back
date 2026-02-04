@@ -56,8 +56,9 @@ class GetUserFileFromCorrect extends Command
                         RecognitionDocumentService::createUserMoreInformationInfoFromDocument($recognitionDocument);
 
                         if(
-                            $recognitionDocument->status === RecognitionDocumentStatusEnum::recognized->value &&
-                            $recognitionDocument->file_type == DocumentTypeEnum::Passport->value
+                            ($recognitionDocument->status == RecognitionDocumentStatusEnum::recognized->value &&
+                            $recognitionDocument->file_type == DocumentTypeEnum::Passport->value) || ($recognitionDocument->status == RecognitionDocumentStatusEnum::recognized &&
+                                $recognitionDocument->file_type == DocumentTypeEnum::Passport)
                         ){
                             $user = $recognitionDocument->user;
                             if(is_array($user->data)){
