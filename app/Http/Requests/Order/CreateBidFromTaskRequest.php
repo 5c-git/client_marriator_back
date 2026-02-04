@@ -86,11 +86,11 @@ class CreateBidFromTaskRequest extends FormRequest
                     $taskActivities = TaskActivity::where('id', $value)->first();
                     /** @var TaskActivity $taskActivities */
 
-//                    if($taskActivities) {
-//                        if (TimeService::getTimeDifferenceSub($this->user(), 'leave_bid', $taskActivities->date_end)) {
-//                            $fail('Time after date end of activities');
-//                        }
-//                    }
+                    if($taskActivities) {
+                        if (TimeService::getTimeDifferenceSub($this->user(), 'leave_bid', $taskActivities->date_end)) {
+                            $fail('Time after date end of activities');
+                        }
+                    }
                 },
             ]
         ];
