@@ -56,8 +56,13 @@ class OrderSActivitiesResource extends JsonResource
     {
         $user = Auth::user();
         $check = true;
-        $count = SearchRequest::query()->where('activity_id', $this->id)->count();
-        if ($count < $this->count) {
+
+        if($this->bidOrTask instanceof Order){
+            $count = SearchRequest::query()->where('order_id',$this->bidOrTask->id)->where('activity_id', $this->id)->count();
+        }else{
+            $count = SearchRequest::query()->where('task_id',$this->bidOrTask->id)->where('activity_id', $this->id)->count();
+        }
+        if ($count >= $this->count) {
             $check = false;
         }
 
