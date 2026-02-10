@@ -35,7 +35,7 @@ use App\Models\Order\OrderActivities;
  * @property Carbon $created_at
  * @property array $date_activity
  * @property bool $need_foto
- * @property OrderStatusEnum $status
+ * @property int $status
  * @property-read User $user
  * @property-read Order $order
  * @property-read Task $task
@@ -71,7 +71,6 @@ class SearchRequest extends Model
     ];
 
     protected $casts = [
-        'status' => OrderStatusEnum::class,
         'date_start' => 'datetime',
         'created_at' => 'datetime',
         'date_end' => 'datetime',
