@@ -84,8 +84,8 @@ class CreateSearchFromTaskRequest extends FormRequest
 
                         if ($bid) {
                             /** @var Bid $bid */
-                            if (!TimeService::getTimeDifferenceSub($this->user(), 'repeat_bid', $bid->date_end)) {
-                                $fail('Time before date of create new bid');
+                            if (TimeService::getTimeDifferenceSub($this->user(), 'leave_bid', $bid->date_end)) {
+                                $fail('Time after date of create new bid');
                             }
                         }
                     }
