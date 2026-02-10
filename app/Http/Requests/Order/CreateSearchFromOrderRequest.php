@@ -75,7 +75,7 @@ class CreateSearchFromOrderRequest extends FormRequest
 
                         if ($bid) {
                             /** @var Bid $bid */
-                            if (!TimeService::getTimeDifferenceAdd($this->user(), 'repeat_bid', $bid->created_at)) {
+                            if (!TimeService::getTimeDifferenceSub($this->user(), 'repeat_bid', $bid->date_end)) {
                                 $fail('Time before date of create new bid');
                             }
                         }
