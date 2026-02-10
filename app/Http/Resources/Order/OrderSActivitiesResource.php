@@ -38,8 +38,18 @@ class OrderSActivitiesResource extends JsonResource
             'needFoto' => (bool)$this->need_foto,
             'dateActivity' => DateActivityResource::collection(collect($this->date_activity)),
             'countSearch' => SearchRequest::query()->where('activity_id',$this->id)->count(),
-            'buttonNeed' => $this->checkButtonNeed()
+            'buttonSearchNeed' => $this->checkButtonNeed(),
+            'buttonBidNeed' => $this->checkBidButtonNeed(),
         ];
+    }
+
+    public function checkBidExist(): bool
+    {
+        if($this->bidOrTask instanceof Order){
+            return Bid::query()->where('order_id',$this->bidOrTask->id)->where('activity_id', $this->id)->orderBy('id','desc')->exists();
+        }else{
+            return Bid::query()->where('task_id',$this->bidOrTask->id)->where('activity_id', $this->id)->orderBy('id','desc')->exists();
+        }
     }
 
     public function checkButtonNeed(): bool
@@ -59,6 +69,27 @@ class OrderSActivitiesResource extends JsonResource
 
         if (!$bid) {
             $check = false;
+        }
+
+        if ($bid && $user) {
+            /** @var Bid $bid */
+            if(!TimeService::getTimeDifferenceAdd($user,'repeat_bid',$bid->created_at)){
+                $check = false;
+            }
+        }
+
+        return $check;
+    }
+
+    public function checkBidButtonNeed(): bool
+    {
+        $user = Auth::user();
+        $check = true;
+
+        if($this->bidOrTask instanceof Order){
+            $bid = Bid::query()->where('order_id',$this->bidOrTask->id)->where('activity_id', $this->id)->orderBy('id','desc')->first();
+        }else{
+            $bid = Bid::query()->where('task_id',$this->bidOrTask->id)->where('activity_id', $this->id)->orderBy('id','desc')->first();
         }
 
         if ($bid && $user) {
