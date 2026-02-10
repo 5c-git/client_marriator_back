@@ -63,14 +63,23 @@ class CreateSearchFromOrderRequest extends FormRequest
                     if($orderActivities){
                         if($count>=$orderActivities->count){
                             $fail('Limit Search request count');
+                            return;
                         }
                     }
-//                    if ($bids) {
-//                        /** @var Bid $bids */
-//                        if(TimeService::getTimeDifferenceAdd($this->user(),'repeat_bid',$bids->created_at)){
-//                            $fail('Time before date of create new bid');
-//                        }
-//                    }
+                    if($orderActivities) {
+                        $bid = Bid::query()
+                            ->where('order_id', $orderActivities->order_id)
+                            ->where('activity_id', $this->orderActivityId)
+                            ->orderBy('id', 'desc')
+                            ->first();
+
+                        if ($bid) {
+                            /** @var Bid $bid */
+                            if (!TimeService::getTimeDifferenceAdd($this->user(), 'repeat_bid', $bid->created_at)) {
+                                $fail('Time before date of create new bid');
+                            }
+                        }
+                    }
 
                 },
             ],

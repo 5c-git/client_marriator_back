@@ -3,9 +3,12 @@
 namespace App\Http\Resources\Order;
 
 use App\Models\Order\Bid;
+use App\Models\Order\Order;
 use App\Models\Order\SearchRequest;
+use App\Services\TimeService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Resources\PlaceResource;
 use App\Http\Resources\ShortUserResource;
@@ -35,7 +38,36 @@ class OrderSActivitiesResource extends JsonResource
             'needFoto' => (bool)$this->need_foto,
             'dateActivity' => DateActivityResource::collection(collect($this->date_activity)),
             'countSearch' => SearchRequest::query()->where('activity_id',$this->id)->count(),
-            'existBid' => Bid::query()->where('activity_id',$this->id)->exists()
+            'buttonNeed' => $this->checkButtonNeed()
         ];
+    }
+
+    public function checkButtonNeed(): bool
+    {
+        $user = Auth::user();
+        $check = true;
+        $count = SearchRequest::query()->where('activity_id', $this->id)->count();
+        if ($count < $this->count) {
+            $check = false;
+        }
+
+        if($this->bidOrTask instanceof Order){
+            $bid = Bid::query()->where('order_id',$this->bidOrTask->id)->where('activity_id', $this->id)->orderBy('id','desc')->first();
+        }else{
+            $bid = Bid::query()->where('task_id',$this->bidOrTask->id)->where('activity_id', $this->id)->orderBy('id','desc')->first();
+        }
+
+        if (!$bid) {
+            $check = false;
+        }
+
+        if ($bid && $user) {
+            /** @var Bid $bid */
+            if(!TimeService::getTimeDifferenceAdd($user,'repeat_bid',$bid->created_at)){
+                $check = false;
+            }
+        }
+
+        return $check;
     }
 }

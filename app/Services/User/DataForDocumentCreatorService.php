@@ -305,7 +305,7 @@ class DataForDocumentCreatorService
     {
         if(!empty($this->order)){
             if($this->order instanceof Bid){
-                return $this->order->viewActivity?->standart?->name??'не заполнено';
+                return $this->order->viewActivity?->standardDirectory?->name??'не заполнено';
             }
         }
         return 'не заполнено';

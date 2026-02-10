@@ -20,6 +20,7 @@ use App\Models\Fields\Directory\ViewActivities;
  * @property bool $need_foto
  * @property array $date_activity
  * @property-read Order $order
+ * @property-read Order $bidOrTask
  * @property-read ViewActivities $viewActivity
  *
  */
@@ -47,6 +48,11 @@ class OrderActivities extends Model
     ];
 
     public function order(): BelongsTo
+    {
+        return $this->belongsTo(Order::class,'order_id');
+    }
+
+    public function bidOrTask(): BelongsTo
     {
         return $this->belongsTo(Order::class,'order_id');
     }

@@ -90,7 +90,7 @@ class ViewActivities extends Model implements ModelDirectoryInterface
         )->withPivot( 'price');
     }
 
-    public function standart(): BelongsTo
+    public function standardDirectory(): BelongsTo
     {
         return $this->belongsTo(Standard::class, 'standard','uuid');
     }

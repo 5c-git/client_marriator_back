@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Http\Resources\Order\StandardResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Http\Resources\ProjectResource;
@@ -30,7 +31,8 @@ class ViewActivityResource extends JsonResource
             'detailName' => $this->detail_name,
             'previewText' => $this->preview_text,
             'logo' =>  $this->img ? Storage::url($this->img) : null,
-            'traveling' =>  (bool)$this->traveling
+            'traveling' =>  (bool)$this->traveling,
+            'standard' => $this->standardDirectory?new StandardResource($this->standardDirectory):null
         ];
 
     }

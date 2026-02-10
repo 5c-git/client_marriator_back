@@ -18,6 +18,7 @@ use App\Models\Fields\Directory\ViewActivities;
  * @property bool $need_foto
  * @property array $date_activity
  * @property-read Task $task
+ * @property-read Task $bidOrTask
  * @property-read ViewActivities $viewActivity
  *
  */
@@ -44,6 +45,11 @@ class TaskActivity extends Model
     ];
 
     public function task(): BelongsTo
+    {
+        return $this->belongsTo(Task::class,'task_id');
+    }
+
+    public function bidOrTask(): BelongsTo
     {
         return $this->belongsTo(Task::class,'task_id');
     }

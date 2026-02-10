@@ -106,6 +106,9 @@ class JobResource extends JsonResource
                 $forPay += $report->forPay * ($report->coefficient ?? 1) + $report->getReasonsAmount();
             }
         }
+        if($forPay<0){
+            $forPay = 0;
+        }
         return (int)$forPay;
     }
 }

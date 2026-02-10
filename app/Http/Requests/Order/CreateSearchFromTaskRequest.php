@@ -71,16 +71,24 @@ class CreateSearchFromTaskRequest extends FormRequest
                     if($orderActivities){
                         if($count>=$orderActivities->count){
                             $fail('Limit Search request count');
+                            return;
                         }
                     }
-//                    $count = $orderExists->bid->count();
-//                    $bids = $orderExists->bid?->where('activity_id', $this->orderActivityId)->first();
-//                    if ($bids) {
-//                        /** @var Bid $bids */
-//                        if(TimeService::getTimeDifferenceAdd($this->user(),'repeat_bid',$bids->created_at)){
-//                            $fail('Time before date of create new bid');
-//                        }
-//                    }
+
+                    if($orderActivities) {
+                        $bid = Bid::query()
+                            ->where('task_id', $orderActivities->task_id)
+                            ->where('activity_id', $this->taskActivityId)
+                            ->orderBy('id', 'desc')
+                            ->first();
+
+                        if ($bid) {
+                            /** @var Bid $bid */
+                            if (!TimeService::getTimeDifferenceAdd($this->user(), 'repeat_bid', $bid->created_at)) {
+                                $fail('Time before date of create new bid');
+                            }
+                        }
+                    }
                 },
             ],
             'taskActivityId' => [
