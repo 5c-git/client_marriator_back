@@ -47,7 +47,6 @@ class SearchResource extends JsonResource
             'dateActivity' => DateActivityResource::collection(collect($this->date_activity)),
             'order' => new ShortOrderResource($this->order),
             'task' => new TaskShortResource($this->task),
-            'acceptingUsers' => AcceptingUsersResource::collection($this->acceptingUsers),
             'count' => $this->count,
             'project'=> new ProjectResource($this->getProject()),
         ];
