@@ -63,7 +63,7 @@ class SearchDataRequest extends FormRequest
                 'after:now',
                 function ($attribute, $value, $fail) {
                     /** @var  $bid Bid */
-                    $bid = SearchRequest::query()->where('id', $this->bidId)->first();
+                    $bid = SearchRequest::query()->where('id', $this->searchId)->first();
                     /** @var  $project Project */
                     $project = $bid->order?->user?->project?->first()
                         ?? $bid->task?->project
@@ -85,7 +85,7 @@ class SearchDataRequest extends FormRequest
                 'after:dateStart',
                 function ($attribute, $value, $fail) {
                     /** @var  $bid Bid */
-                    $bid = Bid::query()->where('id', $this->bidId)->first();
+                    $bid = Bid::query()->where('id', $this->searchId)->first();
                     /** @var  $project Project */
                     $project = $bid->order?->user?->project?->first()
                         ?? $bid->task?->project
