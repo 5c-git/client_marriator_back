@@ -50,6 +50,7 @@ class SearchDataRequest extends FormRequest
 
                     if (!$taskExists) {
                         $fail('Not your search');
+                        return;
                     }
                 },
             ],
