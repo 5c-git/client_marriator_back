@@ -65,17 +65,19 @@ class SearchDataRequest extends FormRequest
                 function ($attribute, $value, $fail) {
                     /** @var  $bid Bid */
                     $bid = SearchRequest::query()->where('id', $this->searchId)->first();
-                    /** @var  $project Project */
-                    $project = $bid->order?->user?->project?->first()
-                        ?? $bid->task?->project
-                        ?? $bid->task?->order?->user?->project?->first();
+                    if($bid) {
+                        /** @var  $project Project */
+                        $project = $bid->order?->user?->project?->first()
+                            ?? $bid->task?->project
+                            ?? $bid->task?->order?->user?->project?->first();
 
-                    if ($project && $project->date_start) {
-                        $dateStart = Carbon::parse($value);
-                        $projectDateStart = Carbon::parse($project->date_start);
+                        if ($project && $project->date_start) {
+                            $dateStart        = Carbon::parse($value);
+                            $projectDateStart = Carbon::parse($project->date_start);
 
-                        if ($dateStart->lt($projectDateStart)) {
-                            $fail('The activity start date must be after or equal to the project start date.');
+                            if ($dateStart->lt($projectDateStart)) {
+                                $fail('The activity start date must be after or equal to the project start date.');
+                            }
                         }
                     }
                 }
@@ -86,18 +88,20 @@ class SearchDataRequest extends FormRequest
                 'after:dateStart',
                 function ($attribute, $value, $fail) {
                     /** @var  $bid Bid */
-                    $bid = Bid::query()->where('id', $this->searchId)->first();
+                    $bid = SearchRequest::query()->where('id', $this->searchId)->first();
                     /** @var  $project Project */
-                    $project = $bid->order?->user?->project?->first()
-                        ?? $bid->task?->project
-                        ?? $bid->task?->order?->user?->project?->first();
+                    if($bid) {
+                        $project = $bid->order?->user?->project?->first()
+                            ?? $bid->task?->project
+                            ?? $bid->task?->order?->user?->project?->first();
 
-                    if ($project && $project->date_end) {
-                        $dateEnd = Carbon::parse($value);
-                        $projectDateEnd = Carbon::parse($project->date_end);
+                        if ($project && $project->date_end) {
+                            $dateEnd        = Carbon::parse($value);
+                            $projectDateEnd = Carbon::parse($project->date_end);
 
-                        if ($dateEnd->gt($projectDateEnd)) {
-                            $fail('The activity end date must be before or equal to the project end date.');
+                            if ($dateEnd->gt($projectDateEnd)) {
+                                $fail('The activity end date must be before or equal to the project end date.');
+                            }
                         }
                     }
                 }
