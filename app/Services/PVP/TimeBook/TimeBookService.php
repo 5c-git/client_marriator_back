@@ -17,9 +17,9 @@ class TimeBookService extends PVPAbstract
     private string $baseUrl;
     private string $token;
 
-    private string $organization = '550e8400-e29b-41d4-a716-441655440001';
-    private string $subdivision = '550e8400-e29b-41d4-a716-441655440002';
-    private string $position = '550e8400-e29b-41d4-a716-441655440003';
+    private string $organization = '550e8400-e29b-41d4-a716-441655440004';
+    private string $subdivision = '550e8400-e29b-41d4-a716-441655440005';
+    private string $position = '550e8400-e29b-41d4-a716-441655440006';
 
     public function __construct()
     {
@@ -164,17 +164,20 @@ class TimeBookService extends PVPAbstract
         $params = [
             'limit' => (50 + (50*$i)),
             'offset' =>(50*$i),
-            'dateBegin' => Carbon::now()->format('Y-m-d'),
-            'dateEnd' => Carbon::now()->addDays(5)->format('Y-m-d'),
+            'dateBegin' => Carbon::now()->addDay()->format('Y-m-d'),
+            'dateEnd' => Carbon::now()->addDays(10)->format('Y-m-d'),
             'statuses' => ['canceled','requested', 'new', 'assigned', 'wait4answer','deleted'],
         ];
+
         $data    = $this->request('post', '/demands', $params);
+
         if (!empty($data['demands'])) {
             $dataRes = $data['demands'];
             if (count($data['demands']) >= 50) {
                 $dataRes = array_merge($dataRes, $this->getDemands($i+1));
             }
         }
+
         return $dataRes;
     }
 
@@ -187,7 +190,7 @@ class TimeBookService extends PVPAbstract
             $this->createEmployee($user);
         }
 
-        $response = $this->request('post', '/demand_actions', [
+        $response = $this->request('post', '/demand-actions', [
             [
                 'demand_key' => $demandKey,
                 'actions' => [
@@ -247,7 +250,12 @@ class TimeBookService extends PVPAbstract
             $response = Http::withHeaders([
                 'X-Access-Token' => $this->token,
             ])->$method("{$this->baseUrl}{$endpoint}", $data);
-
+            echo "<pre>";
+            var_dump("{$this->baseUrl}{$endpoint}");
+            echo "</pre>";
+            echo "<pre>";
+            var_dump($response->status());
+            echo "</pre>";
             if ($response->successful()) {
                 return $response->json();
             }
@@ -286,7 +294,7 @@ class TimeBookService extends PVPAbstract
     {
         $returnArray = [];
         foreach ($data as $dataShift) {
-            if ($dataShift['status'] == 'new') {
+            if (in_array($dataShift['status'],['requested','new'])) {
                 $array                 = [];
                 $array['place']        = $dataShift['unitUuid'];
                 $array['selfEmployed'] = true;
