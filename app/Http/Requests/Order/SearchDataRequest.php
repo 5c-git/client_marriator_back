@@ -42,9 +42,6 @@ class SearchDataRequest extends FormRequest
                     $taskExists = SearchRequest::query()
                         ->whereIn('user_id',$userIdsSupervisor)
                         ->where('id',$value)
-                        ->orWhere(function ($query) use ($user,$value,$userIdsSupervisor) {
-                            $query->whereIn('accept_user_id', $userIdsSupervisor);
-                        })
                         ->where('status',0)
                         ->exists();
 
