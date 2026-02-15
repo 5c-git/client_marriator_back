@@ -898,7 +898,7 @@ class EloquentOrderRepository implements OrderRepository
         return $bid;
     }
 
-    public function updateSearch(SearchDataRequest $bidRequest): Bid
+    public function updateSearch(SearchDataRequest $bidRequest): SearchRequest
     {
         $bid = SearchRequest::where('id',$bidRequest->searchId)->first();
         $radius = Radius::where('default',true)->first();

@@ -203,7 +203,7 @@ class CachingOrderRepository implements OrderRepository
         return $this->orders->updateBid($bidRequest);
     }
 
-    public function updateSearch(SearchDataRequest $bidRequest): Bid
+    public function updateSearch(SearchDataRequest $bidRequest): SearchRequest
     {
         return $this->orders->updateSearch($bidRequest);
     }
