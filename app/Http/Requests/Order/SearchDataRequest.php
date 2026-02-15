@@ -45,7 +45,7 @@ class SearchDataRequest extends FormRequest
                         ->orWhere(function ($query) use ($user,$value,$userIdsSupervisor) {
                             $query->whereIn('accept_user_id', $userIdsSupervisor);
                         })
-                        ->whereIn('status',0)
+                        ->where('status',0)
                         ->exists();
 
                     if (!$taskExists) {
