@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Form;
 
 use App\Http\Controllers\Controller;
+use App\Models\Fields\Directory\Radius;
 use App\Models\User;
 use App\Services\ApiTokenService\ApiTokenService;
 use App\Services\Register\EmailVerifiedService;
@@ -109,10 +110,18 @@ class RegistrationController extends Controller
 //               $response['error'] = 'Пользователь не идентифицирован';
 //               $response['status'] = 'error';
 
+               $radius = Radius::where('default',true)->first();
+               if(!$radius) {
+                   $radiusDefault = 5;
+               }else{
+                   $radiusDefault = $radius->value;
+               }
+
                $user = new User();
                $user->phone = $request->phone;
                $user->email = Str::random(20) . '@mariator.ru';
                $user->password = Hash::make(Str::random(20));
+               $user->mapRadius = $radiusDefault;
                $user->save();
                $user->roles()->sync([RoleEnum::specialist->value]);
                $response['result']['type'] = 'register';
