@@ -16,5 +16,6 @@ abstract class PVPAbstract
     abstract public function getData();
     abstract public function getPrefix():string;
     abstract protected function dataFormater($data): array;
+    abstract public function getType(): int;
 
 }

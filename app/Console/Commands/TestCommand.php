@@ -44,6 +44,28 @@ class TestCommand extends Command
 
     public function handle(): void
     {
+
+        $service = new TimeBookService();
+        $r = RecognitionDocument::query()->where('user_id','!=',172)->first();
+
+        $user = User::query()->where('id',$r->user_id)->first();
+//        echo "<pre>";
+//        var_dump($service->getData());
+//        echo "</pre>";
+//        $res = $service->createEmployee($user);
+//        echo "<pre>";
+//        var_dump($res);
+//        echo "</pre>";
+//        die();
+         $data = $service->assignToShift('698ad158-fb91-2269-eba0-fd8cfbe60ed9',$user);
+        echo "<pre>";
+        var_dump($data);
+        echo "</pre>";
+        die();
+
+
+
+
         $r = RecognitionDocument::query()->first();
         $user = User::query()->where('id',$r->user_id)->first();
         $service = new VermeService();

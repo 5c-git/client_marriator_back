@@ -31,7 +31,7 @@ class VermeService  extends PVPAbstract
         return true;
     }
 
-    public function getTimesheets(User $user, Bid $bid)
+    public function getTimesheets(User $user, Bid $bid):?float
     {
         $payload = [
             'getTimesheets' => [
@@ -45,15 +45,21 @@ class VermeService  extends PVPAbstract
             ]
         ];
 
-        return $this->getResultData($this->sendRequest($payload),$bid);
+        return $this->getResultData($this->sendRequest($payload));
     }
 
-    public function getResultData(?array $data,bid $bid):array
+    public function getResultData(?array $data):?float
     {
-        if(!empty($data)){
-
+        $hours = 0;
+        if(!empty($data) && !empty($data[0])){
+            if(!empty($data[0]['dvalue'])){
+                $hours+=$data[0]['dvalue'];
+            }
+            if(!empty($data[0]['nvalue'])){
+                $hours+=$data[0]['nvalue'];
+            }
         }
-        return [];
+        return $hours?:null;
     }
 
     public function createEmployee(array $employeeData)
@@ -236,7 +242,7 @@ class VermeService  extends PVPAbstract
         return 'v_';
     }
 
-    static function getType():int
+    public function getType():int
     {
         return 1;
     }

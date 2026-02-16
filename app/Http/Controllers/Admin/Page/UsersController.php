@@ -30,7 +30,7 @@ class UsersController extends Controller
 
     public function usersList(Request $request)
     {
-        $users = User::query()->with('roles')->get();
+        $users = User::query()->with('roles')->orderBy('id','desc')->get();
         return view('admin.user.users',compact('users'));
     }
 

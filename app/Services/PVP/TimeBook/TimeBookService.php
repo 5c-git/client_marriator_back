@@ -444,8 +444,8 @@ class TimeBookService extends PVPAbstract
         return 't_';
     }
 
-    static function getType():int
+    public function getType():int
     {
-        return 1;
+        return 3;
     }
 }

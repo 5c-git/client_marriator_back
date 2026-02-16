@@ -46,6 +46,7 @@ class PVPService
                     $newOrder->user_id       = $user->id;
                     $newOrder->self_employed = $item['selfEmployed'];
                     $newOrder->status        = OrderStatusEnum::notAccepted->value;
+                    $newOrder->external_type = $this->pvp->getType();
                     $newOrder->save();
 
 
@@ -67,9 +68,6 @@ class PVPService
     public function getResultData(User $user,Bid $bid)
     {
        $data = $this->pvp->getTimesheets($user,$bid);
-       echo "<pre>";
-       var_dump($data);
-       echo "</pre>";
     }
 
     public function getUser(Place $place): User
@@ -140,12 +138,39 @@ class PVPService
        if(!empty($bid->external_type)){
            $pvpService = self::getObj($bid->external_type);
            $dataWork = $pvpService->getDataWork($report->user,$bid);
-
+           if($dataWork){
+               $report->hours = $dataWork;
+               $report->pvp = false;
+               $report->forPay = self::getPriceForHour($report);
+           }
        }else{
            $report->pvp = false;
            $report->save();
        }
+       $report->save();
 
+    }
+
+    static function getPriceForHour(Report $report): float
+    {
+        if ($report->order) {
+            $project = $report->order->user->project->first();
+        } elseif ($report->task) {
+            $project = $report->task->project;
+        }
+        if(!$report->bid->price) {
+            $price = 0;
+            foreach ($project->viewActivities as $viewActivity) {
+                if ($viewActivity->id === $report->bid->view_activity_id) {
+                    $price = $viewActivity->pivot->price;
+                    break;
+                }
+            }
+            $price = $price * $report->hours;
+        }else{
+            $price = $report->bid->price * $report->hours;
+        }
+        return $price;
     }
 
 }

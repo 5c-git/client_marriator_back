@@ -4,6 +4,7 @@ namespace App\Services\PVP\XFive;
 
 use App\Enum\Document\DocumentTypeEnum;
 use App\Models\Document\RecognitionDocument;
+use App\Models\Order\Bid;
 use App\Models\User;
 use App\Services\PVP\PVPAbstract;
 use App\Services\User\UserDataService;
@@ -112,11 +113,15 @@ class XFiveService  extends PVPAbstract
     /**
      * Получить задание по ID (v4 - актуальная версия)
      */
-    public function getTask(int $taskId): array
+    public function getTimesheets(User $user, Bid $bid): ?float
     {
-        return $this->makeRequest('get', '/task/v4', [
-            'taskid' => $taskId
+        $data = $this->makeRequest('get', '/task/v4', [
+            'taskid' => $bid->external_id
         ]);
+        if(!empty($data) && !empty($data["task"]) && !empty($data["task"][0]) && !empty($data["task"][0]["facthrs"])){
+            return (float)$data["task"][0]["facthrs"];
+        }
+        return null;
     }
 
     /**
@@ -478,7 +483,7 @@ class XFiveService  extends PVPAbstract
         return 'x_';
     }
 
-    static function getType():int
+    public function getType():int
     {
         return 2;
     }
