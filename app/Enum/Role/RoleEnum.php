@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Enum\Role;
+use App\Models\Fields\Directory\Counterparty;
 use ArchTech\Enums\InvokableCases;
 use ArchTech\Enums\Names;
 use ArchTech\Enums\Values;
@@ -22,16 +23,16 @@ enum RoleEnum: int
     case specialist = 5;
     case supervisor = 6;
 
-    public function getUserBinding(): string
+    public function getUserBinding(): array
     {
         return match($this)
         {
-            self::client => Project::class,
-            self::manager => Project::class,
-            self::recruiter => Place::class,
-            self::supervisor => Project::class,
-            self::specialist => Project::class,
-            self::admin => Project::class,
+            self::client => [Counterparty::class,Project::class,Place::class],
+            self::manager => [Project::class],
+            self::recruiter => [],
+            self::supervisor => [],
+            self::specialist => [],
+            self::admin => [],
         };
     }
 

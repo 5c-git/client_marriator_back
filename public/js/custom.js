@@ -523,20 +523,24 @@ $(document).ready(function () {
             contentType: false,
             success: function (data) {
                 if (data.status == 'success') {
+                    $('.jsonData').html(JSON.stringify(data.data, null, 2));
+                    $(document).find('.rolesCustomJSBindingsCounterparty').select2("destroy");
                     var option = '';
                     $('.addSelectJs').html('');
+                    option += '<div class="form-group row rolesCustomJSBindingsCounterpartyDiv" style="display: block">  ' +
+                        '<label for="select" class="col-sm-6 col-form-label">Справочник контрагентов</label> ' +
+                        '<select class="rolesCustomJSBindingsCounterparty custom-select" name="counterparty[]" required multiple>';
                     data.data.forEach(function (items,indexs){
-
-                        option += '<div class="form-group row" style="display: block">  ' +
-                            '<label for="select" class="col-sm-6 col-form-label">Справочник - '+data.name[indexs]+'</label> ' +
-                            '<select class="rolesCustomJSBindings custom-select" name="'+data.userFields[indexs]+'[]" required multiple>';
-                        items.forEach(function (item,index){
-                            option += '<option value="'+item.id+'">'+item.name+'</option>';
-                        })
-                        option += '</select>' + '</div>'
+                        option += '<option value="'+items.id+'">'+items.name+'</option>';
                     })
+                    option += '</select>' + '</div>';
 
                     $('.addSelectJs').append(option);
+
+                    //$(document).find('.rolesCustomJSBindingsCounterparty').select2("destroy");
+                    $(document).find('.rolesCustomJSBindingsCounterparty').select2({
+                        theme: 'bootstrap4',
+                    });
 
                 } else {
                     $(document).Toasts('create', {
@@ -558,6 +562,71 @@ $(document).ready(function () {
                 })
                 //setTimeout(function(){location.reload();},2000);
             }
+        });
+    })
+
+    $(document).on('change', '.rolesCustomJSBindingsCounterparty', function (e) {
+        var jsonString = $('.jsonData').html();
+        var obj = JSON.parse(jsonString);
+        var data = $(this).val();
+        var option = '';
+        var selectPr = [];
+        //$('.addSelectJs').html('');
+        $(document).find('.rolesCustomJSBindingsProject').select2("destroy");
+        $(document).find('.rolesCustomJSBindingsProjectDiv').remove();
+        $(document).find('.rolesCustomJSBindingsPlace').select2("destroy");
+        $(document).find('.rolesCustomJSBindingsPlaceDiv').remove();
+        option += '<div class="form-group rolesCustomJSBindingsProjectDiv row" style="display: block">  ' +
+            '<label for="select" class="col-sm-6 col-form-label">Справочник проектов</label> ' +
+            '<select class="rolesCustomJSBindingsProject custom-select" name="project[]" required multiple>';
+        obj.forEach(function (items,indexs){
+            if(data.includes(String(items.id))) {
+                items.projects.forEach(function (itemsPr,indexsPr){
+                    if(!selectPr.includes(itemsPr.id)){
+                        selectPr.push(itemsPr.id)
+                        option += '<option value="' + itemsPr.id + '">' + itemsPr.name + '</option>';
+                    }
+                })
+            }
+        })
+        option += '</select>' + '</div>';
+        $('.addSelectJs').append(option);
+        $(document).find('.rolesCustomJSBindingsProject').select2({
+            theme: 'bootstrap4',
+        });
+    })
+
+    $(document).on('change', '.rolesCustomJSBindingsProject', function (e) {
+        var jsonString = $('.jsonData').html();
+        var obj = JSON.parse(jsonString);
+        var dataPr = $(this).val();
+        var dataCo = $(document).find('.rolesCustomJSBindingsCounterparty').val();
+        var option = '';
+        var selectPl = [];
+        //$('.addSelectJs').html('');
+        $(document).find('.rolesCustomJSBindingsPlace').select2("destroy");
+        $(document).find('.rolesCustomJSBindingsPlaceDiv').remove();
+        option += '<div class="form-group rolesCustomJSBindingsPlaceDiv row" style="display: block">  ' +
+            '<label for="select" class="col-sm-6 col-form-label">Справочник мест проведения</label> ' +
+            '<select class="rolesCustomJSBindingsPlace custom-select" name="place[]" required multiple>';
+        obj.forEach(function (items,indexs){
+            if(dataCo.includes(String(items.id))) {
+                items.projects.forEach(function (itemsPr,indexsPr){
+                    if(dataPr.includes(String(itemsPr.id))) {
+                        itemsPr.places.forEach(function (itemsPl,indexsPr){
+                            if(!selectPl.includes(itemsPl.id)) {
+                                selectPl.push(itemsPl.id)
+                                option += '<option value="' + itemsPl.id + '">' + itemsPl.name + '</option>';
+                            }
+                        })
+                    }
+                })
+            }
+        })
+        option += '</select>' + '</div>';
+        $('.addSelectJs').append(option);
+        $(document).find('.rolesCustomJSBindingsPlace').select2({
+            theme: 'bootstrap4',
         });
     })
 

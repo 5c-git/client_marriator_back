@@ -97,4 +97,10 @@ class Project extends Model implements ModelDirectoryInterface
             'brand_id'
         );
     }
+
+    static function getForUserQr()
+    {
+        return self::query()->where('date_start', '<=', Carbon::now())
+            ->where('date_end', '>=', Carbon::now())->get()->toArray();
+    }
 }

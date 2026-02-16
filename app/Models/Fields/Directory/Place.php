@@ -73,4 +73,9 @@ class Place extends Model implements ModelDirectoryInterface
             'project_id'
         );
     }
+
+    static function getForUserQr()
+    {
+        return self::query()->get()->toArray();
+    }
 }

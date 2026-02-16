@@ -10,6 +10,7 @@
 
     <div class="container-fluid">
         <form class="qrCodeCreate">
+            <span class="jsonData" style="display: none"></span>
             @csrf
             <div class="form-group row">
                 <label for="select" class="col-sm-2 col-form-label">Роль</label>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\QrCode;
 
 use App\Http\Controllers\Controller;
+use App\Models\Fields\Directory\Counterparty;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\Setting;
@@ -33,22 +34,8 @@ class QrCodeController extends Controller
 
     public function getBindings(Request $request)
     {
-        $data = [];
-        $name = [];
-        $userFields = [];
-        foreach ($request->roles as $role) {
-            $data[(RoleEnum::from($role)?->getUserBinding())::$nameCustom] = (RoleEnum::from($role)?->getUserBinding())::where('date_start', '<=', Carbon::now())
-                ->where('date_end', '>=', Carbon::now())->get()->toArray();
-            $name[(RoleEnum::from($role)?->getUserBinding())::$nameCustom] = (RoleEnum::from($role)?->getUserBinding())::$nameCustom;
-            $userFields[(RoleEnum::from($role)?->getUserBinding())::$nameCustom] = RoleEnum::from($role)?->getUserBindingFunction();
-        }
-        $i = 0;
-        foreach ($data as $k=>$dataBindings){
-            $response['data'][] = $dataBindings;
-            $response['name'][$i] = $name[$k];
-            $response['userFields'][$i] = $userFields[$k];
-            $i++;
-        }
+        $counterparties = Counterparty::with('projects.places')->get()->toArray();
+        $response['data'] = $counterparties;
         if(!empty($response['data'])){
             $response['status'] = 'success';
         }else{
@@ -70,18 +57,31 @@ class QrCodeController extends Controller
             $user->email = $request->email;
             $user->register_hash = str_replace('/', "", Hash::make(date('Y-m-d H:i:s').$request->phone.rand(1000000,9999999)));
             $user->save();
-            $userFunction = [];
-            foreach ($request->roles as $role){
-               $userFunction[] = RoleEnum::from($role)?->getUserBindingFunction();
+
+            if(!empty($request->counterparty)){
+                $user->counterparty()->sync($request->counterparty);
             }
-            if(!empty($userFunction)){
-                $userFunction = array_unique($userFunction);
-                foreach ($userFunction as $function){
-                    if(!empty($request->$function)){
-                        $user->$function()->sync($request->$function);
-                    }
-                }
+
+            if(!empty($request->project)){
+                $user->project()->sync($request->project);
             }
+
+            if(!empty($request->place)){
+                $user->place()->sync($request->place);
+            }
+
+//            $userFunction = [];
+//            foreach ($request->roles as $role){
+//               $userFunction[] = RoleEnum::from($role)?->getUserBindingFunction();
+//            }
+//            if(!empty($userFunction)){
+//                $userFunction = array_unique($userFunction);
+//                foreach ($userFunction as $function){
+//                    if(!empty($request->$function)){
+//                        $user->$function()->sync($request->$function);
+//                    }
+//                }
+//            }
 
             $brand = $user->project()?->first()?->brands()?->first();
             $logoBrand = $brand?->logo;
@@ -91,16 +91,16 @@ class QrCodeController extends Controller
 
             $user->roles()->sync($request->roles);
 
-            $user = User::find($user->id);
-            $projects = $user->project()->with('counterparties')->get();
-            $counterpartyIds = collect();
-            foreach ($projects as $project) {
-                $counterpartyIds = $counterpartyIds->merge(
-                    $project->counterparties->pluck('id')
-                );
-            }
-            $counterpartyIds = $counterpartyIds->unique();
-            $user->counterparty()->syncWithoutDetaching($counterpartyIds->toArray());
+//            $user = User::find($user->id);
+//            $projects = $user->project()->with('counterparties')->get();
+//            $counterpartyIds = collect();
+//            foreach ($projects as $project) {
+//                $counterpartyIds = $counterpartyIds->merge(
+//                    $project->counterparties->pluck('id')
+//                );
+//            }
+//            $counterpartyIds = $counterpartyIds->unique();
+//            $user->counterparty()->syncWithoutDetaching($counterpartyIds->toArray());
 
             $response = ['status'=>'success','data'=>['url'=> config('app.front').'/signin/client/phone?hash='.$user->register_hash]];
         }else{

@@ -41,6 +41,8 @@ class Counterparty extends Model implements ModelDirectoryInterface
 
     public static int $fieldsTypeEnum = FieldsTypeEnum::photoCheckbox->value;
     public static string $uuid = 'directory_counterparty';
+    public static string $nameCustom = 'Контрагент';
+
 
     protected $table = 'directory_counterparty';
     protected $fillable = [
@@ -93,5 +95,10 @@ class Counterparty extends Model implements ModelDirectoryInterface
             'counterparty_id',
             'project_id'
         );
+    }
+
+    static function getForUserQr()
+    {
+        return self::query()->get()->toArray();
     }
 }
