@@ -88,7 +88,7 @@ class QrCodeController extends Controller
             $place = $user->place()?->first()?->project()?->first()?->brands()?->first();
             $logoPlace = $place?->logo;
             $user->img = $logoBrand?:$logoPlace;
-            $user->save();
+            //$user->save();
 
             $user->roles()->sync($request->roles);
 
