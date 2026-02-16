@@ -56,7 +56,7 @@ class UserObserver
     {
         $newUser = $user->toArray();
         $originalData = $user->getOriginal();
-        if($newUser['finishRegister'] == true && $newUser['confirmRegister'] == true) {
+        if(isset($newUser['finishRegister']) && isset($newUser['confirmRegister']) && $newUser['finishRegister'] == true && $newUser['confirmRegister'] == true) {
             $data = [];
             foreach ($this->userFieldForCheckUpdate as $field) {
                 if ($newUser[$field] != $originalData[$field]) {
