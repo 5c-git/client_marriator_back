@@ -565,7 +565,7 @@ $(document).ready(function () {
         });
     })
 
-    $(document).on('change', '.rolesCustomJSBindingsCounterparty', function (e) {
+    $(document).on('change', '.rolesCustomJSBindingsCounterpartyj', function (e) {
         var jsonString = $('.jsonData').html();
         var obj = JSON.parse(jsonString);
         var data = $(this).val();
