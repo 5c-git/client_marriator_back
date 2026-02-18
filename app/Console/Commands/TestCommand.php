@@ -52,12 +52,12 @@ class TestCommand extends Command
 //        echo "<pre>";
 //        var_dump($service->getData());
 //        echo "</pre>";
-//        $res = $service->createEmployee($user);
-//        echo "<pre>";
-//        var_dump($res);
-//        echo "</pre>";
+////        $res = $service->createEmployee($user);
+////        echo "<pre>";
+////        var_dump($res);
+////        echo "</pre>";
 //        die();
-         $data = $service->assignToShift('698ad158-fb91-2269-eba0-fd8cfbe60ed9',$user);
+         $data = $service->assignToShift('2cea118b-f2df-26ac-7a0a-911b52b55068',$user);
         echo "<pre>";
         var_dump($data);
         echo "</pre>";

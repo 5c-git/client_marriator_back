@@ -205,7 +205,7 @@ class TimeBookService extends PVPAbstract
             ],
         ]);
 
-        if(!empty($response)){
+        if(!empty($response) && !empty($response[0]) && isset($response[0]['success']) && $response[0]['success'] === true){
             return true;
         }
 
@@ -250,12 +250,7 @@ class TimeBookService extends PVPAbstract
             $response = Http::withHeaders([
                 'X-Access-Token' => $this->token,
             ])->$method("{$this->baseUrl}{$endpoint}", $data);
-            echo "<pre>";
-            var_dump("{$this->baseUrl}{$endpoint}");
-            echo "</pre>";
-            echo "<pre>";
-            var_dump($response->status());
-            echo "</pre>";
+
             if ($response->successful()) {
                 return $response->json();
             }
@@ -300,7 +295,7 @@ class TimeBookService extends PVPAbstract
                 $array['selfEmployed'] = true;
                 $array['dateStart']    = Carbon::parse($dataShift['datetimeBegin']);
                 $array['end']          = Carbon::parse($dataShift['datetimeEnd']);
-                $array['externalId']   = $dataShift['uuid'];
+                $array['externalId']   = $dataShift['demandKey'];
                 $array['job']          = $dataShift['specialityUuid'];
                 $returnArray[]         = $array;
             }
