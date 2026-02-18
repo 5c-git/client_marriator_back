@@ -7,6 +7,7 @@ use App\Http\Resources\Order\OrderActivitiesResource;
 use App\Http\Resources\Order\StatisticResource;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\ViewActivityResource;
+use App\Http\Resources\ViewActivityResourceJob;
 use App\Models\Fields\Directory\Radius;
 use App\Models\Order\Report;
 use App\Models\User;
@@ -44,7 +45,7 @@ class JobResource extends JsonResource
             'priceResult' => (int)(($this->price ?? $this->getPrice())*($this->self_employed?0.94:0.87)),
             'income' => 0,
             'forPay' => $this->acceptingUser ? $this->getForPay($this->getReports($this->acceptingUser)) : 0,
-            'viewActivity' => new ViewActivityResource($this->viewActivity),
+            'viewActivity' => new ViewActivityResourceJob($this->viewActivity),
             'dateStart' => $this->date_start,
             'dateEnd' => $this->date_end,
             'needFoto' => (bool)$this->need_foto,
