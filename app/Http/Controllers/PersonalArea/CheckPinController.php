@@ -118,7 +118,7 @@ class CheckPinController extends Controller
             $response['status'] = 'error';
             return response()->json($response,417);
         }else {
-            [$dataToken,$user] = ApiTokenService::refreshToken($request->refreshToken);
+            $dataToken = ApiTokenService::refreshToken($request->refreshToken);
             $response['result']['token'] = $dataToken;
             $response['status'] = 'success';
         }

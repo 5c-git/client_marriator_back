@@ -59,7 +59,7 @@ class ApiTokenService
             }
         }
 
-        return [$dataToken,$user];
+        return $dataToken;
     }
 
 }
