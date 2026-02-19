@@ -770,7 +770,8 @@ class ManagerController extends Controller
             ->whereHas('roles', function ($query) {
                 $query->where('name', RoleEnum::supervisor->name);
             })
-            ->where('confirmRegister', true)->where('finishRegister', true)->get()
+            ->where('confirmRegister', true)
+            ->where('finishRegister', true)
             ->get();
         return ShortUserResource::collection($supervisorUsers);
     }
