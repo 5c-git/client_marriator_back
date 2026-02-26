@@ -59,7 +59,7 @@ class VermeService  extends PVPAbstract
                 $hours+=$data[0]['nvalue'];
             }
         }
-        return $hours?:null;
+        return $hours?round($hours,3):null;
     }
 
     public function createEmployee(array $employeeData)
@@ -84,13 +84,16 @@ class VermeService  extends PVPAbstract
         $payload = [
             'getOutsourcingShiftsVer2' => array_merge([
                 'timestamp' => now()->subDay(),
-                'amount' => 10000,
+                'amount' => 100,
                 'headquarter' => ['code' => 'bnt'],
                 //'agency' => ['code' => 'bnt_agency_msk'],
                 'authData' => $this->defaultAuth
             ], $filters)
         ];
-
+        echo "<pre>";
+        var_dump($this->sendRequest($payload, 'POST'));
+        echo "</pre>";
+        die();
         return $this->sendRequest($payload, 'POST');
     }
 
@@ -113,9 +116,7 @@ class VermeService  extends PVPAbstract
         ];
 
         $data = $this->sendRequest($payload, 'POST');
-        echo "<pre>";
-        var_dump($data);
-        echo "</pre>";
+
         if(!empty($data)){
             return true;
         }
@@ -130,12 +131,6 @@ class VermeService  extends PVPAbstract
                 'Accept' => 'application/json',
             ])->timeout(3000)->post($this->baseUrl, $payload);
 
-            echo "<pre>";
-            var_dump($response->body());
-            echo "</pre>";
-            echo "<pre>";
-            var_dump($response->status());
-            echo "</pre>";
             if (!$response->successful()) {
                 Log::error('API Request failed', [
                     'status' => $response->status(),

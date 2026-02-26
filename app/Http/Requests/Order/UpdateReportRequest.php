@@ -49,7 +49,8 @@ class UpdateReportRequest extends FormRequest
                         ->whereIn('status', [ReportStatusEnum::reported->value,
                                              ReportStatusEnum::end->value,
                                              ReportStatusEnum::accept->value,
-                                             ReportStatusEnum::notEnded->value,])
+                                             ReportStatusEnum::notEnded->value,
+                            ])
                         ->exists();
 
                     if (!$report) {

@@ -119,7 +119,7 @@ class XFiveService  extends PVPAbstract
             'taskid' => $bid->external_id
         ]);
         if(!empty($data) && !empty($data["task"]) && !empty($data["task"][0]) && !empty($data["task"][0]["facthrs"])){
-            return (float)$data["task"][0]["facthrs"];
+            return round((float)$data["task"][0]["facthrs"],3);
         }
         return null;
     }

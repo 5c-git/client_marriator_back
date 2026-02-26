@@ -99,6 +99,7 @@ class AcceptAllReportRequest extends FormRequest
                         ReportStatusEnum::reported->value,
                         ReportStatusEnum::notEnded->value,
                         ReportStatusEnum::end->value,
+                        ReportStatusEnum::accept->value
                     ])->with('bid')->first();
                     if (!$report) {
                         $fail('Report not found');

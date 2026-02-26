@@ -4,6 +4,7 @@ namespace App\Services\PVP\TimeBook;
 
 use App\Enum\Document\DocumentTypeEnum;
 use App\Models\Document\RecognitionDocument;
+use App\Models\Order\Bid;
 use App\Models\User;
 use App\Services\PVP\PVPAbstract;
 use Carbon\Carbon;
@@ -179,6 +180,24 @@ class TimeBookService extends PVPAbstract
         }
 
         return $dataRes;
+    }
+
+    public function getTimesheets(User $user, Bid $bid):?float
+    {
+        $dataRes = [];
+        $params = [
+            'demandKeys'=> [$bid->external_id],
+            //'limit' => 1000,
+            //'offset' =>0,
+            //'dateBegin' => Carbon::now()->addDay()->format('Y-m-d'),
+            //'dateEnd' => Carbon::now()->addDays(10)->format('Y-m-d'),
+            //'statuses' => ['canceled','requested', 'new', 'assigned', 'wait4answer','deleted'],
+        ];
+        $data    = $this->request('post', '/demands', $params);
+        if(!empty($data) && !empty($data["demands"]) && !empty($data["demands"][0]) && !empty($data["demands"][0]["factTime"])){
+            return round((float)($data["demands"][0]["factTime"]/(60*60)),3);
+        }
+        return null;
     }
 
     /**

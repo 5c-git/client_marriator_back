@@ -1065,6 +1065,7 @@ class ManagerController extends Controller
                 ReportStatusEnum::reported->value,
                 ReportStatusEnum::notEnded->value,
                 ReportStatusEnum::end->value,
+                ReportStatusEnum::accept->value
             ])
             ->where('user_id',$request->specialistId)->get();
         $dataRequest = [];

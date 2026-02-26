@@ -47,6 +47,7 @@ class AcceptReportRequest extends FormRequest
                         ReportStatusEnum::reported->value,
                         ReportStatusEnum::notEnded->value,
                         ReportStatusEnum::end->value,
+                        ReportStatusEnum::accept->value
                     ])->first();
                     if(!$report){
                         $fail('Report not found');
