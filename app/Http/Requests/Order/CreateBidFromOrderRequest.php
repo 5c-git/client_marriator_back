@@ -60,7 +60,7 @@ class CreateBidFromOrderRequest extends FormRequest
                     $bids = $orderExists->bids?->where('activity_id', $this->orderActivityId)->sortByDesc('created_at')->first();
                     if ($bids) {
                         /** @var Bid $bids */
-                        if(!TimeService::getTimeDifferenceAdd($this->user(),'repeat_bid',$bids->created_at)){
+                        if(TimeService::getTimeDifferenceAdd($this->user(),'repeat_bid',$bids->created_at)){
                             $fail('Time before date of create new bid');
                         }
                     }

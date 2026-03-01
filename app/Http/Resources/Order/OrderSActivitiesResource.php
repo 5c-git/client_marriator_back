@@ -99,7 +99,7 @@ class OrderSActivitiesResource extends JsonResource
 
         if ($bid && $user) {
             /** @var Bid $bid */
-            if(!TimeService::getTimeDifferenceAdd($user,'repeat_bid',$bid->created_at)){
+            if(TimeService::getTimeDifferenceAdd($user,'repeat_bid',$bid->created_at)){
                 $check = false;
             }
         }
