@@ -41,7 +41,7 @@ if(!empty($user->email_verified_at)){
         $email_verified_at = 'No';
 }
 
-           $usersData[] = [$user->id ,$user->phone ,$user->name,  $permission , '<nobr>'.$btnEdit.'</nobr>'];
+           $usersData[] = [$user->id ,$user->phone ,$userService->getName($user)??$user->name,  $permission , '<nobr>'.$btnEdit.'</nobr>'];
         }
 
         $config = [

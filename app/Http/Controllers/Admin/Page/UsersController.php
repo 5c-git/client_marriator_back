@@ -6,6 +6,7 @@ use App\Enum\Role\RoleEnum;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\User\UserRole;
+use App\Services\User\UserDataService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -30,8 +31,9 @@ class UsersController extends Controller
 
     public function usersList(Request $request)
     {
+        $userService = new UserDataService();
         $users = User::query()->with('roles')->orderBy('id','desc')->get();
-        return view('admin.user.users',compact('users'));
+        return view('admin.user.users',compact('users','userService'));
     }
 
     public function userEdit(Request $request)
