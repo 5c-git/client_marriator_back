@@ -37,7 +37,7 @@ class OrderSActivitiesResource extends JsonResource
             'dateEnd' => $this->date_end,
             'needFoto' => (bool)$this->need_foto,
             'dateActivity' => DateActivityResource::collection(collect($this->date_activity)),
-            'countSearch' => SearchRequest::query()->where('activity_id',$this->id)->count(),
+            'countSearch' => $this->count - SearchRequest::query()->where('activity_id',$this->id)->count(),
             'buttonSearchNeed' => $this->checkButtonNeed(),
             'buttonBidNeed' => $this->checkBidButtonNeed(),
         ];
