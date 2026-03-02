@@ -18,7 +18,9 @@ class OfferSearch extends Model implements ModelDirectoryInterface
         'uuid',
         'name',
         'active',
-        'parentFields'
+        'parentFields',
+        'latitude',
+        'longitude',
     ];
 
     public $timestamps = false;

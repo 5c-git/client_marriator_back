@@ -67,6 +67,8 @@ class OfferSearchController extends Controller
 
         $editObj->name = $data['name'];
         $editObj->uuid = $data['uuid'];
+        $editObj->latitude = $data['latitude'];
+        $editObj->longitude = $data['longitude'];
 
         if(!empty($data['parentFields'])) {
             $editObj->parentFields = json_encode($data['parentFields']);
@@ -114,6 +116,8 @@ class OfferSearchController extends Controller
         $editObj = new $this->objClass();
         $editObj->name = $data['name'];
         $editObj->uuid = $data['uuid'];
+        $editObj->latitude = $data['latitude'];
+        $editObj->longitude = $data['longitude'];
 
         if(!empty($data['active'])) {
             $editObj->active = true;

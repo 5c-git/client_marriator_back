@@ -7,6 +7,7 @@ use App\Http\Resources\RoleResource;
 use App\Models\User;
 use App\Models\User\UserRole;
 use App\Services\DocumentServices\RecognitionDocumentService;
+use App\Services\User\UserDataService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -357,6 +358,10 @@ class FormController extends Controller
                 }
                 if(!empty($dataForDoc)) {
                     (new RecognitionDocumentService($dataForDoc, $user))->createDocumentForRecognition();
+                }
+
+                if(!empty($dataForDoc)) {
+                    UserDataService::userFieldsCheckRegister($dataForDoc,$user);
                 }
                 $user->save();
                 $apiTokenService = new ApiTokenService($user);

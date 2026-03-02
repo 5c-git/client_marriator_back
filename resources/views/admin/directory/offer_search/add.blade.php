@@ -37,6 +37,20 @@
         </div>
 
         <div class="form-group row">
+            <label for="latitude" class="col-sm-2 col-form-label">Координаты Широта</label>
+            <div class="col-sm-10">
+                <input type="number" min="-90" max="90" step="any" class="form-control" name="latitude" value="" id="latitude" required>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="longitude" class="col-sm-2 col-form-label">Координаты Долгота</label>
+            <div class="col-sm-10">
+                <input type="number" min="-90" max="90" step="any" class="form-control" name="longitude" value="" id="longitude" required>
+            </div>
+        </div>
+
+        <div class="form-group row">
             <label for="select" class="col-sm-2 col-form-label">Привязка полей</label>
             <div class="col-sm-10">
                 <div class="row addItemSelect">

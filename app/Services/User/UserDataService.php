@@ -5,10 +5,12 @@ namespace App\Services\User;
 use App\Enum\Document\DocumentFieldRecognition\Passport;
 use App\Enum\Document\DocumentTemplates\DocumentTemplatesEnum;
 use App\Enum\Document\DocumentTypeEnum;
+use App\Enum\Document\RecognitionDocumentStatusEnum;
 use App\Enum\Fields\FieldsTypeEnum;
 use App\Models\Document\RecognitionDocument;
 use App\Models\Fields\Directory\Age;
 use App\Models\Fields\Directory\Gender;
+use App\Models\Fields\Directory\OfferSearch;
 use App\Models\Fields\Directory\TaxStatus;
 use App\Models\Fields\Fields;
 use App\Models\User;
@@ -21,6 +23,14 @@ class UserDataService
     protected array $settings = [];
     private User $user;
     private array $passportData = [];
+
+    public static array $checkField = [
+       1 => 'vk0wcCKTq7sP67Iybq19sLyJckCZzz',
+    ];
+
+    public static array $checkFieldFunction = [
+       1 => 'searchPlace',
+    ];
 
     public function __construct()
     {
@@ -438,5 +448,37 @@ class UserDataService
             return $data[$field->uuid];
         }
         return null;
+    }
+
+    static function userFieldsCheckRegister(array $userData,User $user): void
+    {
+        foreach (self::$checkField as $k=>$field){
+            if(!empty($userData[$field])){
+                $function = self::$checkFieldFunction[$k];
+                self::$function($userData[$field],$user);
+            }
+        }
+    }
+
+    static function searchPlace($place,User $user): void
+    {
+        if(is_array($place)) {
+            foreach ($place as $onePlace) {
+                $offerSearch = OfferSearch::query()->where('uuid', $onePlace)->first();
+                if (!empty($offerSearch) && !empty($offerSearch->latitude) && !empty($offerSearch->longitude)) {
+                    $user->latitude  = $offerSearch->latitude;
+                    $user->longitude = $offerSearch->longitude;
+                    $user->saveQuietly();
+                    break;
+                }
+            }
+        }else{
+            $offerSearch = OfferSearch::query()->where('uuid', $place)->first();
+            if (!empty($offerSearch) && !empty($offerSearch->latitude) && !empty($offerSearch->longitude)) {
+                $user->latitude  = $offerSearch->latitude;
+                $user->longitude = $offerSearch->longitude;
+                $user->saveQuietly();
+            }
+        }
     }
 }
