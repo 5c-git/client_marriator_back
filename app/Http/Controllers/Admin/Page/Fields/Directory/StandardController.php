@@ -52,6 +52,7 @@ class StandardController extends Controller
         $editObj->name = $data['name'];
         $editObj->uuid = $data['uuid'];
         $editObj->coefficient = $data['coefficient'];
+        $editObj->name_doc = $data['name_doc'];
 
         $editObj->save();
 
@@ -77,6 +78,7 @@ class StandardController extends Controller
         $editObj->name = $data['name'];
         $editObj->uuid = $data['uuid'];
         $editObj->coefficient = $data['coefficient'];
+        $editObj->name_doc = $data['name_doc'];
 
 
         $editObj->save();

@@ -18,6 +18,7 @@ class Standard extends Model implements ModelDirectoryInterface
         'uuid',
         'name',
         'coefficient',
+        'name_doc'
     ];
 
     public $timestamps = false;

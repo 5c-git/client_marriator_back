@@ -94,21 +94,13 @@ class RegistrationController extends Controller
         }else{
            $user = User::where('phone',$request->phone)->first();
            if(!empty($user)){
-               $apiTokenService = new ApiTokenService($user);
                if($user->confirmRegister) {
                    $response['result']['type'] = 'auth';
-                   $token = $apiTokenService->createToken(['checkPin']);
-                   $response['result']['token'] = $token;
                }else{
                    if($user->finishRegister){
                        $response['result']['type'] = 'moderation';
-                       $token = $apiTokenService->createToken(['checkPin']);
-                       $response['result']['token'] = $token;
                    }else {
                        $response['result']['type'] = 'register';
-                       $smsCodeService = new SmsCodeService($request->phone);
-                       $response['result']['code'] = $smsCodeService->createCode();
-                       $response['status'] = $smsCodeService->status;
                    }
                    $user->register_hash = null;
                    $user->save();
@@ -133,12 +125,11 @@ class RegistrationController extends Controller
                $user->save();
                $user->roles()->sync([RoleEnum::specialist->value]);
                $response['result']['type'] = 'register';
-
-               $smsCodeService = new SmsCodeService($request->phone);
-               $response['result']['code'] = $smsCodeService->createCode();
-               $response['status'] = $smsCodeService->status;
-
            }
+
+            $smsCodeService = new SmsCodeService($request->phone);
+            $response['result']['code'] = $smsCodeService->createCode();
+            $response['status'] = $smsCodeService->status;
 
             return response()->json($response);
         }

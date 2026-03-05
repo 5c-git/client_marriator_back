@@ -546,6 +546,18 @@ return [
                 ],
             ],
         ],
+        [
+            'text' => 'Системное',
+            'icon' => 'fas fa-fw fa-book',
+            'url' => 'admin/system/',
+            'submenu' => [
+                [
+                    'text' => 'Logs',
+                    'icon' => 'fas fa-fw fa-book',
+                    'url' => 'admin/system/log/',
+                ]
+            ],
+        ],
 //        ['header' => 'labels'],
 //        [
 //            'text' => 'important',

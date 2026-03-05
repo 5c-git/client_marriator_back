@@ -21,6 +21,12 @@
             </div>
         </div>
         <div class="form-group row">
+            <label for="name_doc" class="col-sm-2 col-form-label">Имя для документов</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" name="name_doc" id="name_doc" required>
+            </div>
+        </div>
+        <div class="form-group row">
             <label for="uuid" class="col-sm-2 col-form-label">Uuid</label>
             <div class="col-sm-10">
                 <input type="text" class="form-control" value="{{$uuidDirectoryFields}}" name="uuid" id="uuid" required>

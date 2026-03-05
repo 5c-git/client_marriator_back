@@ -340,5 +340,12 @@ Route::group(['prefix' => 'admin'], function () {
             Route::get('/delete/{id}', 'App\Http\Controllers\Admin\Document\DocumentController@delete')->name('documentsDelete');
         });
 
+        Route::group(['prefix' => 'system'], function () {
+            Route::group(['prefix' => 'log'], function () {
+                Route::get('/', 'App\Http\Controllers\Admin\Page\System\LogController@index')->name('indexLog');
+                Route::get('/download/{folder}/{file}', 'App\Http\Controllers\Admin\Page\System\LogController@index')->name('downloadLog');
+            });
+        });
+
     });
 });

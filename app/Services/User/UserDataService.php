@@ -99,6 +99,13 @@ class UserDataService
             if(!empty($this->passportData)) {
                 $name =  $this->passportData[Passport::LastName->name].' '.$this->passportData[Passport::FirstName->name].' '.$this->passportData[Passport::MiddleName->name];
             }
+        }else{
+            $name = '';
+        }
+
+        if(strlen($name)<10)
+        {
+            $name = null;
         }
 
         return $name??null;

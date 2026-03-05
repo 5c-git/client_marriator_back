@@ -45,10 +45,17 @@ class TestCommand extends Command
     public function handle(): void
     {
 
-        $service = new TimeBookService();
+        $service = new VermeService();
+        $data = $service->getShifts();
+        echo "<pre>";
+        var_dump($data);
+        echo "</pre>";
+        die();
         $r = RecognitionDocument::query()->where('user_id','!=',172)->first();
 
         $user = User::query()->where('id',$r->user_id)->first();
+        $bid = new Bid();
+        $bid->external_id = '3d07e6b6-4260-7a55-2c09-107a681fc0d3';
 //        echo "<pre>";
 //        var_dump($service->getData());
 //        echo "</pre>";
@@ -57,7 +64,7 @@ class TestCommand extends Command
 ////        var_dump($res);
 ////        echo "</pre>";
 //        die();
-         $data = $service->assignToShift('2cea118b-f2df-26ac-7a0a-911b52b55068',$user);
+         $data = $service->getTimesheets($user,$bid);
         echo "<pre>";
         var_dump($data);
         echo "</pre>";

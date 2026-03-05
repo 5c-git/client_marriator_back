@@ -30,9 +30,9 @@ class AppServiceProvider extends ServiceProvider
 
         Passport::ignoreRoutes();
         Passport::hashClientSecrets();
-        Passport::tokensExpireIn(now()->addDays(7));
-        Passport::refreshTokensExpireIn(now()->addDays(30));
-        Passport::personalAccessTokensExpireIn(now()->addDays(7));
+        Passport::tokensExpireIn(now()->addHours(3));
+        Passport::refreshTokensExpireIn(now()->addDays(7));
+        Passport::personalAccessTokensExpireIn(now()->addHours(3));
 
         Passport::tokensCan([
             'register' => 'Регистрация',

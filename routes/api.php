@@ -19,6 +19,10 @@ Route::group(["middleware" => ["auth:api"]], function () {
     Route::group(['prefix' => 'personal'], function () {
         Route::get('/getData', 'App\Http\Controllers\UniversalController@getData')->name('getData');
     });
+
+    Route::group(['prefix' => 'log'], function () {
+        Route::post('/add', 'App\Http\Controllers\Log\LogController@add')->name('LogAdd');
+    });
 });
 
 Route::group(["middleware" => ["auth:api", "scope:register"]], function () {
