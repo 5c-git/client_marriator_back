@@ -38,7 +38,6 @@ class LogController extends Controller
                 ]);
             }
         }
-
         return view('admin.system.log.index', compact('result'));
     }
 
