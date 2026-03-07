@@ -24,9 +24,9 @@ class DellSpecialistFromManagerAndSupervisorCommand extends Command
         $cutoffDate = Carbon::now()->subDays(Setting::getValue('waiting_task'));
 
         $inactiveUserIds = User::whereHas('roles', function($query) {
-            $query->where('id', RoleEnum::specialist->value);
+            $query->where('roles.id', RoleEnum::specialist->value);
         })->whereDoesntHave('reports', function($query) use ($cutoffDate) {
-            $query->where('date_start', '<=', $cutoffDate);
+            $query->where('report.date_start', '<=', $cutoffDate);
         })->pluck('id');
 
         if ($inactiveUserIds->isEmpty()) {
