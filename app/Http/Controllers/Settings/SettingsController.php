@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ErrorResource;
+use App\Http\Resources\SettingResource;
 use Illuminate\Http\Request;
 use App\Models\Setting;
 
@@ -48,17 +50,11 @@ class SettingsController extends Controller
 
     public function getFromKey(Request $request)
     {
-        $response = [
-            'status' => 'success',
-            'result' => ''
-        ];
         if (!empty($request->key)) {
             $setting = Setting::query()->where('key', $request->key)->first();
-            if ($setting) {
-                $response['result'] = $setting->value;
-            }
+            return new SettingResource($setting);
         }
-        return response()->json($response, 200);
+        return new ErrorResource();
     }
 
     /**
@@ -78,22 +74,8 @@ class SettingsController extends Controller
      * )
      */
 
-    public function getAll(Request $request){
-        $response = [
-            'status' => 'success',
-            'result' => []
-        ];
-        $settings = Setting::query()->get();
-        if ($settings) {
-            $response['status'] = 'success';
-            foreach ($settings as $setting){
-                $response['result'][] = [
-                    'key'=>$setting->key,
-                    'value'=>$setting->value
-                ];
-            }
-        }
-        return response()->json($response, 200);
+    public function getAll(){
+        return SettingResource::collection(Setting::query()->get());
     }
 
 }

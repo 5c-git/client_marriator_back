@@ -203,7 +203,7 @@ class TimeBookService extends PVPAbstract
     /**
      * Назначение на смену
      */
-    public function assignToShift(string $demandKey, User $user): ?bool
+    public function assignToShift(User $user,string $demandKey): ?bool
     {
         if(!$user->time_book_guid) {
             $this->createEmployee($user);
@@ -236,7 +236,7 @@ class TimeBookService extends PVPAbstract
      */
     public function cancelAssignment(string $demandKey): bool
     {
-        $response = $this->request('post', '/demand_actions', [
+        $response = $this->request('post', '/demand-actions', [
             [
                 'demand_key' => $demandKey,
                 'actions' => [

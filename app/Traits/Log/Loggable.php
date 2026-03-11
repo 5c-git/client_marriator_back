@@ -26,6 +26,7 @@ trait Loggable
             'status'        => $request->requestStatus,
             'body'          => $request->requestBody,
             'response'      => $request->requestResponse,
+            'anyData'      => $request->anyData,
         ];
 
         $this->writeToLog('frontend', $data);

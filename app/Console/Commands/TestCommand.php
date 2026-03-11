@@ -45,13 +45,28 @@ class TestCommand extends Command
     public function handle(): void
     {
 
-        $service = new VermeService();
-        $data = $service->getShifts();
+        $service = new TimeBookService();
+        $r = RecognitionDocument::query()->first();
+        $user = User::query()->where('id',$r->user_id)->first();
+        $data = $service->getData();
+        //$data = $service->assignToShift('f',$user);
+//        $bid = new Bid();
+//        $bid->external_id = 'external_id';
+//        $data = $service->getTimesheets($user,$bid);
+//        $data = $service->cancelAssignment($bid->external_id);
         echo "<pre>";
         var_dump($data);
         echo "</pre>";
         die();
-        $r = RecognitionDocument::query()->where('user_id','!=',172)->first();
+
+
+//        $service = new VermeService();
+//        $data = $service->getShifts();
+//        echo "<pre>";
+//        var_dump($data);
+//        echo "</pre>";
+//        die();
+//        $r = RecognitionDocument::query()->where('user_id','!=',172)->first();
 
         $user = User::query()->where('id',$r->user_id)->first();
         $bid = new Bid();

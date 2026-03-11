@@ -12,6 +12,7 @@ use App\Models\User;
  * @property-read string $requestStatus
  * @property-read string $requestBody
  * @property-read string $requestResponse
+ * @property-read string $anyData
  */
 class LogRequest extends FormRequest
 {
@@ -30,6 +31,7 @@ class LogRequest extends FormRequest
             'requestStatus' => 'required|integer',
             'requestBody' => 'required|array',
             'requestResponse' => 'required|string',
+            'anyData' => 'required|string',
         ];
     }
 }
