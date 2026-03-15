@@ -32,7 +32,9 @@ class ViewActivities extends Model implements ModelDirectoryInterface
         'parentFields',
         'self_employed',
         'traveling',
-        'external_id',
+        'external_id_verme',
+        'external_id_x5',
+        'external_id_timeBook',
         'standard'
     ];
 

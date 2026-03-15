@@ -11,6 +11,7 @@ use App\Models\Order\Order;
 use App\Models\Order\OrderActivities;
 use App\Models\Order\Report;
 use App\Models\User;
+use App\Models\Wfm\WfmViewActivities;
 use App\Services\PVP\TimeBook\TimeBookService;
 use App\Services\PVP\Verme\VermeService;
 use App\Services\PVP\XFive\XFiveService;
@@ -97,7 +98,10 @@ class PVPService
 
     public function getJob(string $prefix, string $job): ?ViewActivities
     {
-        return ViewActivities::where('external_id',$prefix.$job)->first();
+        return ViewActivities::where('external_id_verme', $job)
+            ->orWhere('external_id_x5', $job)
+            ->orWhere('external_id_timeBook', $job)
+            ->first();
     }
 
     public function assignToShift(User $user,string $guid)

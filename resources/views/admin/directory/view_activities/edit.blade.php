@@ -37,10 +37,54 @@
             </div>
         </div>
 
+
         <div class="form-group row">
-            <label for="external_id" class="col-sm-2 col-form-label">Внешний индификатор</label>
-            <div class="col-sm-10">
-                <input type="text" class="form-control" value="{{$edit->external_id}}" name="external_id" id="external_id">
+            <label for="external_id_timeBook" class="col-sm-2 col-form-label">Внешний индификатор timeBook</label>
+            <div class="col-sm-9">
+                <x-adminlte-select2 data-name="external_id_timeBook" id="external_id_timeBook"
+                                    name="external_id_timeBook">
+                    @foreach($wfm as $wfmOne)
+                        @if($wfmOne->type->value == \App\Enum\Wfm\WfmTypeEnum::timeBook->value)
+                            @if($edit->external_id_timeBook == $wfmOne->externalId)
+                                <option selected value="{{$wfmOne->externalId}}">{{$wfmOne->name}}</option>
+                            @else
+                                <option value="{{$wfmOne->externalId}}">{{$wfmOne->name}}</option>
+                            @endif
+                        @endif
+                    @endforeach
+                </x-adminlte-select2>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="external_id_x5" class="col-sm-2 col-form-label">Внешний индификатор x5</label>
+            <div class="col-sm-9">
+                <x-adminlte-select2 data-name="external_id_x5" id="external_id_x5" name="external_id_x5">
+                    @foreach($wfm as $wfmOne)
+                        @if($wfmOne->type->value == \App\Enum\Wfm\WfmTypeEnum::x5->value)
+                            @if($edit->external_id_x5 == $wfmOne->externalId)
+                                <option selected value="{{$wfmOne->externalId}}">{{$wfmOne->name}}</option>
+                            @else
+                                <option value="{{$wfmOne->externalId}}">{{$wfmOne->name}}</option>
+                            @endif
+                        @endif
+                    @endforeach
+                </x-adminlte-select2>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="external_id_verme" class="col-sm-2 col-form-label">Внешний индификатор verme</label>
+            <div class="col-sm-9">
+                <x-adminlte-select2 data-name="external_id_verme" id="external_id_verme" name="external_id_verme">
+                    @foreach($wfm as $wfmOne)
+                        @if($wfmOne->type->value == \App\Enum\Wfm\WfmTypeEnum::verme->value)
+                            @if($edit->external_id_verme == $wfmOne->externalId)
+                                <option selected value="{{$wfmOne->externalId}}">{{$wfmOne->name}}</option>
+                            @else
+                                <option value="{{$wfmOne->externalId}}">{{$wfmOne->name}}</option>
+                            @endif
+                        @endif
+                    @endforeach
+                </x-adminlte-select2>
             </div>
         </div>
 

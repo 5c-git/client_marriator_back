@@ -347,5 +347,16 @@ Route::group(['prefix' => 'admin'], function () {
             });
         });
 
+        Route::group(['prefix' => 'wfm'], function () {
+            Route::group(['prefix' => 'view_activities'], function () {
+                Route::get('/{wfmType}/create/', 'App\Http\Controllers\Admin\Wfm\WfmViewController@create')->name('wfmViewCreate');
+                Route::post('/{wfmType}/createAjax/', 'App\Http\Controllers\Admin\Wfm\WfmViewController@createAjax')->name('wfmViewCreateAjax');
+                Route::get('/{wfmType}/', 'App\Http\Controllers\Admin\Wfm\WfmViewController@list')->name('wfmViewList');
+                Route::get('/{wfmType}/edit/{id}/', 'App\Http\Controllers\Admin\Wfm\WfmViewController@edit')->name('wfmViewEdit');
+                Route::post('/{wfmType}/editAjax/', 'App\Http\Controllers\Admin\Wfm\WfmViewController@editAjax')->name('wfmViewEditAjax');
+                Route::get('/{wfmType}/delete/{id}/', 'App\Http\Controllers\Admin\Wfm\WfmViewController@delete')->name('wfmViewDelete');
+            });
+        });
+
     });
 });

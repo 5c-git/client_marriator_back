@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Fields\Directory\Standard;
 use App\Models\Fields\Directory\ViewActivities;
 use App\Models\Fields\Fields;
+use App\Models\Wfm\WfmViewActivities;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -35,6 +36,7 @@ class ViewActivitiesController extends Controller
 
     public function edit(Request $request)
     {
+        $wfm = WfmViewActivities::query()->get();
         $edit = $this->objClass::where('id', '=', $request->id)->first();
         if(!empty($edit->img)){
             $edit->img = Storage::url($edit->img);
@@ -59,7 +61,7 @@ class ViewActivitiesController extends Controller
             }
             $norm = Standard::get()->toArray();
 
-            return view('admin.directory.'.$this->view.'.edit', compact('edit','fields','norm'));
+            return view('admin.directory.'.$this->view.'.edit', compact('edit','fields','norm','wfm'));
         }else{
             return redirect()->back();
         }
@@ -78,7 +80,15 @@ class ViewActivitiesController extends Controller
         $editObj->detail_name = $data['detail_name'];
         $editObj->detail_text = $data['detail_text'];
         $editObj->link_text = $data['link_text'];
-        $editObj->external_id = $data['external_id'];
+        if(!empty($data['external_id_verme'])) {
+            $editObj->external_id_verme = $data['external_id_verme'];
+        }
+        if(!empty($data['external_id_x5'])) {
+        $editObj->external_id_x5 = $data['external_id_x5'];
+        }
+        if(!empty($data['external_id_timeBook'])) {
+        $editObj->external_id_timeBook = $data['external_id_timeBook'];
+        }
         $editObj->link = $data['link'];
         $editObj->standard = $data['standard'];
         if(!empty($data['self_employed'])) {
@@ -143,6 +153,7 @@ class ViewActivitiesController extends Controller
 
     public function create()
     {
+        $wfm = WfmViewActivities::query()->get();
         $fields['fields']['value'] = Fields::where('active',true)->get()->toArray();
         $fields['fields']['name'] = 'Простые поля';
         $norm = Standard::get()->toArray();
@@ -154,7 +165,7 @@ class ViewActivitiesController extends Controller
             }
         }
         $uuidDirectoryFields = $this->objClass::$uuid.'_'.Str::random(30);
-        return view('admin.directory.'.$this->view.'.add', compact('uuidDirectoryFields','fields','norm'));
+        return view('admin.directory.'.$this->view.'.add', compact('uuidDirectoryFields','fields','norm','wfm'));
     }
 
     public function createAjax(Request $request)
@@ -167,7 +178,15 @@ class ViewActivitiesController extends Controller
         $editObj->preview_text = $data['preview_text'];
         $editObj->detail_name = $data['detail_name'];
         $editObj->detail_text = $data['detail_text'];
-        $editObj->external_id = $data['external_id'];
+        if(!empty($data['external_id_verme'])) {
+            $editObj->external_id_verme = $data['external_id_verme'];
+        }
+        if(!empty($data['external_id_x5'])) {
+            $editObj->external_id_x5 = $data['external_id_x5'];
+        }
+        if(!empty($data['external_id_timeBook'])) {
+            $editObj->external_id_timeBook = $data['external_id_timeBook'];
+        }
         $editObj->link_text = $data['link_text'];
         $editObj->link = $data['link'];
         $editObj->standard = $data['standard'];

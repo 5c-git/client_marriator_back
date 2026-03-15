@@ -558,6 +558,32 @@ return [
                 ]
             ],
         ],
+        [
+            'text' => 'WFM',
+            'icon' => 'fas fa-fw fa-car',
+            'url' => 'admin/wfm/',
+            'submenu' => [
+                [
+                    'text' => 'Виды деятельности',
+                    'icon' => 'fas fa-fw fa-graduation-cap',
+                    'url' => 'admin/wfm/view_activities/',
+                    'submenu' => [
+                        [
+                            'text' => 'TimeBook',
+                            'url' => 'admin/wfm/view_activities/timeBook',
+                        ],
+                        [
+                            'text' => 'X5',
+                            'url' => 'admin/wfm/view_activities/x5',
+                        ],
+                        [
+                            'text' => 'Verme',
+                            'url' => 'admin/wfm/view_activities/verme',
+                        ]
+                    ],
+                ]
+            ],
+        ],
 //        ['header' => 'labels'],
 //        [
 //            'text' => 'important',
