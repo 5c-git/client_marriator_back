@@ -13,8 +13,8 @@ Schedule::command('endedReportCommand')->everyFiveMinutes()->withoutOverlapping(
 Schedule::command('dellSpecialistFromManagerAndSupervisorCommand')->daily()->withoutOverlapping();
 Schedule::command('closeBidCommand')->hourly()->withoutOverlapping();
 
-Schedule::command('sendUserFileToCorrect')->everyThreeMinutes()->withoutOverlapping();
-Schedule::command('getUserFileFromCorrect')->everyThreeMinutes()->withoutOverlapping();
+//Schedule::command('sendUserFileToCorrect')->everyThreeMinutes()->withoutOverlapping();
+//Schedule::command('getUserFileFromCorrect')->everyThreeMinutes()->withoutOverlapping();
 
 Schedule::command('getUserReportCoefficient')->everyMinute()->withoutOverlapping();
 Schedule::command('archiveBid')->everyThreeMinutes()->withoutOverlapping();
