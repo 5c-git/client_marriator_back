@@ -34,7 +34,7 @@
 
         $listData = [];
         foreach ($documents as $document){
-        $listData[] = [$document->id , '<a href="http://preprod.marriator-api.fivecorners.ru/storage/'.$document->link.'"> </a>' ,$document->status->name,$document->unprocessed_data];
+        $listData[] = [$document->id , '<a href="http://preprod.marriator-api.fivecorners.ru/storage/'.$document->link.'"> '.$document->link.' </a>' ,$document->status->name,$document->unprocessed_data];
         }
 
         $config = [
