@@ -27,7 +27,7 @@ class GetUserFileFromCorrect extends Command
                 /** @var RecognitionDocument $recognitionDocument */
                 $correct = new CorrectRecognitionService();
                 $resData = $correct->getRecognitionResult($recognitionDocument->external_package_id);
-                $recognitionDocument->unprocessed_data = json_encode($resData);
+                $recognitionDocument->unprocessed_data = json_encode($resData, JSON_UNESCAPED_UNICODE);
                 if ($resData && !empty($resData['state']) && $resData['state'] === 'Recognized') {
                     if(!empty($resData["documents"])) {
                         $docData = [];
