@@ -555,6 +555,11 @@ return [
                     'text' => 'Logs',
                     'icon' => 'fas fa-fw fa-book',
                     'url' => 'admin/system/log/',
+                ],
+                [
+                    'text' => 'Correct test',
+                    'icon' => 'fas fa-fw fa-book',
+                    'url' => 'admin/system/correct/',
                 ]
             ],
         ],

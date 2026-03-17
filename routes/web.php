@@ -345,6 +345,10 @@ Route::group(['prefix' => 'admin'], function () {
                 Route::get('/', 'App\Http\Controllers\Admin\Page\System\LogController@index')->name('indexLog');
                 Route::get('/download/{folder}/{file}', 'App\Http\Controllers\Admin\Page\System\LogController@download')->name('downloadLog');
             });
+            Route::group(['prefix' => 'correct'], function () {
+                Route::get('/', 'App\Http\Controllers\Admin\Page\System\CorrectController@index')->name('correctIndex');
+                Route::post('/create', 'App\Http\Controllers\Admin\Page\System\CorrectController@create')->name('correctCreate');
+            });
         });
 
         Route::group(['prefix' => 'wfm'], function () {

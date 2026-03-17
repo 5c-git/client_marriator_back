@@ -27,6 +27,7 @@ class GetUserFileFromCorrect extends Command
                 /** @var RecognitionDocument $recognitionDocument */
                 $correct = new CorrectRecognitionService();
                 $resData = $correct->getRecognitionResult($recognitionDocument->external_package_id);
+                $recognitionDocument->unprocessed_data = json_encode($resData);
                 if ($resData && !empty($resData['state']) && $resData['state'] === 'Recognized') {
                     if(!empty($resData["documents"])) {
                         $docData = [];
@@ -76,6 +77,10 @@ class GetUserFileFromCorrect extends Command
                         RecognitionDocumentService::addErrorField($recognitionDocument,DocumentErrorText::ErrorRecognize->getUserBinding());
                         $recognitionDocument->save();
                     }
+                }else{
+                    $recognitionDocument->status = RecognitionDocumentStatusEnum::failed->value;
+                    RecognitionDocumentService::addErrorField($recognitionDocument,DocumentErrorText::ErrorRecognize->getUserBinding());
+                    $recognitionDocument->save();
                 }
             } catch (\Throwable $e) {
                 $recognitionDocument->status = RecognitionDocumentStatusEnum::failed->value;

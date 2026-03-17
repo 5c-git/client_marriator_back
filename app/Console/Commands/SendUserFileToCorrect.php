@@ -19,6 +19,7 @@ class SendUserFileToCorrect extends Command
     {
         $recognitionDocuments = RecognitionDocument::query()
             ->where('status', RecognitionDocumentStatusEnum::pending->value)
+            ->where('user_id',1)
             ->limit(10)->get();
         foreach ($recognitionDocuments as $recognitionDocument) {
             try {

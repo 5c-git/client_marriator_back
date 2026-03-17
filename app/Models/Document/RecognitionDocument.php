@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $file_field
  * @property int $external_package_id
  * @property int $activity_id
+ * @property string $unprocessed_data
  * @property-read User $user
  *
  */
@@ -34,7 +35,8 @@ class RecognitionDocument extends Model
         'user_id',
         'file_field',
         'external_package_id',
-        'file_type'
+        'file_type',
+        'unprocessed_data'
     ];
 
     protected $casts = [
