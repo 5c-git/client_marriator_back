@@ -45,6 +45,15 @@ class TestCommand extends Command
     public function handle(): void
     {
 
+        $service = new VermeService();
+        $data = $service->getData();
+        echo "<pre>";
+        var_dump($data);
+        echo "</pre>";
+        die();
+
+
+
         $service = new TimeBookService();
         $r = RecognitionDocument::query()->first();
         $user = User::query()->where('id',$r->user_id)->first();

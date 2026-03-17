@@ -90,10 +90,6 @@ class VermeService  extends PVPAbstract
                 'authData' => $this->defaultAuth
             ], $filters)
         ];
-        echo "<pre>";
-        var_dump($this->sendRequest($payload, 'POST'));
-        echo "</pre>";
-        die();
         return $this->sendRequest($payload, 'POST');
     }
 
@@ -209,7 +205,7 @@ class VermeService  extends PVPAbstract
 
     public function getData(): array
     {
-        return $this->dataFormater($this->getShifts(['state'=>'accept']));
+        return $this->dataFormater($this->getShifts());
     }
 
     protected function dataFormater($data): array
@@ -217,16 +213,16 @@ class VermeService  extends PVPAbstract
         $returnArray = [];
         if(!empty($data['shifts_list'])){
             foreach ($data['shifts_list'] as $dataShift) {
-                if ($dataShift['state'] == 'accept') {
+
                     $array                 = [];
-                    $array['place']        = '006'??$dataShift['organization']['code'];
+                    $array['place']        = $dataShift['organization']['code'];
                     $array['selfEmployed'] = true;
                     $array['dateStart']    = Carbon::parse($dataShift['start']);
                     $array['end']          = Carbon::parse($dataShift['end']);
                     $array['externalId']   = $dataShift['guid'];
-                    $array['job']          = 'service_sng'??$dataShift['job']['code'];
+                    $array['job']          = $dataShift['job']['code'];
                     $returnArray[]         = $array;
-                }
+
             }
         }
         return $returnArray;
