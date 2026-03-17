@@ -13,7 +13,7 @@ Schedule::command('endedReportCommand')->everyFiveMinutes()->withoutOverlapping(
 Schedule::command('dellSpecialistFromManagerAndSupervisorCommand')->daily()->withoutOverlapping();
 Schedule::command('closeBidCommand')->hourly()->withoutOverlapping();
 
-Schedule::command('sendUserFileToCorrect')->everyMinute()->withoutOverlapping();
+Schedule::command('sendUserFileToCorrect')->everyMinute()->withoutOverlapping();// todo поставить как было раз в 3 минуты
 Schedule::command('getUserFileFromCorrect')->everyMinute()->withoutOverlapping();// todo поставить как было раз в 3 минуты
 
 Schedule::command('getUserReportCoefficient')->everyMinute()->withoutOverlapping();
