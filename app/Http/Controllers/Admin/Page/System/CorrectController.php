@@ -35,7 +35,7 @@ class CorrectController extends Controller
             $recognitionDocument->link = $link;
             $recognitionDocument->status = RecognitionDocumentStatusEnum::pending->value;
             $recognitionDocument->user_id = 1;
-            $recognitionDocument->file_field = 'test';
+            $recognitionDocument->file_field = 'c5gAyG7YPWV7RiCx23srwQnYV8bv5U';
             $recognitionDocument->save();
         }
         $response['url'] = '/admin/system/correct';
