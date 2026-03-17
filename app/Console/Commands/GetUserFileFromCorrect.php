@@ -78,6 +78,7 @@ class GetUserFileFromCorrect extends Command
                         $recognitionDocument->save();
                     }
                 }
+                $recognitionDocument->save();
             } catch (\Throwable $e) {
                 $recognitionDocument->status = RecognitionDocumentStatusEnum::failed->value;
                 RecognitionDocumentService::addErrorField($recognitionDocument,DocumentErrorText::ErrorPhp->getUserBinding());
