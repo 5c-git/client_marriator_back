@@ -28,9 +28,9 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->reportable(function (Throwable $e) {
-            if($e instanceof OAuthServerException || $e instanceof LeagueOAuthServerException){
-                return false;
-            }
+//            if($e instanceof OAuthServerException || $e instanceof LeagueOAuthServerException){
+//                return false;
+//            }//todo По идее нужно разкоментить так как лишние ошибки
             (new ExceptionLogger())->log($e);
         });
     })->create();
