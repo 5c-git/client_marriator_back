@@ -42,4 +42,9 @@ class Standard extends Model implements ModelDirectoryInterface
             self::upsert($dataForUpsert, ['uuid'], ['name','coefficient']);
         }
     }
+
+    public static function getDefault(): string|array
+    {
+        return '';
+    }
 }

@@ -5,5 +5,6 @@ interface ModelDirectoryInterface
 {
     public function getDataDirectory(bool $allFields = false,array $filterData = []);
     public static function upsertFromImport(array $data): void;
+    public static function getDefault(): string|array;
 
 }

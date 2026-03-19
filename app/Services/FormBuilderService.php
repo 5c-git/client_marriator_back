@@ -159,6 +159,7 @@ class FormBuilderService
                 $field->oldType = $field->type;
                 $field->type = $this->getTypeDirectory($field->directory);
                 if ($valuesDirectory = $this->getDirectory($field->directory, true)) {
+                    $field->default = $this->getDefault($field->directory);
                     $field->valuesDirectory = $valuesDirectory;
                 }else{
                     $field->valuesDirectory = [];
@@ -196,6 +197,7 @@ class FormBuilderService
                 $field->oldType = $field->type;
                 $field->type = $this->getTypeDirectory($field->directory);
                 if ($valuesDirectory = $this->getDirectory($field->directory, true)) {
+                    $field->default = $this->getDefault($field->directory);
                     $field->valuesDirectory = $valuesDirectory;
                 }else{
                     $field->valuesDirectory = [];
@@ -224,6 +226,15 @@ class FormBuilderService
             }
         }
         return $directoryData;
+    }
+
+    private function getDefault($directory): array
+    {
+        $default = '';
+        if (class_exists($directory)) {
+            $default = $directory::getDefault();
+        }
+        return $default;
     }
 
     private function getTypeDirectory($directory): int
@@ -325,6 +336,7 @@ class FormBuilderService
                 $field->oldType = $field->type;
                 $field->type = $this->getTypeDirectory($field->directory);
                 if ($valuesDirectory = $this->getDirectory($field->directory, true)) {
+                    $field->default = $this->getDefault($field->directory);
                     $field->valuesDirectory = $valuesDirectory;
                 }else{
                     $field->valuesDirectory = [];

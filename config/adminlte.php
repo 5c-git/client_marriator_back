@@ -472,6 +472,10 @@ return [
                         [
                             'text' => 'Статус мед книжки',
                             'url' => 'admin/directories/directory_medical_book/',
+                        ],
+                        [
+                            'text' => 'Модели телефонов',
+                            'url' => 'admin/directories/directory_phone/',
                         ]
                     ],
                 ],

@@ -64,4 +64,9 @@ class MedicalBook extends Model implements ModelDirectoryInterface
             self::upsert($dataForUpsert, ['uuid'], ['name','active']);
         }
     }
+
+    public static function getDefault(): string|array
+    {
+        return '';
+    }
 }

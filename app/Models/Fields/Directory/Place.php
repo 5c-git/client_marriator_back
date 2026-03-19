@@ -78,4 +78,9 @@ class Place extends Model implements ModelDirectoryInterface
     {
         return self::query()->get()->toArray();
     }
+
+    public static function getDefault(): string|array
+    {
+        return '';
+    }
 }

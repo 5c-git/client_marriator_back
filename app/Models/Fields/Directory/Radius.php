@@ -28,4 +28,9 @@ class Radius extends Model
        }
        return 5;
     }
+
+    public static function getDefault(): string|array
+    {
+        return '';
+    }
 }

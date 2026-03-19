@@ -6,24 +6,28 @@ use App\Enum\Fields\FieldsTypeEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Payouts extends Model implements ModelDirectoryInterface
+class Phone extends Model implements ModelDirectoryInterface
 {
     use HasFactory;
 
-    public static int $fieldsTypeEnum = FieldsTypeEnum::select->value;
-    public static string $uuid = 'directory_payouts';
+    public static int $fieldsTypeEnum = FieldsTypeEnum::text->value;
+    public static string $uuid = 'directory_phone';
 
-    protected $table = 'directory_payouts';
+    protected $table = 'directory_phone';
     protected $fillable = [
         'uuid',
         'name',
-        'active',
+        'active'
     ];
 
     public $timestamps = false;
 
     public function getDataDirectory(bool $allFields = false,array $filterData = []){
-
+        if(!$allFields) {
+            return $this->uuid;
+        }else{
+            return $this->toArray();
+        }
     }
 
     public static function upsertFromImport(array $data): void
@@ -44,6 +48,11 @@ class Payouts extends Model implements ModelDirectoryInterface
 
     public static function getDefault(): string|array
     {
+        $phone = self::query()->where('active', true)->inRandomOrder()
+            ->first();
+        if (!empty($phone)) {
+            return $phone->name;
+        }
         return '';
     }
 }

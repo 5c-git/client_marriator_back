@@ -96,4 +96,9 @@ class ViewActivities extends Model implements ModelDirectoryInterface
     {
         return $this->belongsTo(Standard::class, 'standard','uuid');
     }
+
+    public static function getDefault(): string|array
+    {
+        return '';
+    }
 }

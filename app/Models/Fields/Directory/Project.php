@@ -103,4 +103,9 @@ class Project extends Model implements ModelDirectoryInterface
         return self::query()->where('date_start', '<=', Carbon::now())
             ->where('date_end', '>=', Carbon::now())->get()->toArray();
     }
+
+    public static function getDefault(): string|array
+    {
+        return '';
+    }
 }

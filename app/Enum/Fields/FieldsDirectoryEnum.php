@@ -5,6 +5,7 @@ use App\Models\Fields\Directory\Age;
 use App\Models\Fields\Directory\Documentation;
 use App\Models\Fields\Directory\MedicalBook;
 use App\Models\Fields\Directory\Organization;
+use App\Models\Fields\Directory\Phone;
 use ArchTech\Enums\InvokableCases;
 use ArchTech\Enums\Names;
 use ArchTech\Enums\Values;
@@ -57,6 +58,7 @@ enum FieldsDirectoryEnum: string
     case organization = Organization::class;
     case age = Age::class;
     case medicalBook = MedicalBook::class;
+    case phone = Phone::class;
 
     public function directoryName(): string
     {
@@ -82,7 +84,8 @@ enum FieldsDirectoryEnum: string
             self::documentation => 'Справочник документов',
             self::organization => 'Справочник организаций',
             self::age => 'Справочник возраст',
-            self::medicalBook => 'Справочник мед книжка'
+            self::medicalBook => 'Справочник мед книжка',
+            self::phone => 'Справочник моделей телефона',
         };
     }
 

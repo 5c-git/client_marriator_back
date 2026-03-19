@@ -287,6 +287,15 @@ Route::group(['prefix' => 'admin'], function () {
                 Route::post('/editAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\ReasonsController@editAjax')->name('reasonsEditAjax');
                 Route::get('/delete/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\ReasonsController@delete')->name('reasonsDelete');
             });
+
+            Route::group(['prefix' => 'directory_phone'], function () {
+                Route::get('/create/', 'App\Http\Controllers\Admin\Page\Fields\Directory\PhoneController@create')->name('phoneCreate');
+                Route::post('/createAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\PhoneController@createAjax')->name('phoneCreateAjax');
+                Route::get('/', 'App\Http\Controllers\Admin\Page\Fields\Directory\PhoneController@list')->name('phoneList');
+                Route::get('/edit/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\PhoneController@edit')->name('phoneEdit');
+                Route::post('/editAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\PhoneController@editAjax')->name('phoneEditAjax');
+                Route::get('/delete/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\PhoneController@delete')->name('phoneDelete');
+            });
         });
 
         Route::group(['prefix' => 'importDirectory'], function () {

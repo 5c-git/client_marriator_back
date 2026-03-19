@@ -66,4 +66,9 @@ class Brand extends Model implements ModelDirectoryInterface
             'project_id'
         );
     }
+
+    public static function getDefault(): string|array
+    {
+        return '';
+    }
 }
