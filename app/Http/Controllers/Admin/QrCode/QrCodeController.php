@@ -34,7 +34,13 @@ class QrCodeController extends Controller
 
     public function getBindings(Request $request)
     {
-        $counterparties = Counterparty::with('projects.places')->get()->toArray();
+        $counterparties = Counterparty::with([
+            'projects' => function ($query) {
+                $query->where('date_start', '<=', Carbon::now())
+                    ->where('date_end', '>=', Carbon::now());
+            },
+            'projects.places'
+        ])->get()->toArray();
         $response['data'] = $counterparties;
         if(!empty($response['data'])){
             $response['status'] = 'success';
