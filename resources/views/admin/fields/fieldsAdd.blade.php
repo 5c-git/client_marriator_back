@@ -261,6 +261,13 @@
             </div>
         </div>
 
+        <div class="form-group row">
+            <label for="default_value" class="col-sm-2 col-form-label">Дефолтное значение</label>
+            <div class="col-sm-10">
+                <textarea class="form-control" name="default_value" id="default_value"></textarea>
+            </div>
+        </div>
+
 
 
         <div class="form-group row">

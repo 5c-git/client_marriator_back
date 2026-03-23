@@ -70,8 +70,12 @@ class AutocompleteFormatter implements FormaterInterface
             if(!empty($fieldsData->errorData)){
                 $data['error'] = $fieldsData->errorData;
             }
-            if(!empty($fieldsData->default)){
-                $data['default'] = $fieldsData->default;
+            if(!empty($fieldsData->default_value)){
+                $data['default'] = $fieldsData->default_value;
+            }else {
+                if (!empty($fieldsData->default)) {
+                    $data['default'] = $fieldsData->default;
+                }
             }
 
             if(isset($fieldsData->updateData)){

@@ -83,6 +83,7 @@ class FieldsController extends Controller
         $field->heading = $data['heading'];
         $field->placeholder = $data['placeholder'];
         $field->drawerInfo_text = $data['drawerInfo_text'];
+        $field->default_value = $data['default_value'];
 
 
         $field->helperInfo_text = $data['helperInfo_text'];
@@ -192,6 +193,7 @@ class FieldsController extends Controller
         $field->heading = $data['heading'];
         $field->placeholder = $data['placeholder'];
         $field->drawerInfo_text = $data['drawerInfo_text'];
+        $field->default_value = $data['default_value'];
 
         $field->helperInfo_text = $data['helperInfo_text'];
         $field->helperInfo_link = $data['helperInfo_link'];

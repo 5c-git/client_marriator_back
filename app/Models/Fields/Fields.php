@@ -40,7 +40,8 @@ class Fields extends Model
         'estate',
         'requisites',
         'screen',
-        'role_id'
+        'role_id',
+        'default_value'
     ];
 
     public $timestamps = false;
