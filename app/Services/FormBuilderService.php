@@ -228,7 +228,7 @@ class FormBuilderService
         return $directoryData;
     }
 
-    private function getDefault($directory): array
+    private function getDefault($directory): string|array
     {
         $default = '';
         if (class_exists($directory)) {
