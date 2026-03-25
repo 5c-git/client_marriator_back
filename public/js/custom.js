@@ -17,6 +17,23 @@ $(document).ready(function () {
         });
     });
 
+    function isRegexValid(pattern, flags = '') {
+        try {
+            new RegExp(pattern, flags);
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
+
+    $(document).on('input', '.checkRegular', function (e) {
+        if(isRegexValid($(this).val())){
+            $('.checkRegular').css('border', '1px solid #ced4da');
+        }else{
+            $('.checkRegular').css('border', '1px solid red');
+        }
+    });
+
     $('.userEdit').submit(function (e) {
         e.preventDefault();
         if ($('#inputPassword').val() == $('#inputPasswordConfirm').val()) {

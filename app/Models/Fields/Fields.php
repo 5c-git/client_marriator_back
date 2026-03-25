@@ -41,7 +41,9 @@ class Fields extends Model
         'requisites',
         'screen',
         'role_id',
-        'default_value'
+        'default_value',
+        'preg_value',
+        'preg_text',
     ];
 
     public $timestamps = false;

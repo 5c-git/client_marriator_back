@@ -268,6 +268,21 @@
             </div>
         </div>
 
+        <div class="form-group row">
+            <label for="preg_value" class="col-sm-2 col-form-label">Регулярное выражение для проверки поля</label>
+            <div class="col-sm-10">
+                <textarea class="form-control checkRegular" name="preg_value" id="preg_value"></textarea>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="preg_text" class="col-sm-2 col-form-label">Описание регулярного выражения</label>
+            <div class="col-sm-10">
+                <textarea class="form-control" name="preg_text" id="preg_text"></textarea>
+            </div>
+        </div>
+
+
 
 
         <div class="form-group row">

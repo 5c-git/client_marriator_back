@@ -285,6 +285,10 @@ class FormBuilderService
                 if (count($this->formDataThisStep) < count($this->fieldsThisStep) && !$getForm) {
                     $statusForm = 'addedNewFields';
                 }
+
+                if(!$this->checkPreg()){
+                    $statusForm = 'pregNotValid';
+                }
             }
         }else{
             $statusForm = 'needRequired';
@@ -296,8 +300,13 @@ class FormBuilderService
                 if (count($formData) < count($this->fieldsThisStep) && !$getForm) {
                     $statusForm = 'addedNewFields';
                 }
+
+                if(!$this->checkPreg()){
+                    $statusForm = 'pregNotValid';
+                }
             }
         }
+
         return $statusForm;
     }
 
@@ -313,6 +322,33 @@ class FormBuilderService
             }
         }
         return $required;
+    }
+
+    public function checkPreg(): bool
+    {
+        foreach($this->fieldsThisStep as $data){
+            if( (empty($field->oldType) || $field->oldType != FieldsTypeEnum::directory->value)
+                && $data->type != FieldsTypeEnum::directory->value
+                && $data->type != FieldsTypeEnum::checkbox->value
+                && $data->type != FieldsTypeEnum::checkboxMultiple->value
+                && $data->type != FieldsTypeEnum::file->value
+                && $data->type != FieldsTypeEnum::photo->value
+                && $data->type != FieldsTypeEnum::photoCheckbox->value
+                && $data->type != FieldsTypeEnum::radio->value
+                && $data->type != FieldsTypeEnum::select->value
+                && $data->type != FieldsTypeEnum::selectMultiple->value
+                && !empty($data->preg_value)
+                && !empty($this->formDataThisStep[$data->uuid])
+                && is_string($this->formDataThisStep[$data->uuid])
+            ) {
+                $value = $this->formDataThisStep[$data->uuid];
+                $pattern = $data->preg_value;
+                if (preg_match($pattern, $value) !== 1) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     public function getUserField(array $moreData,array $errorData): array

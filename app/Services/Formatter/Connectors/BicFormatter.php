@@ -79,6 +79,11 @@ class BicFormatter implements FormaterInterface
                 }
             }
 
+            if(!empty($fieldsData->preg_value)){
+                $data['pregValue'] = $fieldsData->preg_value;
+                $data['pregText'] = $fieldsData->preg_text;
+            }
+
             if(isset($fieldsData->updateData)){
                 $data['status'] = "warning";
                 $data['disabled'] = true;

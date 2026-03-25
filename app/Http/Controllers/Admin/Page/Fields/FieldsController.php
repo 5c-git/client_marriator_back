@@ -85,6 +85,16 @@ class FieldsController extends Controller
         $field->drawerInfo_text = $data['drawerInfo_text'];
         $field->default_value = $data['default_value'];
 
+        if(!empty($data['preg_value'])){
+            if($this->is_valid_regex($data['preg_value'])) {
+                $field->preg_value = $data['preg_value'];
+            }else{
+                $response['status'] = 'error';
+                return response()->json($response);
+            }
+        }
+        $field->preg_text = $data['preg_text'];
+
 
         $field->helperInfo_text = $data['helperInfo_text'];
         $field->helperInfo_link = $data['helperInfo_link'];
@@ -155,6 +165,11 @@ class FieldsController extends Controller
 
     }
 
+    private function is_valid_regex(string $pattern): bool {
+        @preg_match($pattern, '');
+        return preg_last_error() === PREG_NO_ERROR;
+    }
+
     public function fieldsCreate()
     {
         $sectionEnum = PersonalInfoSectionEnum::cases();
@@ -194,6 +209,15 @@ class FieldsController extends Controller
         $field->placeholder = $data['placeholder'];
         $field->drawerInfo_text = $data['drawerInfo_text'];
         $field->default_value = $data['default_value'];
+        if(!empty($data['preg_value'])){
+            if($this->is_valid_regex($data['preg_value'])) {
+                $field->preg_value = $data['preg_value'];
+            }else{
+                $response['status'] = 'error';
+                return response()->json($response);
+            }
+        }
+        $field->preg_text = $data['preg_text'];
 
         $field->helperInfo_text = $data['helperInfo_text'];
         $field->helperInfo_link = $data['helperInfo_link'];

@@ -18,6 +18,7 @@ use App\Models\Setting;
 use App\Services\CreatePdfFileService;
 use App\Services\DocumentCreator\UserDocumentCreatorService;
 use App\Services\DocumentServices\CorrectRecognitionService;
+use App\Services\FormBuilderService;
 use App\Services\Nopaper\NopaperService;
 use App\Services\OneC\OneCServices;
 use App\Services\DocumentCreator\PdfCreatorService;
@@ -44,6 +45,20 @@ class TestCommand extends Command
 
     public function handle(): void
     {
+
+        $r = RecognitionDocument::query()->first();
+        $user = User::query()->where('id',$r->user_id)->first();
+        $formData = json_decode($user->data,true);
+        $formDataService = (new FormBuilderService(4, $formData));
+        $formDataService->getStepField();
+        $response['result'] = [
+            'step' => 4,
+            'type' => $formDataService->checkStatusForm()
+            ];
+        echo "<pre>";
+        var_dump($response);
+        echo "</pre>";
+        die();
 
         $service = new VermeService();
         $data = $service->getData();
