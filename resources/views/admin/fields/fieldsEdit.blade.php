@@ -307,7 +307,7 @@
         </div>
 
         <div class="form-group row">
-            <label for="preg_text" class="col-sm-2 col-form-label">Описание регулярного выражения</label>
+            <label for="preg_text" class="col-sm-2 col-form-label">Сообщение об ошибке после проверки содержания поля</label>
             <div class="col-sm-10">
                 <textarea class="form-control checkRegular" name="preg_text" id="preg_text">{{$field->preg_text}}</textarea>
             </div>

@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Fields\Directory\Project;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
 
 class ViewActivities extends Model implements ModelDirectoryInterface
 {
@@ -90,6 +92,36 @@ class ViewActivities extends Model implements ModelDirectoryInterface
             'view_activities_id',
             'project_id'
         )->withPivot( 'price');
+    }
+
+    public function belongsViewActivities(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            ViewActivities::class,
+            'view_activities_view_activities',
+            'view_activities_one',
+            'view_activities_two'
+        );
+    }
+
+    public function linkedViewActivities(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            ViewActivities::class,
+            'view_activities_view_activities',
+            'view_activities_two',
+            'view_activities_one'
+        );
+    }
+
+    public function getAllConnectedUuids(): array
+    {
+        return $this->belongsViewActivities
+            ->merge($this->linkedViewActivities)
+            ->pluck('uuid')
+            ->unique()
+            ->values()
+            ->toArray();
     }
 
     public function standardDirectory(): BelongsTo

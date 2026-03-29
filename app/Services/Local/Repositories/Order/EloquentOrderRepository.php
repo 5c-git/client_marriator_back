@@ -834,7 +834,11 @@ class EloquentOrderRepository implements OrderRepository
         $fieldStat = Fields::where('directory',TaxStatus::class)->first();
 
         if($fieldView && $bid->viewActivity && $place) {
-            $users = User::whereJsonContains('data->'.$fieldView->uuid, $bid->viewActivity->uuid)
+            $viewActivitiesUuids = $bid->viewActivity->getAllConnectedUuids();
+            $viewActivitiesUuids[] = $bid->viewActivity->uuid;
+            $viewActivitiesUuids = array_unique($viewActivitiesUuids);
+
+            $users = User::whereJsonContains('data->'.$fieldView->uuid, $viewActivitiesUuids)
                 ->whereIn('data->'.$fieldStat->uuid, $status)
                 ->whereDoesntHave('acceptedBids', function ($query) {
                     $query->where('accept_bid.accepted', BidAcceptingStatusEnum::notAccepted->value);

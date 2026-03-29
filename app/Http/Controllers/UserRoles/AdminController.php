@@ -315,6 +315,7 @@ class AdminController extends Controller
                 if ($request->confirm) {
                     if (true) {
                         $userForModeration->confirmRegister = true;
+                        $userForModeration->finishRegister = true;
                     }
                 } else {
                     $userForModeration->finishRegister = false;

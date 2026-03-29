@@ -270,6 +270,25 @@
         </div>
 
         <div class="form-group row">
+            <label for="select" class="col-sm-2 col-form-label">Похожие виды деятельности</label>
+            <div class="col-sm-10">
+                    <div class="row">
+                        <div class="col-sm-9">
+                            <x-adminlte-select2 id="viewActivities" name="viewActivities[]" multiple>
+                                @foreach($viewBelong as $viewK=>$viewActivities)
+                                    @if(in_array($viewActivities->id,$edit->belongsViewActivities))
+                                        <option selected value="{{$viewActivities->id}}">{{$viewActivities->name}} [{{$viewActivities->id}}]</option>
+                                    @else
+                                        <option value="{{$viewActivities->id}}">{{$viewActivities->name}} [{{$viewActivities->id}}]</option>
+                                    @endif
+                                @endforeach
+                            </x-adminlte-select2>
+                        </div>
+                    </div>
+            </div>
+        </div>
+
+        <div class="form-group row">
             <div class="col-sm-10">
                 <button type="submit" class="btn btn-success">Сохранить</button>
                 <a href="{{route('view_activitiesList')}}" style="margin-left: 10px" class="btn btn-secondary btn-md active" role="button" aria-pressed="true">Вернуться</a>

@@ -188,6 +188,15 @@ class UserObserver
         $user->place()->detach();
         $user->project()->detach();
         $user->roles()->detach();
+        $user->counterparty()->detach();
+        $user->reports()->detach();
+        $user->acceptedBids()->detach();
+        $user->acceptedTasks()->detach();
+        $user->acceptedOrders()->detach();
+        $user->supervisorSpecialist()->detach();
+        $user->managerSpecialist()->detach();
+        $user->manager()->detach();
+        $user->supervisors()->detach();
 
     }
 

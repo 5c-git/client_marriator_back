@@ -11,6 +11,8 @@ use App\Models\Document\Document;
 use App\Models\Document\RecognitionDocument;
 use App\Models\Fields\Directory\Counterparty;
 use App\Models\Fields\Directory\Project;
+use App\Models\Fields\Directory\ViewActivities;
+use App\Models\Fields\Fields;
 use App\Models\Order\Bid;
 use App\Models\Order\Order;
 use App\Models\Order\Report;
@@ -45,6 +47,17 @@ class TestCommand extends Command
 
     public function handle(): void
     {
+
+
+        $view = ViewActivities::query()->where('id',3)->first();
+        $viewActivitiesUuids = $view->getAllConnectedUuids();
+        $viewActivitiesUuids[] = $view->uuid;
+        $fieldView = Fields::where('directory',ViewActivities::class)->first();
+        $users = User::whereJsonContains('data->'.$fieldView->uuid, $viewActivitiesUuids)->get()->pluck('id')->toArray();
+        echo "<pre>";
+        var_dump($users);
+        echo "</pre>";
+        die();
 
         $r = RecognitionDocument::query()->first();
         $user = User::query()->where('id',$r->user_id)->first();

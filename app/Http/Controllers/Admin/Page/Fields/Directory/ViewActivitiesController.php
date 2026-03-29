@@ -61,7 +61,9 @@ class ViewActivitiesController extends Controller
             }
             $norm = Standard::get()->toArray();
 
-            return view('admin.directory.'.$this->view.'.edit', compact('edit','fields','norm','wfm'));
+            $viewBelong = $this->objClass::where('id','!=',$edit->id)->get();
+            $edit->belongsViewActivities = $edit->belongsViewActivities->pluck('id')->toArray();
+            return view('admin.directory.'.$this->view.'.edit', compact('edit','fields','norm','wfm','viewBelong'));
         }else{
             return redirect()->back();
         }
@@ -141,7 +143,7 @@ class ViewActivitiesController extends Controller
         }
 
         $editObj->save();
-
+        $editObj->belongsViewActivities()->sync($data['viewActivities']);
 
         $response['url'] = '/admin/directories/directory_'.$this->view.'/edit/'.$editObj->id;
 
@@ -164,8 +166,9 @@ class ViewActivitiesController extends Controller
                 $fields = array_merge($fields, [$directory=>$arrData]);
             }
         }
+        $viewBelong = $this->objClass::get();
         $uuidDirectoryFields = $this->objClass::$uuid.'_'.Str::random(30);
-        return view('admin.directory.'.$this->view.'.add', compact('uuidDirectoryFields','fields','norm','wfm'));
+        return view('admin.directory.'.$this->view.'.add', compact('uuidDirectoryFields','fields','norm','wfm','viewBelong'));
     }
 
     public function createAjax(Request $request)
@@ -227,6 +230,8 @@ class ViewActivitiesController extends Controller
             $editObj->img = Storage::disk('public')->putFileAs('/source/directory/'.$this->view.'/'.$editObj->id.'-img', $fileImage, $fileImage->getClientOriginalName(),'public');
             $editObj->save();
         }
+
+        $editObj->belongsViewActivities()->sync($data['viewActivities']);
 
         $response['status'] = 'success';
         $response['url'] = '/admin/directories/directory_'.$this->view.'/edit/' . $editObj->id;
