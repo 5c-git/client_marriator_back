@@ -50,6 +50,7 @@ use App\Http\Resources\PlaceResource;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\RadiusResponse;
 use App\Http\Resources\ReasonsResource;
+use App\Http\Resources\SearchUserForBidResource;
 use App\Http\Resources\SuccessResource;
 use App\Http\Resources\UserForModerationResource;
 use App\Http\Resources\ViewActivityResource;
@@ -923,7 +924,7 @@ class ManagerController extends Controller
     }
 
     public function getSpecialistForBid(GetSpecialistForBisRequest $request){
-        return AcceptingUsersResource::collection($this->orderRepository->getSpecialistForBid($request->bidId));
+        return SearchUserForBidResource::collection($this->orderRepository->getSpecialistForBid($request->bidId));
     }
 
     public function updateBid(BidDataRequest $request){

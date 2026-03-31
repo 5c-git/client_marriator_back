@@ -876,6 +876,19 @@ class EloquentOrderRepository implements OrderRepository
                     $userInRadius->push($user);
                 }
             }
+
+            foreach ($userInRadius as $userOne){
+                if(is_array($userOne->data)){
+                    $arr = $userOne->data;
+                }else{
+                    $arr = json_decode($userOne->data,true);
+                }
+                if(!empty($arr[$fieldView->uuid]) && in_array($bid->viewActivity->uuid,$arr[$fieldView->uuid])) {
+                    $userOne->viewActivitiesAccurate = true;
+                }else{
+                    $userOne->viewActivitiesAccurate = false;
+                }
+            }
         }
         return $userInRadius;
     }
