@@ -68,6 +68,7 @@ use App\Services\Local\Repositories\Contracts\UserRepository;
 use App\Services\Nopaper\NopaperService;
 use App\Services\PVP\PVPService;
 use App\Services\Register\EmailService;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\UserResource;
 use App\Http\Requests\Order\ConvertTaskRequest;
@@ -958,6 +959,7 @@ class ManagerController extends Controller
             ->whereHas('places', function ($query) use ($request) {
                 $query->where('directory_place.id', $request->placeId);
             })
+            ->where('date_end','>=',Carbon::now())
             ->get();
         return ProjectResource::collection($projects);
     }
