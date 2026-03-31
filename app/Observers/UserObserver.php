@@ -189,7 +189,7 @@ class UserObserver
         $user->project()->detach();
         $user->roles()->detach();
         $user->counterparty()->detach();
-        $user->reports()->detach();
+        //$user->reports()->detach();
         $user->acceptedBids()->detach();
         $user->acceptedTasks()->detach();
         $user->acceptedOrders()->detach();
