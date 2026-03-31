@@ -23,6 +23,7 @@ use App\Http\Requests\UserData\SetSurepvisorsRequest;
 use App\Http\Requests\UserData\SetUserImgRequest;
 use App\Http\Resources\CounterpartyResource;
 use App\Http\Resources\ErrorResource;
+use App\Http\Resources\Order\OneOrderResource;
 use App\Http\Resources\Order\OrderResource;
 use App\Http\Resources\PlaceResource;
 use App\Http\Resources\ProjectResource;
@@ -353,7 +354,7 @@ class AdminController extends Controller
 
     public function getOrder(GetOrderRequest $request): OrderResource
     {
-        return new OrderResource(
+        return new OneOrderResource(
             Order::where('id',$request->orderId)->first()
         );
     }

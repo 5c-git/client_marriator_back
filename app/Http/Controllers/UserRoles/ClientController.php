@@ -10,6 +10,7 @@ use App\Http\Requests\Order\OrderByIdCancelRequest;
 use App\Http\Requests\SetBrandImgRequest;
 use App\Http\Requests\SetPlaceRequest;
 use App\Http\Resources\BrandResource;
+use App\Http\Resources\Order\OneOrderResource;
 use App\Http\Resources\Order\OrderResource;
 use App\Http\Resources\Order\ShortOrderResource;
 use App\Http\Resources\PlaceResource;
@@ -163,7 +164,7 @@ class ClientController extends Controller
 
     public function getOrder(GetOrderRequest $request)
     {
-        return new OrderResource(
+        return new OneOrderResource(
             $this->orderRepository->getUserOrderByStatus(
                 Auth::user()->id,
                 $request->input('orderId',null)

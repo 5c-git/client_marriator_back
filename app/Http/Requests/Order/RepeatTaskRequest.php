@@ -55,15 +55,15 @@ class RepeatTaskRequest extends FormRequest
                         ->orderBy('date_start')
                         ->first();
 
-                    if($orderActivities) {
-                        if (!TimeService::getTimeDifferenceSub(
-                            $this->user(),
-                            'change_task',
-                            $orderActivities?->date_start
-                        )) {
-                            $fail('Task activities time start is arrived after change task');
-                        }
-                    }
+//                    if($orderActivities) {
+//                        if (!TimeService::getTimeDifferenceSub(
+//                            $this->user(),
+//                            'change_task',
+//                            $orderActivities?->date_start
+//                        )) {
+//                            $fail('Task activities time start is arrived after change task');
+//                        }
+//                    }
                 },
             ],
         ];

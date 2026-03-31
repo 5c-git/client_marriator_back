@@ -470,7 +470,7 @@ class SupervisorController extends Controller
     }
 
     public function getTasks(GetTaskRequest $request){
-        return OneTaskResource::collection(
+        return TaskResource::collection(
             $this->orderRepository->getTaskByUserSyncDataPaginate(
                 $request->user(),
                 $request->input('status') ? OrderStatusEnum::from($request->input('status')) : null
@@ -479,7 +479,7 @@ class SupervisorController extends Controller
     }
 
     public function getTask(GetTaskRequest $request){
-        return new TaskResource(
+        return new OneTaskResource(
             $this->orderRepository->getTaskByUserSyncData(
                 $request->user(),
                 $request->input('taskId',null)
