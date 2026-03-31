@@ -32,7 +32,7 @@ class RequestResource extends JsonResource
             'selfEmployed' => (bool)$this->self_employed,
             'radius' => $this->radius,
             'price' => $this->price,
-            'priceResult' => $this->price*($this->self_employed?0.94:0.87),
+            'priceResult' => $this->price,
             'viewActivity' => new ViewActivityResource($this->viewActivity),
             'count' => $this->count,
             'dateStart' => $this->date_start,

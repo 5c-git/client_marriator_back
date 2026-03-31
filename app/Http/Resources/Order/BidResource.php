@@ -40,7 +40,7 @@ class BidResource extends JsonResource
             'place' => new PlaceResource($this->place),
             'radius' => $this->radius ?? $this->getRadius(),
             'price' => (int)$this->price,
-            'priceResult' => (int)($this->price*($this->self_employed?0.94:0.87)),
+            'priceResult' => (int)($this->price),
             'viewActivity' => new ViewActivityResource($this->viewActivity),
             'dateStart' => $this->date_start,
             'dateEnd' => $this->date_end,

@@ -42,7 +42,7 @@ class JobResource extends JsonResource
             'place' => new PlaceResource($this->place),
             'radius' => $this->radius ?? $this->getRadius(),
             'price' => (int)($this->price ?? $this->getPrice()),
-            'priceResult' => (int)(($this->price ?? $this->getPrice())*($this->self_employed?0.94:0.87)),
+            'priceResult' => (int)(($this->price ?? $this->getPrice())),
             'income' => 0,
             'forPay' => $this->acceptingUser ? $this->getForPay($this->getReports($this->acceptingUser)) : 0,
             'viewActivity' => new ViewActivityResourceJob($this->viewActivity),
