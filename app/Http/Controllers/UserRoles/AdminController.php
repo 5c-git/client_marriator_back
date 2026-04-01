@@ -39,6 +39,7 @@ use App\Models\User;
 use App\Services\ApiTokenService\ApiTokenService;
 use App\Services\Nopaper\NopaperService;
 use App\Services\Register\EmailService;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -146,7 +147,7 @@ class AdminController extends Controller
     public function getPlaceModeration(GetPlaceRequest $request)
     {
         $user = User::where('id',$request->userId)->first();
-        $places = $user->project
+        $places = $user->project->where('date_end','>=', Carbon::now())
             ->flatMap(fn($project) => $project->places)
             ->unique('id');
         return PlaceResource::collection($places);

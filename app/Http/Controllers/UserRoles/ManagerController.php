@@ -432,7 +432,7 @@ class ManagerController extends Controller
         $user = User::where('id',$request->userId)->first();
         $userRoles = $user->roles?->pluck('id')->toArray();
         if(in_array($userRoles[0],[RoleEnum::manager->value,RoleEnum::client->value,RoleEnum::specialist->value])){
-            $places = $user->project
+            $places = $user->project->where('date_end','>=', Carbon::now())
                 ->flatMap(fn($project) => $project->places)
                 ->unique('id');
             $user = Auth::user();

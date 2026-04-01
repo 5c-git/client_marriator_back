@@ -58,6 +58,7 @@ use App\Services\Local\Repositories\Contracts\UserRepository;
 use App\Services\Nopaper\NopaperService;
 use App\Services\PVP\PVPService;
 use App\Services\Register\EmailService;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\UserResource;
 use App\Http\Resources\Order\TaskResource;
@@ -273,7 +274,8 @@ class SupervisorController extends Controller
                 ->flatMap(fn($project) => $project->places)
                 ->unique('id');
             $user = Auth::user();
-            $placesAdmin = $user->project
+            /** @var  $user User */
+            $placesAdmin = $user->project->where('date_end','>=', Carbon::now())
                 ->flatMap(fn($project) => $project->places)
                 ->unique('id');
 
