@@ -65,7 +65,7 @@ class EndDayRequest extends FormRequest
                     }
                     $this->bidObj = $orderExists;
                     /** @var Bid $orderExists */
-                    if($orderExists->date_start && $orderExists->date_end && ($orderExists->date_start > Carbon::now() || $orderExists->date_end->addHours(12) < Carbon::now())){
+                    if($orderExists->date_start && $orderExists->date_end && ($orderExists->date_start > Carbon::now() || $orderExists->date_end->copy()->addHours(12) < Carbon::now())){
                         $fail('Active date not start or this bid is ended');
                         return;
                     }
@@ -94,7 +94,7 @@ class EndDayRequest extends FormRequest
                     }else{
                         if(
                             $orderExists->date_end &&
-                            $orderExists->date_end > Carbon::now()
+                            $orderExists->date_end->addHours(12) > Carbon::now()
                         ){
                             $check = true;
                         }else{
@@ -104,7 +104,7 @@ class EndDayRequest extends FormRequest
 
                     if($check === false)
                     {
-                        $fail('Date start incorrect');
+                        $fail('Date end incorrect');
                     }
 
                 },

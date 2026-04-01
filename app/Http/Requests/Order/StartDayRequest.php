@@ -68,7 +68,7 @@ class StartDayRequest extends FormRequest
                     if($orderExists->date_end) {
                         $this->dateEnd = $orderExists->date_end->clone();
                     }
-                    if($orderExists->date_start && $orderExists->date_end && ($orderExists->date_start->subHour() > Carbon::now() || $orderExists->date_end->subHour() < Carbon::now())){
+                    if($orderExists->date_start && $orderExists->date_end && ($orderExists->date_start->copy()->subHour() > Carbon::now() || $orderExists->date_end->copy()->subHour() < Carbon::now())){
                         $fail('Active date not start or this bid is ended');
                         return;
                     }
