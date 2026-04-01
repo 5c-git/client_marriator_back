@@ -21,7 +21,7 @@ class CachingUserRepository implements UserRepository
     ) {
     }
 
-    public function getModerationUsers(int $userId, array $roles = [])
+    public function getModerationUsers(int $userId, array $roles = [],bool $isAdmin = false)
     {
         return $this->users->getModerationUsers($userId, $roles);
     }
@@ -30,14 +30,15 @@ class CachingUserRepository implements UserRepository
                                                SortEnum $sort = SortEnum::all,
                                                UserStatusModerationEnum $status = null,
                                                int $page = 1,
-                                               int $perPage = 10
+                                               int $perPage = 10,
+                                               bool $isAdmin = false
     ): Paginator
     {
         return $this->users->getModerationUsersPaginate($roles,$sort,$status,$page,$perPage);
     }
 
 
-    public function getModerationUser(int $userId, array $roles = []): User
+    public function getModerationUser(int $userId, array $roles = [],bool $isAdmin = false): User
     {
         return $this->users->getModerationUser($userId,$roles);
     }

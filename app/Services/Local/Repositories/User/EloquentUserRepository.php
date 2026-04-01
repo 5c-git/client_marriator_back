@@ -21,16 +21,18 @@ use Illuminate\Contracts\Pagination\Paginator;
 
 class EloquentUserRepository implements UserRepository
 {
-    public function getModerationUsers(int $userId, array $roles = [])
+    public function getModerationUsers(int $userId, array $roles = [], bool $isAdmin = false)
     {
-       return User::query()->orderBy('id', 'desc')
+        return User::query()->orderBy('id', 'desc')
             //->where('confirmRegister',false)
             //->where('finishRegister',true)
-            ->where('id',$userId)
-            ->whereNull('register_hash')
+            ->where('id', $userId)
+            ->when(!$isAdmin, function (Builder $query) {
+                $query->whereNull('register_hash');
+            })
             ->with(['roles'])
             ->when($roles, function (Builder $q, array $roles) {
-                $q->whereHas('roles', function ($query) use ($roles)  {
+                $q->whereHas('roles', function ($query) use ($roles) {
                     $query->whereIn('role_id', $roles);
                 });
             })
@@ -38,68 +40,76 @@ class EloquentUserRepository implements UserRepository
     }
 
 
-    public function getModerationUsersPaginate(array $roles = [],SortEnum $sort = SortEnum::all,UserStatusModerationEnum $status = null,int $page = 1,int $perPage = 10): Paginator
-    {
-        $userAuth = Auth::user();
+    public function getModerationUsersPaginate(
+        array $roles = [],
+        SortEnum $sort = SortEnum::all,
+        UserStatusModerationEnum $status = null,
+        int $page = 1,
+        int $perPage = 10,
+        bool $isAdmin = false
+    ): Paginator {
+        $userAuth  = Auth::user();
         $userRoles = $userAuth->roles?->pluck('id')->toArray();
 
 
         $userQuery = User::query()
-            ->where('id','!=',auth()->id())
-            ->with(['roles','project','place'])
-            ->whereNull('register_hash');
-        if($roles) {
+            ->where('id', '!=', auth()->id())
+            ->with(['roles', 'project', 'place']);
+        if (!$isAdmin) {
+            $userQuery = $userQuery->whereNull('register_hash');
+        }
+        if ($roles) {
             $userQuery = $userQuery->when($roles, function (Builder $q, array $roles) {
                 $q->whereHas('roles', function ($query) use ($roles) {
                     $query->whereIn('role_id', $roles);
                 });
             });
-        }else{
-            $userQuery = $userQuery->where('phone','123');
+        } else {
+            $userQuery = $userQuery->where('phone', '123');
         }
 
-        if(in_array(RoleEnum::manager->value,$userRoles) || in_array(RoleEnum::supervisor->value,$userRoles)){
+        if (in_array(RoleEnum::manager->value, $userRoles) || in_array(RoleEnum::supervisor->value, $userRoles)) {
             $userPlaces = $userAuth->place?->pluck('id')->toArray();
-            if(!empty($userPlaces)){
-                $userQuery->where(function($query) use ($userPlaces) {
-                    $query->whereDoesntHave('roles', function($q) {
+            if (!empty($userPlaces)) {
+                $userQuery->where(function ($query) use ($userPlaces) {
+                    $query->whereDoesntHave('roles', function ($q) {
                         $q->where('roles.id', RoleEnum::client->value);
                     });
 
-                    $query->orWhere(function($q) use ($userPlaces) {
-                        $q->whereHas('roles', function($roleQ) {
+                    $query->orWhere(function ($q) use ($userPlaces) {
+                        $q->whereHas('roles', function ($roleQ) {
                             $roleQ->where('roles.id', RoleEnum::client->value);
                         })->whereHas('place', function ($query) use ($userPlaces) {
                             $query->whereIn('place_id', $userPlaces);
                         });
                     });
                 });
-            }else{
-                $userQuery->where(function($query) use ($userPlaces) {
-                    $query->whereDoesntHave('roles', function($q) {
+            } else {
+                $userQuery->where(function ($query) use ($userPlaces) {
+                    $query->whereDoesntHave('roles', function ($q) {
                         $q->where('roles.id', RoleEnum::client->value);
                     });
                 });
             }
         }
 
-        if(in_array(RoleEnum::manager->value,$userRoles)){
+        if (in_array(RoleEnum::manager->value, $userRoles)) {
             $userSupervisors = $userAuth->supervisors?->pluck('id')->toArray();
-            if(!empty($userSupervisors)){
-                $userQuery->where(function($query) use ($userSupervisors) {
-                    $query->whereDoesntHave('roles', function($q) {
+            if (!empty($userSupervisors)) {
+                $userQuery->where(function ($query) use ($userSupervisors) {
+                    $query->whereDoesntHave('roles', function ($q) {
                         $q->where('roles.id', RoleEnum::supervisor->value);
                     });
 
-                    $query->orWhere(function($q) use ($userSupervisors) {
-                        $q->whereHas('roles', function($roleQ) {
+                    $query->orWhere(function ($q) use ($userSupervisors) {
+                        $q->whereHas('roles', function ($roleQ) {
                             $roleQ->where('roles.id', RoleEnum::supervisor->value);
                         })->whereIn('id', $userSupervisors);
                     });
                 });
-            }else{
-                $userQuery->where(function($query) {
-                    $query->whereDoesntHave('roles', function($q) {
+            } else {
+                $userQuery->where(function ($query) {
+                    $query->whereDoesntHave('roles', function ($q) {
                         $q->where('roles.id', RoleEnum::supervisor->value);
                     });
                 });
@@ -107,90 +117,95 @@ class EloquentUserRepository implements UserRepository
         }
 
 
-        if($status == UserStatusModerationEnum::archive){
-            $userQuery = $userQuery->where('confirmRegister',false)
-                ->where('finishRegister',false);
+        if ($status == UserStatusModerationEnum::archive) {
+            $userQuery = $userQuery->where('confirmRegister', false)
+                ->where('finishRegister', false);
         }
-        if($status == UserStatusModerationEnum::new){
-            $userQuery = $userQuery->where('confirmRegister',false)
-                ->where('finishRegister',true);
+        if ($status == UserStatusModerationEnum::new) {
+            $userQuery = $userQuery->where('confirmRegister', false);
+            if (!$isAdmin) {
+                $userQuery = $userQuery->where('finishRegister', true);
+            }
         }
-        if($status == UserStatusModerationEnum::inProgress){
-            $userQuery = $userQuery->where('confirmRegister',true)
-                ->where('finishRegister',true);
+        if ($status == UserStatusModerationEnum::inProgress) {
+            $userQuery = $userQuery->where('confirmRegister', true);
+            if (!$isAdmin) {
+                $userQuery = $userQuery->where('finishRegister', true);
+            }
         }
-        if($sort == SortEnum::new){
-            $userQuery = $userQuery->orderBy('id','desc');
+        if ($sort == SortEnum::new) {
+            $userQuery = $userQuery->orderBy('id', 'desc');
         }
-        if($sort == SortEnum::old){
-            $userQuery = $userQuery->orderBy('id','asc');
+        if ($sort == SortEnum::old) {
+            $userQuery = $userQuery->orderBy('id', 'asc');
         }
 
 
-       return $userQuery->simplePaginate($perPage);
+        return $userQuery->simplePaginate($perPage);
     }
 
-    public function getModerationUser(int $userId, array $roles = []): User
+    public function getModerationUser(int $userId, array $roles = [], bool $isAdmin = false): User
     {
-
-        $userAuth = Auth::user();
+        $userAuth  = Auth::user();
         $userRoles = $userAuth->roles?->pluck('id')->toArray();
         $userQuery = User::query()
-            ->with(['roles','project','place'])
-            ->whereNull('register_hash');
-        if($roles) {
+            ->with(['roles', 'project', 'place']);
+        if (!$isAdmin) {
+            $userQuery = $userQuery->whereNull('register_hash');
+        }
+        if ($roles) {
             $userQuery = $userQuery->when($roles, function (Builder $q, array $roles) {
                 $q->whereHas('roles', function ($query) use ($roles) {
                     $query->whereIn('role_id', $roles);
                 });
             });
-        }else{
-            $userQuery = $userQuery->where('phone','123');
+        } else {
+            $userQuery = $userQuery->where('phone', '123');
         }
-        $userQuery = $userQuery->where('id',$userId);
+        $userQuery = $userQuery->where('id', $userId);
 
-        if(in_array(RoleEnum::manager->value,$userRoles) || in_array(RoleEnum::supervisor->value,$userRoles)){
+        if (in_array(RoleEnum::manager->value, $userRoles) || in_array(RoleEnum::supervisor->value, $userRoles)) {
             $userPlaces = $userAuth->place?->pluck('id')->toArray();
-            if(!empty($userPlaces)){
-                $userQuery->where(function($query) use ($userPlaces) {
-                    $query->whereDoesntHave('roles', function($q) {
+            if (!empty($userPlaces)) {
+                $userQuery->where(function ($query) use ($userPlaces) {
+                    $query->whereDoesntHave('roles', function ($q) {
                         $q->where('roles.id', RoleEnum::client->value);
                     });
 
-                    $query->orWhere(function($q) use ($userPlaces) {
-                        $q->whereHas('roles', function($roleQ) {
+                    $query->orWhere(function ($q) use ($userPlaces) {
+                        $q->whereHas('roles', function ($roleQ) {
                             $roleQ->where('roles.id', RoleEnum::client->value);
                         })->whereHas('place', function ($query) use ($userPlaces) {
                             $query->whereIn('place_id', $userPlaces);
                         });
                     });
                 });
-            }else{
-                $userQuery->where(function($query) use ($userPlaces) {
-                    $query->whereDoesntHave('roles', function($q) {
+            } else {
+                $userQuery->where(function ($query) use ($userPlaces) {
+                    $query->whereDoesntHave('roles', function ($q) {
                         $q->where('roles.id', RoleEnum::client->value);
                     });
                 });
             }
         }
 
-        if(in_array(RoleEnum::manager->value,$userRoles)){
+        if (in_array(RoleEnum::manager->value, $userRoles)) {
             $userSupervisors = $userAuth->supervisors?->pluck('id')->toArray();
-            if(!empty($userSupervisors)){
-                $userQuery->where(function($query) use ($userSupervisors) {
-                    $query->whereDoesntHave('roles', function($q) {
+            if (!empty($userSupervisors)) {
+                $userQuery->where(function ($query) use ($userSupervisors) {
+                    $query->whereDoesntHave('roles', function ($q) {
                         $q->where('roles.id', RoleEnum::supervisor->value);
                     });
 
-                    $query->orWhere(function($q) use ($userSupervisors) {
-                        $q->whereHas('roles', function($roleQ) {
+                    $query->orWhere(function ($q) use ($userSupervisors) {
+                        $q->whereHas('roles', function ($roleQ) {
                             $roleQ->where('roles.id', RoleEnum::supervisor->value);
                         })->whereIn('id', $userSupervisors);
                     });
                 });
-            }else{
-                $userQuery->where(function($query) {
-                    $query->whereDoesntHave('roles', function($q) {
+            } else {
+                $userQuery->where(function ($query) {
+                    $query->whereDoesntHave('roles', function ($q) {
                         $q->where('roles.id', RoleEnum::supervisor->value);
                     });
                 });

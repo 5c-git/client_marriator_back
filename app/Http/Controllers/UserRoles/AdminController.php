@@ -263,6 +263,7 @@ class AdminController extends Controller
             $request->input('status') ? UserStatusModerationEnum::from($request->input('status')) : null,
             $request->input('page', 1),
             $request->input('perPage', 10),
+            true
         );
 
         return UserForModerationResource::collection($usersForModeration);
@@ -288,7 +289,8 @@ class AdminController extends Controller
 
         $usersForModeration = $this->userRepository->getModerationUser(
             $request->userId,
-            $arrRoleConfirm
+            $arrRoleConfirm,
+            true
         );
 
         return new UserForModerationResource($usersForModeration);
@@ -305,7 +307,7 @@ class AdminController extends Controller
         $arrRoleConfirm = array_unique($arrRoleConfirm);
 
         $userForModeration = $this->userRepository
-            ->getModerationUsers($request->userId,$arrRoleConfirm);
+            ->getModerationUsers($request->userId,$arrRoleConfirm,true);
         if(!empty($userForModeration)){
             $checkReg = false;
             if(!$userForModeration->confirmRegister){
