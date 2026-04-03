@@ -5,6 +5,7 @@ namespace App\Models\Fields\Directory;
 use App\Enum\Fields\FieldsTypeEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 
 class MedicalBook extends Model implements ModelDirectoryInterface
 {
@@ -18,7 +19,9 @@ class MedicalBook extends Model implements ModelDirectoryInterface
         'uuid',
         'name',
         'active',
-        'parentFields'
+        'parentFields',
+        'sort',
+        'default'
     ];
 
     public $timestamps = false;
@@ -67,6 +70,14 @@ class MedicalBook extends Model implements ModelDirectoryInterface
 
     public static function getDefault(): string|array
     {
-        return '';
+        return self::query()
+            ->where('default',true)
+            ->where('active',true)
+            ->first()?->uuid??'';
+    }
+
+    public static function getAllData(): Collection
+    {
+        return self::query()->where('active',true)->get();
     }
 }

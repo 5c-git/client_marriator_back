@@ -5,6 +5,7 @@ namespace App\Models\Fields\Directory;
 use App\Enum\Fields\FieldsTypeEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 
 class Organization extends Model implements ModelDirectoryInterface
 {
@@ -69,5 +70,10 @@ class Organization extends Model implements ModelDirectoryInterface
     public static function getDefault(): string|array
     {
         return '';
+    }
+
+    public static function getAllData(): Collection
+    {
+        return self::query()->where('active',true)->get();
     }
 }

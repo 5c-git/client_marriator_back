@@ -133,4 +133,9 @@ class ViewActivities extends Model implements ModelDirectoryInterface
     {
         return '';
     }
+
+    public static function getAllData(): Collection
+    {
+        return self::query()->where('active',true)->get();
+    }
 }

@@ -6,6 +6,7 @@ use App\Enum\Fields\FieldsTypeEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use \App\Models\Fields\Directory\ModelDirectoryInterface;
+use Illuminate\Support\Collection;
 
 class Bank extends Model implements ModelDirectoryInterface
 {
@@ -71,5 +72,10 @@ class Bank extends Model implements ModelDirectoryInterface
     public static function getDefault(): string|array
     {
         return '';
+    }
+
+    public static function getAllData(): Collection
+    {
+        return self::query()->where('active',true)->get();
     }
 }

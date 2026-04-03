@@ -28,6 +28,23 @@
         </div>
 
         <div class="form-group row">
+            <label for="sort" class="col-sm-2 col-form-label">Сортировка</label>
+            <div class="col-sm-10">
+                <input type="number" class="form-control" name="sort" value="100" id="sort" required>
+            </div>
+        </div>
+
+
+        <div class="form-group row">
+            <label for="default" class="col-sm-2 col-form-label">Дефолтное значение</label>
+            <div class="offset-sm-2 col-sm-10">
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" style="margin-top: -1.5rem" name="default" value="1" id="default">
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group row">
             <label for="active" class="col-sm-2 col-form-label">Активность</label>
             <div class="offset-sm-2 col-sm-10">
                 <div class="form-check">

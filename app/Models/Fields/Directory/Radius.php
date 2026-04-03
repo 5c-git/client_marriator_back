@@ -4,6 +4,7 @@ namespace App\Models\Fields\Directory;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 
 class Radius extends Model
 {
@@ -32,5 +33,10 @@ class Radius extends Model
     public static function getDefault(): string|array
     {
         return '';
+    }
+
+    public static function getAllData(): Collection
+    {
+        return self::query()->get();
     }
 }

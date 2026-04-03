@@ -83,4 +83,9 @@ class Place extends Model implements ModelDirectoryInterface
     {
         return '';
     }
+
+    public static function getAllData(): Collection
+    {
+        return self::query()->get();
+    }
 }

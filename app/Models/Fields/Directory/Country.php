@@ -6,6 +6,7 @@ use App\Enum\Fields\FieldsTypeEnum;
 use App\Models\Fields\Directory\ModelDirectoryInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 
 class Country extends Model implements ModelDirectoryInterface
 {
@@ -70,5 +71,10 @@ class Country extends Model implements ModelDirectoryInterface
     public static function getDefault(): string|array
     {
         return '';
+    }
+
+    public static function getAllData(): Collection
+    {
+        return self::query()->where('active',true)->get();
     }
 }

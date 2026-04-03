@@ -67,6 +67,7 @@ class MedicalBookController extends Controller
 
         $editObj->name = $data['name'];
         $editObj->uuid = $data['uuid'];
+        $editObj->sort = $data['sort'];
 
         if(!empty($data['parentFields'])) {
             $editObj->parentFields = json_encode($data['parentFields']);
@@ -78,6 +79,12 @@ class MedicalBookController extends Controller
             $editObj->active = true;
         }else{
             $editObj->active = false;
+        }
+
+        if(!empty($data['default'])) {
+            $editObj->default = true;
+        }else{
+            $editObj->default = false;
         }
 
         $editObj->save();
@@ -114,6 +121,7 @@ class MedicalBookController extends Controller
         $editObj = new $this->objClass();
         $editObj->name = $data['name'];
         $editObj->uuid = $data['uuid'];
+        $editObj->sort = $data['sort'];
 
         if(!empty($data['parentFields'])) {
             $editObj->parentFields = json_encode($data['parentFields']);
@@ -125,6 +133,12 @@ class MedicalBookController extends Controller
             $editObj->active = true;
         }else{
             $editObj->active = false;
+        }
+
+        if(!empty($data['default'])) {
+            $editObj->default = true;
+        }else{
+            $editObj->default = false;
         }
 
         $editObj->save();
