@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 
 use App\Enum\Order\OrderStatusEnum;
 use App\Enum\Order\ReportStatusEnum;
+use App\Enum\Role\RoleEnum;
 use App\Models\Order\Bid;
 use App\Models\Order\Report;
 use App\Models\Setting;
@@ -26,9 +27,12 @@ class DeleteNotFinishRegisterUsers extends Command
             $users = User::query()
                 ->where('finishRegister', false)
                 ->where('updated_at', '>=', Carbon::now()->subDays($days))
+                ->whereHas('roles', function ($query) {
+                    $query->where('role_id','!=',RoleEnum::admin->value);
+                })
                 ->get();
             foreach ($users as $user) {
-               $user->delete();
+                $user->delete();
             }
         }
     }
