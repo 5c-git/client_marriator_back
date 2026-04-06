@@ -38,8 +38,8 @@ class BidShortResource extends JsonResource
             'selfEmployed' => (bool)$this->self_employed,
             'place' => new PlaceResource($this->place),
             'radius' => $this->radius ?? $this->getRadius(),
-            'price' => (int)$this->price,
-            'priceResult' => (int)($this->price),
+            'price' => (int)(($this->price ?? $this->getPrice())),
+            'priceResult' => (int)(($this->price ?? $this->getPrice())),
             'viewActivity' => new ViewActivityResource($this->viewActivity),
             'dateStart' => $this->date_start,
             'dateEnd' => $this->date_end,
@@ -51,6 +51,22 @@ class BidShortResource extends JsonResource
             'statistic' => $this->getStatistic(),
             'project'=> new ProjectResource($this->getProject()),
         ];
+    }
+
+    private function getPrice()
+    {
+        if($this->order){
+            $project = $this->order->user->project->first();
+        }elseif($this->task){
+            $project = $this->task->project;
+        }
+        $price = 0;
+        foreach ($project->viewActivities as $viewActivity){
+            if($viewActivity->id == $this->view_activity_id){
+                $price = $viewActivity->pivot->price;
+            }
+        }
+        return $price;
     }
 
     private function getActualStatus(): int

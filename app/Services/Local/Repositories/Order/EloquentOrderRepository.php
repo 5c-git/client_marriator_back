@@ -172,7 +172,7 @@ class EloquentOrderRepository implements OrderRepository
             'place_id' => $taskRequest->placeId??$task->place_id,
             'project_id' => $taskRequest->projectId??$task->project_id,
             'self_employed' => $taskRequest->selfEmployed??$task->self_employed,
-//        'price' => $taskRequest->price??$task->price,
+            'price' => $taskRequest->price??$task->price,
 //            'income' => $taskRequest->income??$task->income,
 //            'scope_of_services' => $taskRequest->scope_of_services??$task->scope_of_services
         ]);
@@ -512,13 +512,22 @@ class EloquentOrderRepository implements OrderRepository
         }else{
             $searchRequest->radius = $radius->value;
         }
+        $project = $order->user?->project?->first()??[];
+        $price = 0;
+        if($project) {
+            foreach ($project->viewActivities as $viewActivity) {
+                if ($viewActivity->id == $orderActivities->view_activity_id) {
+                    $price = $viewActivity->pivot->price;
+                }
+            }
+        }
         $searchRequest->place_id         = $order->place_id;
         $searchRequest->user_id          = $order->accept_user_id;
         $searchRequest->order_id         = $order->id;
         $searchRequest->task_id          = null;
         $searchRequest->status           = 0;
         $searchRequest->self_employed    = $order->self_employed;
-        $searchRequest->price            = null;
+        $searchRequest->price            = $price;
         $searchRequest->view_activity_id = $orderActivities->view_activity_id;
         $searchRequest->count            = $orderActivities->count;
         $searchRequest->date_start       = $orderActivities->date_start;
@@ -593,13 +602,22 @@ class EloquentOrderRepository implements OrderRepository
             $searchRequest->radius = $radius->value;
         }
 
+        $price = 0;
+        if($task->project) {
+            foreach ($task->project->viewActivities as $viewActivity) {
+                if ($viewActivity->id == $taskActivities->view_activity_id) {
+                    $price = $viewActivity->pivot->price;
+                }
+            }
+        }
+
         $searchRequest->place_id         = $task->place_id;
         $searchRequest->user_id          = $task->accept_user_id??$task->user_id;
         $searchRequest->order_id         = $task->order_id;
         $searchRequest->task_id          = $task->id;
         $searchRequest->status           = 0;
         $searchRequest->self_employed    = $task->self_employed;
-        $searchRequest->price            = null;
+        $searchRequest->price            = $price;
         $searchRequest->view_activity_id = $taskActivities->view_activity_id;
         $searchRequest->count            = $taskActivities->count;
         $searchRequest->date_start       = $taskActivities->date_start;

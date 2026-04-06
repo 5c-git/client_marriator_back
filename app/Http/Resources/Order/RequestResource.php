@@ -31,8 +31,8 @@ class RequestResource extends JsonResource
             'status' => $this->status->getStatusName(),
             'selfEmployed' => (bool)$this->self_employed,
             'radius' => $this->radius,
-            'price' => $this->price,
-            'priceResult' => $this->price,
+            'price' => (int)(($this->price ?? $this->getPrice())),
+            'priceResult' => (int)(($this->price ?? $this->getPrice())),
             'viewActivity' => new ViewActivityResource($this->viewActivity),
             'count' => $this->count,
             'dateStart' => $this->date_start,
@@ -40,5 +40,21 @@ class RequestResource extends JsonResource
             'needFoto' => (bool)$this->need_foto,
             'dateActivity' => $this->date_activity,
         ];
+    }
+
+    private function getPrice()
+    {
+        if($this->order){
+            $project = $this->order->user->project->first();
+        }elseif($this->task){
+            $project = $this->task->project;
+        }
+        $price = 0;
+        foreach ($project->viewActivities as $viewActivity){
+            if($viewActivity->id == $this->view_activity_id){
+                $price = $viewActivity->pivot->price;
+            }
+        }
+        return $price;
     }
 }
