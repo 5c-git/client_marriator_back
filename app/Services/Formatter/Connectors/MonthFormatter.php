@@ -55,11 +55,13 @@ class MonthFormatter implements FormaterInterface
             $data['error'] = $fieldsData->errorData;
         }
 
-        if(!empty($fieldsData->default_value)){
-            $data['default'] = $fieldsData->default_value;
-        }else {
-            if (!empty($fieldsData->default)) {
-                $data['default'] = $fieldsData->default;
+        if(!$data['value']) {
+            if (!empty($fieldsData->default_value)) {
+                $data['value'] = $fieldsData->default_value;
+            } else {
+                if (!empty($fieldsData->default)) {
+                    $data['value'] = $fieldsData->default;
+                }
             }
         }
 
