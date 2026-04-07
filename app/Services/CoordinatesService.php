@@ -14,10 +14,10 @@ class CoordinatesService
         int $radius,
         int $radiusBid
     ): bool {
-        $lat1_rad = deg2rad($latitudeFirst);
-        $lon1_rad = deg2rad($longitudeFirst);
-        $lat2_rad = deg2rad($latitudeTwo);
-        $lon2_rad = deg2rad($longitudeTwo);
+        $lat1_rad = deg2rad($longitudeFirst);
+        $lon1_rad = deg2rad($latitudeFirst);
+        $lat2_rad = deg2rad($longitudeTwo);
+        $lon2_rad = deg2rad($latitudeTwo);
 
         $delta_lat = $lat2_rad - $lat1_rad;
         $delta_lon = $lon2_rad - $lon1_rad;
