@@ -476,7 +476,11 @@ return [
                         [
                             'text' => 'Модели телефонов',
                             'url' => 'admin/directories/directory_phone/',
-                        ]
+                        ],
+                        [
+                            'text' => 'Imei телефонов',
+                            'url' => 'admin/directories/directory_imei/',
+                        ],
                     ],
                 ],
                 [

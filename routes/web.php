@@ -296,6 +296,15 @@ Route::group(['prefix' => 'admin'], function () {
                 Route::post('/editAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\PhoneController@editAjax')->name('phoneEditAjax');
                 Route::get('/delete/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\PhoneController@delete')->name('phoneDelete');
             });
+
+            Route::group(['prefix' => 'directory_imei'], function () {
+                Route::get('/create/', 'App\Http\Controllers\Admin\Page\Fields\Directory\ImeiController@create')->name('imeiCreate');
+                Route::post('/createAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\ImeiController@createAjax')->name('imeiCreateAjax');
+                Route::get('/', 'App\Http\Controllers\Admin\Page\Fields\Directory\ImeiController@list')->name('imeiList');
+                Route::get('/edit/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\ImeiController@edit')->name('imeiEdit');
+                Route::post('/editAjax/', 'App\Http\Controllers\Admin\Page\Fields\Directory\ImeiController@editAjax')->name('imeiEditAjax');
+                Route::get('/delete/{id}/', 'App\Http\Controllers\Admin\Page\Fields\Directory\ImeiController@delete')->name('imeiDelete');
+            });
         });
 
         Route::group(['prefix' => 'importDirectory'], function () {
