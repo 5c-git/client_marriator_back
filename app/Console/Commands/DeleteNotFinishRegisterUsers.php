@@ -26,7 +26,7 @@ class DeleteNotFinishRegisterUsers extends Command
         if(!empty($days) && is_numeric($days)) {
             $users = User::query()
                 ->where('finishRegister', false)
-                ->where('updated_at', '>=', Carbon::now()->subDays($days))
+                ->where('updated_at', '<=', Carbon::now()->subDays($days))
                 ->whereHas('roles', function ($query) {
                     $query->where('role_id','!=',RoleEnum::admin->value);
                 })
