@@ -177,10 +177,12 @@ class SupervisorController extends Controller
         if($checkRole){
             $projects = $user->counterparty
                 ->flatMap(fn($counterparty) => $counterparty->projects)
+                ->where('date_end','>=', Carbon::now())
                 ->unique('id');
             $user = Auth::user();
             $projectsAdmin = $user->counterparty
                 ->flatMap(fn($counterparty) => $counterparty->projects)
+                ->where('date_end','>=', Carbon::now())
                 ->unique('id');
 
             $commonProjects = $projects->intersect($projectsAdmin);
@@ -203,6 +205,7 @@ class SupervisorController extends Controller
         if($checkRole){
             $projects = $user->counterparty
                 ->flatMap(fn($counterparty) => $counterparty->projects)
+                ->where('date_end','>=', Carbon::now())
                 ->unique('id')->pluck('id')->toArray();
             $projectIds = [];
             foreach ($request->projectId as $projectOneId){

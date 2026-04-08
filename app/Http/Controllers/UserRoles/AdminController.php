@@ -94,6 +94,7 @@ class AdminController extends Controller
 
         $user          = User::where('id', $request->userId)->first();
         $placesProject = $user->project
+            ->where('date_end','>=', Carbon::now())
             ->flatMap(fn($project) => $project->places)
             ->unique('id')?->pluck('id')->toArray();
         $places        = $user->place?->pluck('id')->toArray();
@@ -109,6 +110,7 @@ class AdminController extends Controller
         $user = User::where('id',$request->userId)->first();
         $projects = $user->counterparty
             ->flatMap(fn($counterparty) => $counterparty->projects)
+            ->where('date_end','>=', Carbon::now())
             ->unique('id');
         return ProjectResource::collection($projects);
     }

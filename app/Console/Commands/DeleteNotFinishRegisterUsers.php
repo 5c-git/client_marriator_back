@@ -35,5 +35,21 @@ class DeleteNotFinishRegisterUsers extends Command
                 $user->delete();
             }
         }
+
+        $users = User::where('confirmRegister', true)
+            ->where('finishRegister', true)
+            ->whereHas('project', function ($query) {
+                $query->where('date_end', '<', Carbon::now());
+            })
+            ->get();
+        foreach ($users as $user) {
+            $user->confirmRegister = false;
+            $user->finishRegister = false;
+            $user->save();
+        }
+
+
+
+
     }
 }
