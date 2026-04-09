@@ -78,6 +78,6 @@ class MedicalBook extends Model implements ModelDirectoryInterface
 
     public static function getAllData(): Collection
     {
-        return self::query()->where('active',true)->get();
+        return self::query()->where('active',true)->orderBy('sort')->get();
     }
 }
