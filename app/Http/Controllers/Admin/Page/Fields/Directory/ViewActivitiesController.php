@@ -143,6 +143,9 @@ class ViewActivitiesController extends Controller
         }
 
         $editObj->save();
+        if(empty($data['viewActivities'])){
+            $data['viewActivities'] = [];
+        }
         $editObj->belongsViewActivities()->sync($data['viewActivities']);
 
         $response['url'] = '/admin/directories/directory_'.$this->view.'/edit/'.$editObj->id;
@@ -231,6 +234,9 @@ class ViewActivitiesController extends Controller
             $editObj->save();
         }
 
+        if(empty($data['viewActivities'])){
+            $data['viewActivities'] = [];
+        }
         $editObj->belongsViewActivities()->sync($data['viewActivities']);
 
         $response['status'] = 'success';
