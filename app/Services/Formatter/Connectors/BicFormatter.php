@@ -38,7 +38,7 @@ class BicFormatter implements FormaterInterface
             foreach ($fieldsData->valuesDirectory as $item) {
                 $option[$item['name']] = ['value' => $item['uuid'], 'bic'=>$item['bic'], 'label' => $item['name'], 'disabled' => false];
             }
-            ksort($option);
+            //ksort($option);
             $data['options'] = array_values($option);
             if ($fieldsData->required) {
                 $data['validation'] = 'default';

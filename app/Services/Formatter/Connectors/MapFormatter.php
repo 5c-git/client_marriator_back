@@ -43,7 +43,7 @@ class MapFormatter implements FormaterInterface
                     'address'=>$item['address_kladr']
                 ];
             }
-            ksort($option);
+            //ksort($option);
             $data['options'] = array_values($option);
             if ($fieldsData->required) {
                 $data['validation'] = 'default';

@@ -76,7 +76,7 @@ class PhotoCheckboxFormatter implements FormaterInterface
                     $option[$item['name']] = $dataArr;
                 }
             }
-            ksort($option);
+            //ksort($option);
             $data['options'] = array_values($option);
 
             if ($fieldsData->required) {
