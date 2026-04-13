@@ -3,6 +3,7 @@
 namespace App\Enum\Fields;
 use App\Models\Fields\Directory\Age;
 use App\Models\Fields\Directory\Documentation;
+use App\Models\Fields\Directory\Imei;
 use App\Models\Fields\Directory\MedicalBook;
 use App\Models\Fields\Directory\Organization;
 use App\Models\Fields\Directory\Phone;
@@ -59,6 +60,7 @@ enum FieldsDirectoryEnum: string
     case age = Age::class;
     case medicalBook = MedicalBook::class;
     case phone = Phone::class;
+    case imei = Imei::class;
 
     public function directoryName(): string
     {
@@ -86,6 +88,7 @@ enum FieldsDirectoryEnum: string
             self::age => 'Справочник возраст',
             self::medicalBook => 'Справочник мед книжка',
             self::phone => 'Справочник моделей телефона',
+            self::imei => 'Справочник imei телефонов',
         };
     }
 
