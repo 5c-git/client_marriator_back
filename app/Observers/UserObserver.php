@@ -14,6 +14,7 @@ class UserObserver
         'phone',
         'data',
         'img',
+        'pin',
         'estateData',
         'requisitesData',
         'mapAddress',
