@@ -92,6 +92,8 @@ class FieldsController extends Controller
                 $response['status'] = 'error';
                 return response()->json($response);
             }
+        }else{
+            $field->preg_value = null;
         }
         $field->preg_text = $data['preg_text'];
 
@@ -216,6 +218,8 @@ class FieldsController extends Controller
                 $response['status'] = 'error';
                 return response()->json($response);
             }
+        }else{
+            $field->preg_value = null;
         }
         $field->preg_text = $data['preg_text'];
 
