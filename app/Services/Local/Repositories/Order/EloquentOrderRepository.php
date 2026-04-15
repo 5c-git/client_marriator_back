@@ -856,11 +856,13 @@ class EloquentOrderRepository implements OrderRepository
             $viewActivitiesUuids[] = $bid->viewActivity->uuid;
             $viewActivitiesUuids = array_unique($viewActivitiesUuids);
 
-            $users = User::whereIn('data->'.$fieldStat->uuid, $status);
-                foreach ($viewActivitiesUuids as $viewActivitiesUuid) {
-                    $users = $users->orWhereJsonContains('data->'.$fieldView->uuid, $viewActivitiesUuid);
-                }
-            $users = $users->whereDoesntHave('acceptedBids', function ($query) {
+            $users = User::whereIn('data->'.$fieldStat->uuid, $status)
+                ->where(function ($query) use ($viewActivitiesUuids, $fieldView) {
+                    foreach ($viewActivitiesUuids as $uuid) {
+                        $query->orWhereJsonContains('data->'.$fieldView->uuid, $uuid);
+                    }
+                })
+                ->whereDoesntHave('acceptedBids', function ($query) {
                     $query->where('accept_bid.accepted', BidAcceptingStatusEnum::notAccepted->value);
                 })
                 ->whereDoesntHave('acceptedBids', function ($query) use ($bid) {
