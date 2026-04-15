@@ -265,12 +265,14 @@ class EloquentOrderRepository implements OrderRepository
         $place = $user->place?->pluck('id')->toArray();
 
         return Order::query()
+            ->has('user')
             ->where(function ($query) use ($status, $place) {
                 $query->when($status, fn($q) => $q->where('status', $status->value))
                     ->whereIn('place_id', $place)
                     ->whereNotIn('status',[OrderStatusEnum::accepted->value,OrderStatusEnum::new->value])
                     ->has('orderActivities');
             })
+
             ->orWhere(function ($query) use ($user,$status) {
                 $userIdsSupervisor = $user->supervisors->pluck('id')->toArray();
                 $userIdsSupervisor[] = $user->id;
@@ -289,7 +291,8 @@ class EloquentOrderRepository implements OrderRepository
 
         if($orderId) {
             return Order
-                ::where(function ($query) use ($place, $orderId) {
+                ::has('user')
+                ->where(function ($query) use ($place, $orderId) {
                     $query->whereIn('place_id', $place)
                         ->where('status', '!=', OrderStatusEnum::accepted->value)
                         ->where('id', $orderId)
@@ -366,6 +369,7 @@ class EloquentOrderRepository implements OrderRepository
         $userIdsSupervisor = $user->supervisors->pluck('id')->toArray();
         $userIdsSupervisor[] = $user->id;
         return Task::query()
+            ->has('user')
             ->orWhere(function ($query) use ($user,$status,$userIdsSupervisor) {
                 $query = $query->whereIn('user_id', $userIdsSupervisor);
                 if ($status) {
@@ -394,7 +398,7 @@ class EloquentOrderRepository implements OrderRepository
         $userIdsSupervisor = $user->supervisors->pluck('id')->toArray();
         $userIdsSupervisor[] = $user->id;
         if($taskId){
-            return Task::where(function ($query) use ($user,$taskId,$userIdsSupervisor) {
+            return Task::has('user')->where(function ($query) use ($user,$taskId,$userIdsSupervisor) {
                     $query->whereIn('user_id', $userIdsSupervisor)->where('id', $taskId);
                 })
                 ->orWhere(function ($query) use ($user,$taskId,$userIdsSupervisor) {
@@ -636,7 +640,7 @@ class EloquentOrderRepository implements OrderRepository
         $userIdsSupervisor = $user->supervisors->pluck('id')->toArray();
         $userIdsSupervisor[] = $user->id;
 
-        return Bid::query()
+        return Bid::query()->has('user')
             ->orWhere(function ($query) use ($user,$status,$userIdsSupervisor) {
                 $query = $query->whereIn('user_id', $userIdsSupervisor);
                 if($status) {
@@ -656,7 +660,7 @@ class EloquentOrderRepository implements OrderRepository
     {
         $userIdsSupervisor   = $user->supervisors->pluck('id')->toArray();
         $userIdsSupervisor[] = $user->id;
-        $bid                 = Bid::query()->with('acceptingUsers')
+        $bid                 = Bid::query()->has('user')->with('acceptingUsers')
             ->has('acceptingUsers');
         if ($user->id != $specialistId) {
             $bid = $bid->where(function ($query) use ($userIdsSupervisor) {
@@ -676,7 +680,7 @@ class EloquentOrderRepository implements OrderRepository
         $userId = $request->specialistId;
         $bidId  = $request->bidId;
 
-        $bid = Bid::with([
+        $bid = Bid::has('user')->with([
                 'acceptingUsers' => function ($query) use ($userId) {
                     $query->where('user_id', $userId);
                 }
@@ -697,7 +701,7 @@ class EloquentOrderRepository implements OrderRepository
         $userIdsSupervisor = $user->supervisors->pluck('id')->toArray();
         $userIdsSupervisor[] = $user->id;
         if($bidId){
-            return Bid::where(function ($query) use ($user,$bidId,$userIdsSupervisor) {
+            return Bid::has('user')->where(function ($query) use ($user,$bidId,$userIdsSupervisor) {
                 $query->whereIn('user_id', $userIdsSupervisor)->where('id', $bidId);
             })
                 ->orWhere(function ($query) use ($user,$bidId) {
