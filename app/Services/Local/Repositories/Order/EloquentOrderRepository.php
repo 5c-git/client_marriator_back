@@ -652,20 +652,18 @@ class EloquentOrderRepository implements OrderRepository
 
         return Bid::query()->has('user')
             ->where(function ($query) use ($status, $userIdsSupervisor, $user) {
-                $query->
-                orWhere(function ($queryNew) use ($user, $status, $userIdsSupervisor) {
+                $query->orWhere(function ($queryNew) use ($user, $status, $userIdsSupervisor) {
                     $queryNew = $queryNew->whereIn('user_id', $userIdsSupervisor);
                     if ($status) {
                         $queryNew->where('status', $status->value);
                     }
-                })
-                    ->orWhere(function ($queryNew) use ($user, $status) {
-                        $userIdsSupervisor = $user->acceptedBids?->pluck('id')->toArray();
-                        $queryNew          = $queryNew->whereIn('id', $userIdsSupervisor);
-                        if ($status) {
-                            $queryNew->where('status', $status->value);
-                        }
-                    });
+                })->orWhere(function ($queryNew) use ($user, $status) {
+                    $userIdsSupervisor = $user->acceptedBids?->pluck('id')->toArray();
+                    $queryNew          = $queryNew->whereIn('id', $userIdsSupervisor);
+                    if ($status) {
+                        $queryNew->where('status', $status->value);
+                    }
+                });
             })
             ->get();
     }

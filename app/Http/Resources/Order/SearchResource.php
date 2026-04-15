@@ -54,15 +54,18 @@ class SearchResource extends JsonResource
 
     private function getPrice()
     {
+        $project = null;
         if($this->order){
-            $project = $this->order->user->project->first();
+            $project = $this->order->user?->project?->first();
         }elseif($this->task){
-            $project = $this->task->project;
+            $project = $this->task?->project;
         }
         $price = 0;
-        foreach ($project->viewActivities as $viewActivity){
-            if($viewActivity->id == $this->view_activity_id){
-                $price = $viewActivity->pivot->price;
+        if($project) {
+            foreach ($project->viewActivities as $viewActivity) {
+                if ($viewActivity->id == $this->view_activity_id) {
+                    $price = $viewActivity->pivot->price;
+                }
             }
         }
         return $price;
