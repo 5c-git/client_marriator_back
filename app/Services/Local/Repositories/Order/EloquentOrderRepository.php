@@ -272,7 +272,6 @@ class EloquentOrderRepository implements OrderRepository
                     ->whereNotIn('status',[OrderStatusEnum::accepted->value,OrderStatusEnum::new->value])
                     ->has('orderActivities');
             })
-
             ->orWhere(function ($query) use ($user,$status) {
                 $userIdsSupervisor = $user->supervisors->pluck('id')->toArray();
                 $userIdsSupervisor[] = $user->id;
