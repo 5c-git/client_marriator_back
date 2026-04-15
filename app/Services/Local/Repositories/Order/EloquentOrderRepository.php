@@ -266,21 +266,23 @@ class EloquentOrderRepository implements OrderRepository
 
         return Order::query()
             ->has('user')
-            ->where(function ($query) use ($status, $place) {
-                $query->when($status, fn($q) => $q->where('status', $status->value))
-                    ->whereIn('place_id', $place)
-                    ->whereNotIn('status',[OrderStatusEnum::accepted->value,OrderStatusEnum::new->value])
-                    ->has('orderActivities');
+            ->where(function ($query) use ($status, $place, $user) {
+                $query->where(function ($queryNew) use ($status, $place) {
+                    $queryNew->when($status, fn($q) => $q->where('status', $status->value))
+                        ->whereIn('place_id', $place)
+                        ->whereNotIn('status', [OrderStatusEnum::accepted->value, OrderStatusEnum::new->value])
+                        ->has('orderActivities');
+                })->orWhere(function ($queryNew) use ($user, $status) {
+                    $userIdsSupervisor   = $user->supervisors->pluck('id')->toArray();
+                    $userIdsSupervisor[] = $user->id;
+                    $queryNew               = $queryNew->whereIn('accept_user_id', $userIdsSupervisor);
+                    if ($status == OrderStatusEnum::accepted) {
+                        $queryNew = $queryNew->where('status', OrderStatusEnum::accepted->value);
+                    }
+                    $queryNew->has('orderActivities');
+                });
             })
-            ->orWhere(function ($query) use ($user,$status) {
-                $userIdsSupervisor = $user->supervisors->pluck('id')->toArray();
-                $userIdsSupervisor[] = $user->id;
-                $query = $query->whereIn('accept_user_id',$userIdsSupervisor);
-                if($status == OrderStatusEnum::accepted) {
-                    $query = $query->where('status', OrderStatusEnum::accepted->value);
-                }
-                $query->has('orderActivities');
-            })->get();
+            ->get();
     }
 
     public function getOrderByUserSyncData(User $user, int|null $orderId): Order|null
@@ -288,21 +290,23 @@ class EloquentOrderRepository implements OrderRepository
 
         $place = $user->place?->pluck('id')->toArray();
 
-        if($orderId) {
+        if ($orderId) {
             return Order
                 ::has('user')
-                ->where(function ($query) use ($place, $orderId) {
-                    $query->whereIn('place_id', $place)
-                        ->where('status', '!=', OrderStatusEnum::accepted->value)
-                        ->where('id', $orderId)
-                        ->has('orderActivities');
-                })
-                ->orWhere(function ($query) use ($user, $orderId) {
-                    $userIdsSupervisor = $user->supervisors->pluck('id')->toArray();
-                    $userIdsSupervisor[] = $user->id;
-                    $query->whereIn('accept_user_id',$userIdsSupervisor)
-                        ->where('id', $orderId)
-                        ->has('orderActivities');
+                ->where(function ($query) use ($place, $orderId, $user) {
+                    $query->where(function ($queryNew) use ($place, $orderId) {
+                        $queryNew->whereIn('place_id', $place)
+                            ->where('status', '!=', OrderStatusEnum::accepted->value)
+                            ->where('id', $orderId)
+                            ->has('orderActivities');
+                    })
+                        ->orWhere(function ($queryNew) use ($user, $orderId) {
+                            $userIdsSupervisor   = $user->supervisors->pluck('id')->toArray();
+                            $userIdsSupervisor[] = $user->id;
+                            $queryNew->whereIn('accept_user_id', $userIdsSupervisor)
+                                ->where('id', $orderId)
+                                ->has('orderActivities');
+                        });
                 })
                 ->first();
         }
@@ -369,27 +373,30 @@ class EloquentOrderRepository implements OrderRepository
         $userIdsSupervisor[] = $user->id;
         return Task::query()
             ->has('user')
-            ->orWhere(function ($query) use ($user,$status,$userIdsSupervisor) {
-                $query = $query->whereIn('user_id', $userIdsSupervisor);
-                if ($status) {
-                    $query->where('status', $status->value);
-                }
-            })
-            ->orWhere(function ($query) use ($user,$status,$userIdsSupervisor) {
-                $query = $query->whereIn('accept_user_id', $userIdsSupervisor);
-                if ($status) {
-                    $query->where('status', $status->value);
-                }
-            })
-            ->orWhere(function ($query) use ($user,$status) {
-                $userIdsSupervisor = $user->acceptedTasks?->pluck('id')->toArray();
-                if($userIdsSupervisor) {
-                    $query = $query->whereIn('id', $userIdsSupervisor);
+            ->where(function ($query) use ($status, $userIdsSupervisor, $user) {
+                $query->orWhere(function ($queryNew) use ($user, $status, $userIdsSupervisor) {
+                    $queryNew = $queryNew->whereIn('user_id', $userIdsSupervisor);
                     if ($status) {
-                        $query->where('status', $status->value);
+                        $queryNew->where('status', $status->value);
                     }
-                }
-            })->get();
+                })
+                    ->orWhere(function ($queryNew) use ($user, $status, $userIdsSupervisor) {
+                        $queryNew = $queryNew->whereIn('accept_user_id', $userIdsSupervisor);
+                        if ($status) {
+                            $queryNew->where('status', $status->value);
+                        }
+                    })
+                    ->orWhere(function ($queryNew) use ($user, $status) {
+                        $userIdsSupervisor = $user->acceptedTasks?->pluck('id')->toArray();
+                        if ($userIdsSupervisor) {
+                            $queryNew = $queryNew->whereIn('id', $userIdsSupervisor);
+                            if ($status) {
+                                $queryNew->where('status', $status->value);
+                            }
+                        }
+                    });
+            })
+            ->get();
     }
 
     public function getTaskByUserSyncData(User $user, ?int $taskId): Task|null
@@ -397,16 +404,20 @@ class EloquentOrderRepository implements OrderRepository
         $userIdsSupervisor = $user->supervisors->pluck('id')->toArray();
         $userIdsSupervisor[] = $user->id;
         if($taskId){
-            return Task::has('user')->where(function ($query) use ($user,$taskId,$userIdsSupervisor) {
-                    $query->whereIn('user_id', $userIdsSupervisor)->where('id', $taskId);
+            return Task::has('user')
+                ->where(function ($query) use ($taskId, $userIdsSupervisor, $user) {
+                    $query->where(function ($queryNew) use ($user, $taskId, $userIdsSupervisor) {
+                        $queryNew->whereIn('user_id', $userIdsSupervisor)->where('id', $taskId);
+                    })
+                        ->orWhere(function ($queryNew) use ($user, $taskId, $userIdsSupervisor) {
+                            $queryNew->whereIn('accept_user_id', $userIdsSupervisor)->where('id', $taskId);
+                        })
+                        ->orWhere(function ($queryNew) use ($user, $taskId) {
+                            $userIdsSupervisor = $user->acceptedTasks?->pluck('id')->toArray();
+                            $queryNew->whereIn('id', $userIdsSupervisor)->where('id', $taskId);
+                        });
                 })
-                ->orWhere(function ($query) use ($user,$taskId,$userIdsSupervisor) {
-                    $query->whereIn('accept_user_id', $userIdsSupervisor)->where('id', $taskId);
-                })
-                ->orWhere(function ($query) use ($user,$taskId) {
-                    $userIdsSupervisor = $user->acceptedTasks?->pluck('id')->toArray();
-                    $query->whereIn('id', $userIdsSupervisor)->where('id', $taskId);
-                })->first();
+                ->first();
         }
         return null;
     }
@@ -640,19 +651,23 @@ class EloquentOrderRepository implements OrderRepository
         $userIdsSupervisor[] = $user->id;
 
         return Bid::query()->has('user')
-            ->orWhere(function ($query) use ($user,$status,$userIdsSupervisor) {
-                $query = $query->whereIn('user_id', $userIdsSupervisor);
-                if($status) {
-                    $query->where('status', $status->value);
-                }
+            ->where(function ($query) use ($status, $userIdsSupervisor, $user) {
+                $query->
+                orWhere(function ($queryNew) use ($user, $status, $userIdsSupervisor) {
+                    $queryNew = $queryNew->whereIn('user_id', $userIdsSupervisor);
+                    if ($status) {
+                        $queryNew->where('status', $status->value);
+                    }
+                })
+                    ->orWhere(function ($queryNew) use ($user, $status) {
+                        $userIdsSupervisor = $user->acceptedBids?->pluck('id')->toArray();
+                        $queryNew          = $queryNew->whereIn('id', $userIdsSupervisor);
+                        if ($status) {
+                            $queryNew->where('status', $status->value);
+                        }
+                    });
             })
-            ->orWhere(function ($query) use ($user,$status) {
-                $userIdsSupervisor = $user->acceptedBids?->pluck('id')->toArray();
-                $query = $query->whereIn('id', $userIdsSupervisor);
-                if($status) {
-                    $query->where('status', $status->value);
-                }
-            })->get();
+            ->get();
     }
 
     public function getJobsByUserSyncDataPaginate(User $user, $specialistId = null): Collection
@@ -700,13 +715,17 @@ class EloquentOrderRepository implements OrderRepository
         $userIdsSupervisor = $user->supervisors->pluck('id')->toArray();
         $userIdsSupervisor[] = $user->id;
         if($bidId){
-            return Bid::has('user')->where(function ($query) use ($user,$bidId,$userIdsSupervisor) {
-                $query->whereIn('user_id', $userIdsSupervisor)->where('id', $bidId);
-            })
-                ->orWhere(function ($query) use ($user,$bidId) {
-                    $userIdsSupervisor = $user->acceptedBids?->pluck('id')->toArray();
-                    $query->whereIn('id', $userIdsSupervisor)->where('id', $bidId);
-                })->first();
+            return Bid::has('user')
+                ->where(function ($query) use ($bidId, $userIdsSupervisor, $user) {
+                    $query->where(function ($queryNew) use ($user, $bidId, $userIdsSupervisor) {
+                        $queryNew->whereIn('user_id', $userIdsSupervisor)->where('id', $bidId);
+                    })
+                        ->orWhere(function ($queryNew) use ($user, $bidId) {
+                            $userIdsSupervisor = $user->acceptedBids?->pluck('id')->toArray();
+                            $queryNew->whereIn('id', $userIdsSupervisor)->where('id', $bidId);
+                        });
+                })
+                ->first();
         }
         return null;
     }
