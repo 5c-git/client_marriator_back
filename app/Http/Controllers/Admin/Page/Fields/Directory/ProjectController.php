@@ -62,6 +62,8 @@ class ProjectController extends Controller
         $editObj->uuid = $data['uuid'];
         $editObj->date_start = $data['date_start'];
         $editObj->date_end = $data['date_end'];
+        $editObj->time_start = $data['time_start'];
+        $editObj->time_end = $data['time_end'];
 
         $viewActivities = [];
         if (!empty($data['viewActivities'])) {
@@ -143,6 +145,8 @@ class ProjectController extends Controller
         $editObj->uuid = $data['uuid'];
         $editObj->date_start = $data['date_start'];
         $editObj->date_end = $data['date_end'];
+        $editObj->time_start = $data['time_start'];
+        $editObj->time_end = $data['time_end'];
         $editObj->save();
         $editObj->viewActivities()->sync($viewActivities);
         $editObj->places()->sync($place);

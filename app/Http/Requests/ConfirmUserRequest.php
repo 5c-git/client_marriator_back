@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use App\Http\Requests\FormRequest;
 use App\Enum\Role\RoleEnum;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Validation\Rule;
 
 /**
@@ -21,7 +22,20 @@ class ConfirmUserRequest extends FormRequest
     public function rules()
     {
         $rules = [
-            'userId' => 'required|integer|exists:users,id',
+            'userId' => [
+                'required',
+                'integer',
+                function ($attribute, $value, $fail) {
+                    $users = User::where('id',$value)
+                        ->whereHas('project', function ($query) {
+                            $query->where('date_end', '<', Carbon::now());
+                        })
+                        ->first();
+                    if($users){
+                        $fail('User project is out of date');
+                    }
+                }
+            ],
             'supervisorIds' => [
                 'sometimes',
                 'array',

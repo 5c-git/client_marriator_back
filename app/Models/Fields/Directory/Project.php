@@ -18,6 +18,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property string $name
  * @property Carbon $date_start
  * @property Carbon $date_end
+ * @property Carbon $time_start
+ * @property Carbon $time_end
  * @property string $external_id
  * @property-read Collection|Counterparty[] $counterparties
  * @property-read Collection|Place[] $places
@@ -39,12 +41,16 @@ class Project extends Model implements ModelDirectoryInterface
         'name',
         'date_start',
         'date_end',
-        'external_id'
+        'external_id',
+        'time_start',
+        'time_end',
     ];
 
     protected $casts = [
         'date_start' => 'datetime',
         'date_end' => 'datetime',
+        'time_start' => 'datetime',
+        'time_end'   => 'datetime',
     ];
 
     public $timestamps = false;

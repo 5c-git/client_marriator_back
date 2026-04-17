@@ -6,8 +6,10 @@ use App\Enum\Order\OrderStatusEnum;
 use App\Http\Requests\FormRequest;
 use App\Models\Order\OrderActivities;
 use App\Models\Order\TaskActivity;
+use App\Models\User;
 use App\Services\TimeService;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use App\Models\Order\Order;
 
@@ -41,6 +43,16 @@ class OrderByIdRequest extends FormRequest
                     $orderExists = Order::query()->where('id', $value)
                         ->where('user_id', auth()->id())
                         ->first();
+
+                    $users = User::where('id',Auth::user()->id)
+                        ->whereHas('project', function ($query) {
+                            $query->where('date_end', '<', Carbon::now());
+                        })
+                        ->first();
+                    if($users){
+                        $fail('User project is out of date');
+                        return;
+                    }
 
                     if (!$orderExists) {
                         $fail('Not your order');

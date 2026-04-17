@@ -52,6 +52,20 @@
         </div>
 
         <div class="form-group row">
+            <label for="time_start" class="col-sm-2 col-form-label">Time start</label>
+            <div class="col-sm-10">
+                <input type="time" class="form-control" name="time_start" value="{{$edit->time_start?->format('H:i')}}" id="time_start" >
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="time_end" class="col-sm-2 col-form-label">Time end</label>
+            <div class="col-sm-10">
+                <input type="time" class="form-control" name="time_end" value="{{$edit->time_end?->format('H:i')}}" id="time_end" >
+            </div>
+        </div>
+
+        <div class="form-group row">
             <label for="select" class="col-sm-2 col-form-label">Привязка Мест проведения</label>
             <div class="col-sm-10">
                 @if(!empty($edit->places))

@@ -4,7 +4,9 @@ namespace App\Http\Requests\UserData;
 
 use App\Http\Requests\FormRequest;
 use App\Enum\Role\RoleEnum;
+use App\Models\Fields\Directory\Project;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
@@ -45,7 +47,13 @@ class SetProjectRequest extends FormRequest
             'projectId' => 'required|array',
             'projectId.*' => [
                 'integer',
-                Rule::exists('directory_project', 'id'),
+                function ($attribute, $value, $fail) {
+                    $project = Project::where('id',$value)
+                        ->where('date_end','>', Carbon::now())->first();
+                    if (!$project) {
+                        $fail('Project id not valid or date end of project is arrived');
+                    }
+                }
             ],
         ];
     }

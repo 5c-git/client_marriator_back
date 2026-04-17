@@ -8,8 +8,10 @@ use App\Models\Fields\Directory\Project;
 use App\Models\Order\Order;
 use App\Models\Order\OrderActivities;
 use App\Models\Order\Task;
+use App\Models\User;
 use App\Services\TimeService;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 class UpdateOrderActivityRequest extends FormRequest
@@ -48,6 +50,15 @@ class UpdateOrderActivityRequest extends FormRequest
                     if (!$orderExists) {
                         $fail('Not your order');
                         return;
+                    }
+
+                    $users = User::where('id',Auth::user()->id)
+                        ->whereHas('project', function ($query) {
+                            $query->where('date_end', '<', Carbon::now());
+                        })
+                        ->first();
+                    if($users){
+                        $fail('User project is out of date');
                     }
 
 //                    /** @var Order $orderExists */

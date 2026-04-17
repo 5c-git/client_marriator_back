@@ -4,6 +4,8 @@ namespace App\Http\Requests\Order;
 
 use App\Http\Requests\FormRequest;
 use App\Models\Order\Order;
+use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
@@ -38,6 +40,15 @@ class CreateOrderRequest extends FormRequest
 
                     if (!in_array($value,$places)) {
                         $fail('Not your place');
+                        return;
+                    }
+                    $users = User::where('id',Auth::user()->id)
+                        ->whereHas('project', function ($query) {
+                            $query->where('date_end', '<', Carbon::now());
+                        })
+                        ->first();
+                    if($users){
+                        $fail('User project is out of date');
                     }
                 },
             ],

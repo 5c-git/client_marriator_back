@@ -24,6 +24,8 @@ class ProjectResource extends JsonResource
             'name' => $this->name,
             'dateStart' => $this->date_start,
             'dateEnd' => $this->date_end,
+            'timeStart' => $this->time_start?->format('H:i'),
+            'timeEnd' => $this->time_end?->format('H:i'),
             'brand' => BrandResource::collection($this->brands)
         ];
     }

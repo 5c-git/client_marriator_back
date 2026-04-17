@@ -6,7 +6,9 @@ use App\Enum\Order\OrderStatusEnum;
 use App\Http\Requests\FormRequest;
 use App\Models\Order\Order;
 use App\Models\Order\OrderActivities;
+use App\Models\User;
 use App\Services\TimeService;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
@@ -34,6 +36,15 @@ class RepeatOrderRequest extends FormRequest
                 'required',
                 'integer',
                 function ($attribute, $value, $fail) {
+                    $users = User::where('id',Auth::user()->id)
+                        ->whereHas('project', function ($query) {
+                            $query->where('date_end', '<', Carbon::now());
+                        })
+                        ->first();
+                    if($users){
+                        $fail('User project is out of date');
+                        return;
+                    }
                     $orderExists = Order::query()->where('id', $value)
                         ->where('user_id', auth()->id())
                         ->where('status',OrderStatusEnum::canceled->value)
