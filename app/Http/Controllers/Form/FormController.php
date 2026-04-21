@@ -122,7 +122,7 @@ class FormController extends Controller
             $response['status'] = 'error';
         }
 
-        return response()->json($response, 200, [], JSON_UNESCAPED_SLASHES);
+        return response()->json($response);
     }
 
     /**

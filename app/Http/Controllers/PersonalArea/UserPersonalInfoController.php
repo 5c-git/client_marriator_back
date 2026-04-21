@@ -154,7 +154,7 @@ class UserPersonalInfoController extends Controller
 
         $response['result']['section'] = FormBuilderService::getUserMenu($user->errorData);
         $response['status'] = 'success';
-        return response()->json($response, 200, [], JSON_UNESCAPED_SLASHES);
+        return response()->json($response);
     }
 
     /**
@@ -830,7 +830,7 @@ class UserPersonalInfoController extends Controller
         }else{
             $response['error'] = 'Поле step не может быть больше 3';
             $response['status'] = 'error';
-            return response()->json($response, 417, [], JSON_UNESCAPED_SLASHES);
+            return response()->json($response);
         }
 
         return response()->json($response);
