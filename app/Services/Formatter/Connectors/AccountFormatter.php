@@ -65,7 +65,7 @@ class AccountFormatter implements FormaterInterface
         }
 
         if(!empty($fieldsData->preg_value)){
-            $data['pregValue'] = $fieldsData->preg_value;
+            $data['pregValue'] = base64_encode($fieldsData->preg_value);
             $data['pregText'] = $fieldsData->preg_text;
         }
 
