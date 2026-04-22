@@ -20,6 +20,8 @@ use App\Http\Requests\Order\SearchDataRequest;
 use App\Http\Requests\Order\UpdateOrderActivityRequest;
 use App\Http\Requests\Order\UpdateTaskActivityRequest;
 use App\Http\Requests\Order\UpdateTaskRequest;
+use App\Jobs\CreateDocumentJob;
+use App\Jobs\SendNotificationInvoiceBidJob;
 use App\Models\Fields\Directory\Radius;
 use App\Models\Order\Bid;
 use App\Models\Order\Order;
@@ -788,6 +790,10 @@ class EloquentOrderRepository implements OrderRepository
                 );
             }
             $bid->save();
+
+            foreach ($specialistIds as $specialistId){
+                SendNotificationInvoiceBidJob::dispatch($specialistId);
+            }
         }
         return true;
     }
@@ -816,8 +822,7 @@ class EloquentOrderRepository implements OrderRepository
             if($updated){
                 $counterparty = UserDocumentCreatorService::getCounterpartyByOrder($bid);
                 if($counterparty) {
-                    $service  = new UserDocumentCreatorService();
-                    $service->createContract($user,$counterparty);
+                    CreateDocumentJob::dispatch($user,$counterparty);
                 }
             }
             return (bool)$updated;

@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\Document\DocumentResource;
 use App\Http\Resources\ErrorResource;
 use App\Http\Resources\SuccessResource;
+use App\Jobs\CreateDocumentJob;
 use App\Models\Document\RecognitionDocument;
 use App\Models\Fields\Directory\Counterparty;
 use App\Models\User;
@@ -309,16 +310,12 @@ class DocumentsController extends Controller
         $counterparties = Counterparty::query()
             ->whereIn('id',$counterpartyIds)
             ->get();
-        $documents = collect();
-        $service = new UserDocumentCreatorService();
         foreach ($counterparties as $counterparty){
-            $document = $service->createContract($user,$counterparty);
-            if($document){
-                $documents->push($document);
-                $response = [
-                        'status' => 'success',
-                ];
-            }
+            CreateDocumentJob::dispatch($user,$counterparty);
+            $response = [
+                'status' => 'success',
+            ];
+
         }
         return response()->json($response, 200);
     }

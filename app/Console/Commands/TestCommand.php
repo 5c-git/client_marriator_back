@@ -7,6 +7,7 @@ use App\Enum\Document\DocumentStatusEnum;
 use App\Enum\Document\DocumentStatusSignatureEnum;
 use App\Enum\Order\OrderStatusEnum;
 use App\Enum\Order\ReportStatusEnum;
+use App\Jobs\SendNotificationInvoiceBidJob;
 use App\Models\Document\Document;
 use App\Models\Document\RecognitionDocument;
 use App\Models\Fields\Directory\Counterparty;
@@ -47,6 +48,8 @@ class TestCommand extends Command
 
     public function handle(): void
     {
+        SendNotificationInvoiceBidJob::dispatch(1);
+        die();
 
 
         $view = ViewActivities::query()->where('id',3)->first();

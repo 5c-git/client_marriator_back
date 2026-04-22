@@ -4,6 +4,7 @@ namespace App\Services\DocumentServices;
 use App\Enum\Document\DocumentFieldTypeEnum;
 use App\Enum\Document\DocumentTypeEnum;
 use App\Enum\Document\RecognitionDocumentStatusEnum;
+use App\Jobs\CreateDocumentJob;
 use App\Models\Document\RecognitionDocument;
 use App\Models\Fields\Directory\Counterparty;
 use App\Models\Fields\Directory\Organization;
@@ -61,9 +62,8 @@ class RecognitionDocumentService
                     $counterparties = Counterparty::whereIn('id',$counterpartyId)->get();
                 }
                 if($counterparties) {
-                    $service = new UserDocumentCreatorService();
                     foreach ($counterparties as $counterparty) {
-                        $service->createContract($this->user, $counterparty);
+                        CreateDocumentJob::dispatch($this->user,$counterparty);
                     }
                 }
             }

@@ -12,9 +12,11 @@ use App\Models\Order\Bid;
 use App\Models\Order\Report;
 use App\Models\Order\Task;
 use App\Models\User\Role;
+use App\Models\User\UserSettings;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
@@ -273,5 +275,10 @@ class User extends Authenticatable
     public function reports(): HasMany
     {
         return $this->hasMany(Report::class);
+    }
+
+    public function settings(): HasOne
+    {
+        return $this->hasOne(UserSettings::class, 'user_id', 'id');
     }
 }

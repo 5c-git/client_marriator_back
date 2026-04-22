@@ -27,6 +27,7 @@ use App\Http\Resources\Order\OrderResource;
 use App\Http\Resources\Order\ShortOrderResource;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\SuccessResource;
+use App\Jobs\CreateDocumentJob;
 use App\Models\Document\Document;
 use App\Models\Fields\Directory\Counterparty;
 use App\Models\Order\Bid;
@@ -302,14 +303,9 @@ class SpecialistController extends Controller
         $counterparties = Counterparty::query()
             ->whereIn('id',$request->counterpartyIds)
             ->get();
-        $documents = collect();
-        $service = new UserDocumentCreatorService();
         foreach ($counterparties as $counterparty){
-            $document = $service->createContract($user,$counterparty);
-            if($document){
-                $documents->push($document);
-            }
+            CreateDocumentJob::dispatch($user,$counterparty);
         }
-        return DocumentResource::collection($documents);
+        return new SuccessResource();
     }
 }

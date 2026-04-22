@@ -3,6 +3,7 @@
 namespace App\Services\Register;
 
 use App\Mail\ApplicationApproved;
+use App\Mail\NotificationInvoiceBid;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redis;
@@ -24,6 +25,13 @@ class EmailService
     {
         Mail::to($user->email)->send(
             new ApplicationApproved($user)
+        );
+    }
+
+    public static function sendNotificationInvoiceBid(User $user): void
+    {
+        Mail::to($user->email)->send(
+            new NotificationInvoiceBid()
         );
     }
 
