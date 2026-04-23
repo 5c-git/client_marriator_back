@@ -38,8 +38,9 @@ class DeleteNotFinishRegisterUsers extends Command
 
         $users = User::where('confirmRegister', true)
             ->where('finishRegister', true)
-            ->whereHas('project', function ($query) {
-                $query->where('date_end', '<', Carbon::now());
+            ->whereHas('project')
+            ->whereDoesntHave('project', function ($query) {
+                $query->where('date_end', '>', Carbon::now());
             })
             ->get();
         foreach ($users as $user) {
