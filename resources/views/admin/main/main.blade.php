@@ -8,9 +8,10 @@
 
 @section('content')
     <div class="container-fluid">
-
-        Hi
-
+        <a class="nav-link" href="/horizon/">
+            <i class="fas fa-fw fa-window-restore"></i>
+            <p style="display: contents">Laravel Horizon</p>
+        </a>
     </div>
 @stop
 
