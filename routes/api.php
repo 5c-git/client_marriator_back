@@ -153,6 +153,11 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
             Route::get('/getCounterpartiesForSign','App\Http\Controllers\UserRoles\SpecialistController@getCounterpartiesForSign')->name('getCounterpartiesForSign');//???????????????????????
             Route::post('/signContracts','App\Http\Controllers\UserRoles\SpecialistController@signContracts')->name('signContracts');//????????????????????????????
 
+            Route::group(['prefix' => 'userSettings'], function () {
+                Route::get('/getUserSettings', 'App\Http\Controllers\PersonalArea\UserPersonalInfoController@getUserSettings')->name('getUserSettings');
+                Route::post('/setUserSettings', 'App\Http\Controllers\PersonalArea\UserPersonalInfoController@setUserSettings')->name('setUserSettings');
+            });
+
             Route::group(['prefix' => 'signedDocument'], function () {
                 Route::post('', 'App\Http\Controllers\UserRoles\SpecialistController@signedDocuments')->name('signedDocuments');
                 Route::post('/sendCode', 'App\Http\Controllers\UserRoles\SpecialistController@signedDocumentsSendCode')->name('signedDocumentsSendCode');

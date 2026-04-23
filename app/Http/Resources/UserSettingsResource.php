@@ -22,7 +22,7 @@ class UserSettingsResource extends JsonResource
     public function toArray($request): array
     {
         return [
-            'notification_new_bids' => $this->notification_new_bids
+            'notificationNewBids' => $this->notification_new_bids
         ];
     }
 }

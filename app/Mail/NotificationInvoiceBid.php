@@ -20,6 +20,7 @@ class NotificationInvoiceBid extends Mailable implements ShouldQueue
     public function __construct()
     {
         $this->link = env('FRONT_URL', '');
+        $this->onQueue('emailMessage');
     }
 
     public function build()

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\PersonalArea;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UserData\UserSettingsRequest;
 use App\Http\Resources\RoleResource;
 use App\Http\Resources\SuccessResource;
 use App\Http\Resources\UserSettingsResource;
@@ -1149,14 +1150,14 @@ class UserPersonalInfoController extends Controller
         return response()->json($response, 200);
     }
 
-    public function getUserSettings(Request $request){
+    public function getUserSettings(){
         $user = Auth::user();
         /** @var  $user User */
         $setting = $user->settings();
         return new UserSettingsResource($setting);
     }
 
-    public function setUserSettings(Request $request){
+    public function setUserSettings(UserSettingsRequest $request){
         $user = Auth::user();
         $userSettings = UserSettings::query()->where('user_id',$user->id)->first();
         if($userSettings) {

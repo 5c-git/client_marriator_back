@@ -22,6 +22,8 @@ class ApplicationApproved extends Mailable implements ShouldQueue
     {
         $this->fullName = (new UserDataService())->getName($user);
         $this->loginUrl = env('FRONT_URL', '').'/signin/phone';
+
+        $this->onQueue('emailMessage');
     }
 
     public function build()
