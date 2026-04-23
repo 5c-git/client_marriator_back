@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Models\User;
+use App\Models\User\UserSettings;
 use App\Models\User\UserUpdates;
 
 class UserObserver
@@ -47,7 +48,13 @@ class UserObserver
      */
     public function created(User $user): void
     {
-
+        $userSettings = UserSettings::query()->where('user_id',$user->id)->first();
+        if(!$userSettings){
+            $userSettings = new UserSettings();
+            $userSettings->user_id = $user->id;
+            $userSettings->notification_new_bids = true;
+            $userSettings->save();
+        }
     }
 
     /**

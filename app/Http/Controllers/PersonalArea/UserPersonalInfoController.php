@@ -4,8 +4,11 @@ namespace App\Http\Controllers\PersonalArea;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\RoleResource;
+use App\Http\Resources\SuccessResource;
+use App\Http\Resources\UserSettingsResource;
 use App\Models\Fields\Fields;
 use App\Models\User;
+use App\Models\User\UserSettings;
 use App\Services\ApiTokenService\ApiTokenService;
 use App\Services\DocumentServices\RecognitionDocumentService;
 use App\Services\FormBuilderService;
@@ -1144,6 +1147,23 @@ class UserPersonalInfoController extends Controller
         $response['result']['longitude'] = $user->longitude;
         $response['status'] = 'success';
         return response()->json($response, 200);
+    }
+
+    public function getUserSettings(Request $request){
+        $user = Auth::user();
+        /** @var  $user User */
+        $setting = $user->settings();
+        return new UserSettingsResource($setting);
+    }
+
+    public function setUserSettings(Request $request){
+        $user = Auth::user();
+        $userSettings = UserSettings::query()->where('user_id',$user->id)->first();
+        if($userSettings) {
+            $userSettings->notification_new_bids = $request->notificationNewBids;
+            $userSettings->save();
+        }
+        return new SuccessResource();
     }
 
 
