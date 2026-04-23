@@ -24,4 +24,6 @@ class UserSettings extends Model
 
     protected $casts = [
     ];
+
+    public $timestamps = false;
 }
