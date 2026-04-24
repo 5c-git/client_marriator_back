@@ -25,6 +25,9 @@ Schedule::command('archiveJob')->everyThreeMinutes()->withoutOverlapping();
 
 Schedule::command('deleteNotFinishRegisterUsers')->hourly()->withoutOverlapping();
 
+Schedule::command('horizonGuard')->everyMinute()->withoutOverlapping();// todo поставить как было раз в 3 минуты
+
+
 
 
 
