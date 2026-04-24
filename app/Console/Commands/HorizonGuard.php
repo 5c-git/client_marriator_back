@@ -23,7 +23,7 @@ class HorizonGuard extends Command
         $this->warn('Horizon is not running. Starting it...');
 
         // Запускаем Horizon в фоне
-        $process = Process::start('php artisan horizon');
+        $process = Process::start('/opt/php83/bin/php artisan horizon');
         // Небольшая пауза для инициализации
         sleep(2);
 
