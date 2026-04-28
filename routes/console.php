@@ -23,7 +23,7 @@ Schedule::command('archiveOrder')->everyThreeMinutes()->withoutOverlapping();
 Schedule::command('inWorkBid')->everyThreeMinutes()->withoutOverlapping();
 Schedule::command('archiveJob')->everyThreeMinutes()->withoutOverlapping();
 
-Schedule::command('deleteNotFinishRegisterUsers')->hourly()->withoutOverlapping();
+Schedule::command('deleteNotFinishRegisterUsers')->everyFiveMinutes()->withoutOverlapping();
 
 
 
