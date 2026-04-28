@@ -55,7 +55,7 @@ class SetSurepvisorsRequest extends FormRequest
                 function ($attribute, $value, $fail) {
                     $users = User::whereHas('roles', function ($query) {
                         $query->where('role_id', RoleEnum::supervisor->value);
-                    })->where('id', $value)->where('confirmRegister', true)->where('finishRegister', true)->first();
+                    })->where('id', $value)->where('confirmRegister', true)->where('archive', false)->where('finishRegister', true)->first();
 
                     if (!$users) {
                         $fail('Not your task');

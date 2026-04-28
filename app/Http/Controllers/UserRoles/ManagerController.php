@@ -333,7 +333,7 @@ class ManagerController extends Controller
             if($deleteSuperVisor) {
                 $users = $users->whereNotIn('id', $deleteSuperVisor);
             }
-            $users = $users->where('confirmRegister', true)->where('finishRegister', true)->get();
+            $users = $users->where('confirmRegister', true)->where('archive', false)->where('finishRegister', true)->get();
         }
         return ShortUserResource::collection($users);
     }
@@ -357,7 +357,7 @@ class ManagerController extends Controller
             if($deleteManager) {
                 $users = $users->whereNotIn('id', $deleteManager);
             }
-            $users = $users->where('confirmRegister', true)->where('finishRegister', true)->get();
+            $users = $users->where('confirmRegister', true)->where('archive', false)->where('finishRegister', true)->get();
         }
         return ShortUserResource::collection($users);
     }
@@ -561,6 +561,7 @@ class ManagerController extends Controller
                     if (true) {
                         $userForModeration->confirmRegister = true;
                         $userForModeration->finishRegister = true;
+                        $userForModeration->archive = false;
                     }
                 } else {
                     $userForModeration->finishRegister = false;
@@ -777,6 +778,7 @@ class ManagerController extends Controller
                 $query->where('name', RoleEnum::supervisor->name);
             })
             ->where('confirmRegister', true)
+            ->where('archive', false)
             ->where('finishRegister', true)
             ->get();
         return ShortUserResource::collection($supervisorUsers);

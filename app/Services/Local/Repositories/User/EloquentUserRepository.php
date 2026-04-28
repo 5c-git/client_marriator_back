@@ -118,17 +118,16 @@ class EloquentUserRepository implements UserRepository
 
 
         if ($status == UserStatusModerationEnum::archive) {
-            $userQuery = $userQuery->where('confirmRegister', false)
-                ->where('finishRegister', false);
+            $userQuery = $userQuery->where('archive', true);
         }
         if ($status == UserStatusModerationEnum::new) {
-            $userQuery = $userQuery->where('confirmRegister', false);
+            $userQuery = $userQuery->where('confirmRegister', false)->where('archive', false);
             if (!$isAdmin) {
                 $userQuery = $userQuery->where('finishRegister', true);
             }
         }
         if ($status == UserStatusModerationEnum::inProgress) {
-            $userQuery = $userQuery->where('confirmRegister', true);
+            $userQuery = $userQuery->where('confirmRegister', true)->where('archive', false);
             if (!$isAdmin) {
                 $userQuery = $userQuery->where('finishRegister', true);
             }

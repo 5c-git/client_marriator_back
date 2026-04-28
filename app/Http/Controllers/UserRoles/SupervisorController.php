@@ -400,6 +400,7 @@ class SupervisorController extends Controller
                     if (true) {
                         $userForModeration->confirmRegister = true;
                         $userForModeration->finishRegister = true;
+                        $userForModeration->archive = false;
                     }
                 } else {
                     $userForModeration->finishRegister = false;

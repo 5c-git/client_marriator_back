@@ -898,7 +898,7 @@ class EloquentOrderRepository implements OrderRepository
                         });
                     })->whereIn('accept_bid.accepted', [BidAcceptingStatusEnum::work->value,BidAcceptingStatusEnum::consideration->value]);
                 })
-                ->where('confirmRegister', true)->where('finishRegister', true)
+                ->where('confirmRegister', true)->where('archive', false)->where('finishRegister', true)
                 ->get();
 
             $userInRadius = collect();

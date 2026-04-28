@@ -51,6 +51,7 @@ use App\Models\Order\Order;
  * @property-read Collection|Counterparty[] $counterparty
  * @property-read Collection|Report[] $reports
  * @property-read UserSettings|null $settings
+ * @property-read boolean $archive
  */
 class User extends Authenticatable
 {
@@ -101,7 +102,8 @@ class User extends Authenticatable
         'verme_id',
         'nopaper_guid',
         'nopaper_certificate_id',
-        'time_book_guid'
+        'time_book_guid',
+        'archive'
     ];
 
     /**
