@@ -343,13 +343,19 @@ class FormBuilderService
             ) {
                 $value = $this->formDataThisStep[$data->uuid];
                 $pattern = $data->preg_value;
-                if (preg_match($pattern, $value) !== 1) {
+                if (preg_match($pattern, $value) !== 1 && ($this->is_valid_regex($pattern.'u') && preg_match($pattern.'u', $value) !== 1)) {
                     return false;
                 }
             }
         }
         return true;
     }
+
+    private function is_valid_regex(string $pattern): bool {
+        @preg_match($pattern, '');
+        return preg_last_error() === PREG_NO_ERROR;
+    }
+
 
     public function getUserField(array $moreData,array $errorData): array
     {
