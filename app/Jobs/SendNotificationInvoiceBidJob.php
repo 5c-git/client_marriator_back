@@ -31,6 +31,10 @@ class SendNotificationInvoiceBidJob implements ShouldQueue
     public function handle(): void
     {
         $user = User::query()->where('id',$this->userId)->first();
-        EmailService::sendNotificationInvoiceBid($user);
+        /** @var  $user User */
+        $setting = $user->settings;
+        if($setting && $setting->notification_new_bids) {
+            EmailService::sendNotificationInvoiceBid($user);
+        }
     }
 }
