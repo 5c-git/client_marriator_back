@@ -298,13 +298,13 @@ class UniversalController extends Controller
 
     public function getPlaceForOrder(){
         if(in_array('supervisor',$this->roles)){
-            return app(\App\Http\Controllers\UserRoles\SupervisorController::class)->getPlace();
+            return app(\App\Http\Controllers\UserRoles\SupervisorController::class)->getPlaceForOrder();
         }
         if(in_array('manager',$this->roles)){
-            return app(\App\Http\Controllers\UserRoles\ManagerController::class)->getPlace();
+            return app(\App\Http\Controllers\UserRoles\ManagerController::class)->getPlaceForOrder();
         }
         if(in_array('client',$this->roles)){
-            return app(\App\Http\Controllers\UserRoles\ClientController::class)->getPlace();
+            return app(\App\Http\Controllers\UserRoles\ClientController::class)->getPlaceForOrder();
         }
         return response()->json(['message' => 'Role not allowed.'], 403);
     }

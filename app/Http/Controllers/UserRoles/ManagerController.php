@@ -606,6 +606,11 @@ class ManagerController extends Controller
         return PlaceResource::collection($places);
     }
 
+    public function getPlaceForOrder()
+    {
+        return PlaceResource::collection(Auth::user()->place);
+    }
+
     public function setPlace(SetPlaceRequest $request): SuccessResource
     {
         $user = Auth::user();
@@ -971,10 +976,7 @@ class ManagerController extends Controller
 
     public function getPlaceForBid()
     {
-        $places = Auth::user()->project
-            ->flatMap(fn($project) => $project->places)
-            ->unique('id');
-        return PlaceResource::collection($places);
+        PlaceResource::collection(Auth::user()->place);
     }
 
     public function getRadiusSelect()

@@ -73,6 +73,11 @@ class ClientController extends Controller
         return PlaceResource::collection($places);
     }
 
+    public function getPlaceForOrder()
+    {
+        return PlaceResource::collection(Auth::user()->place);
+    }
+
     public function setPlace(SetPlaceRequest $request): SuccessResource
     {
         $user = Auth::user();

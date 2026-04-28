@@ -445,6 +445,14 @@ class SupervisorController extends Controller
         return PlaceResource::collection($places);
     }
 
+    public function getPlaceForOrder()
+    {
+        $places = Auth::user()->project
+            ->flatMap(fn($project) => $project->places)
+            ->unique('id');
+        return PlaceResource::collection($places);
+    }
+
     public function getOrders(GetOrderRequest $request)
     {
         return OrderResource::collection(
