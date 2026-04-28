@@ -1153,7 +1153,7 @@ class UserPersonalInfoController extends Controller
     public function getUserSettings(){
         $user = Auth::user();
         /** @var  $user User */
-        $setting = $user->settings();
+        $setting = $user->settings;
         return new UserSettingsResource($setting);
     }
 
@@ -1161,6 +1161,11 @@ class UserPersonalInfoController extends Controller
         $user = Auth::user();
         $userSettings = UserSettings::query()->where('user_id',$user->id)->first();
         if($userSettings) {
+            $userSettings->notification_new_bids = $request->notificationNewBids;
+            $userSettings->save();
+        }else{
+            $userSettings = new UserSettings();
+            $userSettings->user_id = $user->id;
             $userSettings->notification_new_bids = $request->notificationNewBids;
             $userSettings->save();
         }

@@ -50,6 +50,7 @@ use App\Models\Order\Order;
  * @property-read Collection|User[] $supervisorSpecialist
  * @property-read Collection|Counterparty[] $counterparty
  * @property-read Collection|Report[] $reports
+ * @property-read Collection|UserSettings $settings
  */
 class User extends Authenticatable
 {
