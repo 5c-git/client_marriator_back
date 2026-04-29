@@ -97,7 +97,7 @@ class RegistrationController extends Controller
                if($user->confirmRegister) {
                    $response['result']['type'] = 'auth';
                }else{
-                   if($user->finishRegister){
+                   if($user->finishRegister || $user->archive){
                        $response['result']['type'] = 'moderation';
                    }else {
                        $response['result']['type'] = 'register';
