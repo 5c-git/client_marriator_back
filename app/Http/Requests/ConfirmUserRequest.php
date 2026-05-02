@@ -6,6 +6,7 @@ use App\Http\Requests\FormRequest;
 use App\Enum\Role\RoleEnum;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 /**
@@ -27,8 +28,9 @@ class ConfirmUserRequest extends FormRequest
                 'integer',
                 function ($attribute, $value, $fail) {
                     $users = User::where('id',$value)
-                        ->whereHas('project', function ($query) {
-                            $query->where('date_end', '<', Carbon::now());
+                        ->whereHas('project')
+                        ->whereDoesntHave('project', function ($query) {
+                            $query->where('date_end', '>', Carbon::now());
                         })
                         ->first();
                     if($users){

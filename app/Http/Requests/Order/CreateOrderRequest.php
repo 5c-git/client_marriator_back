@@ -43,8 +43,9 @@ class CreateOrderRequest extends FormRequest
                         return;
                     }
                     $users = User::where('id',Auth::user()->id)
-                        ->whereHas('project', function ($query) {
-                            $query->where('date_end', '>', now());
+                        ->whereHas('project')
+                        ->whereDoesntHave('project', function ($query) {
+                            $query->where('date_end', '>', Carbon::now());
                         })
                         ->first();
                     if($users){

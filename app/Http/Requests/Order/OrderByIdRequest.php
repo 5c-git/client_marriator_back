@@ -45,8 +45,9 @@ class OrderByIdRequest extends FormRequest
                         ->first();
 
                     $users = User::where('id',Auth::user()->id)
-                        ->whereHas('project', function ($query) {
-                            $query->where('date_end', '<', Carbon::now());
+                        ->whereHas('project')
+                        ->whereDoesntHave('project', function ($query) {
+                            $query->where('date_end', '>', Carbon::now());
                         })
                         ->first();
                     if($users){
