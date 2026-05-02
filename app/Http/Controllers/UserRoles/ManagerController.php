@@ -976,7 +976,7 @@ class ManagerController extends Controller
 
     public function getPlaceForBid()
     {
-        PlaceResource::collection(Auth::user()->place);
+        return PlaceResource::collection(Auth::user()->place);
     }
 
     public function getRadiusSelect()
