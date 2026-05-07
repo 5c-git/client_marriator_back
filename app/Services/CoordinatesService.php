@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Models\User;
+
 class CoordinatesService
 {
     public const RADIUS_EARTH = 6371;
@@ -12,7 +14,8 @@ class CoordinatesService
         float $latitudeTwo,
         float $longitudeTwo,
         int $radius,
-        int $radiusBid
+        int $radiusBid,
+        ?User $user = null
     ): bool {
         $lat1_rad = deg2rad($latitudeFirst);
         $lon1_rad = deg2rad($longitudeFirst);
@@ -28,6 +31,10 @@ class CoordinatesService
 
         $c        = 2 * atan2(sqrt($a), sqrt(1 - $a));
         $distance = self::RADIUS_EARTH * $c;
+
+        if($user){
+            $user->mapRadius = round($distance,2);
+        }
 
         // Проверка попадания в радиус
         return $distance <= $radius && $distance <= $radiusBid;

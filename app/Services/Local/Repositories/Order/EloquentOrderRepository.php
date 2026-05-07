@@ -918,7 +918,8 @@ class EloquentOrderRepository implements OrderRepository
                         $place->latitude,
                         $place->longitude,
                         $user->mapRadius ?: $radius,
-                        $bid->radius ?: $radius
+                        $bid->radius ?: $radius,
+                        $user
                     )) {
                     $userInRadius->push($user);
                 }

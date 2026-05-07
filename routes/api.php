@@ -288,5 +288,11 @@ Route::group(['prefix' => 'integration'], function () {
     });
 });
 
+Route::group(['prefix' => 'common'], function () {
+    Route::group(["middleware" => 'throttle:1000,1'], function () {
+        Route::get('/getBids/', 'App\Http\Controllers\UserRoles\CommonController@getBids')->name('commonBids');
+    });
+});
+
 
 
