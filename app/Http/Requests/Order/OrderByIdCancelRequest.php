@@ -54,7 +54,7 @@ class OrderByIdCancelRequest extends FormRequest
                             $query->where('date_end', '>', Carbon::now());
                         })
                         ->first();
-                    if($users){
+                    if(!$users){
                         $fail('User project is out of date');
                         return;
                     }
