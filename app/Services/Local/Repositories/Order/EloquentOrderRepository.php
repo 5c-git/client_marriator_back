@@ -352,6 +352,7 @@ class EloquentOrderRepository implements OrderRepository
             foreach ($order->orderActivities as $orderActivity) {
                 $taskActivity = new TaskActivity([
                     'view_activity_id' => $orderActivity->view_activity_id,
+                    'order_activity_id' => $orderActivity->id,
                     'count' => $orderActivity->count,
                     'date_start' => $orderActivity->date_start,
                     'date_end' => $orderActivity->date_end,
@@ -1085,6 +1086,7 @@ class EloquentOrderRepository implements OrderRepository
         foreach ($taskActivitiesOld as $taskActivityOld) {
             $taskActivity = new TaskActivity([
                 'view_activity_id' => $taskActivityOld->view_activity_id,
+                'order_activity_id' => $taskActivityOld->order_activity_id,
                 'count'            => $taskActivityOld->count,
                 'date_start'       => $taskActivityOld->date_start,
                 'date_end'         => $taskActivityOld->date_end,

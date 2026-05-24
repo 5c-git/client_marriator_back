@@ -46,7 +46,7 @@ class OrderSActivitiesResource extends JsonResource
     public function getCountSearch(): int
     {
         if($this->bidOrTask instanceof Order){
-            $count = SearchRequest::query()->where('order_id',$this->bidOrTask->id)->where('activity_id', $this->id)->count();
+            $count = SearchRequest::query()->where('order_id',$this->bidOrTask->id)->where('activity_id', $this->order_activity_id)->count();
         }else{
             $count = SearchRequest::query()->where('task_id',$this->bidOrTask->id)->where('activity_id', $this->id)->count();
         }
@@ -56,7 +56,7 @@ class OrderSActivitiesResource extends JsonResource
     public function checkBidExist(): bool
     {
         if($this->bidOrTask instanceof Order){
-            return Bid::query()->where('order_id',$this->bidOrTask->id)->where('activity_id', $this->id)->orderBy('id','desc')->exists();
+            return Bid::query()->where('order_id',$this->bidOrTask->id)->where('activity_id', $this->order_activity_id)->orderBy('id','desc')->exists();
         }else{
             return Bid::query()->where('task_id',$this->bidOrTask->id)->where('activity_id', $this->id)->orderBy('id','desc')->exists();
         }
@@ -68,7 +68,7 @@ class OrderSActivitiesResource extends JsonResource
         $check = true;
 
         if($this->bidOrTask instanceof Order){
-            $count = SearchRequest::query()->where('order_id',$this->bidOrTask->id)->where('activity_id', $this->id)->count();
+            $count = SearchRequest::query()->where('order_id',$this->bidOrTask->id)->where('activity_id', $this->order_activity_id)->count();
         }else{
             $count = SearchRequest::query()->where('task_id',$this->bidOrTask->id)->where('activity_id', $this->id)->count();
         }
@@ -77,7 +77,7 @@ class OrderSActivitiesResource extends JsonResource
         }
 
         if($this->bidOrTask instanceof Order){
-            $bid = Bid::query()->where('order_id',$this->bidOrTask->id)->where('activity_id', $this->id)->orderBy('id','desc')->first();
+            $bid = Bid::query()->where('order_id',$this->bidOrTask->id)->where('activity_id', $this->order_activity_id)->orderBy('id','desc')->first();
         }else{
             $bid = Bid::query()->where('task_id',$this->bidOrTask->id)->where('activity_id', $this->id)->orderBy('id','desc')->first();
         }
@@ -102,7 +102,7 @@ class OrderSActivitiesResource extends JsonResource
         $check = true;
 
         if($this->bidOrTask instanceof Order){
-            $bid = Bid::query()->where('order_id',$this->bidOrTask->id)->where('activity_id', $this->id)->orderBy('id','desc')->first();
+            $bid = Bid::query()->where('order_id',$this->bidOrTask->id)->where('activity_id', $this->order_activity_id)->orderBy('id','desc')->first();
         }else{
             $bid = Bid::query()->where('task_id',$this->bidOrTask->id)->where('activity_id', $this->id)->orderBy('id','desc')->first();
         }

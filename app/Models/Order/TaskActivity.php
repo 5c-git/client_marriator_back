@@ -30,6 +30,7 @@ class TaskActivity extends Model
     public $timestamps = false;
     protected $fillable = [
         'task_id',
+        'order_activity_id',
         'view_activity_id',
         'count',
         'date_start',
