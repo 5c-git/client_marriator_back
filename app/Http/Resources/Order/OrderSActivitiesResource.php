@@ -37,10 +37,20 @@ class OrderSActivitiesResource extends JsonResource
             'dateEnd' => $this->date_end,
             'needFoto' => (bool)$this->need_foto,
             'dateActivity' => DateActivityResource::collection(collect($this->date_activity)),
-            'countSearch' => $this->count - SearchRequest::query()->where('activity_id',$this->id)->count(),
+            'countSearch' => $this->getCountSearch(),
             'buttonSearchNeed' => $this->checkButtonNeed(),
             'buttonBidNeed' => $this->checkBidButtonNeed(),
         ];
+    }
+
+    public function getCountSearch(): int
+    {
+        if($this->bidOrTask instanceof Order){
+            $count = SearchRequest::query()->where('order_id',$this->bidOrTask->id)->where('activity_id', $this->id)->count();
+        }else{
+            $count = SearchRequest::query()->where('task_id',$this->bidOrTask->id)->where('activity_id', $this->id)->count();
+        }
+        return $this->count - $count;
     }
 
     public function checkBidExist(): bool
