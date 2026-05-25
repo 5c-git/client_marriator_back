@@ -47,7 +47,6 @@ class UpdateOrderRequest extends FormRequest
                 },
             ],
             'projectId' => [
-                Rule::requiredIf($this->has('placeId')),
                 'integer',
                 'exists:directory_project,id',
                 function ($attribute, $value, $fail) {
