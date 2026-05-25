@@ -122,6 +122,7 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
             Route::post('/deleteOrderActivity','App\Http\Controllers\UserRoles\ClientController@deleteOrderActivity')->name('deleteOrderActivity');
             Route::get('/getViewActivitiesForOrder','App\Http\Controllers\UserRoles\ClientController@getViewActivitiesForOrder')->name('getViewActivitiesForOrder');
             Route::post('/repeatOrder','App\Http\Controllers\UserRoles\ClientController@repeatOrder')->name('repeatOrder');
+            Route::post('/getProjectForOrder','App\Http\Controllers\UserRoles\ClientController@getProjectForOrder')->name('getProjectForOrder');
         });
         Route::middleware([CheckRole::class.':manager'])->group( function () {
             Route::post('/convertTask','App\Http\Controllers\UserRoles\ManagerController@convertTask')->name('convertTask');

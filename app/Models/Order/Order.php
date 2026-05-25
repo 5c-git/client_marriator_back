@@ -44,6 +44,7 @@ class Order extends Model implements OrderInterface
     protected $table = 'orders';
     protected $fillable = [
         'place_id',
+        'project_id',
         'user_id',
         'self_employed',
         'status',

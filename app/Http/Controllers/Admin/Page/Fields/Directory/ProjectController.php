@@ -64,6 +64,11 @@ class ProjectController extends Controller
         $editObj->date_end = $data['date_end'];
         $editObj->time_start = $data['time_start'];
         $editObj->time_end = $data['time_end'];
+        if(!empty($data['self_employed'])) {
+            $editObj->self_employed = true;
+        }else{
+            $editObj->self_employed = false;
+        }
 
         $viewActivities = [];
         if (!empty($data['viewActivities'])) {
@@ -152,6 +157,12 @@ class ProjectController extends Controller
         $editObj->places()->sync($place);
         $editObj->counterparties()->sync($counterparty);
         $editObj->brands()->sync($brands);
+
+        if(!empty($data['self_employed'])) {
+            $editObj->self_employed = true;
+        }else{
+            $editObj->self_employed = false;
+        }
 
 
         $response['status'] = 'success';

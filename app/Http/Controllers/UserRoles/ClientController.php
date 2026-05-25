@@ -6,6 +6,7 @@ use App\Enum\Order\OrderStatusEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Order\CreateOrderRequest;
 use App\Http\Requests\Order\GetOrderRequest;
+use App\Http\Requests\Order\GetProjectForOrderRequest;
 use App\Http\Requests\Order\OrderByIdCancelRequest;
 use App\Http\Requests\SetBrandImgRequest;
 use App\Http\Requests\SetPlaceRequest;
@@ -14,10 +15,12 @@ use App\Http\Resources\Order\OneOrderResource;
 use App\Http\Resources\Order\OrderResource;
 use App\Http\Resources\Order\ShortOrderResource;
 use App\Http\Resources\PlaceResource;
+use App\Http\Resources\ProjectResource;
 use App\Http\Resources\SuccessResource;
 use App\Models\Fields\Directory\ViewActivities;
 use App\Models\Order\Order;
 use App\Services\Local\Repositories\Contracts\OrderRepository;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\Order\OrderByIdRequest;
 use App\Http\Resources\ErrorResource;
@@ -114,6 +117,23 @@ class ClientController extends Controller
                 Auth::user()->id
             )
         );
+    }
+
+    public function getProjectForOrder(GetProjectForOrderRequest $request)
+    {
+        $order = Order::query()->where('id',$request->orderId)->first();
+        $projects = collect();
+        if($order) {
+            $user     = Auth::user();
+            $projects = $user->project()
+                ->whereHas('places', function ($query) use ($order) {
+                    $query->where('directory_place.id', $order->place_id);
+                })
+                ->where('date_end', '>=', Carbon::now())
+                ->where('self_employed', $order->self_employed)
+                ->get();
+        }
+        return ProjectResource::collection($projects);
     }
 
     public function repeatOrder(RepeatOrderRequest $request): OrderResource

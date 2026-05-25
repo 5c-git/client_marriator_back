@@ -91,8 +91,9 @@ class EloquentOrderRepository implements OrderRepository
 
         DB::transaction(function () use ($order, $orderRequest) {
             $order->update([
-                'place_id' => $orderRequest->placeId??$order->placeId,
-                'self_employed' => $orderRequest->selfEmployed??$order->selfEmployed,
+                'place_id' => $orderRequest->placeId??$order->place_id,
+                'self_employed' => $orderRequest->selfEmployed??$order->self_employed,
+                'project_id' => $orderRequest->projectId??$order->project_id,
             ]);
         });
 

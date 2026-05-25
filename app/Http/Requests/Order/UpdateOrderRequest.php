@@ -46,6 +46,28 @@ class UpdateOrderRequest extends FormRequest
                     }
                 },
             ],
+            'projectId' => [
+                Rule::requiredIf($this->has('placeId')),
+                'integer',
+                'exists:directory_project,id',
+                function ($attribute, $value, $fail) {
+                    $order = Order::query()->where('id',$this->orderId)->first();
+                    $project = collect();
+                    if($order) {
+                        $project = Auth::user()?->project()
+                            ->whereHas('places', function ($query) use ($order) {
+                                $query->where('directory_place.id', $order->place_id);
+                            })
+                            ->where('date_end', '>=', Carbon::now())
+                            ->where('self_employed', $order->self_employed)
+                            ->pluck('id')?->toArray();
+                    }
+
+                    if (!in_array($value,$project)) {
+                        $fail('Not your project');
+                    }
+                },
+            ],
             'selfEmployed' => 'sometimes|boolean',
             'orderId' => [
                 'required',
@@ -71,7 +93,7 @@ class UpdateOrderRequest extends FormRequest
                             $query->where('date_end', '>', Carbon::now());
                         })
                         ->first();
-                    if(!$users){
+                    if($users){
                         $fail('User project is out of date');
                     }
 

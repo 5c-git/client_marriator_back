@@ -18,6 +18,7 @@
         $heads = [
         'ID',
         'Название',
+        'Для самозанятых',
         'Uuid',
         ['label' => 'Actions', 'no-export' => true, 'width' => 5],
         ];
@@ -32,7 +33,7 @@
             </button></a>';
         $btnName = '<a href="'.route('projectEdit',$listItem->id).'">'.$listItem->name.'</a>';
 
-        $listData[] = [$listItem->id , $btnName, $listItem->uuid, '<nobr>'.$btnEdit.$btnDelete.'</nobr>'];
+        $listData[] = [$listItem->id , $btnName,$listItem->self_employed?'Да':'Нет', $listItem->uuid, '<nobr>'.$btnEdit.$btnDelete.'</nobr>'];
         }
 
         $config = [
@@ -40,7 +41,7 @@
         $listData
         ,
         'order' => [[0, 'desc']],
-        'columns' => [null, null,null, ['orderable' => false]],
+        'columns' => [null, null,null,null, ['orderable' => false]],
         ];
     @endphp
 

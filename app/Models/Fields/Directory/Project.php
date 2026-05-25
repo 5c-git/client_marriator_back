@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 /**
  * @property int $id
  * @property string $uuid
+ * @property bool $self_employed
  * @property string $name
  * @property Carbon $date_start
  * @property Carbon $date_end
@@ -44,6 +45,7 @@ class Project extends Model implements ModelDirectoryInterface
         'external_id',
         'time_start',
         'time_end',
+        'self_employed'
     ];
 
     protected $casts = [

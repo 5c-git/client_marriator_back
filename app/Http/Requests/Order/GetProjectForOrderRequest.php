@@ -4,18 +4,14 @@ namespace App\Http\Requests\Order;
 
 use App\Enum\Order\OrderStatusEnum;
 use App\Http\Requests\FormRequest;
-use App\Models\Order\OrderActivities;
+use App\Models\Order\Order;
+use App\Models\Order\Task;
 use App\Models\User;
-use App\Services\TimeService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
-use App\Models\Order\Order;
 
-/**
- * @property-read int orderId
- */
-class OrderByIdCancelRequest extends FormRequest
+class GetProjectForOrderRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -42,11 +38,16 @@ class OrderByIdCancelRequest extends FormRequest
                     $orderExists = Order::query()->where('id', $value)
                         ->where('user_id', auth()->id())
                         ->whereIn('status', [
-                            OrderStatusEnum::new->value,
-                            OrderStatusEnum::notAccepted->value,
-                            OrderStatusEnum::accepted->value,
-                        ])
-                        ->first();
+                                OrderStatusEnum::new->value,
+                                OrderStatusEnum::notAccepted->value,
+                            ]
+                        )
+                        ->exists();
+
+                    if (!$orderExists) {
+                        $fail('Not your order');
+                        return;
+                    }
 
                     $users = User::where('id',Auth::user()->id)
                         ->whereHas('project')
@@ -56,29 +57,7 @@ class OrderByIdCancelRequest extends FormRequest
                         ->first();
                     if($users){
                         $fail('User project is out of date');
-                        return;
                     }
-
-                    if (!$orderExists) {
-                        $fail('Not your order');
-                        return;
-                    }
-                    /** @var Order $orderExists */
-                    /** @var OrderActivities $orderActivities */
-                    $orderActivities = $orderExists->orderActivities()
-                        ->orderBy('date_start')
-                        ->first();
-
-                    if($orderActivities) {
-                        if (TimeService::getTimeDifferenceSub(
-                            $this->user(),
-                            'cancel_order',
-                            $orderActivities?->date_start
-                        )) {
-                            $fail('Order activities time start is arrived');
-                        }
-                    }
-
                 },
             ],
         ];
