@@ -600,7 +600,7 @@ class ManagerController extends Controller
 
     public function getPlace()
     {
-        $places = Auth::user()->project
+        $places = Auth::user()->project->where('date_end','>=', Carbon::now())
             ->flatMap(fn($project) => $project->places)
             ->unique('id');
         return PlaceResource::collection($places);
@@ -608,7 +608,11 @@ class ManagerController extends Controller
 
     public function getPlaceForOrder()
     {
-        return PlaceResource::collection(Auth::user()->place);
+        $places = Auth::user()->project->where('date_end','>=', Carbon::now())
+            ->flatMap(fn($project) => $project->places)
+            ->unique('id');
+        $commonPlaces = $places->whereIn('id', Auth::user()->place->pluck('id'));
+        return PlaceResource::collection($commonPlaces);
     }
 
     public function setPlace(SetPlaceRequest $request): SuccessResource
@@ -976,7 +980,11 @@ class ManagerController extends Controller
 
     public function getPlaceForBid()
     {
-        return PlaceResource::collection(Auth::user()->place);
+        $places = Auth::user()->project->where('date_end','>=', Carbon::now())
+            ->flatMap(fn($project) => $project->places)
+            ->unique('id');
+        $commonPlaces = $places->whereIn('id', Auth::user()->place->pluck('id'));
+        return PlaceResource::collection($commonPlaces);
     }
 
     public function getRadiusSelect()

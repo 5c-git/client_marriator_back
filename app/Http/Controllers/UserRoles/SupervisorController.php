@@ -273,16 +273,16 @@ class SupervisorController extends Controller
         $user = User::where('id',$request->userId)->first();
         $userRoles = $user->roles?->pluck('id')->toArray();
         if(in_array($userRoles[0],[RoleEnum::manager->value,RoleEnum::client->value,RoleEnum::specialist->value])){
-            $places = $user->project
+            $places = $user->project->where('date_end','>=', Carbon::now())
                 ->flatMap(fn($project) => $project->places)
                 ->unique('id');
             $user = Auth::user();
-            /** @var  $user User */
-            $placesAdmin = $user->project->where('date_end','>=', Carbon::now())
+            $placesAdmin = $user->project
                 ->flatMap(fn($project) => $project->places)
                 ->unique('id');
 
-            $commonPlace = $places->intersect($placesAdmin);
+            $commonPlace = $places->whereIn('id', $placesAdmin->pluck('id'));
+
             return PlaceResource::collection($commonPlace);
         }
         if($userRoles[0] == RoleEnum::recruiter->value){
@@ -439,7 +439,7 @@ class SupervisorController extends Controller
 
     public function getPlace()
     {
-        $places = Auth::user()->project
+        $places = Auth::user()->project->where('date_end','>=', Carbon::now())
             ->flatMap(fn($project) => $project->places)
             ->unique('id');
         return PlaceResource::collection($places);
@@ -447,7 +447,7 @@ class SupervisorController extends Controller
 
     public function getPlaceForOrder()
     {
-        $places = Auth::user()->project
+        $places = Auth::user()->project->where('date_end','>=', Carbon::now())
             ->flatMap(fn($project) => $project->places)
             ->unique('id');
         return PlaceResource::collection($places);
@@ -646,7 +646,7 @@ class SupervisorController extends Controller
 
     public function getPlaceForBid()
     {
-        $places = Auth::user()->project
+        $places = Auth::user()->project->where('date_end','>=', Carbon::now())
             ->flatMap(fn($project) => $project->places)
             ->unique('id');
         return PlaceResource::collection($places);
