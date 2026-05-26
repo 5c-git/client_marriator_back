@@ -73,13 +73,30 @@ class EntrustBidRequest extends FormRequest
                     $fieldView = Fields::where('directory', ViewActivities::class)->first();
                     $fieldStat = Fields::where('directory', TaxStatus::class)->first();
 
+                    $viewActivitiesUuids = $bid->viewActivity->getAllConnectedUuids();
+                    $viewActivitiesUuids[] = $bid->viewActivity->uuid;
+                    $viewActivitiesUuids = array_unique($viewActivitiesUuids);
+
                     if ($fieldView && $bid->viewActivity && $place) {
-                        $users = User::whereJsonContains('data->' . $fieldView->uuid, $bid->viewActivity->uuid)
+                        $users = User::query()->where(function ($queryY) use ($viewActivitiesUuids, $fieldView) {
+                                foreach ($viewActivitiesUuids as $uuid) {
+                                    $queryY = $queryY->orWhereJsonContains('data->'.$fieldView->uuid, $uuid);
+                                }
+                            })
                             ->whereIn('data->' . $fieldStat->uuid, $status)
                             ->whereIn('id', $value)
                             ->whereDoesntHave('acceptedBids', function ($query) {
                                 $query->where('accept_bid.accepted', BidAcceptingStatusEnum::notAccepted->value);
                             })
+                            ->whereDoesntHave('acceptedBids', function ($query) use ($bid) {
+                                $query->where(function ($q) use ($bid) {
+                                    $q->where(function ($innerQ) use ($bid) {
+                                        $innerQ->where('bids.date_start', '<=', $bid->date_end)
+                                            ->where('bids.date_end', '>=', $bid->date_start);
+                                    });
+                                })->whereIn('accept_bid.accepted', [BidAcceptingStatusEnum::work->value,BidAcceptingStatusEnum::consideration->value]);
+                            })
+                            ->where('confirmRegister', true)->where('archive', false)->where('finishRegister', true)
                             ->get();
 
                         $userInRadius = collect();
