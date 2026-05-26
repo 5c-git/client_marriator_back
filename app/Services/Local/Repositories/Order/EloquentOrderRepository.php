@@ -867,6 +867,7 @@ class EloquentOrderRepository implements OrderRepository
 
     public function getSpecialistForBid(int $bidId): Collection
     {
+        $userAuth = auth()->user();
         /** @var Bid $bid  */
         $bid = Bid::query()->where('id',$bidId)->first();
         $place = $bid->place;
@@ -882,12 +883,29 @@ class EloquentOrderRepository implements OrderRepository
             $viewActivitiesUuids = $bid->viewActivity->getAllConnectedUuids();
             $viewActivitiesUuids[] = $bid->viewActivity->uuid;
             $viewActivitiesUuids = array_unique($viewActivitiesUuids);
+            $userIdsSupervisor = $userAuth->supervisors->pluck('id')->toArray();
+            $userIdsSupervisor = array_merge($userIdsSupervisor,$userAuth->manager->pluck('id')->toArray());
+            $userIdsSupervisor[] = $userAuth->id;
 
             $users = User::query()->whereIn('data->'.$fieldStat->uuid, $status)
                 ->where(function ($queryY) use ($viewActivitiesUuids, $fieldView) {
                     foreach ($viewActivitiesUuids as $uuid) {
                         $queryY = $queryY->orWhereJsonContains('data->'.$fieldView->uuid, $uuid);
                     }
+                })
+                ->where(function ($query) use ($userIdsSupervisor) {
+                    $query->where(function ($q) {
+                        $q->doesntHave('managersAsSpecialist')
+                            ->doesntHave('supervisorsAsSpecialist');
+                    });
+
+                    $query->orWhereHas('managersAsSpecialist', function ($q) use ($userIdsSupervisor) {
+                        $q->whereIn('user_id_manager', $userIdsSupervisor);
+                    });
+
+                    $query->orWhereHas('supervisorsAsSpecialist', function ($q) use ($userIdsSupervisor) {
+                        $q->whereIn('user_id_supervisor', $userIdsSupervisor);
+                    });
                 })
                 ->whereDoesntHave('acceptedBids', function ($query) {
                     $query->where('accept_bid.accepted', BidAcceptingStatusEnum::notAccepted->value);

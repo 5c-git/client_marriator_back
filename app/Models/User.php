@@ -224,6 +224,26 @@ class User extends Authenticatable
         );
     }
 
+    public function managersAsSpecialist(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            User::class,
+            'manager_specialist',
+            'user_id_specialist',
+            'user_id_manager'
+        );
+    }
+
+    public function supervisorsAsSpecialist(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            User::class,
+            'supervisor_specialist',
+            'user_id_specialist',
+            'user_id_supervisor'
+        );
+    }
+
     public function acceptedOrders(): BelongsToMany
     {
         return $this->belongsToMany(
