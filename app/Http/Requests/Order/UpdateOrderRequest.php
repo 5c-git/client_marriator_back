@@ -47,6 +47,7 @@ class UpdateOrderRequest extends FormRequest
                 },
             ],
             'projectId' => [
+                'sometimes',
                 'integer',
                 'exists:directory_project,id',
                 function ($attribute, $value, $fail) {
