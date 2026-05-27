@@ -28,6 +28,7 @@ use App\Models\Order\Task;
  * @property OrderStatusEnum $status
  * @property-read User $user
  * @property-read Place $place
+ * @property-read Project $project
  * @property-read Collection|OrderActivities[] $orderActivities
  * @property-read Collection|ViewActivities[] $viewActivities
  * @property-read Collection|User[] $acceptingUsers
@@ -75,6 +76,11 @@ class Order extends Model implements OrderInterface
     public function place(): BelongsTo
     {
         return $this->belongsTo(Place::class, 'place_id');
+    }
+
+    public function project(): BelongsTo
+    {
+        return $this->belongsTo(Project::class, 'project_id');
     }
 
     public function orderActivities(): HasMany

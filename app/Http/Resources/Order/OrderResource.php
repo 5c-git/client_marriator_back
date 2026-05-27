@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Order;
 
 use App\Http\Resources\Order\StatisticResource;
+use App\Http\Resources\ProjectResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\DB;
@@ -34,7 +35,8 @@ class OrderResource extends JsonResource
             'user' => new ShortUserResource($this->user),
             'orderActivities' => OrderActivitiesResource::collection($this->orderActivities),
             'acceptUser' => new ShortUserResource($this->acceptUser),
-            'statistic' => $this->getStatistic()
+            'statistic' => $this->getStatistic(),
+            'project' => new ProjectResource($this->project)
         ];
     }
 
