@@ -5,6 +5,7 @@ namespace App\Http\Resources\Order;
 use App\Models\Order\Bid;
 use App\Models\Order\Order;
 use App\Models\Order\SearchRequest;
+use App\Models\Order\TaskActivity;
 use App\Services\TimeService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -46,7 +47,17 @@ class OrderSActivitiesResource extends JsonResource
     public function getCountSearch(): int
     {
         if($this->bidOrTask instanceof Order){
-            $count = SearchRequest::query()->where('order_id',$this->bidOrTask->id)->where('activity_id', $this->order_activity_id)->count();
+            $count = 0;
+            $taskActivity = TaskActivity::query()->where('order_activity_id',$this->id)->first();
+            if($taskActivity) {
+                $count+= SearchRequest::query()->where('order_id', $this->bidOrTask->id)->where('activity_id', $taskActivity->id)->exists();
+                $count += SearchRequest::query()->where('order_id', $this->bidOrTask->id)->where(
+                    'activity_id',
+                    $this->id
+                )->exists();
+            }else{
+                $count = SearchRequest::query()->where('order_id', $this->bidOrTask->id)->where('activity_id', $this->id)->exists();
+            }
         }else{
             $count = SearchRequest::query()->where('task_id',$this->bidOrTask->id)->where('activity_id', $this->id)->count();
         }
@@ -56,7 +67,19 @@ class OrderSActivitiesResource extends JsonResource
     public function checkBidExist(): bool
     {
         if($this->bidOrTask instanceof Order){
-            return Bid::query()->where('order_id',$this->bidOrTask->id)->where('activity_id', $this->order_activity_id)->orderBy('id','desc')->exists();
+            $taskActivity = TaskActivity::query()->where('order_activity_id',$this->id)->first();
+            if($taskActivity) {
+               $bidTask = Bid::query()->where('order_id', $this->bidOrTask->id)->where('activity_id', $taskActivity->id)->orderBy('id', 'desc')->exists();
+               if(!$bidTask) {
+                   $bidTask = Bid::query()->where('order_id', $this->bidOrTask->id)->where(
+                       'activity_id',
+                       $this->id
+                   )->orderBy('id', 'desc')->exists();
+               }
+                return $bidTask;
+            }else{
+                return Bid::query()->where('order_id', $this->bidOrTask->id)->where('activity_id', $this->id)->orderBy('id', 'desc')->exists();
+            }
         }else{
             return Bid::query()->where('task_id',$this->bidOrTask->id)->where('activity_id', $this->id)->orderBy('id','desc')->exists();
         }
@@ -68,7 +91,17 @@ class OrderSActivitiesResource extends JsonResource
         $check = true;
 
         if($this->bidOrTask instanceof Order){
-            $count = SearchRequest::query()->where('order_id',$this->bidOrTask->id)->where('activity_id', $this->order_activity_id)->count();
+            $count = 0;
+            $taskActivity = TaskActivity::query()->where('order_activity_id',$this->id)->first();
+            if($taskActivity) {
+                $count+= SearchRequest::query()->where('order_id', $this->bidOrTask->id)->where('activity_id', $taskActivity->id)->exists();
+                $count += SearchRequest::query()->where('order_id', $this->bidOrTask->id)->where(
+                    'activity_id',
+                    $this->id
+                )->exists();
+            }else{
+                $count = SearchRequest::query()->where('order_id', $this->bidOrTask->id)->where('activity_id', $this->id)->exists();
+            }
         }else{
             $count = SearchRequest::query()->where('task_id',$this->bidOrTask->id)->where('activity_id', $this->id)->count();
         }
@@ -77,7 +110,18 @@ class OrderSActivitiesResource extends JsonResource
         }
 
         if($this->bidOrTask instanceof Order){
-            $bid = Bid::query()->where('order_id',$this->bidOrTask->id)->where('activity_id', $this->order_activity_id)->orderBy('id','desc')->first();
+            $taskActivity = TaskActivity::query()->where('order_activity_id',$this->id)->first();
+            if($taskActivity) {
+                $bid = Bid::query()->where('order_id', $this->bidOrTask->id)->where('activity_id', $taskActivity->id)->orderBy('id', 'desc')->first();
+                if(!$bid) {
+                    $bid = Bid::query()->where('order_id', $this->bidOrTask->id)->where(
+                        'activity_id',
+                        $this->id
+                    )->orderBy('id', 'desc')->first();
+                }
+            }else{
+                $bid = Bid::query()->where('order_id', $this->bidOrTask->id)->where('activity_id', $this->id)->orderBy('id', 'desc')->first();
+            }
         }else{
             $bid = Bid::query()->where('task_id',$this->bidOrTask->id)->where('activity_id', $this->id)->orderBy('id','desc')->first();
         }
@@ -102,7 +146,18 @@ class OrderSActivitiesResource extends JsonResource
         $check = true;
 
         if($this->bidOrTask instanceof Order){
-            $bid = Bid::query()->where('order_id',$this->bidOrTask->id)->where('activity_id', $this->order_activity_id)->orderBy('id','desc')->first();
+            $taskActivity = TaskActivity::query()->where('order_activity_id',$this->id)->first();
+            if($taskActivity) {
+                $bid = Bid::query()->where('order_id', $this->bidOrTask->id)->where('activity_id', $taskActivity->id)->orderBy('id', 'desc')->first();
+                if(!$bid) {
+                    $bid = Bid::query()->where('order_id', $this->bidOrTask->id)->where(
+                        'activity_id',
+                        $this->id
+                    )->orderBy('id', 'desc')->first();
+                }
+            }else{
+                $bid = Bid::query()->where('order_id', $this->bidOrTask->id)->where('activity_id', $this->id)->orderBy('id', 'desc')->first();
+            }
         }else{
             $bid = Bid::query()->where('task_id',$this->bidOrTask->id)->where('activity_id', $this->id)->orderBy('id','desc')->first();
         }
