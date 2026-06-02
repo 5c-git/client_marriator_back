@@ -94,7 +94,6 @@ class AdminController extends Controller
 
         $user          = User::where('id', $request->userId)->first();
         $placesProject = $user->project
-            ->where('date_end','>=', Carbon::now())
             ->flatMap(fn($project) => $project->places)
             ->unique('id')?->pluck('id')->toArray();
         $places        = $user->place?->pluck('id')->toArray();
@@ -123,7 +122,7 @@ class AdminController extends Controller
 
     public function setUserImg(SetUserImgRequest $request){
         $user = User::where('id',$request->userId)->first();
-        $project = Project::where('id',$request->projectId)->first();
+        $project = Project::where('id',$request->projectId)->where('date_end', '>=', Carbon::now())->first();
         $projectLogo = $project?->brands()?->first()?->logo;
         $user->img = $projectLogo;
         $user->save();
@@ -159,7 +158,7 @@ class AdminController extends Controller
     {
         $user          = User::where('id', $request->userId)->first();
         $placeForUser  = [];
-        $placesProject = $user->project
+        $placesProject = $user->project->where('date_end','>=', Carbon::now())
             ->flatMap(fn($project) => $project->places)
             ->unique('id')?->pluck('id')->toArray();
         foreach ($request->placeId as $place) {
@@ -239,7 +238,7 @@ class AdminController extends Controller
     }
 
     public function getDataProject(){
-        $userProject = Auth::user()->project;
+        $userProject = Auth::user()->project->where('date_end', '>=', Carbon::now());
         return new ProjectResource($userProject);
     }
 

@@ -259,7 +259,7 @@ class ManagerController extends Controller
             }
         }
         if($checkRole){
-            $project = Project::where('id',$request->projectId)->first();
+            $project = Project::where('id',$request->projectId)->where('date_end','>=', Carbon::now())->first();
             $projectLogo = $project?->brands()?->first()?->logo;
             $user->img = $projectLogo;
             $user->save();
@@ -439,16 +439,12 @@ class ManagerController extends Controller
                 ->flatMap(fn($project) => $project->places)
                 ->unique('id');
             $user = Auth::user();
-            $placesAdmin = $user->project
+            $placesAdmin = $user->project->where('date_end','>=', Carbon::now())
                 ->flatMap(fn($project) => $project->places)
                 ->unique('id');
 
             $commonPlace = $places->intersect($placesAdmin);
             return PlaceResource::collection($commonPlace);
-        }
-        if($userRoles[0] == RoleEnum::recruiter->value){
-            $places = Place::all();
-            return PlaceResource::collection($places);
         }
         return new ErrorResource();
     }
@@ -460,6 +456,7 @@ class ManagerController extends Controller
         $placeForUser = [];
         if(in_array($userRoles[0],[RoleEnum::manager->value,RoleEnum::client->value,RoleEnum::specialist->value])) {
             $placesProject = $user->project
+                ->where('date_end','>=', Carbon::now())
                 ->flatMap(fn($project) => $project->places)
                 ->unique('id')?->pluck('id')->toArray();
             foreach ($request->placeId as $place) {
@@ -468,9 +465,7 @@ class ManagerController extends Controller
                 }
             }
         }
-        if($userRoles[0] == RoleEnum::recruiter->value){
-            $placeForUser = $request->placeId;
-        }
+
         if($placeForUser){
             $user->place()->syncWithoutDetaching($placeForUser);
         }
@@ -618,7 +613,7 @@ class ManagerController extends Controller
     public function setPlace(SetPlaceRequest $request): SuccessResource
     {
         $user = Auth::user();
-        $place = $user->project
+        $place = $user->project->where('date_end', '>=', Carbon::now())
             ->flatMap(fn($project) => $project->places)
             ->unique('id')->whereIn('id',$request->placeId)->pluck('id')?->toArray();
         if(!empty($place)) {
@@ -637,7 +632,7 @@ class ManagerController extends Controller
 
     public function getBrand()
     {
-        $brands = Auth::user()->project
+        $brands = Auth::user()->project->where('date_end', '>=', Carbon::now())
             ->flatMap(fn($project) => $project->brands)
             ->unique('id');
         return BrandResource::collection($brands);
@@ -646,7 +641,7 @@ class ManagerController extends Controller
     public function setBrandImg(SetBrandImgRequest $request)
     {
         $user = Auth::user();
-        $brands = Auth::user()->project
+        $brands = Auth::user()->project->where('date_end', '>=', Carbon::now())
             ->flatMap(fn($project) => $project->brands)
             ->unique('id')?->where('id',$request->brandId)?->first();
 
@@ -1151,7 +1146,7 @@ class ManagerController extends Controller
     private function getPriceForHour(Report $report): float
     {
         if ($report->order) {
-            $project = $report->order->user->project->first();
+            $project = $report->order->user->project->where('date_end', '>=', Carbon::now())->first();
         } elseif ($report->task) {
             $project = $report->task->project;
         }

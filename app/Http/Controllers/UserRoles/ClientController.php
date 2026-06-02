@@ -48,7 +48,7 @@ class ClientController extends Controller
 
     public function getBrand()
     {
-        $brands = Auth::user()->project
+        $brands = Auth::user()->project->where('date_end','>=', Carbon::now())
             ->flatMap(fn($project) => $project->brands)
             ->unique('id');
         return BrandResource::collection($brands);
@@ -57,7 +57,7 @@ class ClientController extends Controller
     public function setBrandImg(SetBrandImgRequest $request)
     {
         $user = Auth::user();
-        $brands = Auth::user()->project
+        $brands = Auth::user()->project->where('date_end','>=', Carbon::now())
             ->flatMap(fn($project) => $project->brands)
             ->unique('id')?->where('id',$request->brandId)?->first();
 
@@ -89,7 +89,7 @@ class ClientController extends Controller
     public function setPlace(SetPlaceRequest $request): SuccessResource
     {
         $user = Auth::user();
-        $place = $user->project
+        $place = $user->project->where('date_end','>=', Carbon::now())
             ->flatMap(fn($project) => $project->places)
             ->unique('id')->whereIn('id',$request->placeId)->pluck('id')?->toArray();
         if(!empty($place)) {
@@ -219,6 +219,7 @@ class ClientController extends Controller
     public function getViewActivitiesForOrder(GetViewActivitiesForOrderRequest $request){
         $order = Order::where('id',$request->orderId)->first();
         $viewActivities = $order->place->project
+            ->where('date_end', '>=', Carbon::now())
             ->flatMap(fn($project) => $project->viewActivities)
             ->unique('id');
         if(!$order->self_employed) {

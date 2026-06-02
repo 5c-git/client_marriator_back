@@ -231,7 +231,7 @@ class SupervisorController extends Controller
             }
         }
         if($checkRole){
-            $project = Project::where('id',$request->projectId)->first();
+            $project = Project::where('id',$request->projectId)->where('date_end', '>=', Carbon::now())->first();
             $projectLogo = $project?->brands()?->first()?->logo;
             $user->img = $projectLogo;
             $user->save();
@@ -277,7 +277,7 @@ class SupervisorController extends Controller
                 ->flatMap(fn($project) => $project->places)
                 ->unique('id');
             $user = Auth::user();
-            $placesAdmin = $user->project
+            $placesAdmin = $user->project->where('date_end','>=', Carbon::now())
                 ->flatMap(fn($project) => $project->places)
                 ->unique('id');
 
@@ -285,10 +285,7 @@ class SupervisorController extends Controller
 
             return PlaceResource::collection($commonPlace);
         }
-        if($userRoles[0] == RoleEnum::recruiter->value){
-            $places = Place::all();
-            return PlaceResource::collection($places);
-        }
+
         return new ErrorResource();
     }
 
@@ -298,7 +295,7 @@ class SupervisorController extends Controller
         $userRoles = $user->roles?->pluck('id')->toArray();
         $placeForUser = [];
         if(in_array($userRoles[0],[RoleEnum::manager->value,RoleEnum::client->value,RoleEnum::specialist->value])) {
-            $placesProject = $user->project
+            $placesProject = $user->project->where('date_end','>=', Carbon::now())
                 ->flatMap(fn($project) => $project->places)
                 ->unique('id')?->pluck('id')->toArray();
             foreach ($request->placeId as $place) {
@@ -307,9 +304,7 @@ class SupervisorController extends Controller
                 }
             }
         }
-        if($userRoles[0] == RoleEnum::recruiter->value){
-            $placeForUser = $request->placeId;
-        }
+
         if($placeForUser){
             $user->place()->syncWithoutDetaching($placeForUser);
         }
@@ -816,7 +811,7 @@ class SupervisorController extends Controller
     private function getPriceForHour(Report $report): float
     {
         if ($report->order) {
-            $project = $report->order->user->project->first();
+            $project = $report->order->user->project->where('date_end', '>=', Carbon::now())->first();
         } elseif ($report->task) {
             $project = $report->task->project;
         }
