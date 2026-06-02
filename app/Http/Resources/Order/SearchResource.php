@@ -9,6 +9,7 @@ use App\Http\Resources\Order\StatisticResource;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\ViewActivityResource;
 use App\Models\Fields\Directory\Radius;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;
@@ -56,7 +57,7 @@ class SearchResource extends JsonResource
     {
         $project = null;
         if($this->order){
-            $project = $this->order->user?->project?->first();
+            $project = $this->order->user?->project?->where('date_end','>=',Carbon::now())->first();
         }elseif($this->task){
             $project = $this->task?->project;
         }
@@ -72,7 +73,7 @@ class SearchResource extends JsonResource
     }
 
     private function getProject(){
-        return $this->order?->user?->project?->first()
+        return $this->order?->user?->project?->where('date_end','>=',Carbon::now())->first()
             ?? $this->task?->project
             ?? $this->task?->order?->user?->project?->first();
     }

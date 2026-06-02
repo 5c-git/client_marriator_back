@@ -4,6 +4,7 @@ namespace App\Http\Resources\Order;
 
 use App\Http\Resources\Order\OrderActivitiesResource;
 use App\Http\Resources\ViewActivityResource;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;
@@ -46,7 +47,7 @@ class RequestResource extends JsonResource
     {
         $project = null;
         if($this->order){
-            $project = $this->order?->user?->project?->first();
+            $project = $this->order?->user?->project?->where('date_end','>=',Carbon::now())->first();
         }elseif($this->task){
             $project = $this->task?->project;
         }

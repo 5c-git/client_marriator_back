@@ -9,6 +9,7 @@ use App\Models\Fields\Directory\Age;
 use App\Models\Fields\Directory\Citizenship;
 use App\Models\Fields\Directory\ViewActivities;
 use App\Models\Fields\Fields;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;
@@ -38,7 +39,7 @@ class UserForModerationResource extends JsonResource
             'phone' => $this->phone,
             'email' => $this->email,
             'logo' =>  $this->img ? Storage::url($this->img) : null,
-            'project' => ProjectResource::collection($this->project),
+            'project' => ProjectResource::collection($this->project->where('date_end','>=',Carbon::now())),
             'place' => PlaceResource::collection($this->place),
             'roles' => RoleResource::collection($this->roles),
             'change_order' => $this->change_order ?? $this->getSettings('change_order'),
