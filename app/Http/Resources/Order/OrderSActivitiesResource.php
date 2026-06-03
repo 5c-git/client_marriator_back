@@ -50,13 +50,13 @@ class OrderSActivitiesResource extends JsonResource
             $count = 0;
             $taskActivity = TaskActivity::query()->where('order_activity_id',$this->id)->first();
             if($taskActivity) {
-                $count+= SearchRequest::query()->where('order_id', $this->bidOrTask->id)->where('activity_id', $taskActivity->id)->exists();
+                $count+= SearchRequest::query()->where('order_id', $this->bidOrTask->id)->where('activity_id', $taskActivity->id)->count();
                 $count += SearchRequest::query()->where('order_id', $this->bidOrTask->id)->where(
                     'activity_id',
                     $this->id
-                )->exists();
+                )->count();
             }else{
-                $count = SearchRequest::query()->where('order_id', $this->bidOrTask->id)->where('activity_id', $this->id)->exists();
+                $count = SearchRequest::query()->where('order_id', $this->bidOrTask->id)->where('activity_id', $this->id)->count();
             }
         }else{
             $count = SearchRequest::query()->where('task_id',$this->bidOrTask->id)->where('activity_id', $this->id)->count();
@@ -69,13 +69,13 @@ class OrderSActivitiesResource extends JsonResource
         if($this->bidOrTask instanceof Order){
             $taskActivity = TaskActivity::query()->where('order_activity_id',$this->id)->first();
             if($taskActivity) {
-               $bidTask = Bid::query()->where('order_id', $this->bidOrTask->id)->where('activity_id', $taskActivity->id)->orderBy('id', 'desc')->exists();
-               if(!$bidTask) {
-                   $bidTask = Bid::query()->where('order_id', $this->bidOrTask->id)->where(
-                       'activity_id',
-                       $this->id
-                   )->orderBy('id', 'desc')->exists();
-               }
+                $bidTask = Bid::query()->where('order_id', $this->bidOrTask->id)->where('activity_id', $taskActivity->id)->orderBy('id', 'desc')->exists();
+                if(!$bidTask) {
+                    $bidTask = Bid::query()->where('order_id', $this->bidOrTask->id)->where(
+                        'activity_id',
+                        $this->id
+                    )->orderBy('id', 'desc')->exists();
+                }
                 return $bidTask;
             }else{
                 return Bid::query()->where('order_id', $this->bidOrTask->id)->where('activity_id', $this->id)->orderBy('id', 'desc')->exists();
@@ -94,13 +94,13 @@ class OrderSActivitiesResource extends JsonResource
             $count = 0;
             $taskActivity = TaskActivity::query()->where('order_activity_id',$this->id)->first();
             if($taskActivity) {
-                $count+= SearchRequest::query()->where('order_id', $this->bidOrTask->id)->where('activity_id', $taskActivity->id)->exists();
+                $count+= SearchRequest::query()->where('order_id', $this->bidOrTask->id)->where('activity_id', $taskActivity->id)->count();
                 $count += SearchRequest::query()->where('order_id', $this->bidOrTask->id)->where(
                     'activity_id',
                     $this->id
-                )->exists();
+                )->count();
             }else{
-                $count = SearchRequest::query()->where('order_id', $this->bidOrTask->id)->where('activity_id', $this->id)->exists();
+                $count = SearchRequest::query()->where('order_id', $this->bidOrTask->id)->where('activity_id', $this->id)->count();
             }
         }else{
             $count = SearchRequest::query()->where('task_id',$this->bidOrTask->id)->where('activity_id', $this->id)->count();
