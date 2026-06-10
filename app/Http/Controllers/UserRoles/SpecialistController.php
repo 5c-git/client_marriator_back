@@ -16,6 +16,7 @@ use App\Http\Requests\Order\GetBidRequest;
 use App\Http\Requests\Order\GetBidsRequest;
 use App\Http\Requests\Order\GetJobRequest;
 use App\Http\Requests\Order\PaySpecialistReportRequest;
+use App\Http\Requests\UserData\SetCounterpartyForOrderRequest;
 use App\Http\Requests\UserData\SignContractRequest;
 use App\Http\Resources\CounterpartyResource;
 use App\Http\Resources\Document\DocumentResource;
@@ -306,6 +307,43 @@ class SpecialistController extends Controller
         foreach ($counterparties as $counterparty){
             CreateDocumentJob::dispatch($user,$counterparty);
         }
+        return new SuccessResource();
+    }
+
+    public function getCounterpartyForOrder(Request $request)
+    {
+        $user = $request->user();
+        /** @var  $user User */
+        $userContractData = UserContractData::query()
+            ->where('user_id', $user->id)
+            ->where('date_start', '<=', Carbon::now())
+            ->where('date_end', '>=', Carbon::now())
+            ->get();
+        $counterpartyIds = [];
+        foreach ($userContractData as $userContract)
+        {
+            $counterpartyIds[] = $userContract->counterparty_id;
+        }
+        $counterparty = collect();
+        if($counterpartyIds){
+            $counterparty = Counterparty::query()->whereIn('id',$counterpartyIds)->get();
+            $userCounterpartyIds = $user->counterparty->pluck('id');
+            foreach ($counterparty as $item) {
+                if ($userCounterpartyIds->contains($item->id)) {
+                    $item->active = true;
+                }else{
+                    $item->active = false;
+                }
+            }
+        }
+
+        return CounterpartyResource::collection($counterparty);
+    }
+
+    public function setCounterpartyForOrder(SetCounterpartyForOrderRequest $request): SuccessResource
+    {
+        $user = $request->user();
+        $user->counterparty()->syncWithoutDetaching($request->counterpartyIds);
         return new SuccessResource();
     }
 }

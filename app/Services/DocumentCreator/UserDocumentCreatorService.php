@@ -84,6 +84,8 @@ class UserDocumentCreatorService
                     $document->date_signature   = Carbon::now();
                     $document->save();
                     $this->saveDataContract($document, $counterparty, $documentTemplate, $dataForSave);
+
+                    $user->counterparty()->syncWithoutDetaching([$counterparty->id]);
                 }
             }
         }

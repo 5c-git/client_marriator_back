@@ -22,6 +22,7 @@ use App\Http\Requests\Order\UpdateTaskActivityRequest;
 use App\Http\Requests\Order\UpdateTaskRequest;
 use App\Jobs\CreateDocumentJob;
 use App\Jobs\SendNotificationInvoiceBidJob;
+use App\Models\Fields\Directory\Counterparty;
 use App\Models\Fields\Directory\Radius;
 use App\Models\Order\Bid;
 use App\Models\Order\Order;
@@ -498,6 +499,7 @@ class EloquentOrderRepository implements OrderRepository
         }
         $bid->place_id         = $order->place_id;
         $bid->user_id          = $order->accept_user_id;
+        $bid->project_id       = $order->project_id;
         $bid->accept_user_id   = null;
         $bid->order_id         = $order->id;
         $bid->task_id          = null;
@@ -584,6 +586,7 @@ class EloquentOrderRepository implements OrderRepository
 
         $bid->place_id         = $task->place_id;
         $bid->user_id          = $task->accept_user_id??$task->user_id;
+        $bid->project_id       = $task->project_id;
         $bid->accept_user_id   = null;
         $bid->order_id         = $task->order_id;
         $bid->task_id          = $task->id;
@@ -880,6 +883,13 @@ class EloquentOrderRepository implements OrderRepository
         $fieldStat = Fields::where('directory',TaxStatus::class)->first();
 
         if($fieldView && $bid->viewActivity && $place) {
+            $projectIds = $bid->project->pluck('id')->toArray();
+            $counterparties = [];
+            if($projectIds) {
+                $counterparties = Counterparty::whereHas('projects', function ($query) use ($projectIds) {
+                    $query->whereIn('project_id', $projectIds);
+                })->get()->pluck('id')->toArray();
+            }
             $viewActivitiesUuids = $bid->viewActivity->getAllConnectedUuids();
             $viewActivitiesUuids[] = $bid->viewActivity->uuid;
             $viewActivitiesUuids = array_unique($viewActivitiesUuids);
@@ -919,6 +929,12 @@ class EloquentOrderRepository implements OrderRepository
                     })->whereIn('accept_bid.accepted', [BidAcceptingStatusEnum::work->value,BidAcceptingStatusEnum::consideration->value]);
                 })
                 ->where('confirmRegister', true)->where('archive', false)->where('finishRegister', true)
+                ->where(function ($query) use ($counterparties) {
+                    $query->whereDoesntHave('counterparty')
+                        ->orWhereHas('counterparty', function ($q) use ($counterparties) {
+                            $q->whereIn('counterparty_id', $counterparties);
+                        });
+                })
                 ->get();
 
             $userInRadius = collect();

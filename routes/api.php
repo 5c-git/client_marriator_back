@@ -157,6 +157,8 @@ Route::group(["middleware" => ["auth:api", "scope:personalArea"]], function () {
             Route::group(['prefix' => 'userSettings'], function () {
                 Route::get('/getUserSettings', 'App\Http\Controllers\PersonalArea\UserPersonalInfoController@getUserSettings')->name('getUserSettings');
                 Route::post('/setUserSettings', 'App\Http\Controllers\PersonalArea\UserPersonalInfoController@setUserSettings')->name('setUserSettings');
+                Route::get('/getCounterpartyForOrder', 'App\Http\Controllers\UserRoles\SpecialistController@getCounterpartyForOrder')->name('getCounterpartyForOrder');
+                Route::post('/setCounterpartyForOrder', 'App\Http\Controllers\UserRoles\SpecialistController@setCounterpartyForOrder')->name('setCounterpartyForOrder');
             });
 
             Route::group(['prefix' => 'signedDocument'], function () {

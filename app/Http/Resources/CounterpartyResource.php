@@ -20,12 +20,18 @@ class CounterpartyResource extends JsonResource
      */
     public function toArray($request): array
     {
-        return [
+        $array = [
             'id' => $this->id,
             'name' => $this->name,
             'ogrn' => $this->ogrn,
             'legal_address' => $this->legal_address,
             'legal_email' => $this->legal_email,
         ];
+
+        if(isset($this->active)){
+            $array['active'] = $this->active;
+        }
+
+        return $array;
     }
 }

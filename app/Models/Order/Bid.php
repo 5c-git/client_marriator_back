@@ -29,6 +29,7 @@ use App\Models\Order\OrderActivities;
  * @property int $view_activity_id
  * @property int $radius
  * @property int $count
+ * @property int $project_id
  * @property string $external_id
  * @property int $external_type
  * @property float $price
@@ -44,6 +45,7 @@ use App\Models\Order\OrderActivities;
  * @property-read Order $order
  * @property-read Task $task
  * @property-read Place $place
+ * @property-read Project $project
  * @property-read Collection|BidActivity[] $bidActivities
  * @property-read ViewActivities $viewActivity
  * @property-read Collection|User[] $acceptingUsers
@@ -74,7 +76,8 @@ class Bid extends Model implements OrderInterface
         'date_activity',
         'activity_id',
         'external_id',
-        'external_type'
+        'external_type',
+        'project_id'
     ];
 
     protected $casts = [
@@ -88,6 +91,11 @@ class Bid extends Model implements OrderInterface
     public function place(): BelongsTo
     {
         return $this->belongsTo(Place::class,'place_id');
+    }
+
+    public function project(): BelongsTo
+    {
+        return $this->belongsTo(Project::class,'project_id');
     }
 
     public function user(): BelongsTo
