@@ -288,6 +288,7 @@ Route::group(['prefix' => 'integration'], function () {
     Route::middleware([CheckIntegration::class])->group(function () {
         Route::get('/ping/', 'App\Http\Controllers\Integration\IntegrationController@ping')->name('ping');
         Route::post('/updateUserData/', 'App\Http\Controllers\Integration\IntegrationController@updateUserData')->name('updateUserData');
+        Route::post('/syncUser/', 'App\Http\Controllers\Integration\UserExternalSyncController@sync')->name('syncUser');
     });
 });
 

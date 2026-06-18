@@ -22,7 +22,9 @@ class CheckIntegration
 
         $apiToken = str_replace("Bearer ", "", $apiToken);
 
-        if (!is_string($apiToken) || strlen($apiToken) < 40 || $apiToken != env('ONE_C_TOKEN')) {
+        $expectedToken = config('services.one_c.token', env('ONE_C_TOKEN'));
+
+        if (!is_string($apiToken) || strlen($apiToken) < 40 || $apiToken != $expectedToken) {
             return response()->json([
                 'errors' => 'Check credentials (1)',
             ], 403);

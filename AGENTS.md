@@ -28,6 +28,7 @@ The following project-specific docs live in `docs/`. Refer to them when working 
 
 - `docs/FORM_REGISTRATION.md` — dynamic user registration form flow, `FormController` methods, field formatting, and registration lifecycle.
 - `docs/USER_DATA_ANALYSIS.md` — how user form data is stored in `users.data`, how to analyze a specific user's fields, resolve directory values, and reusable analysis scripts.
+- `docs/QUESTIONNAIRE_MODULE.md` — independent questionnaire module: step chain, queue processing, API, and adding new validation/enrichment steps.
 - `docs/SKILLS.md` — full inventory of available Laravel skills in `.kimi-code/skills/`.
 - `docs/KIMI_GUIDE.md` — general guide for interacting with Kimi Code CLI in this project.
 
@@ -128,6 +129,39 @@ Read these files explicitly when the task touches registration, user data, skill
 - When modifying a column, the migration must include **all previously defined attributes** on that column, or they will be dropped.
 - Laravel 11 supports limiting eagerly loaded records natively: `$query->latest()->limit(10);`.
 - Model casts can be defined in a `casts()` method; follow the convention used by existing models.
+- Add a PHPDoc block at the top of every Eloquent model documenting database properties and relationships.
+
+### Model PHPDoc
+
+Use `@property` for columns and `@property-read` for relations. Example:
+
+```php
+/**
+ * @property int $id
+ * @property int $place_id
+ * @property int $user_id
+ * @property int $accept_user_id
+ * @property string $external_id
+ * @property int $external_type
+ * @property bool $self_employed
+ * @property OrderStatusEnum $status
+ * @property-read User $user
+ * @property-read Place $place
+ * @property-read Project $project
+ * @property-read Collection|OrderActivities[] $orderActivities
+ * @property-read Collection|User[] $acceptingUsers
+ * @property-read User $acceptUser
+ */
+class Order extends Model
+```
+
+Rules:
+- Include all significant database columns.
+- Use the correct PHP type (`int`, `string`, `bool`, `array`, `Carbon\Carbon`, enum class, etc.).
+- For JSON columns prefer `array`.
+- For timestamps use `Carbon\Carbon`.
+- For relations use `@property-read` and include the collection/item form: `Collection|OrderActivities[]` for `hasMany`, single model for `belongsTo`/`hasOne`.
+- Update the block when columns or relations change.
 
 ### Direct MySQL access (inside Docker container)
 

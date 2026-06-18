@@ -2,13 +2,14 @@
 
 namespace App\Observers;
 
+use App\Jobs\SyncUserToExternalSystemJob;
 use App\Models\User;
 use App\Models\User\UserSettings;
 use App\Models\User\UserUpdates;
+use Modules\Questionnaire\Services\QuestionnaireProcessor;
 
 class UserObserver
 {
-
     private array $userFieldForCheckUpdate = [
         'name',
         'email',
@@ -35,21 +36,22 @@ class UserObserver
         'count_wait_bid',
         'time_answer_bid',
         'notification_start',
-        'change_fields'
+        'change_fields',
     ];
 
     private array $userFieldJson = [
-        'data'=>'dataFormater',
-        'estateData' =>'estateDataFormater',
-        'requisitesData' => 'requisitesDataFormater'
+        'data' => 'dataFormater',
+        'estateData' => 'estateDataFormater',
+        'requisitesData' => 'requisitesDataFormater',
     ];
+
     /**
      * Handle the User "created" event.
      */
     public function created(User $user): void
     {
-        $userSettings = UserSettings::query()->where('user_id',$user->id)->first();
-        if(!$userSettings){
+        $userSettings = UserSettings::query()->where('user_id', $user->id)->first();
+        if (! $userSettings) {
             $userSettings = new UserSettings();
             $userSettings->user_id = $user->id;
             $userSettings->notification_new_bids = true;
@@ -64,11 +66,15 @@ class UserObserver
     {
         $newUser = $user->toArray();
         $originalData = $user->getOriginal();
-        if(isset($newUser['finishRegister']) && isset($newUser['confirmRegister']) && $newUser['finishRegister'] == true && $newUser['confirmRegister'] == true) {
+        if (isset($newUser['finishRegister']) && isset($newUser['confirmRegister']) && $newUser['finishRegister'] == true && $newUser['confirmRegister'] == true) {
             $data = [];
             foreach ($this->userFieldForCheckUpdate as $field) {
+                if (! array_key_exists($field, $newUser) || ! array_key_exists($field, $originalData)) {
+                    continue;
+                }
+
                 if ($newUser[$field] != $originalData[$field]) {
-                    if (!empty($this->userFieldJson[$field])) {
+                    if (! empty($this->userFieldJson[$field])) {
                         $func = $this->userFieldJson[$field];
                         if (empty($newUser[$field])) {
                             $newUser[$field] = [];
@@ -96,53 +102,62 @@ class UserObserver
                 $this->saveDataUpdates($data, $user);
             }
         }
+        if (isset($newUser['finishRegister']) && $newUser['finishRegister'] == true) {
+            SyncUserToExternalSystemJob::dispatchForUser($user);
+
+            $questionnaireProcessor = app(QuestionnaireProcessor::class);
+            $questionnaireProcessor->processUser($user);
+        }
     }
 
-    private function dataFormater(array $oldData,array $newData): array
+    private function dataFormater(array $oldData, array $newData): array
     {
         $dataForSave = [];
-        foreach ($oldData as $t=>$oldArr) {
-            if(!isset($newData[$t])){
+        foreach ($oldData as $t => $oldArr) {
+            if (! isset($newData[$t])) {
                 $newData[$t] = [];
             }
-            if(is_array($newData[$t])) {
+            if (is_array($newData[$t])) {
                 asort($newData[$t]);
             }
-            if(is_array($oldArr)) {
+            if (is_array($oldArr)) {
                 asort($oldArr);
             }
-            if($newData[$t] != $oldArr){
-                echo "<pre>";
+            if ($newData[$t] != $oldArr) {
+                echo '<pre>';
                 var_dump([
                     'key' => $t,
-                    'new' => is_array($newData[$t])?json_encode($newData[$t] ?? []):$newData[$t],
-                    'old' => is_array($oldArr)?json_encode($oldArr ?? []):$oldArr,
+                    'new' => is_array($newData[$t]) ? json_encode($newData[$t] ?? []) : $newData[$t],
+                    'old' => is_array($oldArr) ? json_encode($oldArr ?? []) : $oldArr,
                 ]);
-                echo "</pre>";
+                echo '</pre>';
                 $dataForSave[] = [
                     'key' => $t,
-                    'new' => is_array($newData[$t])?json_encode($newData[$t] ?? []):$newData[$t],
-                    'old' => is_array($oldArr)?json_encode($oldArr ?? []):$oldArr,
+                    'new' => is_array($newData[$t]) ? json_encode($newData[$t] ?? []) : $newData[$t],
+                    'old' => is_array($oldArr) ? json_encode($oldArr ?? []) : $oldArr,
                 ];
             }
         }
+
         return $dataForSave;
     }
 
-    private function array_diff_assoc_recursive($array1, $array2) {
+    private function array_diff_assoc_recursive($array1, $array2)
+    {
         $difference = [];
         foreach ($array1 as $key => $value) {
             if (is_array($value)) {
-                if (!isset($array2[$key]) || !is_array($array2[$key]) || $array2[$key] === $value) {
+                if (! isset($array2[$key]) || ! is_array($array2[$key]) || $array2[$key] === $value) {
                     $difference[$key] = $value;
                 } else {
                     $new_diff = $this->array_diff_assoc_recursive($value, $array2[$key]);
-                    if (!empty($new_diff)) {
+                    if (! empty($new_diff)) {
                         $difference[$key] = $new_diff;
                     }
                 }
             }
         }
+
         return $difference;
     }
 
@@ -158,6 +173,7 @@ class UserObserver
                 ];
             }
         }
+
         return $dataForSave;
     }
 
@@ -173,17 +189,19 @@ class UserObserver
                 ];
             }
         }
+
         return $dataForSave;
     }
 
-    private function saveDataUpdates(array $data, User $user){
-        foreach ($data as $updates){
+    private function saveDataUpdates(array $data, User $user)
+    {
+        foreach ($data as $updates) {
             $obj = new UserUpdates();
             $obj->user_id = $user->id;
             $obj->field = $updates['key'];
             $obj->newData = $updates['new'];
-            $obj->oldData= $updates['old'];
-            $obj->status= 1;
+            $obj->oldData = $updates['old'];
+            $obj->status = 1;
             $obj->save();
         }
     }
