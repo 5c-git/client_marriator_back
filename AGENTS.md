@@ -1,0 +1,390 @@
+# AI Agent Instructions — Marriator
+
+This file guides Kimi Code CLI when working with this Laravel project.
+
+## Project Overview
+
+- **PHP:** 8.3
+- **Framework:** Laravel 11.54.0
+- **Environment:** Laravel Sail (Docker) with MySQL, Redis, Meilisearch, Mailpit, Selenium
+- **Package Manager:** Composer
+- **Frontend build:** Vite
+- **Testing:** PHPUnit 11
+- **Key packages:**
+  - `laravel/horizon` v5
+  - `laravel/passport` v12
+  - `laravel/sanctum` v4
+  - `laravel/boost` v2
+  - `laravel/mcp` v0
+  - `laravel/pint` v1
+  - `laravel/sail` v1
+  - `phpunit/phpunit` v11
+
+> For version-specific Laravel docs and examples, use the `search-docs` MCP tool or check `CLAUDE.md`.
+
+## Key Documentation
+
+The following project-specific docs live in `docs/`. Refer to them when working in the related domain:
+
+- `docs/FORM_REGISTRATION.md` — dynamic user registration form flow, `FormController` methods, field formatting, and registration lifecycle.
+- `docs/USER_DATA_ANALYSIS.md` — how user form data is stored in `users.data`, how to analyze a specific user's fields, resolve directory values, and reusable analysis scripts.
+- `docs/SKILLS.md` — full inventory of available Laravel skills in `.kimi-code/skills/`.
+- `docs/KIMI_GUIDE.md` — general guide for interacting with Kimi Code CLI in this project.
+
+Read these files explicitly when the task touches registration, user data, skills, or project conventions.
+
+## Skills Activation
+
+- This project has domain-specific skills in `.kimi-code/skills/`.
+- **Always activate the relevant skill** when working in that domain — do not wait until stuck.
+- Default meta-skill: `laravel:using-laravel-superpowers`.
+
+## Working Mode
+
+- Use the **`laravel:using-laravel-superpowers`** methodology by default.
+- Work in **automatic mode**: choose the right workflow (brainstorm → write-plan → execute-plan) based on task complexity without asking permission for every step.
+- The user will slow down or correct the process when needed.
+- For complex or architectural changes, briefly propose a plan and wait for confirmation before executing.
+- Be concise in explanations — focus on what's important, avoid stating obvious details.
+
+## Command Runner Selection
+
+**All commands MUST run through Laravel Sail.** Do not use host PHP/Composer/Node unless Sail is explicitly unavailable.
+
+```bash
+# Artisan
+./vendor/bin/sail artisan <command>
+
+# Composer
+./vendor/bin/sail composer <command>
+
+# Node / Vite
+./vendor/bin/sail npm run dev
+./vendor/bin/sail npm run build
+
+# Tests
+./vendor/bin/sail artisan test --compact
+
+# Pint
+./vendor/bin/sail bin pint --dirty
+```
+
+- Pass `--no-interaction` to Artisan commands when running non-interactively.
+- Use `./vendor/bin/sail` without arguments to list available Sail commands.
+
+## Frontend Bundling
+
+- If a frontend change is not reflected in the UI, run:
+  ```bash
+  ./vendor/bin/sail npm run build
+  ./vendor/bin/sail npm run dev
+  ./vendor/bin/sail composer run dev
+  ```
+- Vite manifest errors (`Unable to locate file in Vite manifest`) are usually fixed by `npm run build`.
+
+## Code Style & Quality
+
+- Follow **PSR-12**.
+- Run **Laravel Pint** on modified files before finalizing:
+  ```bash
+  ./vendor/bin/sail bin pint --dirty
+  ```
+- Use explicit **type hints** and return types for all method parameters.
+- Favor small, testable services over fat controllers/jobs/commands.
+- Use DTOs, typed Collections, and Enums when they clarify intent.
+- Prefer model factories in tests and model scopes for complex queries.
+- Always use curly braces for control structures, even single-line bodies.
+- Use PHP 8 **constructor property promotion**: `public function __construct(public GitHub $github) {}`.
+- Use **TitleCase** for Enum keys: `FavoritePerson`, `Monthly`.
+- Prefer **PHPDoc blocks** over inline comments; use array shape type definitions in PHPDoc.
+- Use descriptive names: `isRegisteredForDiscounts`, not `discount()`.
+
+## Architecture
+
+- Controllers should be thin: validate input, delegate to services, return responses.
+- Business logic lives in **Services** (`app/Services/`).
+- Data access and relationships live in **Models** (`app/Models/`).
+- Validation lives in **Form Requests** (`app/Http/Requests/`).
+- Use Eloquent relationships and eager loading to avoid N+1 queries.
+- Stick to the existing directory structure; do not create new base folders without approval.
+- Do not change application dependencies without approval.
+- Check for existing components to reuse before writing new ones.
+- Follow existing code conventions; check sibling files for structure, approach, and naming.
+- Do not create documentation files unless explicitly requested.
+
+## Laravel 11 Structure
+
+- Middleware are registered in `bootstrap/app.php` via `Application::configure()->withMiddleware()`, not in `app/Http/Kernel.php`.
+- `bootstrap/providers.php` contains application-specific service providers.
+- There is no `app/Console/Kernel.php`; use `bootstrap/app.php` or `routes/console.php`.
+- Commands in `app/Console/Commands/` auto-register.
+- Use `vendor/bin/sail artisan make:enum`, `make:class`, `make:interface` for new generic PHP files.
+- When creating a new model, also create useful factories and seeders; ask if other related files are needed.
+
+## Database
+
+- All schema changes must be done through **migrations** (`database/migrations/`).
+- Use **factories** (`database/factories/`) and **seeders** (`database/seeders/`) for test data.
+- When modifying a column, the migration must include **all previously defined attributes** on that column, or they will be dropped.
+- Laravel 11 supports limiting eagerly loaded records natively: `$query->latest()->limit(10);`.
+- Model casts can be defined in a `casts()` method; follow the convention used by existing models.
+
+### Direct MySQL access (inside Docker container)
+
+```bash
+# List databases
+docker compose exec mysql sh -c 'mysql -u root -p"$MYSQL_ROOT_PASSWORD" -e "SHOW DATABASES;"'
+
+# List tables in the app database
+docker compose exec mysql sh -c 'mysql -u root -p"$MYSQL_ROOT_PASSWORD" -e "USE $MYSQL_DATABASE; SHOW TABLES;"'
+
+# Run any SQL query
+docker compose exec mysql sh -c 'mysql -u root -p"$MYSQL_ROOT_PASSWORD" -e "USE $MYSQL_DATABASE; <SQL>;"'
+```
+
+### PHP inside the app container
+
+```bash
+# Check PHP version
+docker compose exec laravel.test php -v
+
+# Run any artisan command
+docker compose exec laravel.test php artisan <command>
+
+# Run tinker with a one-liner
+docker compose exec laravel.test php artisan tinker --execute="<php_code>"
+```
+
+### Useful examples
+
+```bash
+# Describe a table
+docker compose exec mysql sh -c 'mysql -u root -p"$MYSQL_ROOT_PASSWORD" -e "USE $MYSQL_DATABASE; DESCRIBE users;"'
+
+# Get last 5 users
+docker compose exec mysql sh -c 'mysql -u root -p"$MYSQL_ROOT_PASSWORD" -e "USE $MYSQL_DATABASE; SELECT * FROM users ORDER BY id DESC LIMIT 5;"'
+
+# Count records via Eloquent in tinker
+docker compose exec laravel.test php artisan tinker --execute='echo App\\Models\\User::count();'
+```
+
+### Tinker rules
+
+- Use Tinker for debugging and testing code snippets.
+- Do **not** create models without user approval; prefer tests with factories.
+- Prefer existing Artisan commands over custom Tinker code.
+- Always use **single quotes** around the `--execute` argument to prevent shell expansion:
+  ```bash
+  ./vendor/bin/sail artisan tinker --execute='User::where("active", true)->count();'
+  ```
+
+## MCP (Model Context Protocol)
+
+The project includes a Laravel Boost MCP server configured in `.mcp.json`. It runs via:
+
+```bash
+./vendor/bin/sail artisan boost:mcp
+```
+
+### Available MCP tools
+
+| Tool | Purpose |
+|---|---|
+| `application-info` | PHP version, Laravel version, database engine, installed packages and versions |
+| `database-connections` | List configured database connections |
+| `database-schema` | Full database schema: tables, columns, indexes, foreign keys |
+| `database-query` | Execute read-only SQL queries (SELECT, SHOW, EXPLAIN, DESCRIBE) |
+| `browser-logs` | Recent browser logs, errors, and exceptions |
+| `search-docs` | Version-specific Laravel documentation search based on installed packages |
+| `get-absolute-url` | Resolve correct scheme, domain, and port for project URLs |
+
+### Prefer Boost tools
+
+- **Prefer Laravel Boost MCP tools over manual alternatives** (shell commands or file reads).
+- Use `database-query` instead of raw SQL in Tinker.
+- Use `database-schema` before writing migrations or models.
+- Use `search-docs` **before making code changes**; it returns version-specific docs automatically.
+- Use `get-absolute-url` before sharing any URL with the user.
+- Use `browser-logs` for frontend debugging; ignore old entries.
+
+#### search-docs tips
+
+- Pass a `packages` array to scope results when relevant packages are known.
+- Use broad, topic-based queries: `['rate limiting', 'routing']`.
+- Do **not** add package names to queries — package info is already shared.
+- Use `"quoted phrases"` for exact adjacent words: `"infinite scroll"`.
+- Combine words and phrases: `middleware "rate limit"`.
+- Use multiple queries for OR logic: `queries=["authentication", "middleware"]`.
+
+### How to use MCP
+
+Kimi Code CLI does not have a native MCP client, so invoke the server manually through Bash when richer context is needed:
+
+```bash
+# Prepare a JSON-RPC request file
+cat > /tmp/mcp_request.txt <<'EOF'
+{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"kimi","version":"1.0.0"}}}
+{"jsonrpc":"2.0","method":"notifications/initialized"}
+{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"database-schema","arguments":{"summary":true}}}
+EOF
+
+# Run the MCP server with the request
+./vendor/bin/sail artisan boost:mcp --no-interaction < /tmp/mcp_request.txt
+```
+
+Prefer MCP for:
+- Getting the exact database schema before writing migrations or queries.
+- Checking installed package versions before using package-specific APIs.
+- Running read-only SQL queries when direct MySQL access is not needed.
+
+### Known issue
+
+The Sail script prints warnings like:
+
+```text
+./.env: line 75: 45LMSjPbrnLtOJtuwma4cnZO857AGVEnxVaowdTz: command not found
+./.env: line 95: ToA@ka4cPbjX0: command not found
+```
+
+These come from `.env` values containing shell-special characters (`$`, `@`) that Sail tries to interpret. They do not block execution, but should be fixed by properly quoting those values when convenient.
+
+## Redis
+
+The project uses Redis for queues and Horizon. Redis runs in Docker and is accessible via `docker compose exec redis redis-cli`.
+
+### Common Redis commands
+
+```bash
+# Check connectivity
+docker compose exec redis redis-cli PING
+
+# List keys by pattern
+docker compose exec redis redis-cli KEYS "*queue*"
+docker compose exec redis redis-cli SCAN 0 MATCH "*job*" COUNT 100
+
+# Queue length and contents
+docker compose exec redis redis-cli LLEN queues:default
+docker compose exec redis redis-cli LRANGE queues:default 0 -1
+
+# Horizon failed jobs
+docker compose exec redis redis-cli LRANGE laravel_horizon:recent_failed_jobs 0 -1
+
+# Read a specific Horizon job hash
+docker compose exec redis redis-cli HGETALL laravel_horizon:job:App\\Jobs\\SendNotificationInvoiceBidJob
+```
+
+### Laravel/Horizon commands
+
+```bash
+# Horizon status and supervisors
+./vendor/bin/sail artisan horizon:list
+./vendor/bin/sail artisan horizon:status
+
+# Monitor queues
+./vendor/bin/sail artisan queue:monitor
+
+# List failed jobs
+./vendor/bin/sail artisan queue:failed
+```
+
+### What can be inspected
+
+- Queue backlogs (`queues:default`, `queues:high`, delayed jobs).
+- Failed jobs via Horizon or `queue:failed`.
+- Laravel cache keys (`laravel_database_*`).
+- Sessions if Redis is configured as session driver.
+- Horizon metrics and measured jobs/queues.
+
+## Testing
+
+- This project uses **PHPUnit 11**, not Pest. If you encounter Pest-style tests, convert them to PHPUnit.
+- Write tests for new features and bug fixes.
+- Use factories for test models; check for custom states before manually setting up models.
+- Do not create verification scripts or Tinker snippets when tests already cover and prove the functionality.
+- Create tests via Artisan:
+  ```bash
+  ./vendor/bin/sail artisan make:test --phpunit {name}      # feature test
+  ./vendor/bin/sail artisan make:test --phpunit --unit {name} # unit test
+  ```
+- Most tests should be feature tests.
+- Tests should cover happy paths, failure paths, and edge cases.
+- Do not remove any tests or test files without approval.
+
+### Running tests
+
+```bash
+# All tests
+./vendor/bin/sail artisan test --compact
+
+# Single file
+./vendor/bin/sail artisan test --compact tests/Feature/ExampleTest.php
+
+# Filter by test name (recommended after a change)
+./vendor/bin/sail artisan test --compact --filter=testName
+```
+
+### Before finalizing
+
+- Run the minimal set of tests related to the change.
+- When those pass, ask the user if they want to run the full suite.
+
+## Post-Implementation Review
+
+After writing or modifying code, always perform a self-review before considering the task done. If any issue is found, fix it and re-check.
+
+### What to verify
+
+1. **Correctness**
+   - The change does what the task asked for.
+   - Happy path, failure path, and edge cases are handled.
+   - No existing business logic is broken.
+
+2. **Codebase consistency**
+   - The new code follows existing patterns in sibling files.
+   - Naming, structure, and approach are consistent with the rest of the project.
+   - No duplicate logic is introduced; reuse existing services/helpers when possible.
+
+3. **Performance & optimization**
+   - Avoid N+1 queries; use eager loading (`with`) where needed.
+   - Avoid loading large datasets into memory; use chunking or pagination.
+   - Cache expensive computations when appropriate.
+   - Minimize unnecessary database or external API calls.
+
+4. **Bugs & regressions**
+   - Check for off-by-one errors, null pointers, type mismatches.
+   - Ensure validation rules are correct and not bypassed.
+   - Confirm authorization gates and policies still apply.
+   - Verify that related features still work.
+
+5. **Test coverage**
+   - New features and bug fixes have tests.
+   - Existing tests still pass.
+   - Tests actually assert meaningful behavior, not just existence.
+
+6. **Style & quality**
+   - Run Laravel Pint on changed files.
+   - Run PHPStan if configured.
+   - Remove debug code, commented-out blocks, and unused imports.
+
+### Iteration rule
+
+If any check reveals an error, inaccuracy, or potential bug, **fix it immediately** and re-run the relevant checks. Do not finish the task with known issues or "TODO: fix later" comments without explicit user approval.
+
+## Before Completing a Task
+
+1. Run tests — they must pass.
+2. Run Laravel Pint — code must be formatted.
+3. If applicable, run static analysis (`phpstan` if configured).
+4. Summarize what was changed and why.
+
+## Documentation
+
+- Project docs live in `docs/`.
+- API documentation uses `darkaonline/l5-swagger`.
+- For complex changes, update relevant docs.
+
+## Security & Safety
+
+- Do not modify `.env`, SSH keys, or credential files.
+- Do not run `git commit`, `git push`, `git reset`, or `rm -rf` without explicit user confirmation.
+- Back up config files before editing them.
