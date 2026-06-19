@@ -12,6 +12,11 @@ class CheckExternalRegistryStep implements QuestionnaireStepInterface
         return 'external.registry_check';
     }
 
+    public function isRequired(): bool
+    {
+        return true;
+    }
+
     public function handle(Questionnaire $questionnaire): void
     {
         $data = $questionnaire->mappedData();

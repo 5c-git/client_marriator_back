@@ -117,11 +117,13 @@ return [
 interface QuestionnaireStepInterface
 {
     public function name(): string;
+    public function isRequired(): bool;
     public function handle(Questionnaire $questionnaire): void;
 }
 ```
 
-A step should throw `QuestionnaireProcessingException` on expected validation failures.
+- `isRequired()` — if `true`, a failure stops the whole chain. If `false`, the failure is logged and the next step runs.
+- A step should throw `QuestionnaireProcessingException` on expected validation failures.
 
 ## Execution Flow
 
@@ -134,7 +136,9 @@ A step should throw `QuestionnaireProcessingException` on expected validation fa
    - marks the questionnaire `in_progress` with current step;
    - runs the step;
    - on success appends a log entry and dispatches the next step;
-   - on failure marks the questionnaire `failed` with step index, class, and message.
+   - on expected failure (`QuestionnaireProcessingException`):
+     - if the step is **required** (`isRequired() === true`), marks the questionnaire `failed`;
+     - if the step is **optional** (`isRequired() === false`), logs the failure and dispatches the next step.
 7. Lock is released on terminal state (`completed` or `failed`).
 
 ## API

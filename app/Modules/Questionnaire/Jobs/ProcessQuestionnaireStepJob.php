@@ -97,11 +97,20 @@ class ProcessQuestionnaireStepJob implements ShouldQueue
                 'step_class' => $stepClass,
                 'step_name' => $step->name(),
                 'status' => 'failed',
+                'required' => $step->isRequired(),
                 'message' => $e->getMessage(),
                 'processed_at' => now()->toDateTimeString(),
             ]);
-            $questionnaire->markFailed($this->stepIndex, $stepClass, $e->getMessage());
-            $processor->releaseLock($questionnaire);
+
+            if ($step->isRequired()) {
+                $questionnaire->markFailed($this->stepIndex, $stepClass, $e->getMessage());
+                $processor->releaseLock($questionnaire);
+
+                return;
+            }
+
+            $questionnaire->save();
+            self::dispatch($questionnaire->id, $this->stepIndex + 1);
         } catch (\Throwable $e) {
             Log::channel('single')->error('ProcessQuestionnaireStepJob: unexpected error', [
                 'questionnaire_id' => $this->questionnaireId,

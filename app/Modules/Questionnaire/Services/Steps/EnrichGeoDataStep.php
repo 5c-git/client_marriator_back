@@ -11,6 +11,11 @@ class EnrichGeoDataStep implements QuestionnaireStepInterface
         return 'enrichment.geo_data';
     }
 
+    public function isRequired(): bool
+    {
+        return false;
+    }
+
     public function handle(Questionnaire $questionnaire): void
     {
         $data = $questionnaire->data;

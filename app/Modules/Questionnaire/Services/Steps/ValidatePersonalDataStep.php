@@ -12,6 +12,11 @@ class ValidatePersonalDataStep implements QuestionnaireStepInterface
         return 'validation.personal_data';
     }
 
+    public function isRequired(): bool
+    {
+        return true;
+    }
+
     public function handle(Questionnaire $questionnaire): void
     {
         $data = $questionnaire->mappedData();

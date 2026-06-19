@@ -12,6 +12,11 @@ interface QuestionnaireStepInterface
     public function name(): string;
 
     /**
+     * Whether this step is required to succeed before the next step runs.
+     */
+    public function isRequired(): bool;
+
+    /**
      * Execute the step against the questionnaire.
      *
      * @throws \Modules\Questionnaire\Exceptions\QuestionnaireProcessingException
