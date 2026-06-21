@@ -16,6 +16,9 @@ use Modules\Questionnaire\Services\QuestionnaireDataMapper;
  * @property int|null $current_step_index
  * @property string|null $current_step_class
  * @property array $data
+ * @property array|null $expansion_data
+ * @property array|null $error_data
+ * @property array|null $requisites_data
  * @property array|null $logs
  * @property string|null $error_message
  * @property \Carbon\Carbon|null $completed_at
@@ -23,6 +26,17 @@ use Modules\Questionnaire\Services\QuestionnaireDataMapper;
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property-read User $user
+ *
+ * The data array contains:
+ * - base user fields (user_id, name, email, phone, img, finishRegister, confirmRegister, pin, uuid, latitude, longitude, mapAddress, mapRadius)
+ * - all keys from users.data (flat or step-based)
+ * - registration_fields metadata
+ * - derived/enriched keys written by steps
+ *
+ * Descriptive user data lives in separate JSON columns:
+ * - expansion_data
+ * - error_data
+ * - requisites_data
  */
 class Questionnaire extends Model
 {
@@ -36,6 +50,9 @@ class Questionnaire extends Model
         'current_step_index',
         'current_step_class',
         'data',
+        'expansion_data',
+        'error_data',
+        'requisites_data',
         'logs',
         'error_message',
         'completed_at',
@@ -46,6 +63,9 @@ class Questionnaire extends Model
     {
         return [
             'data' => 'array',
+            'expansion_data' => 'array',
+            'error_data' => 'array',
+            'requisites_data' => 'array',
             'logs' => 'array',
             'completed_at' => 'datetime',
             'failed_at' => 'datetime',

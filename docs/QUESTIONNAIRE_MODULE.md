@@ -82,7 +82,10 @@ Table `questionnaires`:
 [
     'user_id' => 184,
     'phone' => '79269453055',
-    // all base user fields
+    // base user fields: name, email, img, finishRegister, confirmRegister,
+    // pin, uuid, latitude, longitude, mapAddress, mapRadius
+    // decoded JSON columns: expansionData, errorData, requisitesData
+    // (archive is intentionally not included)
     // all keys from users.data (flat or step-based)
     'registration_fields' => [
         'field-uuid' => [
@@ -95,6 +98,12 @@ Table `questionnaires`:
 ```
 
 Top-level keys are easy to read and update. `registration_fields` adds metadata for registered form fields.
+
+### Complex user fields
+
+- `expansionData` — moderator expansion of uploaded documents, shape `{field-uuid: [{name, value}, ...]}`.
+- `errorData` — field-level error messages, shape `{field-uuid: "error message"}`.
+- `requisitesData` — array of payment requisites, shape `[{bik, fio, card, account, cardDue, confidant, payWithCard}, ...]`.
 
 ## Configuration
 

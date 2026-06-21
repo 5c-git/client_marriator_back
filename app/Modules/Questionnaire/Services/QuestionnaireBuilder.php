@@ -19,6 +19,7 @@ class QuestionnaireBuilder
     public function buildForUser(User $user): Questionnaire
     {
         $data = $this->buildData($user);
+        $descriptive = $this->extractDescriptiveFields($user);
 
         $questionnaire = Questionnaire::query()->where('user_id', $user->id)->first();
 
@@ -35,6 +36,9 @@ class QuestionnaireBuilder
         $questionnaire->failed_at = null;
         $questionnaire->logs = [];
         $questionnaire->data = $data;
+        $questionnaire->expansion_data = $descriptive['expansion_data'];
+        $questionnaire->error_data = $descriptive['error_data'];
+        $questionnaire->requisites_data = $descriptive['requisites_data'];
         $questionnaire->save();
 
         return $questionnaire;
@@ -111,8 +115,29 @@ class QuestionnaireBuilder
             'uuid' => $user->uuid,
             'latitude' => $user->latitude,
             'longitude' => $user->longitude,
-            'archive' => $user->archive,
+            'mapAddress' => $user->mapAddress,
+            'mapRadius' => $user->mapRadius,
         ];
+    }
+
+    private function extractDescriptiveFields(User $user): array
+    {
+        return [
+            'expansion_data' => $this->decodeJson($user->expansionData),
+            'error_data' => $this->decodeJson($user->errorData),
+            'requisites_data' => $this->decodeJson($user->requisitesData),
+        ];
+    }
+
+    private function decodeJson(mixed $value): mixed
+    {
+        if (is_string($value) && $value !== '') {
+            $decoded = json_decode($value, true);
+
+            return json_last_error() === JSON_ERROR_NONE ? $decoded : $value;
+        }
+
+        return $value;
     }
 
     private function resolveFieldType(Fields $field, mixed $value): string

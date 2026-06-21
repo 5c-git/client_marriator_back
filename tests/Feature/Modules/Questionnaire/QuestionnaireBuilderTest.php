@@ -52,6 +52,40 @@ class QuestionnaireBuilderTest extends TestCase
         $this->assertSame('79112223344', $second->data['phone']);
     }
 
+    public function test_includes_additional_user_fields_and_stores_descriptive_data_in_separate_columns(): void
+    {
+        $expansionData = [
+            'field-uuid' => [
+                ['name' => 'ФИО', 'value' => 'Тест'],
+            ],
+        ];
+        $errorData = ['field-uuid' => 'Ошибка заполнения'];
+        $requisitesData = [
+            ['bik' => '044525600', 'fio' => 'test', 'card' => '5536913757516790'],
+        ];
+
+        $user = User::factory()->create([
+            'mapAddress' => 'г. Москва, Красная площадь',
+            'mapRadius' => 5000,
+            'expansionData' => json_encode($expansionData),
+            'errorData' => json_encode($errorData),
+            'requisitesData' => json_encode($requisitesData),
+        ]);
+
+        $builder = new QuestionnaireBuilder();
+        $questionnaire = $builder->buildForUser($user);
+
+        $this->assertSame('г. Москва, Красная площадь', $questionnaire->data['mapAddress']);
+        $this->assertSame(5000, $questionnaire->data['mapRadius']);
+        $this->assertSame($expansionData, $questionnaire->expansion_data);
+        $this->assertSame($errorData, $questionnaire->error_data);
+        $this->assertSame($requisitesData, $questionnaire->requisites_data);
+        $this->assertArrayNotHasKey('expansionData', $questionnaire->data);
+        $this->assertArrayNotHasKey('errorData', $questionnaire->data);
+        $this->assertArrayNotHasKey('requisitesData', $questionnaire->data);
+        $this->assertArrayNotHasKey('archive', $questionnaire->data);
+    }
+
     public function test_resolves_directory_field_values(): void
     {
         TaxStatus::create([

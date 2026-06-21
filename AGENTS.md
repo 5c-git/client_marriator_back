@@ -43,9 +43,14 @@ Read these files explicitly when the task touches registration, user data, skill
 ## Working Mode
 
 - Use the **`laravel:using-laravel-superpowers`** methodology by default.
-- Work in **automatic mode**: choose the right workflow (brainstorm → write-plan → execute-plan) based on task complexity without asking permission for every step.
+- Work in **automatic mode**: choose the right workflow based on task complexity.
+- **Plan mode** — use proactively and often:
+  - For new features, architectural decisions, multi-file changes, unclear requirements, or anything non-trivial, enter plan mode first.
+  - Thoroughly explore the codebase and think through architecture before proposing a solution.
+  - Present the plan to the user for approval before writing code.
+  - If difficulties or unclear requirements appear during execution, pause and ask for clarification.
+- **Skip user approval for truly small tasks** — a couple of files, no full rewrite, obvious fix — but still write a short internal plan for yourself.
 - The user will slow down or correct the process when needed.
-- For complex or architectural changes, briefly propose a plan and wait for confirmation before executing.
 - Be concise in explanations — focus on what's important, avoid stating obvious details.
 
 ## Command Runner Selection
