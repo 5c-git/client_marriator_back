@@ -868,7 +868,7 @@ class EloquentOrderRepository implements OrderRepository
         return true;
     }
 
-    public function getSpecialistForBid(int $bidId): Collection
+    public function getSpecialistForBid(int $bidId,?int $radius): Collection
     {
         $userAuth = auth()->user();
         /** @var Bid $bid  */
@@ -936,6 +936,11 @@ class EloquentOrderRepository implements OrderRepository
                         });
                 })
                 ->get();
+
+            if($radius)
+            {
+                $bid->radius = $radius;
+            }
 
             $userInRadius = collect();
             $radius = Radius::where('default',true)->first();

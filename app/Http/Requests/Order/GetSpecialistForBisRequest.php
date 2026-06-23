@@ -9,6 +9,7 @@ use Illuminate\Validation\Rule;
 
 /**
  * @property-read int bidId
+ * @property-read int|null radius
  */
 class GetSpecialistForBisRequest extends FormRequest
 {
@@ -51,6 +52,11 @@ class GetSpecialistForBisRequest extends FormRequest
                     }
                 },
             ],
+            'radius' => [
+                'sometimes',
+                'integer',
+                'min:1'
+            ]
         ];
     }
 }

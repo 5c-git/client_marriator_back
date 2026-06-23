@@ -193,7 +193,7 @@ class CachingOrderRepository implements OrderRepository
         return $this->orders->cancelBid($bidId);
     }
 
-    public function getSpecialistForBid(int $bidId): Collection
+    public function getSpecialistForBid(int $bidId, ?int $radius): Collection
     {
         return $this->orders->getSpecialistForBid($bidId);
     }

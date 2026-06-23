@@ -71,7 +71,7 @@ interface OrderRepository
     public function rejectBid(User $user,int $bidId):bool;
     public function instructBid(int $bidId,int $specialistId):bool;
     public function cancelBid(int $bidId): bool;
-    public function getSpecialistForBid(int $bidId): Collection;
+    public function getSpecialistForBid(int $bidId, ?int $radius): Collection;
     public function updateBid(BidDataRequest $bidRequest): Bid;
     public function updateSearch(SearchDataRequest $bidRequest): SearchRequest;
     public function createRequestFromTask(CreateRequestFromTaskRequest $request, User $user): Request;

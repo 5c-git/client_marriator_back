@@ -612,7 +612,7 @@ class SupervisorController extends Controller
     }
 
     public function getSpecialistForBid(GetSpecialistForBisRequest $request){
-        return SearchUserForBidResource::collection($this->orderRepository->getSpecialistForBid($request->bidId));
+        return SearchUserForBidResource::collection($this->orderRepository->getSpecialistForBid($request->bidId, $request->radius));
     }
 
     public function updateBid(BidDataRequest $request){
