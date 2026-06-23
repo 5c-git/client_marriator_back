@@ -5,20 +5,16 @@ namespace App\Http\Requests\Order;
 use App\Enum\Order\OrderStatusEnum;
 use App\Http\Requests\FormRequest;
 use App\Models\Fields\Directory\Project;
-use App\Models\Order\Order;
 use App\Models\Order\Task;
 use App\Models\Order\TaskActivity;
 use App\Services\TimeService;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 class CreateTaskActivityRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
-     *
-     * @return bool
      */
     public function authorize(): bool
     {
@@ -43,32 +39,33 @@ class CreateTaskActivityRequest extends FormRequest
                     $orderExists = Task::query()->where('id', $value)
                         ->whereIn('user_id', $userIdsSupervisor)
                         ->whereIn('status', [
-                                OrderStatusEnum::new->value,
-                                OrderStatusEnum::notAccepted->value,
-                            ]
+                            OrderStatusEnum::new->value,
+                            OrderStatusEnum::notAccepted->value,
+                        ]
                         )
                         ->first();
 
-                    if (!$orderExists) {
+                    if (! $orderExists) {
                         $fail('Not your order');
+
                         return;
                     }
 
-//                    /** @var Task $orderExists */
-//                    /** @var TaskActivity $orderActivities */
-//                    $orderActivities = $orderExists->taskActivities()
-//                        ->orderBy('date_start')
-//                        ->first();
-//
-//                    if($orderActivities) {
-//                        if (!TimeService::getTimeDifferenceSub(
-//                            $this->user(),
-//                            'change_task',
-//                            $orderActivities?->date_start
-//                        )) {
-//                            $fail('Task activities time start is arrived after change task');
-//                        }
-//                    }
+                    //                    /** @var Task $orderExists */
+                    //                    /** @var TaskActivity $orderActivities */
+                    //                    $orderActivities = $orderExists->taskActivities()
+                    //                        ->orderBy('date_start')
+                    //                        ->first();
+                    //
+                    //                    if($orderActivities) {
+                    //                        if (!TimeService::getTimeDifferenceSub(
+                    //                            $this->user(),
+                    //                            'change_task',
+                    //                            $orderActivities?->date_start
+                    //                        )) {
+                    //                            $fail('Task activities time start is arrived after change task');
+                    //                        }
+                    //                    }
                 },
             ],
             'viewActivityId' => 'required|exists:directory_view_activities,id',
@@ -79,7 +76,7 @@ class CreateTaskActivityRequest extends FormRequest
                 'after:now',
                 function ($attribute, $value, $fail) {
                     $task = Task::query()->where('id', $this->taskId)->first();
-                    /** @var  $project Project */
+                    /** @var $project Project */
                     $project = $task->project ? $task->project : $task->order->user->project->first();
                     if ($project && $project->date_start) {
                         $dateStart = Carbon::parse($value);
@@ -89,7 +86,7 @@ class CreateTaskActivityRequest extends FormRequest
                             $fail('The activity start date must be after or equal to the project start date.');
                         }
                     }
-                }
+                },
             ],
             'dateEnd' => [
                 'required',
@@ -97,7 +94,7 @@ class CreateTaskActivityRequest extends FormRequest
                 'after:dateStart',
                 function ($attribute, $value, $fail) {
                     $task = Task::query()->where('id', $this->taskId)->first();
-                    /** @var  $project Project */
+                    /** @var $project Project */
                     $project = $task->project ? $task->project : $task->order->user->project->first();
                     if ($project && $project->date_end) {
                         $dateEnd = Carbon::parse($value);
@@ -107,13 +104,13 @@ class CreateTaskActivityRequest extends FormRequest
                             $fail('The activity end date must be before or equal to the project end date.');
                         }
                     }
-                }
+                },
             ],
             'needFoto' => 'required|boolean',
 
             'dateActivity' => 'sometimes|array|min:1',
             'dateActivity.*.timeStart' => 'required|date|after:now',
-            'dateActivity.*.timeEnd' => 'required|date|after:timeStart|before_or_equal:dateEnd',
+            'dateActivity.*.timeEnd' => 'required|date|after:timeStart|time_end_on_or_before_date_end',
             'dateActivity.*.placeIds' => 'sometimes|array|min:1',
             'dateActivity.*.placeIds.*' => [
                 'required',

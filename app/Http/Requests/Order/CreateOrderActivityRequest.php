@@ -15,8 +15,6 @@ class CreateOrderActivityRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
-     *
-     * @return bool
      */
     public function authorize(): bool
     {
@@ -38,24 +36,25 @@ class CreateOrderActivityRequest extends FormRequest
                     $orderExists = Order::query()->where('id', $value)
                         ->where('user_id', auth()->id())
                         ->whereIn('status', [
-                                OrderStatusEnum::new->value,
-                                OrderStatusEnum::notAccepted->value,
-                            ]
+                            OrderStatusEnum::new->value,
+                            OrderStatusEnum::notAccepted->value,
+                        ]
                         )
                         ->exists();
 
-                    if (!$orderExists) {
+                    if (! $orderExists) {
                         $fail('Not your order');
+
                         return;
                     }
 
-                    $users = User::where('id',Auth::user()->id)
+                    $users = User::where('id', Auth::user()->id)
                         ->whereHas('project')
                         ->whereDoesntHave('project', function ($query) {
                             $query->where('date_end', '>', Carbon::now());
                         })
                         ->first();
-                    if($users){
+                    if ($users) {
                         $fail('User project is out of date');
                     }
                 },
@@ -68,7 +67,7 @@ class CreateOrderActivityRequest extends FormRequest
                 'after:now',
                 function ($attribute, $value, $fail) {
                     $order = Order::query()->where('id', $this->orderId)->first();
-                    /** @var  $project Project */
+                    /** @var $project Project */
                     $project = $order->user->project->first();
                     if ($project && $project->date_start) {
                         $dateStart = Carbon::parse($value);
@@ -78,7 +77,7 @@ class CreateOrderActivityRequest extends FormRequest
                             $fail('The activity start date must be after or equal to the project start date.');
                         }
                     }
-                }
+                },
             ],
             'dateEnd' => [
                 'required',
@@ -86,7 +85,7 @@ class CreateOrderActivityRequest extends FormRequest
                 'after:dateStart',
                 function ($attribute, $value, $fail) {
                     $order = Order::query()->where('id', $this->orderId)->first();
-                    /** @var  $project Project */
+                    /** @var $project Project */
                     $project = $order->user->project->first();
                     if ($project && $project->date_end) {
                         $dateEnd = Carbon::parse($value);
@@ -96,13 +95,13 @@ class CreateOrderActivityRequest extends FormRequest
                             $fail('The activity end date must be before or equal to the project end date.');
                         }
                     }
-                }
+                },
             ],
             'needFoto' => 'required|boolean',
 
             'dateActivity' => 'sometimes|array|min:1',
             'dateActivity.*.timeStart' => 'required|date|after:now',
-            'dateActivity.*.timeEnd' => 'required|date|after:timeStart|before_or_equal:dateEnd',
+            'dateActivity.*.timeEnd' => 'required|date|after:timeStart|time_end_on_or_before_date_end',
             'dateActivity.*.placeIds' => 'sometimes|array|min:1',
             'dateActivity.*.placeIds.*' => [
                 'required',

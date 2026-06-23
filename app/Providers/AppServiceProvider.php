@@ -2,12 +2,12 @@
 
 namespace App\Providers;
 
+use App\Models\User;
+use App\Observers\UserObserver;
 use App\Services\DocumentCreator\PdfCreatorService;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Passport\Passport;
-use App\Models\User;
-use App\Observers\UserObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -46,6 +46,7 @@ class AppServiceProvider extends ServiceProvider
 
             return preg_replace_callback($pattern, function ($matches) {
                 $varName = $matches[1];
+
                 return "<?php echo e(\$$varName ?? ''); ?>";
             }, $value);
         });
