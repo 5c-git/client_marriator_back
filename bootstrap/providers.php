@@ -6,4 +6,5 @@ return [
     App\Providers\RepositoryServiceProvider::class,
     App\Providers\ValidationServiceProvider::class,
     Modules\Questionnaire\Providers\QuestionnaireServiceProvider::class,
+    Modules\YandexSmena\Providers\YandexSmenaServiceProvider::class,
 ];

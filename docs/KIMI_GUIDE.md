@@ -1,297 +1,43 @@
-# Инструкция по работе с Kimi Code CLI
+# Kimi Guide — Marriator
 
-Это руководство объясняет, как эффективно взаимодействовать с AI-ассистентом (Kimi Code CLI) в этом Laravel-проекте.
+This is a short guide for interacting with Kimi Code CLI on this project. For detailed agent instructions (commands, architecture, testing, etc.), see `AGENTS.md`.
 
----
+## Quick Commands
 
-## 1. Быстрый старт
-
-1. Открой терминал в корне проекта: `/Users/macintosh/marriator/marriator`.
-2. Задай вопрос или опиши задачу простым языком.
-3. Kimi сам разберётся в проекте, прочитает нужные файлы и предложит решение.
-
-Примеры запросов:
-
-```text
-Исправь баг в авторизации — при входе падает 500-я ошибка.
-Добавь в API метод для обновления профиля пользователя.
-Объясни, как работает модель Bid.
-Проверь, почему падают тесты.
-```
-
----
-
-## 2. Нужно ли индексировать проект?
-
-**Нет, индексировать не нужно.** Kimi читает файлы по мере необходимости: через поиск, по имени или по структуре проекта.
-
-Однако чем лучше организован проект, тем быстрее и точнее работа:
-
-- чёткая структура `app/Models`, `app/Services`, `app/Http/Controllers`;
-- понятные имена файлов и классов;
-- миграции и seeders актуальны;
-- есть тесты.
-
----
-
-## 3. Как правильно формулировать задачи
-
-### Хороший запрос
-
-```text
-В модели Order в методе calculatePrice() нужно добавить проверку:
-если price < 0, выбрасывать InvalidArgumentException.
-Метод находится в app/Models/Order/Order.php.
-После изменения запусти phpunit.
-```
-
-### Что делает запрос хорошим
-
-- указан конкретный файл или место;
-- описано ожидаемое поведение;
-- сказано, что проверить после изменений.
-
-### Запросы, которых стоит избегать
-
-```text
-Сделай всё хорошо.
-Почини баг.
-Улучши код.
-```
-
-Такие формулировки слишком размыты. Лучше добавить детали: где проблема, как воспроизвести, какой результат ожидается.
-
----
-
-## 4. Контекст: AGENTS.md
-
-`AGENTS.md` — это файл с инструкциями для AI-агента. Он помогает Kimi лучше понимать проект и следовать правилам.
-
-### Где создавать
-
-- `AGENTS.md` в корне — общие правила проекта.
-- `app/AGENTS.md` — правила для бизнес-логики.
-- `resources/views/AGENTS.md` — правила для Blade-шаблонов.
-- `tests/AGENTS.md` — правила для тестов.
-
-### Что писать
-
-```markdown
-# Правила проекта Marriator
-
-## Архитектура
-- Используем Service Layer: контроллеры тонкие, логика в Services.
-- Модели не должны содержать сложную бизнес-логику.
-
-## Код-стайл
-- Следуем PSR-12.
-- Используем Laravel Pint для форматирования.
-- Все публичные методы должны иметь type hints.
-
-## Тесты
-- Каждый новый сервис покрывать unit-тестом.
-- Запускать тесты командой: ./vendor/bin/sail artisan test
-
-## БД
-- Используем Laravel Sail с MySQL.
-- Для схемы смотреть миграции в database/migrations.
-```
-
-Чем подробнее `AGENTS.md`, тем меньше нужно объяснять в каждом запросе.
-
----
-
-## 5. Навыки (skills)
-
-### Что такое skills
-
-Skills — это встроенные или пользовательские расширения, которые дают Kimi дополнительные возможности.
-
-### Какие skills доступны сейчас
-
-В текущей сессии доступны:
-
-- `update-config` — редактирование настроек Kimi Code CLI (`config.toml`, `tui.toml`).
-- `sub-skill.review` — аудит списка skills и предложения по их группировке.
-
-### Как активировать skill
-
-Например:
-
-```text
-/using-superpowers
-/sub-skill.review
-```
-
-Или просто скажи: «Активируй skill sub-skill.review».
-
-### Как добавить свой skill
-
-1. Создай директорию, например `.kimi-code/skills/my-skill/`.
-2. Внутри создай файл `SKILL.md` с описанием:
-
-```markdown
-# my-skill
-
-## Описание
-Этот skill помогает работать с документами проекта.
-
-## Когда использовать
-- Когда нужно сгенерировать PDF из шаблона.
-- Когда нужно проверить договор на ошибки.
-
-## Пример использования
-Запрос: "Сгенерируй договор offer для пользователя #123".
-```
-
-3. Перезапусти сессию или дождись обновления списка skills.
-
-> **Важно:** пользовательские skills работают только если Kimi Code CLI настроен на их загрузку. Если skill не появился — проверь конфигурацию через `update-config`.
-
----
-
-## 6. Инструменты, которыми я пользуюсь
-
-Kimi может выполнять разные действия в проекте:
-
-| Инструмент | Что делает | Пример |
-|---|---|---|
-| `Read` | Читает файлы | `Прочитай app/Models/User.php` |
-| `Edit` | Редактирует файлы | `Исправь опечатку в методе` |
-| `Write` | Создаёт новые файлы | `Создай контроллер TaskController` |
-| `Bash` | Выполняет команды в терминале | `Запусти тесты` |
-| `Grep` | Ищет по содержимому файлов | `Найди все вызовы calculatePrice` |
-| `Glob` | Ищет файлы по шаблону | `Покажи все модели` |
-| `Agent` | Делегирует задачу под-агенту | Сложные многокомпонентные задачи |
-
----
-
-## 7. Безопасность и одобрения
-
-### Что требует подтверждения
-
-Некоторые действия Kimi выполняет только после твоего одобрения:
-
-- запуск bash-команд;
-- изменение файлов (в зависимости от настроек permissions);
-- доступ к Docker, БД, внешним сервисам.
-
-### Как одобрить
-
-В терминале Kimi Code CLI появится запрос. Нужно нажать `y` (yes) или `a` (always), либо отклонить `n`.
-
-### Важно
-
-- **Никогда** не одобряй команд, если не понимаешь, что они делают.
-- Kimi не будет сам делать `git push`, `git reset`, `rm -rf` и другие опасные операции без явного подтверждения.
-- Если что-то пошло не так, можно отменить через git: `git checkout -- .` или `git reset`.
-
----
-
-## 8. Docker и БД
-
-Проект использует Laravel Sail. Вот основные команды, которые Kimi может выполнить для тебя:
+All commands run through Laravel Sail:
 
 ```bash
-# Поднять контейнеры
-./vendor/bin/sail up -d
+# Run tests
+./vendor/bin/sail exec -u sail laravel.test ./vendor/bin/phpunit
 
-# Выполнить artisan-команду
-./vendor/bin/sail artisan migrate
+# Check / fix code style
+./vendor/bin/sail exec -u sail laravel.test ./vendor/bin/pint
 
-# Запустить тесты
-./vendor/bin/sail artisan test
-
-# Подключиться к MySQL напрямую
-./vendor/bin/sail mysql
-
-# Выполнить SQL-запрос внутри контейнера MySQL
-docker compose exec mysql sh -c 'mysql -u root -p"$MYSQL_ROOT_PASSWORD" -e "USE $MYSQL_DATABASE; SELECT * FROM users LIMIT 5;"'
+# Tinker
+./vendor/bin/sail exec laravel.test php artisan tinker
 ```
 
-### Как получить данные из БД
+## Working with Kimi
 
-Просто попроси:
+- **Automatic mode.** Kimi will choose the right workflow for each task. For non-trivial changes it enters plan mode automatically and presents the plan for approval.
+- **Planning is required** for new features, architectural decisions, multi-file changes, or unclear requirements.
+- **Context.** Kimi tracks progress in the TODO list and reads `AGENTS.md` and the docs listed there before starting work.
+- **MCP.** Kimi can use the Laravel Boost MCP server for database schema, queries, docs search, and application info.
 
-```text
-Выведи последние 5 записей из таблицы users.
-Покажи структуру таблицы bids.
-```
+## Key Documentation
 
-Kimi сам подключится через Docker и выполнит запрос.
+- `docs/FORM_REGISTRATION.md` — registration form flow
+- `docs/USER_DATA_ANALYSIS.md` — `users.data` structure
+- `docs/QUESTIONNAIRE_MODULE.md` — questionnaire module
+- `docs/YANDEX_SMENA_MODULE.md` — Yandex.Smena integration
+- `docs/PROJECT_STATUS.md` — current project snapshot
+- `docs/SKILLS.md` — available skills
 
----
+## Module Pattern
 
-## 9. Частые сценарии
+Large features are built as modules under `app/Modules/<ModuleName>/` with their own config, migrations, models, routes, and provider. If you want a new module, ask Kimi to plan it first.
 
-### Исправить баг
+## Asking for Help
 
-```text
-При создании заявки (Bid) падает ошибка 500. Логи говорят о проблеме в app/Services/BidService.php. Разберись и исправь.
-```
-
-### Добавить фичу
-
-```text
-Нужно добавить поле phone_verified_at в таблицу users. Сделай миграцию, обнови модель User и напиши unit-тест.
-```
-
-### Рефакторинг
-
-```text
-Вынеси валидацию из BidController в отдельный FormRequest. Назови StoreBidRequest.
-```
-
-### Проверить качество кода
-
-```text
-Запусти Laravel Pint и PHPStan, исправь найденные ошибки.
-```
-
-### Объяснить код
-
-```text
-Объясни, как работает метод accept() в BidService.
-```
-
----
-
-## 10. Что я не умею
-
-- **Не имею доступа к интернету** по умолчанию (есть инструменты `WebSearch`/`FetchURL`, но они работают только для публичных страниц).
-- **Не помню** контекст между разными сессиями, если сессия не сохранена.
-- **Не могу** выполнять действия вне рабочей директории без разрешения.
-- **Не могу** читать секретные файлы: `.env`, SSH-ключи, токены и т.д.
-- **Не могу** самостоятельно делать `git commit`, `git push`, `git reset` без явного запроса.
-
----
-
-## 11. Советы по продуктивной работе
-
-1. **Начинай с контекста.** Если задача сложная, кратко опиши, что ты хочешь получить.
-2. **Указывай файлы.** Если знаешь, где проблема — назови файл и метод.
-3. **Проси проверки.** Попроси Kimi запустить тесты или линтер после изменений.
-4. **Делай шаги.** Для больших задач лучше разбить на этапы и обсуждать каждый.
-5. **Используй AGENTS.md.** Чем больше контекста о проекте зафиксировано, тем меньше повторов.
-
----
-
-## 12. Пример идеального запроса
-
-```text
-Нужно добавить метод PATCH /api/users/{id}/profile в проект.
-
-Требования:
-- Обновлять можно поля: name, phone, email.
-- Email должен быть уникальным, кроме текущего пользователя.
-- Доступ только для авторизованных пользователей (Sanctum).
-- Валидация через FormRequest.
-- Логика обновления в UserService.
-- После изменения запусти тесты и Laravel Pint.
-
-Если чего-то не хватает — спроси.
-```
-
----
-
-Если у тебя остались вопросы — просто спроси.
+- Be specific about what should happen and how to verify it.
+- If something is unclear, Kimi will ask before proceeding.

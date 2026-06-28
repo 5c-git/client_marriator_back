@@ -304,6 +304,11 @@ Route::post('/finishRegister/', [FormController::class, 'finishRegister'])->name
    - На текущий момент это поиск местоположения (`searchPlace`) по полю `vk0wcCKTq7sP67Iybq19sLyJckCZzz`.
    - Если найдены координаты — сохраняет `latitude` и `longitude` в пользователя.
 8. Сохраняет пользователя.
+
+   > **После сохранения** срабатывает `UserObserver::updated()`. Если `finishRegister` и `confirmRegister` стали `true`, observer диспатчит:
+   > - `SyncUserToExternalSystemJob` в очередь `external-sync`;
+   > - `QuestionnaireProcessor::processUser($user)` в очередь `questionnaire`.
+
 9. Создаёт токен доступа:
    ```php
    $apiTokenService = new ApiTokenService($user);
@@ -351,6 +356,9 @@ Route::post('/finishRegister/', [FormController::class, 'finishRegister'])->name
 6. Повторяет шаги 3-5 для шагов 2, 3, ...
 7. POST /api/finishRegister/ → FormController::finishRegister
    └── 1С → распознавание → токен 'personalArea'
+   └── UserObserver (при finishRegister && confirmRegister)
+       ├── SyncUserToExternalSystemJob → очередь external-sync
+       └── QuestionnaireProcessor → очередь questionnaire
 ```
 
 ---

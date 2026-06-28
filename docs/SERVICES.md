@@ -445,4 +445,55 @@
 
 ---
 
-Итог: сервисы покрывают авторизацию (токены, SMS, email), формы (FormBuilderService, Formatter), заказы/задачи/ставки/отчёты (OrderRepository), пользователей и модерацию (UserRepository), документы (Nopaper, Correct, PDF, 1С), интеграции (1С, PVP, Correct) и вспомогательные утилиты (Time, Coordinates).
+## 21. UserExternalSync (`app/Services/UserExternalSync/`)
+
+**Назначение:** Формирование структурированного экспорта данных пользователя во внешнюю систему.
+
+**Классы:**
+- `UserExternalSyncService` — собирает данные пользователя из `users.data`, справочников и реквизитов.
+- `SyncUserToExternalSystemJob` — job, отправляемый в очередь `external-sync` после завершения регистрации.
+- `UserExternalSyncController` — входящий endpoint `/api/integration/syncUser/`.
+
+**Использование:** `UserObserver::updated()` диспатчит job после `finishRegister && confirmRegister`.
+
+---
+
+## 22. ValidationServiceProvider (`app/Providers/ValidationServiceProvider.php`)
+
+**Назначение:** Централизованная регистрация кастомных правил валидации.
+
+**Пример правила:** `time_end_on_or_before_date_end` — проверяет, что `dateActivity.*.timeEnd` не позже `dateEnd` активности. Применяется в 6 request-файлах Order/Task.
+
+---
+
+## 23. Questionnaire (`app/Modules/Questionnaire/Services/`)
+
+**Назначение:** Модуль построения и пошаговой обработки анкеты после регистрации.
+
+**Классы:**
+- `QuestionnaireBuilder` — парсит `User` в структуру `questionnaires.data`.
+- `QuestionnaireProcessor` — оркеструет цепочку шагов, управляет очередью и Redis-локами.
+- `QuestionnaireDataMapper` — добавляет семантические ключи (`first_name`, `phone`, `inn`) к данным с UUID-ключами.
+- `Steps\QuestionnaireStepInterface` + примеры шагов валидации/обогащения.
+
+**Очередь:** `questionnaire` (Redis + Horizon).
+
+---
+
+## 24. Yandex.Smena (`app/Modules/YandexSmena/Services/`)
+
+**Назначение:** Интеграция с API Yandex.Smena для публикации смен и обработки кандидатов.
+
+**Классы:**
+- `YandexSmenaApiClient` / `YandexSmenaApiClientInterface` — HTTP-клиент для `POST /api/v1/events/publish`.
+- `YandexSmenaEventPublisher` — формирует конверт события и диспатчит `PublishYandexSmenaEventJob`.
+- `Mappers\SiteMapper` — `Place` → site.
+- `Mappers\ProfessionMapper` — `ViewActivities` → profession.
+- `Mappers\PaymentMapper` — конфиг `PAY_*` → tariff.
+- `Mappers\ShiftMapper` — `OrderActivities` / `TaskActivity` → shift.
+
+**Очередь:** `yandex-smena` (Redis + Horizon).
+
+---
+
+Итог: сервисы покрывают авторизацию (токены, SMS, email), формы (FormBuilderService, Formatter), заказы/задачи/ставки/отчёты (OrderRepository), пользователей и модерацию (UserRepository), документы (Nopaper, Correct, PDF, 1С), интеграции (1С, PVP, Correct, Yandex.Smena, UserExternalSync), вспомогательные утилиты (Time, Coordinates) и модули анкетирования/валидации.

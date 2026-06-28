@@ -1,0 +1,1045 @@
+# Смена API
+Яндекс.Смена для потребителя услуг (Провайдера) — это способ быстро закрывать потребность в сменах через единый интеграционный контур: вы создаёте смену, платформа подбирает исполнителя, а вы управляете подтверждением, стартом, фактом и качеством выполнения через события.
+## [](ru/#vozmozhnosti)Возможности
+- Управление сменами — создание, отмена, приостановка и возобновление поиска исполнителя. Вы задаёте параметры (точка, профессия, тариф, время), а Смена ищет исполнителя.
+        
+- Работа с исполнителями на сменах — подтверждение или отклонение откликнувшегося исполнителя, старт смены (опционально через QR-код), проставление факта (отработанное время или неявка), оценка выполнения, получение корректировок факта от Смены.
+        
+- Контроль качества — блокировка/разблокировка исполнителей (глобально или в рамках точки/профессии), добавление в избранные для ускорения повторных выходов (включая режим «только избранные»).
+        
+- Получение данных исполнителя — ИНН, ФИО, телефон, СНИЛС.
+### Была ли статья полезна?
+Следующая[Жизненный цикл смены](ru/lifecycle)
+
+---
+
+# Жизненный цикл смены
+Типовой сценарий от заявки до закрытия:
+- Создать смену — Провайдер задаёт точку, профессию, тариф и время.
+        
+- Получить отклик исполнителя — Смена сообщает, что исполнитель откликнулся.
+        
+- Принять решение — Провайдер либо подтверждает исполнителя, либо отклоняет (при отклонении поиск продолжается).
+        
+- Старт смены (опционально с QR-кодом) — Провайдер может выдать код, чтобы у исполнителя появился QR, а затем после проверки зафиксировать старт.
+        
+- Закрыть смену фактом — Провайдер передаёт факт: отработанное время или неявку.
+        
+- Оценить качество — Провайдер ставит оценку 1–5.
+### Была ли статья полезна?
+Предыдущая[Введение](ru/)Следующая[События](ru/events)
+
+---
+
+# События
+- [Принцип работы](ru/events#princip-raboty)
+- [Структура события](ru/events#struktura-sobytiya)
+- [Ключи сущностей](ru/events#klyuchi-sushnostej)
+- [События Провайдера](ru/events#sobytiya-provajdera)
+- [События Смены](ru/events#sobytiya-smeny)
+- [Диаграмма состояний](ru/events#diagramma-sostoyanij)
+## [](ru/events#princip-raboty)Принцип работы
+Взаимодействие построено на событиях. Все операции — асинхронные.
+- Провайдер отправляет события в Смену через `POST /api/v1/events/publish`.
+        
+- Провайдер получает события от Смены через `GET /api/v1/events/poll`.
+        
+- Данные исполнителя запрашиваются отдельно через `GET /api/v1/worker/{worker_id}`.
+    
+    
+Типичный сценарий описан в разделе [Жизненный цикл смены](ru/lifecycle).
+Важно
+Ответ `200 OK` на отправку события означает только приём в очередь. Результат операции (успех или ошибка) приходит позже отдельным событием [`smena.event.result`](ru/smena-event-result) при [поллинге](ru/poll).
+## [](ru/events#struktura-sobytiya)Структура события
+Каждое событие (в обе стороны) имеет единую структуру:
+
+| Поле | Тип | Описание |
+|---|---|---|
+| `event_id` | string (UUID v7) | Уникальный идентификатор события |
+| `event_type` | string | Тип события (формат: `{источник}.{сущность}.{действие}`) |
+| `event_ts` | string (datetime) | Время создания события (UTC) |
+| `entity_type` | string | Тип сущности: `shift` или `worker` |
+| `entity_id` | string | Идентификатор сущности |
+| `payload` | object | Данные события (наполнение зависит от типа) |
+Примечание
+Все даты и время во всех полях передаются в формате ISO 8601 в UTC (с суффиксом `Z`), например: `2026-01-24T10:00:00Z`.
+### [](ru/events#klyuchi-sushnostej)Ключи сущностей
+- Смена (`entity_type: shift`): `entity_id` — уникальный идентификатор смены, генерируемый Провайдером. Должен быть уникален для каждой смены и не может быть переиспользован.
+        
+- Исполнитель (`entity_type: worker`): `entity_id` — идентификатор исполнителя в системе Смены (приходит в событиях от Смены).
+## [](ru/events#sobytiya-provajdera)События Провайдера
+
+| Событие | Код | Что делает | Результат |
+|---|---|---|---|
+| [Создание смены](ru/provider-shift-create) | `provider.shift.create` | Создаёт смену с указанием точки, профессии, тарифа и времени. Можно запросить конкретных исполнителей | Смена создана, начинается поиск исполнителя |
+| [Отмена смены](ru/provider-shift-cancel) | `provider.shift.cancel` | Отменяет смену | Смена отменена, исполнитель (если был) снят |
+| [Возобновление поиска](ru/provider-shift-resume) | `provider.shift.resume` | Возобновляет поиск исполнителя на отменённую смену | Смена снова доступна для откликов |
+| [Подтверждение исполнителя](ru/provider-shift-approve-worker) | `provider.shift.approve_worker` | Подтверждает назначение откликнувшегося исполнителя | Подтверждение зафиксировано. Состояние смены не меняется |
+| [Отклонение исполнителя](ru/provider-shift-reject-worker) | `provider.shift.reject_worker` | Отклоняет откликнувшегося исполнителя | Исполнитель снят, поиск возобновлён |
+| [Установка кода для начала смены](ru/provider-shift-set-code) | `provider.shift.set_code` | Опционально. Передаёт код для начала смены. В приложении исполнителя отобразится QR. Можно обновлять и задать срок действия | Код сохранён, исполнитель видит QR |
+| [Начало смены](ru/provider-shift-start) | `provider.shift.start` | Опционально. Фиксирует начало смены | Смена начата |
+| [Проставление факта](ru/provider-shift-set-fact) | `provider.shift.set_fact` | Проставляет фактическую длительность или неявку. Можно отправить повторно для корректировки | Факт зафиксирован. При неявке — смена отменяется |
+| [Оценка исполнителя](ru/provider-shift-rate-worker) | `provider.shift.rate_worker` | Оценивает исполнителя по шкале 1–5 | Оценка сохранена |
+| [Блокировка исполнителя](ru/provider-worker-block) | `provider.worker.block` | Блокирует исполнителя — глобально или на конкретной точке/профессии. Временная или постоянная | Исполнитель не будет назначаться на смены в рамках блокировки |
+| [Разблокировка исполнителя](ru/provider-worker-unblock) | `provider.worker.unblock` | Снимает блокировку — глобально или на конкретной точке/профессии | Исполнитель снова доступен |
+| [Добавление в избранные](ru/provider-worker-like) | `provider.worker.like` | Добавляет исполнителя в избранные на точке | Исполнитель будет чаще предлагаться на этой точке |
+| [Удаление из избранных](ru/provider-worker-unlike) | `provider.worker.unlike` | Убирает исполнителя из избранных на точке | Приоритет исполнителя на точке сброшен |
+## [](ru/events#sobytiya-smeny)События Смены
+
+| Событие | Код | Что сообщает | Ожидаемая реакция Провайдера |
+|---|---|---|---|
+| [Исполнитель откликнулся](ru/smena-shift-signup-worker) | `smena.shift.signup_worker` | Исполнитель откликнулся на смену или избранный исполнитель подтвердил выход | Подтвердить (`approve_worker`) или отклонить (`reject_worker`) |
+| [Исполнитель снят со смены](ru/smena-shift-withdraw-worker) | `smena.shift.withdraw_worker` | Исполнитель снят со смены — отказался сам, не найден или есть пересечение | Ничего — поиск продолжается автоматически |
+| [Корректировка факта](ru/smena-shift-adjust-fact) | `smena.shift.adjust_fact` | Факт по смене изменён на стороне Смены (через поддержку или сверку) | Информационное — обновить данные о факте при необходимости |
+| [Результат обработки события](ru/smena-event-result) | `smena.event.result` | Результат обработки отправленного provider-события (успех или ошибка) | Сопоставить с отправленным событием (подробнее — [Результат обработки](ru/smena-event-result)) |
+## [](ru/events#diagramma-sostoyanij)Диаграмма состояний
+
+| Статус | Описание | Переходы | Без смены состояния |
+|---|---|---|---|
+| `available` | Смена создана, идёт поиск исполнителя | `smena.shift.signup_worker` → `assigned`; `provider.shift.cancel` → `canceled` | — |
+| `assigned` | Исполнитель откликнулся, ожидает подтверждения | `provider.shift.reject_worker` → `available`; `smena.shift.withdraw_worker` → `available`; `provider.shift.cancel` → `canceled`; `provider.shift.start` → `started`; `provider.shift.set_fact` → `finished` / `canceled` | `provider.shift.approve_worker`; `provider.shift.set_code` |
+| `started` | Смена начата | `provider.shift.set_fact` → `finished` / `canceled` | — |
+| `finished` | Смена завершена | — | `provider.shift.set_fact`; `provider.shift.rate_worker`; `smena.shift.adjust_fact` |
+| `canceled` | Смена отменена | `provider.shift.resume` → `available` | — |
+### Была ли статья полезна?
+Предыдущая[Жизненный цикл смены](ru/lifecycle)Следующая[Как отправить событие?](ru/publish)
+
+---
+
+- События от Провайдера
+- Как отправить событие?
+# Как отправить событие?
+- [Гарантии, которые должен обеспечить Провайдер](ru/publish#garantii,-kotorye-dolzhen-obespechit-provajder)
+- [Поведение при ошибках](ru/publish#povedenie-pri-oshibkah)
+Endpoint: `POST /api/v1/events/publish`
+Тело запроса — объект `Event` (структура описана в разделе [Структура события](ru/events#структура-события)). При успешной обработке метод возвращает `200 OK` без тела ответа.
+## [](ru/publish#garantii,-kotorye-dolzhen-obespechit-provajder)Гарантии, которые должен обеспечить Провайдер
+- Уникальность `event_id` — повторное событие с тем же `event_id` будет проигнорировано (дедупликация). Метод всё равно вернёт `200 OK`, но событие не будет обработано повторно и дополнительного `smena.event.result` не придёт.
+        
+- Корректный `event_ts` — для одной и той же сущности (`entity_id` + `entity_type`, см. [Структура события](ru/events#структура-события)) Смена обрабатывает только события с возрастающим `event_ts`. Если событие приходит с `event_ts` меньше, чем у последнего обработанного — оно игнорируется.
+    
+    
+Важно
+Пример: если `approve_worker` пришёл с `event_ts = 10:00`, а затем `reject_worker` с `event_ts = 09:59`, то отклонение будет проигнорировано — считается, что исполнитель подтверждён.
+## [](ru/publish#povedenie-pri-oshibkah)Поведение при ошибках
+Транспорт. Если `publish` вернул ошибку сервера (5xx) или запрос завершился таймаутом, повторите запрос с тем же `event_id`. Благодаря дедупликации событие не будет обработано дважды.
+Результат обработки. Ответ `200 OK` на `publish` означает только приём события в очередь. Итог обработки (успех или ошибка) приходит отдельным событием `smena.event.result` при [поллинге](ru/poll). Сопоставляйте его с отправленным событием по `source_event_id`. Подробнее — в разделе [Результат обработки события](ru/smena-event-result).
+### Была ли статья полезна?
+Предыдущая[События](ru/events)Следующая[Создание смены](ru/provider-shift-create)
+
+---
+
+- События от Провайдера
+- Создание смены
+# Создание смены
+- [Payload](ru/provider-shift-create#payload)
+- [Пример](ru/provider-shift-create#primer)
+`provider.shift.create` — создаёт новую смену. Можно указать избранных исполнителей.
+## [](ru/provider-shift-create#payload)Payload
+
+| Поле | Обязательное | Тип | Описание |
+|---|---|---|---|
+| `site_id` | да | string | ID торговой точки |
+| `profession_id` | да | string | ID профессии |
+| `payment_id` | да | string | ID тарифа оплаты |
+| `start_at` | да | datetime | Дата и время начала (UTC) |
+| `length` | да | integer | Длительность смены в минутах (включая перерыв) |
+| `rest_length` | да | integer | Длительность перерыва в минутах |
+| `favorites_worker_ids` | нет | string[] | ID избранных исполнителей |
+| `favorites_only` | нет | boolean | Если `true` — смена будет отменена, если ни один из избранных исполнителей не сможет выйти |
+## [](ru/provider-shift-create#primer)Пример
+`curl -X POST "$HOST/api/v1/events/publish" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "event_id": "550e8400-e29b-71d4-a716-446655440001",
+    "event_type": "provider.shift.create",
+    "event_ts": "2026-01-23T08:00:00Z",
+    "entity_type": "shift",
+    "entity_id": "shift-001",
+    "payload": {
+      "site_id": "site-1",
+      "profession_id": "prof-1",
+      "payment_id": "pay-1",
+      "start_at": "2026-01-24T10:00:00Z",
+      "length": 480,
+      "rest_length": 60,
+      "favorites_worker_ids": ["worker-42"],
+      "favorites_only": false
+    }
+  }'
+`
+
+        
+
+            
+        
+    
+    
+Важно
+`favorites_only = true`: если все избранные исполнители недоступны, смена автоматически переходит в статус `canceled`. На каждого недоступного исполнителя приходит событие `smena.shift.withdraw_worker` с причиной (`favorite_not_found`, `favorite_not_confirmed`, `favorite_has_intersection`).
+### Была ли статья полезна?
+Предыдущая[Как отправить событие?](ru/publish)Следующая[Отмена смены](ru/provider-shift-cancel)
+
+---
+
+- События от Провайдера
+- Отмена смены
+# Отмена смены
+- [Payload](ru/provider-shift-cancel#payload)
+- [Пример](ru/provider-shift-cancel#primer)
+`provider.shift.cancel` — отменяет смену.
+## [](ru/provider-shift-cancel#payload)Payload
+
+| Поле | Обязательное | Тип | Описание |
+|---|---|---|---|
+| `reason` | да | string | Причина отмены |
+| `comment` | нет | string | Комментарий |
+Допустимые значения `reason`:
+
+| Значение | Описание |
+|---|---|
+| `creation_mistake` | Ошибка при создании |
+| `service_not_needed` | Услуга больше не нужна |
+| `worker_not_found` | Исполнитель не найден |
+| `other` | Другое |
+## [](ru/provider-shift-cancel#primer)Пример
+`curl -X POST "$HOST/api/v1/events/publish" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "event_id": "550e8400-e29b-71d4-a716-446655440002",
+    "event_type": "provider.shift.cancel",
+    "event_ts": "2026-01-23T09:00:00Z",
+    "entity_type": "shift",
+    "entity_id": "shift-001",
+    "payload": {
+      "reason": "service_not_needed",
+      "comment": "Смена больше не нужна"
+    }
+  }'
+`
+### Была ли статья полезна?
+Предыдущая[Создание смены](ru/provider-shift-create)Следующая[Возобновление поиска](ru/provider-shift-resume)
+
+---
+
+- События от Провайдера
+- Возобновление поиска
+# Возобновление поиска
+- [Payload](ru/provider-shift-resume#payload)
+- [Пример](ru/provider-shift-resume#primer)
+`provider.shift.resume` — возобновляет поиск исполнителя на ранее отменённую смену.
+## [](ru/provider-shift-resume#payload)Payload
+
+| Поле | Обязательное | Тип | Описание |
+|---|---|---|---|
+| `comment` | нет | string | Комментарий |
+## [](ru/provider-shift-resume#primer)Пример
+`curl -X POST "$HOST/api/v1/events/publish" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "event_id": "550e8400-e29b-71d4-a716-446655440003",
+    "event_type": "provider.shift.resume",
+    "event_ts": "2026-01-23T10:00:00Z",
+    "entity_type": "shift",
+    "entity_id": "shift-001",
+    "payload": {}
+  }'
+`
+### Была ли статья полезна?
+Предыдущая[Отмена смены](ru/provider-shift-cancel)Следующая[Подтверждение исполнителя](ru/provider-shift-approve-worker)
+
+---
+
+- События от Провайдера
+- Подтверждение исполнителя
+# Подтверждение исполнителя
+- [Payload](ru/provider-shift-approve-worker#payload)
+- [Пример](ru/provider-shift-approve-worker#primer)
+`provider.shift.approve_worker` — подтверждает назначение откликнувшегося исполнителя. Событие не меняет состояние смены — исполнитель считается назначенным с момента отклика (`smena.shift.signup_worker`).
+## [](ru/provider-shift-approve-worker#payload)Payload
+
+| Поле | Обязательное | Тип | Описание |
+|---|---|---|---|
+| `worker_id` | да | string | ID исполнителя |
+## [](ru/provider-shift-approve-worker#primer)Пример
+`curl -X POST "$HOST/api/v1/events/publish" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "event_id": "550e8400-e29b-71d4-a716-446655440004",
+    "event_type": "provider.shift.approve_worker",
+    "event_ts": "2026-01-23T11:00:00Z",
+    "entity_type": "shift",
+    "entity_id": "shift-001",
+    "payload": {
+      "worker_id": "worker-42"
+    }
+  }'
+`
+### Была ли статья полезна?
+Предыдущая[Возобновление поиска](ru/provider-shift-resume)Следующая[Отклонение исполнителя](ru/provider-shift-reject-worker)
+
+---
+
+- События от Провайдера
+- Отклонение исполнителя
+# Отклонение исполнителя
+- [Payload](ru/provider-shift-reject-worker#payload)
+- [Пример](ru/provider-shift-reject-worker#primer)
+`provider.shift.reject_worker` — отклоняет исполнителя с указанием причины. Смена продолжит поиск нового исполнителя.
+## [](ru/provider-shift-reject-worker#payload)Payload
+
+| Поле | Обязательное | Тип | Описание |
+|---|---|---|---|
+| `worker_id` | да | string | ID исполнителя |
+| `reason` | да | string | Причина отклонения |
+| `comment` | нет | string | Комментарий |
+Допустимые значения `reason`:
+
+| Значение | Описание |
+|---|---|
+| `banned_by_inn` | Исполнитель заблокирован по ИНН |
+| `need_other_worker` | Нужен другой исполнитель |
+| `other` | Другое |
+## [](ru/provider-shift-reject-worker#primer)Пример
+`curl -X POST "$HOST/api/v1/events/publish" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "event_id": "550e8400-e29b-71d4-a716-446655440005",
+    "event_type": "provider.shift.reject_worker",
+    "event_ts": "2026-01-23T11:00:00Z",
+    "entity_type": "shift",
+    "entity_id": "shift-001",
+    "payload": {
+      "worker_id": "worker-42",
+      "reason": "need_other_worker",
+      "comment": "Нужен другой исполнитель"
+    }
+  }'
+`
+### Была ли статья полезна?
+Предыдущая[Подтверждение исполнителя](ru/provider-shift-approve-worker)Следующая[Установка кода для начала смены](ru/provider-shift-set-code)
+
+---
+
+- События от Провайдера
+- Установка кода для начала смены
+# Установка кода для начала смены
+- [Payload](ru/provider-shift-set-code#payload)
+- [Пример](ru/provider-shift-set-code#primer)
+`provider.shift.set_code` — опциональное событие. Используется, если Провайдер хочет контролировать начало смены через свою систему.
+Провайдер передаёт код, на основе которого в приложении исполнителя отображается QR. Исполнитель показывает QR на точке, Провайдер сканирует его и проверяет по своей логике. После успешной проверки Провайдер отправляет событие `provider.shift.start`, фиксируя начало смены.
+Код можно обновлять повторной отправкой события. Если указан `expires_at`, после истечения срока код перестаёт отображаться в приложении.
+## [](ru/provider-shift-set-code#payload)Payload
+
+| Поле | Обязательное | Тип | Описание |
+|---|---|---|---|
+| `worker_id` | да | string | ID исполнителя |
+| `code` | да | string | Уникальный код |
+| `expires_at` | нет | datetime | Срок действия кода (UTC). После истечения код перестаёт отображаться |
+## [](ru/provider-shift-set-code#primer)Пример
+`curl -X POST "$HOST/api/v1/events/publish" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "event_id": "550e8400-e29b-71d4-a716-446655440006",
+    "event_type": "provider.shift.set_code",
+    "event_ts": "2026-01-24T09:50:00Z",
+    "entity_type": "shift",
+    "entity_id": "shift-001",
+    "payload": {
+      "worker_id": "worker-42",
+      "code": "ABC123",
+      "expires_at": "2026-01-24T10:30:00Z"
+    }
+  }'
+`
+### Была ли статья полезна?
+Предыдущая[Отклонение исполнителя](ru/provider-shift-reject-worker)Следующая[Начало смены](ru/provider-shift-start)
+
+---
+
+- События от Провайдера
+- Начало смены
+# Начало смены
+- [Payload](ru/provider-shift-start#payload)
+- [Пример](ru/provider-shift-start#primer)
+`provider.shift.start` — опциональное событие. Фиксирует начало смены. Ожидается после того, как Провайдер проверил QR-код исполнителя (см. [Установка кода](ru/provider-shift-set-code)) по своей логике и подтвердил допуск к смене.
+## [](ru/provider-shift-start#payload)Payload
+
+| Поле | Обязательное | Тип | Описание |
+|---|---|---|---|
+| `worker_id` | да | string | ID исполнителя |
+| `start_at` | да | datetime | Фактическое время начала (UTC) |
+## [](ru/provider-shift-start#primer)Пример
+`curl -X POST "$HOST/api/v1/events/publish" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "event_id": "550e8400-e29b-71d4-a716-446655440007",
+    "event_type": "provider.shift.start",
+    "event_ts": "2026-01-24T10:02:00Z",
+    "entity_type": "shift",
+    "entity_id": "shift-001",
+    "payload": {
+      "worker_id": "worker-42",
+      "start_at": "2026-01-24T10:02:00Z"
+    }
+  }'
+`
+### Была ли статья полезна?
+Предыдущая[Установка кода для начала смены](ru/provider-shift-set-code)Следующая[Проставление факта](ru/provider-shift-set-fact)
+
+---
+
+- События от Провайдера
+- Проставление факта
+# Проставление факта
+- [Payload](ru/provider-shift-set-fact#payload)
+- [Пример](ru/provider-shift-set-fact#primer)
+`provider.shift.set_fact` — фиксирует результат смены: фактическую длительность или неявку. Если `is_absent = true`, смена отменяется.
+## [](ru/provider-shift-set-fact#payload)Payload
+
+| Поле | Обязательное | Тип | Описание |
+|---|---|---|---|
+| `worker_id` | да | string | ID исполнителя |
+| `is_absent` | да | boolean | `true` — неявка |
+| `fact_length` | нет | integer | Фактическая длительность в минутах (включая перерыв) |
+| `fact_rest_length` | нет | integer | Фактическая длительность перерыва в минутах |
+Примечание
+При неявке (`is_absent = true`) поля `fact_length` и `fact_rest_length` можно не передавать — они считаются равными нулю.
+## [](ru/provider-shift-set-fact#primer)Пример
+`curl -X POST "$HOST/api/v1/events/publish" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "event_id": "550e8400-e29b-71d4-a716-446655440008",
+    "event_type": "provider.shift.set_fact",
+    "event_ts": "2026-01-24T18:05:00Z",
+    "entity_type": "shift",
+    "entity_id": "shift-001",
+    "payload": {
+      "worker_id": "worker-42",
+      "is_absent": false,
+      "fact_length": 470,
+      "fact_rest_length": 55
+    }
+  }'
+`
+### Была ли статья полезна?
+Предыдущая[Начало смены](ru/provider-shift-start)Следующая[Оценка исполнителя](ru/provider-shift-rate-worker)
+
+---
+
+- События от Провайдера
+- Оценка исполнителя
+# Оценка исполнителя
+- [Payload](ru/provider-shift-rate-worker#payload)
+- [Пример](ru/provider-shift-rate-worker#primer)
+`provider.shift.rate_worker` — оценивает исполнителя по шкале 1–5.
+## [](ru/provider-shift-rate-worker#payload)Payload
+
+| Поле | Обязательное | Тип | Описание |
+|---|---|---|---|
+| `worker_id` | да | string | ID исполнителя |
+| `rating` | да | integer | Оценка от 1 до 5 |
+| `comment` | нет | string | Комментарий |
+## [](ru/provider-shift-rate-worker#primer)Пример
+`curl -X POST "$HOST/api/v1/events/publish" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "event_id": "550e8400-e29b-71d4-a716-446655440009",
+    "event_type": "provider.shift.rate_worker",
+    "event_ts": "2026-01-24T18:10:00Z",
+    "entity_type": "shift",
+    "entity_id": "shift-001",
+    "payload": {
+      "worker_id": "worker-42",
+      "rating": 5,
+      "comment": "Отличная работа"
+    }
+  }'
+`
+### Была ли статья полезна?
+Предыдущая[Проставление факта](ru/provider-shift-set-fact)Следующая[Блокировка исполнителя](ru/provider-worker-block)
+
+---
+
+- События от Провайдера
+- Блокировка исполнителя
+# Блокировка исполнителя
+- [Payload](ru/provider-worker-block#payload)
+- [Пример](ru/provider-worker-block#primer)
+`provider.worker.block` — блокирует исполнителя. Область блокировки определяется переданными полями:
+- Указаны `site_id` и/или `profession_id` — блокировка на конкретной точке/профессии.
+        
+- Не указаны — глобальная блокировка.
+## [](ru/provider-worker-block#payload)Payload
+
+| Поле | Обязательное | Тип | Описание |
+|---|---|---|---|
+| `reason` | да | string | Причина блокировки |
+| `block_type` | да | string | `temporary` — временная, `permanent` — постоянная |
+| `blocked_until` | да (для `temporary`) | datetime | До какого момента действует блокировка (UTC). Обязателен при `block_type = temporary` |
+| `site_id` | нет | string | ID торговой точки |
+| `profession_id` | нет | string | ID профессии |
+| `comment` | нет | string | Комментарий |
+Допустимые значения `reason`:
+
+| Значение | Описание |
+|---|---|
+| `incident` | Инцидент |
+| `invalid_documents` | Недействительные документы |
+| `intoxicated` | Алкогольное/наркотическое опьянение |
+| `spoof_account` | Поддельный аккаунт |
+| `no_mandatory_training` | Не пройдено обязательное обучение |
+| `low_performance` | Низкая эффективность |
+| `low_qualification` | Низкая квалификация |
+| `other` | Другое |
+## [](ru/provider-worker-block#primer)Пример
+`curl -X POST "$HOST/api/v1/events/publish" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "event_id": "550e8400-e29b-71d4-a716-446655440010",
+    "event_type": "provider.worker.block",
+    "event_ts": "2026-01-25T12:00:00Z",
+    "entity_type": "worker",
+    "entity_id": "worker-42",
+    "payload": {
+      "reason": "incident",
+      "block_type": "temporary",
+      "blocked_until": "2026-02-01T00:00:00Z",
+      "site_id": "site-1",
+      "comment": "Нарушение на точке"
+    }
+  }'
+`
+### Была ли статья полезна?
+Предыдущая[Оценка исполнителя](ru/provider-shift-rate-worker)Следующая[Разблокировка исполнителя](ru/provider-worker-unblock)
+
+---
+
+- События от Провайдера
+- Разблокировка исполнителя
+# Разблокировка исполнителя
+- [Payload](ru/provider-worker-unblock#payload)
+- [Пример](ru/provider-worker-unblock#primer)
+`provider.worker.unblock` — снимает блокировку. Область разблокировки определяется аналогично [блокировке](ru/provider-worker-block).
+## [](ru/provider-worker-unblock#payload)Payload
+
+| Поле | Обязательное | Тип | Описание |
+|---|---|---|---|
+| `site_id` | нет | string | ID торговой точки |
+| `profession_id` | нет | string | ID профессии |
+| `comment` | нет | string | Комментарий |
+## [](ru/provider-worker-unblock#primer)Пример
+`curl -X POST "$HOST/api/v1/events/publish" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "event_id": "550e8400-e29b-71d4-a716-446655440011",
+    "event_type": "provider.worker.unblock",
+    "event_ts": "2026-02-01T00:00:00Z",
+    "entity_type": "worker",
+    "entity_id": "worker-42",
+    "payload": {
+      "site_id": "site-1"
+    }
+  }'
+`
+### Была ли статья полезна?
+Предыдущая[Блокировка исполнителя](ru/provider-worker-block)Следующая[Добавление в избранные](ru/provider-worker-like)
+
+---
+
+- События от Провайдера
+- Добавление в избранные
+# Добавление в избранные
+- [Payload](ru/provider-worker-like#payload)
+- [Пример](ru/provider-worker-like#primer)
+`provider.worker.like` — добавляет исполнителя в избранные на точке. Исполнитель будет чаще предлагаться на смены на указанной точке.
+## [](ru/provider-worker-like#payload)Payload
+
+| Поле | Обязательное | Тип | Описание |
+|---|---|---|---|
+| `site_id` | да | string | ID торговой точки |
+| `comment` | нет | string | Комментарий |
+## [](ru/provider-worker-like#primer)Пример
+`curl -X POST "$HOST/api/v1/events/publish" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "event_id": "550e8400-e29b-71d4-a716-446655440012",
+    "event_type": "provider.worker.like",
+    "event_ts": "2026-01-25T13:00:00Z",
+    "entity_type": "worker",
+    "entity_id": "worker-42",
+    "payload": {
+      "site_id": "site-1"
+    }
+  }'
+`
+### Была ли статья полезна?
+Предыдущая[Разблокировка исполнителя](ru/provider-worker-unblock)Следующая[Удаление из избранных](ru/provider-worker-unlike)
+
+---
+
+- События от Провайдера
+- Удаление из избранных
+# Удаление из избранных
+- [Payload](ru/provider-worker-unlike#payload)
+- [Пример](ru/provider-worker-unlike#primer)
+`provider.worker.unlike` — убирает исполнителя из избранных на точке.
+## [](ru/provider-worker-unlike#payload)Payload
+
+| Поле | Обязательное | Тип | Описание |
+|---|---|---|---|
+| `site_id` | да | string | ID торговой точки |
+| `comment` | нет | string | Комментарий |
+## [](ru/provider-worker-unlike#primer)Пример
+`curl -X POST "$HOST/api/v1/events/publish" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "event_id": "550e8400-e29b-71d4-a716-446655440013",
+    "event_type": "provider.worker.unlike",
+    "event_ts": "2026-01-25T14:00:00Z",
+    "entity_type": "worker",
+    "entity_id": "worker-42",
+    "payload": {
+      "site_id": "site-1"
+    }
+  }'
+`
+### Была ли статья полезна?
+Предыдущая[Добавление в избранные](ru/provider-worker-like)Следующая[Как получить событие?](ru/poll)
+
+---
+
+- События от Смены
+- Как получить событие?
+# Как получить событие?
+- [Параметры запроса](ru/poll#parametry-zaprosa)
+- [Формат ответа](ru/poll#format-otveta)
+- [Рекомендации](ru/poll#rekomendacii)
+- [Гарантии Смены](ru/poll#garantii-smeny)
+Endpoint: `GET /api/v1/events/poll`
+## [](ru/poll#parametry-zaprosa)Параметры запроса
+
+| Параметр | Обязательный | Тип | Описание |
+|---|---|---|---|
+| `last_event_id` | нет | string (UUID v7) | ID последнего полученного события (курсор) |
+| `limit` | нет | integer | Количество событий в ответе (1–1000, по умолчанию 100) |
+| `event_type` | нет | string[] | Фильтр по типам событий. Если не указан — все типы |
+`curl "$HOST/api/v1/events/poll?last_event_id=550e8400-e29b-71d4-a716-446655440000&limit=100"
+`
+
+        
+
+            
+        
+    
+    
+С фильтром по типу:
+`curl "$HOST/api/v1/events/poll?last_event_id=550e8400-e29b-71d4-a716-446655440000&limit=100&event_type=smena.shift.signup_worker&event_type=smena.shift.withdraw_worker"
+`
+## [](ru/poll#format-otveta)Формат ответа
+`{
+  "events": [ ... ],
+  "has_next": true
+}
+`
+
+        
+
+            
+        
+    
+    
+        
+- `events` — массив событий.
+        
+- `has_next` — `true`, если после текущего батча есть ещё события.
+    
+    
+Пример ответа:
+`{
+  "events": [
+    {
+      "event_id": "019468a0-7741-7000-a278-afb18b4e244f",
+      "event_type": "smena.shift.signup_worker",
+      "event_ts": "2026-01-24T09:00:00Z",
+      "entity_type": "shift",
+      "entity_id": "shift-001",
+      "payload": {
+        "worker_id": "worker-42",
+        "is_favorite": false
+      }
+    },
+    {
+      "event_id": "019468a0-7741-7001-b389-cfc29c5f355a",
+      "event_type": "smena.shift.withdraw_worker",
+      "event_ts": "2026-01-24T09:05:00Z",
+      "entity_type": "shift",
+      "entity_id": "shift-002",
+      "payload": {
+        "worker_id": "worker-15",
+        "is_favorite": true,
+        "reason": "cancelled_by_worker"
+      }
+    }
+  ],
+  "has_next": false
+}
+`
+## [](ru/poll#rekomendacii)Рекомендации
+- Для получения событий в режиме, близком к реальному времени, рекомендуется опрашивать метод раз в секунду. Частота может быть снижена, если оперативность не критична.
+        
+- Используйте `event_id` последнего полученного события как `last_event_id` для следующего запроса.
+        
+- Доступны события не старше 24 часов.
+## [](ru/poll#garantii-smeny)Гарантии Смены
+- `event_id` уникален и монотонно возрастает — используйте его как курсор.
+        
+- События возвращаются в порядке, в котором они должны быть обработаны.
+### Была ли статья полезна?
+Предыдущая[Удаление из избранных](ru/provider-worker-unlike)Следующая[Исполнитель откликнулся](ru/smena-shift-signup-worker)
+
+---
+
+- События от Смены
+- Исполнитель откликнулся
+# Исполнитель откликнулся
+- [Payload](ru/smena-shift-signup-worker#payload)
+- [Пример](ru/smena-shift-signup-worker#primer)
+`smena.shift.signup_worker` — исполнитель откликнулся на смену (или избранный исполнитель подтвердил выход). Ожидается ответ — подтверждение (`approve_worker`) или отклонение (`reject_worker`).
+## [](ru/smena-shift-signup-worker#payload)Payload
+
+| Поле | Обязательное | Тип | Описание |
+|---|---|---|---|
+| `worker_id` | да | string | ID исполнителя |
+| `is_favorite` | да | boolean | `true` — это избранный исполнитель, запрошенный Провайдером |
+## [](ru/smena-shift-signup-worker#primer)Пример
+`{
+  "event_id": "019468a0-7741-7000-a278-afb18b4e244f",
+  "event_type": "smena.shift.signup_worker",
+  "event_ts": "2026-01-24T09:00:00Z",
+  "entity_type": "shift",
+  "entity_id": "shift-001",
+  "payload": {
+    "worker_id": "worker-42",
+    "is_favorite": false
+  }
+}
+`
+### Была ли статья полезна?
+Предыдущая[Как получить событие?](ru/poll)Следующая[Исполнитель снят со смены](ru/smena-shift-withdraw-worker)
+
+---
+
+- События от Смены
+- Исполнитель снят со смены
+# Исполнитель снят со смены
+- [Payload](ru/smena-shift-withdraw-worker#payload)
+- [Пример](ru/smena-shift-withdraw-worker#primer)
+`smena.shift.withdraw_worker` — исполнитель отказался от смены или не смог быть назначен. Это информационное событие — Смена продолжит поиск.
+## [](ru/smena-shift-withdraw-worker#payload)Payload
+
+| Поле | Обязательное | Тип | Описание |
+|---|---|---|---|
+| `worker_id` | да | string | ID исполнителя |
+| `is_favorite` | да | boolean | `true` — это избранный исполнитель |
+| `reason` | да | string | Причина снятия |
+Допустимые значения `reason`:
+
+| Значение | Описание |
+|---|---|
+| `cancelled_by_worker` | Исполнитель отказался сам |
+| `favorite_not_found` | Избранный исполнитель не найден |
+| `favorite_not_confirmed` | Избранный исполнитель не подтвердил выход |
+| `favorite_has_intersection` | У избранного исполнителя пересечение с другой сменой |
+## [](ru/smena-shift-withdraw-worker#primer)Пример
+`{
+  "event_id": "019468a0-7741-7001-b389-cfc29c5f355a",
+  "event_type": "smena.shift.withdraw_worker",
+  "event_ts": "2026-01-24T09:05:00Z",
+  "entity_type": "shift",
+  "entity_id": "shift-002",
+  "payload": {
+    "worker_id": "worker-15",
+    "is_favorite": true,
+    "reason": "cancelled_by_worker"
+  }
+}
+`
+### Была ли статья полезна?
+Предыдущая[Исполнитель откликнулся](ru/smena-shift-signup-worker)Следующая[Корректировка факта](ru/smena-shift-adjust-fact)
+
+---
+
+- События от Смены
+- Корректировка факта
+# Корректировка факта
+- [Payload](ru/smena-shift-adjust-fact#payload)
+- [Пример](ru/smena-shift-adjust-fact#primer)
+`smena.shift.adjust_fact` — факт по смене был изменён на стороне Смены (через поддержку или сверку). Событие информационное.
+## [](ru/smena-shift-adjust-fact#payload)Payload
+
+| Поле | Обязательное | Тип | Описание |
+|---|---|---|---|
+| `worker_id` | да | string | ID исполнителя |
+| `is_absent` | да | boolean | Неявка |
+| `fact_length` | нет | integer | Фактическая длительность в минутах (включая перерыв) |
+| `fact_rest_length` | нет | integer | Фактическая длительность перерыва в минутах |
+| `reason` | да | string | Причина корректировки: `support_request`, `reconciliation`, `other` |
+| `comment` | нет | string | Комментарий |
+## [](ru/smena-shift-adjust-fact#primer)Пример
+`{
+  "event_id": "019468a0-7741-7004-e6f52f8a688d",
+  "event_type": "smena.shift.adjust_fact",
+  "event_ts": "2026-01-25T14:00:00Z",
+  "entity_type": "shift",
+  "entity_id": "shift-001",
+  "payload": {
+    "worker_id": "worker-42",
+    "is_absent": false,
+    "fact_length": 450,
+    "fact_rest_length": 60,
+    "reason": "reconciliation",
+    "comment": "Корректировка по результатам сверки"
+  }
+}
+`
+### Была ли статья полезна?
+Предыдущая[Исполнитель снят со смены](ru/smena-shift-withdraw-worker)Следующая[Результат обработки события](ru/smena-event-result)
+
+---
+
+- События от Смены
+- Результат обработки события
+# Результат обработки события
+- [Payload](ru/smena-event-result#payload)
+- [Пример при успехе](ru/smena-event-result#primer-pri-uspehe)
+- [Пример при ошибке](ru/smena-event-result#primer-pri-oshibke)
+- [Каталог кодов ошибок](ru/smena-event-result#katalog-kodov-oshibok)
+- [Общие — для любого provider-события](ru/smena-event-result#obshie-—-dlya-lyubogo-provider-sobytiya)
+- [Создание смены (provider.shift.create)](ru/smena-event-result#)
+- [Операции с исполнителем на смене](ru/smena-event-result#operacii-s-ispolnitelem-na-smene)
+- [Рекомендации](ru/smena-event-result#rekomendacii)
+`smena.event.result` — Смена создаёт это событие для каждого обработанного provider-события: при успехе и при ошибке. Провайдер получает его при [поллинге](ru/poll) вместе с остальными событиями.
+`entity_type` и `entity_id` совпадают с сущностью из исходного provider-события (смена или исполнитель).
+## [](ru/smena-event-result#payload)Payload
+
+| Поле | Обязательное | Тип | Описание |
+|---|---|---|---|
+| `source_event_id` | да | string (UUID) | `event_id` отправленного provider-события |
+| `source_event_type` | да | string | `event_type` отправленного события (один из `provider.*`) |
+| `status` | да | string | `success` — обработано успешно; `error` — ошибка |
+| `error_code` | при `status=error` | string | Код ошибки (см. каталог ниже) |
+| `error_message` | при `status=error` | string | Описание ошибки (для логирования) |
+## [](ru/smena-event-result#primer-pri-uspehe)Пример при успехе
+`{
+  "event_id": "019468a0-7741-7002-c490-dde30d6f466b",
+  "event_type": "smena.event.result",
+  "event_ts": "2026-01-23T10:01:00Z",
+  "entity_type": "shift",
+  "entity_id": "shift-001",
+  "payload": {
+    "source_event_id": "550e8400-e29b-71d4-a716-446655440001",
+    "source_event_type": "provider.shift.cancel",
+    "status": "success"
+  }
+}
+`
+## [](ru/smena-event-result#primer-pri-oshibke)Пример при ошибке
+`{
+  "event_id": "019468a0-7741-7003-d5e41e7f577c",
+  "event_type": "smena.event.result",
+  "event_ts": "2026-01-23T10:01:00Z",
+  "entity_type": "shift",
+  "entity_id": "shift-001",
+  "payload": {
+    "source_event_id": "550e8400-e29b-71d4-a716-446655440002",
+    "source_event_type": "provider.shift.create",
+    "status": "error",
+    "error_code": "invalid_site_id",
+    "error_message": "Site site-999 not found"
+  }
+}
+`
+## [](ru/smena-event-result#katalog-kodov-oshibok)Каталог кодов ошибок
+При `status=error` в payload присутствуют `error_code` и `error_message`.
+### [](ru/smena-event-result#obshie-—-dlya-lyubogo-provider-sobytiya)Общие — для любого provider-события
+
+| Код | Описание | Рекомендуемое действие |
+|---|---|---|
+| `entity_not_found` | Сущность не найдена (смена не создана, исполнитель неизвестен) | Проверить `entity_id` и порядок событий |
+| `invalid_state_transition` | Операция невозможна в текущем состоянии | Проверить состояние сущности и отправить корректное событие |
+| `event_outdated` | Событие проигнорировано: `event_ts` меньше последнего обработанного для этой сущности | Обеспечить монотонное возрастание `event_ts` |
+| `internal_error` | Внутренняя ошибка Смены | Повторить операцию с новым `event_id`. При повторении — в поддержку |
+### [](ru/smena-event-result#)Создание смены (`provider.shift.create`)
+
+| Код | Описание | Рекомендуемое действие |
+|---|---|---|
+| `invalid_site_id` | Торговая точка не найдена | Проверить `site_id` |
+| `invalid_profession_id` | Профессия не найдена | Проверить `profession_id` |
+| `invalid_payment_id` | Тариф оплаты не найден | Проверить `payment_id` |
+### [](ru/smena-event-result#operacii-s-ispolnitelem-na-smene)Операции с исполнителем на смене
+Применимо к: `provider.shift.approve_worker`, `provider.shift.reject_worker`, `provider.shift.set_code`, `provider.shift.start`, `provider.shift.set_fact`.
+
+| Код | Описание | Рекомендуемое действие |
+|---|---|---|
+| `worker_not_assigned` | На смене нет указанного исполнителя (или другой назначен) | Дождаться `smena.shift.signup_worker` перед операцией |
+| `worker_already_withdrawn` | Исполнитель уже снят со смены | Дождаться нового отклика |
+## [](ru/smena-event-result#rekomendacii)Рекомендации
+- Корреляция: храните отправленные события по `event_id` и при получении `smena.event.result` сопоставляйте по `source_event_id`.
+        
+- Успех: при `status=success` считайте операцию выполненной; можно обновить локальное состояние.
+        
+- Ошибка: логируйте `error_code` и `error_message`. Не повторяйте то же событие с тем же `event_id` — для повторной попытки создайте новое событие с новым `event_id` и актуальным `event_ts`.
+        
+- Неизвестные коды: обрабатывайте как общую ошибку (логировать, уведомлять). Новые коды могут добавляться без смены версии API.
+    
+    
+Подробнее о поведении при ошибках — в разделе [Отправка событий](ru/publish).
+### Была ли статья полезна?
+Предыдущая[Корректировка факта](ru/smena-shift-adjust-fact)Следующая[Данные исполнителя](ru/worker)
+
+---
+
+# Данные исполнителя
+- [Поля ответа](ru/worker#polya-otveta)
+- [Пример ответа](ru/worker#primer-otveta)
+- [Ошибки](ru/worker#oshibki)
+Endpoint: `GET /api/v1/worker/{worker_id}`
+Возвращает персональные данные исполнителя по его `worker_id`.
+`curl "$HOST/api/v1/worker/worker-42"
+`
+## [](ru/worker#polya-otveta)Поля ответа
+
+| Поле | Обязательное | Тип | Описание |
+|---|---|---|---|
+| `inn` | да | string | ИНН |
+| `full_name` | да | string | ФИО |
+| `phone` | да | string | Телефон |
+| `snils` | нет | string | СНИЛС |
+## [](ru/worker#primer-otveta)Пример ответа
+`{
+  "inn": "123456789012",
+  "full_name": "Иванов Иван Иванович",
+  "phone": "+79001234567",
+  "snils": "123-456-789 00"
+}
+`
+## [](ru/worker#oshibki)Ошибки
+Если исполнитель не найден — ответ `404`:
+`{
+    "code": "worker_not_found",
+    "message": "Worker not found"
+}
+`
+
+        
+
+            
+        
+    
+    
+`worker_id` появляется в событиях `smena.shift.signup_worker` и далее используется для всех операций с этим исполнителем.
+### Была ли статья полезна?
+Предыдущая[Результат обработки события](ru/smena-event-result)Следующая[Авторизация](ru/auth)
+
+---
+
+# Авторизация
+Доступ к API осуществляется по API-ключу в связке с IP whitelist. Ключ выдаётся при подключении и передаётся в заголовке каждого запроса:
+`Authorization: Bearer <token>
+`
+
+        
+
+            
+        
+    
+    
+При невалидном или отсутствующем ключе метод возвращает `401 Unauthorized`.
+Примечание
+Во всех примерах запросов в документации заголовок авторизации опущен для краткости.
+### Была ли статья полезна?
+Предыдущая[Данные исполнителя](ru/worker)Следующая[Ошибки валидации](ru/errors)
+
+---
+
+# Ошибки валидации
+Тело запроса валидируется по схеме. Если запрос не соответствует схеме, метод вернёт ошибку:
+`{
+    "code": "openapi_validation_request_error",
+    "message": "Invalid request",
+    "details": {
+        "error": "request body has an error: doesn't match the schema: Error at \"/message\": Field must be set to string or not be present"
+    }
+}
+`
+
+        
+
+            
+        
+    
+    
+        
+- `code` — всегда `openapi_validation_request_error`.
+        
+- `message` — краткое описание.
+        
+- `details.error` — подробности о том, какое поле не прошло валидацию.
+### Была ли статья полезна?
+Предыдущая[Авторизация](ru/auth)Следующая[Ограничения](ru/limits)
+
+---
+
+# Ограничения
+
+| Метод | Лимит |
+|---|---|
+| `POST /api/v1/events/publish` | 40 запросов/сек |
+| `GET /api/v1/events/poll` | 60 запросов/мин |
+| `GET /api/v1/worker/{worker_id}` | 100 запросов/мин |
+Максимальный `limit` при поллинге — 1000 событий за запрос.
+При превышении лимита метод возвращает `429 Too Many Requests` с заголовком `Retry-After`, указывающим через сколько секунд можно повторить запрос.
+### Была ли статья полезна?
+Предыдущая[Ошибки валидации](ru/errors)Следующая[Обратная совместимость](ru/compatibility)
+
+---
+
+# Обратная совместимость
+API развивается с сохранением обратной совместимости. При интеграции учитывайте следующее:
+- Новые поля могут быть добавлены в любой `payload` — игнорируйте неизвестные поля.
+        
+- Новые типы событий (`event_type`), причины (`reason`), коды ошибок (`error_code`) и другие строковые значения могут появляться без предупреждения — корректно обрабатывайте неизвестные значения (логируйте и пропускайте).
+        
+- Основная структура события (кроме `payload`) не изменяется без повышения версии API.
+### Была ли статья полезна?
+Предыдущая[Ограничения](ru/limits)Следующая[FAQ](ru/faq)
+
+---
+
+# FAQ
+- [Откуда берутся site_id, profession_id, payment_id?](ru/faq#)
+- [Откуда взять worker_id для favorites_worker_ids?](ru/faq#1)
+- [Как редактировать смену?](ru/faq#kak-redaktirovat-smenu)
+- [Что произойдёт при favorites_only = true, если все избранные исполнители недоступны?](ru/faq#,-esli-vse-izbrannye-ispolniteli-nedostupny)
+- [Что делать, когда has_next = true?](ru/faq#2)
+- [Что если endpoint не опрашивался более 24 часов?](ru/faq#chto-esli-endpoint-ne-oprashivalsya-bolee-24-chasov)
+- [Нужна ли дедупликация на стороне Провайдера при поллинге?](ru/faq#nuzhna-li-deduplikaciya-na-storone-provajdera-pri-pollinge)
+## [](ru/faq#)Откуда берутся `site_id`, `profession_id`, `payment_id`?
+Идентификаторы торговых точек, профессий и тарифов создаются на стороне Смены и передаются Провайдеру при подключении. В первой версии API нет интерфейса для их самостоятельного создания или изменения.
+## [](ru/faq#1)Откуда взять `worker_id` для `favorites_worker_ids`?
+`worker_id` появляется в событиях [`smena.shift.signup_worker`](ru/smena-shift-signup-worker). Чтобы использовать исполнителя как избранного в будущем, сохраняйте `worker_id` из предыдущих откликов. Поле `favorites_worker_ids` описано в разделе [Создание смены](ru/provider-shift-create).
+## [](ru/faq#kak-redaktirovat-smenu)Как редактировать смену?
+Отдельного события для редактирования нет. Отмените смену (`provider.shift.cancel`) и создайте новую (`provider.shift.create`). Новая смена должна иметь новый `entity_id` — переиспользовать идентификатор отменённой смены нельзя.
+## [](ru/faq#,-esli-vse-izbrannye-ispolniteli-nedostupny)Что произойдёт при `favorites_only = true`, если все избранные исполнители недоступны?
+На каждого избранного исполнителя придёт `smena.shift.withdraw_worker` с соответствующей причиной (`favorite_not_found`, `favorite_not_confirmed`, `favorite_has_intersection`). После исчерпания всех — смена будет автоматически отменена.
+## [](ru/faq#2)Что делать, когда `has_next = true`?
+Немедленно запросите следующий батч, передав `event_id` последнего полученного события как `last_event_id`. Повторяйте до `has_next = false`, затем вернитесь к обычному поллингу раз в секунду. Подробнее — в разделе [Получение событий](ru/poll).
+## [](ru/faq#chto-esli-endpoint-ne-oprashivalsya-bolee-24-chasov)Что если endpoint не опрашивался более 24 часов?
+События старше 24 часов недоступны. Для восстановления состояния обратитесь в поддержку Смены.
+## [](ru/faq#nuzhna-li-deduplikaciya-na-storone-provajdera-pri-pollinge)Нужна ли дедупликация на стороне Провайдера при поллинге?
+Нет. При корректном использовании `last_event_id` каждый запрос возвращает только новые события. Если по какой-то причине вы получили одно и то же событие дважды — просто обработайте его повторно или пропустите по `event_id`.
+### Была ли статья полезна?
+Предыдущая[Обратная совместимость](ru/compatibility)
+
+---

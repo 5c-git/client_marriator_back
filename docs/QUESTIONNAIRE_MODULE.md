@@ -49,7 +49,7 @@ app/Modules/Questionnaire/
 
 Registration fields are stored in `users.data` under UUID keys. Steps work with semantic keys (`first_name`, `last_name`, `phone`, `inn`, etc.).
 
-`QuestionnaireFieldAlias` enum maps UUIDs to semantic keys. `QuestionnaireDataMapper::map()` returns a copy of the data with semantic keys added, plus a computed `full_name`.
+`QuestionnaireFieldAlias` enum (`app/Modules/Questionnaire/Enums/QuestionnaireFieldAlias.php`) maps UUIDs to semantic keys. `QuestionnaireDataMapper::map()` returns a copy of the data with semantic keys added, plus a computed `full_name`.
 
 Example inside a step:
 
@@ -104,6 +104,10 @@ Top-level keys are easy to read and update. `registration_fields` adds metadata 
 - `expansionData` — moderator expansion of uploaded documents, shape `{field-uuid: [{name, value}, ...]}`.
 - `errorData` — field-level error messages, shape `{field-uuid: "error message"}`.
 - `requisitesData` — array of payment requisites, shape `[{bik, fio, card, account, cardDue, confidant, payWithCard}, ...]`.
+
+## Provider Registration
+
+`QuestionnaireServiceProvider` (`app/Modules/Questionnaire/Providers/QuestionnaireServiceProvider.php`) зарегистрирован в `bootstrap/providers.php`. Провайдер загружает миграции, конфиг, роуты и команды модуля.
 
 ## Configuration
 

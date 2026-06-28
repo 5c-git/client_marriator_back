@@ -506,7 +506,91 @@
 
 ---
 
-## 7. Схема связей (кратко)
+## 7. Модульные таблицы
+
+### 7.1 questionnaires
+
+Таблица модуля анкетирования (`app/Modules/Questionnaire/`).
+
+| Колонка | Тип | Nullable | Описание |
+|---------|-----|----------|----------|
+| id | bigint unsigned | NO | PK, AI |
+| user_id | bigint unsigned | NO | unique | Владелец анкеты |
+| status | string | NO | | `pending` / `in_progress` / `completed` / `failed` |
+| current_step_index | int | YES | | Индекс текущего шага |
+| current_step_class | string | YES | | FQCN текущего/последнего шага |
+| data | json | YES | | Данные анкеты |
+| logs | json | YES | | История выполнения шагов |
+| error_message | string | YES | | Сообщение об ошибке при `failed` |
+| completed_at | timestamp | YES | | |
+| failed_at | timestamp | YES | | |
+| created_at / updated_at | timestamp | YES | | |
+
+### 7.2 yandex_smena_sites
+
+| Колонка | Тип | Nullable | Описание |
+|---------|-----|----------|----------|
+| id | bigint unsigned | NO | PK, AI |
+| place_id | bigint unsigned | NO | Ссылка на `directory_place` |
+| external_id | string | YES | | ID площадки в Yandex.Smena |
+| payload | json | YES | | Сырые данные, отправленные/полученные |
+| created_at / updated_at | timestamp | YES | | |
+
+### 7.3 yandex_smena_professions
+
+| Колонка | Тип | Nullable | Описание |
+|---------|-----|----------|----------|
+| id | bigint unsigned | NO | PK, AI |
+| view_activity_id | bigint unsigned | NO | Ссылка на `directory_view_activities` |
+| external_id | string | YES | | ID профессии в Yandex.Smena |
+| payload | json | YES | | |
+| created_at / updated_at | timestamp | YES | | |
+
+### 7.4 yandex_smena_payments
+
+| Колонка | Тип | Nullable | Описание |
+|---------|-----|----------|----------|
+| id | bigint unsigned | NO | PK, AI |
+| code | string | NO | | Локальный код тарифа (`PAY_100`) |
+| external_id | string | YES | | ID тарифа в Yandex.Smena |
+| payload | json | YES | | |
+| created_at / updated_at | timestamp | YES | | |
+
+### 7.5 yandex_smena_shifts
+
+| Колонка | Тип | Nullable | Описание |
+|---------|-----|----------|----------|
+| id | bigint unsigned | NO | PK, AI |
+| shiftable_type | string | NO | | `OrderActivities` / `TaskActivity` |
+| shiftable_id | bigint unsigned | NO | | Локальный ID активности |
+| external_id | string | YES | | ID смены в Yandex.Smena |
+| status | string | YES | | Локальный статус |
+| payload | json | YES | | |
+| created_at / updated_at | timestamp | YES | | |
+
+### 7.6 yandex_smena_candidates
+
+| Колонка | Тип | Nullable | Описание |
+|---------|-----|----------|----------|
+| id | bigint unsigned | NO | PK, AI |
+| yandex_smena_shift_id | bigint unsigned | NO | | Ссылка на `yandex_smena_shifts` |
+| external_id | string | YES | | ID кандидата в Yandex.Smena |
+| status | string | YES | | Статус кандидата |
+| payload | json | YES | | |
+| created_at / updated_at | timestamp | YES | | |
+
+### 7.7 yandex_smena_favorite_workers
+
+| Колонка | Тип | Nullable | Описание |
+|---------|-----|----------|----------|
+| id | bigint unsigned | NO | PK, AI |
+| external_id | string | NO | | ID избранного работника в Yandex.Smena |
+| payload | json | YES | | |
+| created_at / updated_at | timestamp | YES | | |
+
+---
+
+## 8. Схема связей (кратко)
 
 - **users** ↔ **roles** через **user_roles**
 - **users** ↔ **directory_project**, **directory_place**, **directory_counterparty** через **user_directory_*** 
@@ -526,5 +610,10 @@
 - **report** → **users**, **bids**, **orders**, **tasks**
 - **report_reason** → **report**, **directory_reasons**
 - **documents** → **users**
+- **questionnaires** → **users**
+- **yandex_smena_sites** → **directory_place**
+- **yandex_smena_professions** → **directory_view_activities**
+- **yandex_smena_shifts** → **OrderActivities** / **TaskActivity** (polymorphic `shiftable`)
+- **yandex_smena_candidates** → **yandex_smena_shifts**
 
 Все перечисленные таблицы создаются и изменяются миграциями в `database/migrations/`. Точный список колонок при расхождении следует сверять с конкретным файлом миграции.

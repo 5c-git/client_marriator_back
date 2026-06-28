@@ -275,6 +275,19 @@ return [
             'timeout' => 120,
             'nice' => 0,
         ],
+        'yandex-smena' => [
+            'connection' => 'redis',
+            'queue' => ['yandex-smena'],
+            'balance' => 'auto',
+            'autoScalingStrategy' => 'time',
+            'maxProcesses' => 5,
+            'maxTime' => 0,
+            'maxJobs' => 100,
+            'memory' => 128,
+            'tries' => 3,
+            'timeout' => 90,
+            'nice' => 0,
+        ],
     ],
 
     'environments' => [

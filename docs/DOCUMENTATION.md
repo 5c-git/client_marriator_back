@@ -7,6 +7,13 @@
 - **[DATABASE.md](DATABASE.md)** — структура БД: все таблицы, колонки, типы, связи.
 - **[CONTROLLERS.md](CONTROLLERS.md)** — логика контроллеров: что делает каждый метод, вызываемый из роутинга.
 - **[SERVICES.md](SERVICES.md)** — как работают сервисы: методы, зависимости, потоки данных.
+- **[FORM_REGISTRATION.md](FORM_REGISTRATION.md)** — динамическая форма регистрации пользователя.
+- **[USER_DATA_ANALYSIS.md](USER_DATA_ANALYSIS.md)** — анализ данных пользователя в `users.data`.
+- **[QUESTIONNAIRE_MODULE.md](QUESTIONNAIRE_MODULE.md)** — модуль анкетирования после регистрации.
+- **[YANDEX_SMENA_MODULE.md](YANDEX_SMENA_MODULE.md)** — интеграция с Yandex.Smena.
+- **[PROJECT_STATUS.md](PROJECT_STATUS.md)** — текущее состояние проекта и планы.
+- **[SKILLS.md](SKILLS.md)** — список доступных Laravel-скилов.
+- **[KIMI_GUIDE.md](KIMI_GUIDE.md)** — краткий гид по работе с Kimi Code CLI.
 
 ---
 

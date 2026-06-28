@@ -13,8 +13,8 @@ Schedule::command('endedReportCommand')->everyFiveMinutes()->withoutOverlapping(
 Schedule::command('dellSpecialistFromManagerAndSupervisorCommand')->daily()->withoutOverlapping();
 Schedule::command('closeBidCommand')->hourly()->withoutOverlapping();
 
-Schedule::command('sendUserFileToCorrect')->everyMinute()->withoutOverlapping();// todo поставить как было раз в 3 минуты
-Schedule::command('getUserFileFromCorrect')->everyMinute()->withoutOverlapping();// todo поставить как было раз в 3 минуты
+Schedule::command('sendUserFileToCorrect')->everyMinute()->withoutOverlapping(); // todo поставить как было раз в 3 минуты
+Schedule::command('getUserFileFromCorrect')->everyMinute()->withoutOverlapping(); // todo поставить как было раз в 3 минуты
 
 Schedule::command('getUserReportCoefficient')->everyMinute()->withoutOverlapping();
 Schedule::command('archiveBid')->everyThreeMinutes()->withoutOverlapping();
@@ -25,7 +25,4 @@ Schedule::command('archiveJob')->everyThreeMinutes()->withoutOverlapping();
 
 Schedule::command('deleteNotFinishRegisterUsers')->everyFiveMinutes()->withoutOverlapping();
 
-
-
-
-
+Schedule::command('yandex-smena:poll-events')->everyMinute()->withoutOverlapping();

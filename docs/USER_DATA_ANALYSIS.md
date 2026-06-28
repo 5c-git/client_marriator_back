@@ -384,6 +384,7 @@ SELECT id, phone FROM users WHERE data LIKE '%"982d33e2-bee6-453a-992e-11d13fa66
 3. **Не все поля есть в `fields`.** Например, `staticEmail` и `staticPhoto` — захардкоженные поля, они не описаны в таблице полей.
 4. **Файлы хранятся как URL.** Сами файлы лежат в `storage/app/public/source/pdf/{userId}/{random}/`, а в базе — публичный URL.
 5. **Для анализа лучше использовать Laravel/Tinker**, а не чистый SQL, потому что нужно разрешать справочники и обрабатывать разные форматы данных.
+6. **После `finishRegister` (при `confirmRegister = true`) запускаются фоновые процессы:** `SyncUserToExternalSystemJob` и `QuestionnaireProcessor`. Они используют те же данные из `users.data`, но не меняют исходный JSON.
 
 ---
 
