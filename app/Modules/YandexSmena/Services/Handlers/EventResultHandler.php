@@ -14,7 +14,6 @@ class EventResultHandler implements SmenaEventHandlerInterface
         'provider.shift.resume' => 'available',
         'provider.shift.reject_worker' => 'available',
         'provider.shift.start' => 'started',
-        'provider.shift.approve_worker' => 'assigned',
     ];
 
     public function handle(array $event): void

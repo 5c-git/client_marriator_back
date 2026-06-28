@@ -165,6 +165,23 @@ class SmenaShiftLifecycleServiceTest extends TestCase
         });
     }
 
+    public function test_set_fact_without_fact_length_dispatches_event(): void
+    {
+        Queue::fake();
+        $shift = $this->createShift();
+
+        app(SmenaShiftLifecycleService::class)->setFact($shift, 'worker-42', false);
+
+        Queue::assertPushed(PublishYandexSmenaEventJob::class, function ($job) {
+            $envelope = $job->envelope();
+
+            return $envelope['event_type'] === 'provider.shift.set_fact'
+                && $envelope['payload']['worker_id'] === 'worker-42'
+                && $envelope['payload']['is_absent'] === false
+                && ! array_key_exists('fact_length', $envelope['payload']);
+        });
+    }
+
     public function test_rate_worker_validates_rating(): void
     {
         $shift = $this->createShift();

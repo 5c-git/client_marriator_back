@@ -54,6 +54,12 @@ class PublishYandexSmenaEventJob implements ShouldQueue
                 'processed_at' => now(),
             ]);
 
+            if ($e->getRetryAfter() !== null && $e->getRetryAfter() > 0) {
+                $this->release($e->getRetryAfter());
+
+                return;
+            }
+
             throw $e;
         }
     }

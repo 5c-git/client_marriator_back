@@ -18,7 +18,7 @@ interface YandexSmenaApiClientInterface
      *
      * @throws YandexSmenaApiException
      */
-    public function pollEvents(?string $lastEventId = null, int $limit = 100): array;
+    public function pollEvents(?string $lastEventId = null, int $limit = 100, array $eventTypes = []): array;
 
     /**
      * Fetch worker personal data.

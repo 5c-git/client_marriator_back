@@ -89,6 +89,23 @@ class SmenaShiftPublisherTest extends TestCase
         });
     }
 
+    public function test_create_with_favorites(): void
+    {
+        Queue::fake();
+
+        $shift = $this->createShift();
+        $publisher = app(SmenaShiftPublisher::class);
+        $publisher->create($shift, ['worker-1', 'worker-2'], true);
+
+        Queue::assertPushed(PublishYandexSmenaEventJob::class, function ($job) {
+            $envelope = $job->envelope();
+
+            return $envelope['event_type'] === 'provider.shift.create'
+                && $envelope['payload']['favorites_worker_ids'] === ['worker-1', 'worker-2']
+                && $envelope['payload']['favorites_only'] === true;
+        });
+    }
+
     public function test_create_throws_when_mapping_external_id_missing(): void
     {
         Queue::fake();

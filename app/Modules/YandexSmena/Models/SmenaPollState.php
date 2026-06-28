@@ -37,8 +37,12 @@ class SmenaPollState extends Model
         return $state?->last_event_id;
     }
 
-    public static function updateCursor(string $lastEventId): void
+    public static function updateCursor(?string $lastEventId): void
     {
+        if ($lastEventId === null || $lastEventId === '') {
+            return;
+        }
+
         self::query()->updateOrCreate(
             ['id' => 1],
             [

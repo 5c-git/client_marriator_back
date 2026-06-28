@@ -16,7 +16,7 @@ class SmenaShiftPublisher
     ) {
     }
 
-    public function create(SmenaShift $shift): void
+    public function create(SmenaShift $shift, ?array $favoritesWorkerIds = null, ?bool $favoritesOnly = null): void
     {
         $payload = $this->shiftMapper->toPayload([
             'entity_id' => $shift->entity_id,
@@ -26,6 +26,8 @@ class SmenaShiftPublisher
             'start_at' => $shift->start_at,
             'length_min' => $shift->length_min,
             'rest_length_min' => $shift->rest_length_min,
+            'favorites_worker_ids' => $favoritesWorkerIds,
+            'favorites_only' => $favoritesOnly,
         ]);
 
         $shift->update([

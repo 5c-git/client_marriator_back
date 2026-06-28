@@ -24,6 +24,17 @@ class EventEnvelopeBuilderTest extends TestCase
         $this->assertSame(['site_id' => 'site-1'], $envelope['payload']);
     }
 
+    public function test_event_id_is_uuid_v7(): void
+    {
+        $builder = new EventEnvelopeBuilder();
+        $envelope = $builder->build('provider.shift.create', 'shift', 'shift-1', []);
+
+        $this->assertMatchesRegularExpression(
+            '/^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/',
+            $envelope['event_id']
+        );
+    }
+
     public function test_event_ts_is_monotonic_per_entity(): void
     {
         Carbon::setTestNow('2026-01-01 12:00:00');

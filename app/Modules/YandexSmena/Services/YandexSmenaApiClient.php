@@ -15,6 +15,8 @@ class YandexSmenaApiClient implements YandexSmenaApiClientInterface
 
     private const POLL_LIMIT = 'yandex-smena-poll';
 
+    private const WORKER_LIMIT = 'yandex-smena-worker';
+
     public function __construct(
         private readonly string $host,
         private readonly string $token,
@@ -53,12 +55,13 @@ class YandexSmenaApiClient implements YandexSmenaApiClientInterface
                 "Yandex.Smena API error [{$status}]: ".$body,
                 $status,
                 $e,
-                $response?->json() ?? []
+                $response?->json() ?? [],
+                $this->resolveRetryAfter($response?->header('Retry-After'))
             );
         }
     }
 
-    public function pollEvents(?string $lastEventId = null, int $limit = 100): array
+    public function pollEvents(?string $lastEventId = null, int $limit = 100, array $eventTypes = []): array
     {
         $this->throttlePoll();
 
@@ -68,6 +71,10 @@ class YandexSmenaApiClient implements YandexSmenaApiClientInterface
             'last_event_id' => $lastEventId,
             'limit' => $limit,
         ], fn ($value) => $value !== null);
+
+        if ($eventTypes !== []) {
+            $query['event_type'] = $eventTypes;
+        }
 
         try {
             $response = Http::withHeaders($this->headers())
@@ -102,13 +109,16 @@ class YandexSmenaApiClient implements YandexSmenaApiClientInterface
                 "Yandex.Smena poll error [{$status}]: ".$body,
                 $status,
                 $e,
-                $response?->json() ?? []
+                $response?->json() ?? [],
+                $this->resolveRetryAfter($response?->header('Retry-After'))
             );
         }
     }
 
     public function getWorker(string $workerId): array
     {
+        $this->throttleWorker();
+
         $url = rtrim($this->host, '/').'/api/v1/worker/'.urlencode($workerId);
 
         try {
@@ -133,7 +143,8 @@ class YandexSmenaApiClient implements YandexSmenaApiClientInterface
                 "Yandex.Smena worker error [{$status}]: ".($response?->body() ?? ''),
                 $status,
                 $e,
-                $response?->json() ?? []
+                $response?->json() ?? [],
+                $this->resolveRetryAfter($response?->header('Retry-After'))
             );
         }
     }
@@ -178,5 +189,33 @@ class YandexSmenaApiClient implements YandexSmenaApiClientInterface
         $seconds = RateLimiter::availableIn(self::POLL_LIMIT);
         Log::channel('single')->warning('Yandex.Smena poll rate limit hit', ['sleep' => $seconds]);
         sleep($seconds);
+    }
+
+    private function throttleWorker(): void
+    {
+        // 100 requests per minute.
+        if (! RateLimiter::tooManyAttempts(self::WORKER_LIMIT, 100)) {
+            RateLimiter::hit(self::WORKER_LIMIT, 60);
+
+            return;
+        }
+
+        $seconds = RateLimiter::availableIn(self::WORKER_LIMIT);
+        Log::channel('single')->warning('Yandex.Smena worker rate limit hit', ['sleep' => $seconds]);
+        sleep($seconds);
+    }
+
+    private function resolveRetryAfter(?string $header): ?int
+    {
+        if ($header === null || $header === '') {
+            return null;
+        }
+
+        if (is_numeric($header)) {
+            return (int) $header;
+        }
+
+        // Retry-After may also be an HTTP-date; we do not parse dates here.
+        return null;
     }
 }

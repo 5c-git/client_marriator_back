@@ -95,11 +95,9 @@ class SmenaShiftLifecycleService
         ];
 
         if (! $isAbsent) {
-            if ($factLength === null) {
-                throw new InvalidArgumentException('fact_length is required when is_absent is false');
+            if ($factLength !== null) {
+                $payload['fact_length'] = $factLength;
             }
-
-            $payload['fact_length'] = $factLength;
 
             if ($factRestLength !== null) {
                 $payload['fact_rest_length'] = $factRestLength;

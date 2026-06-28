@@ -7,6 +7,12 @@ use Modules\YandexSmena\Models\SmenaShift;
 
 class WithdrawWorkerHandler implements SmenaEventHandlerInterface
 {
+    private const FAVORITE_REASONS = [
+        'favorite_not_found',
+        'favorite_not_confirmed',
+        'favorite_has_intersection',
+    ];
+
     public function handle(array $event): void
     {
         $shift = $this->resolveShift($event['entity_id'] ?? null);
@@ -15,7 +21,9 @@ class WithdrawWorkerHandler implements SmenaEventHandlerInterface
             return;
         }
 
-        $workerId = $event['payload']['worker_id'] ?? null;
+        $payload = $event['payload'] ?? [];
+        $workerId = $payload['worker_id'] ?? null;
+        $reason = $payload['reason'] ?? null;
 
         if ($workerId === null) {
             return;
@@ -26,7 +34,20 @@ class WithdrawWorkerHandler implements SmenaEventHandlerInterface
             ->where('external_worker_id', $workerId)
             ->update(['status' => 'withdrawn']);
 
-        $shift->update(['external_status' => 'available']);
+        $status = $this->resolveShiftStatus($shift, $reason);
+
+        $shift->update(['external_status' => $status]);
+    }
+
+    private function resolveShiftStatus(SmenaShift $shift, ?string $reason): string
+    {
+        $favoritesOnly = $shift->payload['favorites_only'] ?? false;
+
+        if ($favoritesOnly && in_array($reason, self::FAVORITE_REASONS, true)) {
+            return 'canceled';
+        }
+
+        return 'available';
     }
 
     private function resolveShift(?string $entityId): ?SmenaShift

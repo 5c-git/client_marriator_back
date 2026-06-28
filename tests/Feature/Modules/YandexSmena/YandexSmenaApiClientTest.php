@@ -69,6 +69,24 @@ class YandexSmenaApiClientTest extends TestCase
         $this->assertFalse($result['has_next']);
     }
 
+    public function test_poll_events_supports_event_type_filter(): void
+    {
+        Http::fake([
+            'https://smena.yandex.ru/api/v1/events/poll*' => Http::response([
+                'events' => [],
+                'has_next' => false,
+            ], 200),
+        ]);
+
+        $client = new YandexSmenaApiClient('https://smena.yandex.ru', 'test-token');
+        $client->pollEvents(null, 50, ['smena.shift.signup_worker', 'smena.event.result']);
+
+        Http::assertSent(function ($request) {
+            return str_starts_with($request->url(), 'https://smena.yandex.ru/api/v1/events/poll')
+                && $request['event_type'] === ['smena.shift.signup_worker', 'smena.event.result'];
+        });
+    }
+
     public function test_get_worker_returns_personal_data(): void
     {
         Http::fake([

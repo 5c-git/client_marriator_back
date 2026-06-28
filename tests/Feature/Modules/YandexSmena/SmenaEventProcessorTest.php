@@ -143,6 +143,42 @@ class SmenaEventProcessorTest extends TestCase
         $this->assertSame('withdrawn', $candidate->status);
     }
 
+    public function test_withdraw_worker_favorite_not_found_cancels_shift(): void
+    {
+        Http::fake([
+            'https://smena.yandex.ru/api/v1/events/poll*' => Http::response([
+                'events' => [
+                    [
+                        'event_id' => 'event-fav',
+                        'event_type' => 'smena.shift.withdraw_worker',
+                        'event_ts' => '2026-01-24T09:05:00Z',
+                        'entity_type' => 'shift',
+                        'entity_id' => 'shift-001',
+                        'payload' => [
+                            'worker_id' => 'worker-42',
+                            'is_favorite' => true,
+                            'reason' => 'favorite_not_found',
+                        ],
+                    ],
+                ],
+                'has_next' => false,
+            ], 200),
+        ]);
+
+        $shift = $this->createShift();
+        $shift->update(['payload' => ['favorites_only' => true]]);
+        SmenaCandidate::create([
+            'yandex_smena_shift_id' => $shift->id,
+            'external_worker_id' => 'worker-42',
+            'status' => 'pending',
+        ]);
+
+        app(SmenaEventProcessor::class)->run();
+
+        $shift->refresh();
+        $this->assertSame('canceled', $shift->external_status);
+    }
+
     public function test_event_result_updates_source_log_and_shift_status(): void
     {
         $shift = $this->createShift();
