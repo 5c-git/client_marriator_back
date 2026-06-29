@@ -44,6 +44,15 @@ Read these files explicitly when the task touches the related domain:
 
 </foundation-rules>
 
+<communication>
+
+## Communication Language
+
+- All answers, clarifications, plans, and summaries must be in **Russian**.
+- Code, file paths, identifiers, commands, and technical terms remain in their original form.
+
+</communication>
+
 <working-mode>
 
 ## Working Mode
