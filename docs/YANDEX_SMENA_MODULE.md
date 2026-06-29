@@ -205,9 +205,51 @@ When `smena.shift.signup_worker` arrives:
 |---|---|
 | Site | `Place` (`directory_place`) |
 | Profession | `ViewActivities` (`directory_view_activities`) |
-| Payment | Config entry / `SmenaPayment` |
+| Payment | `SmenaProfession.yandex_smena_payment_id` → `SmenaPayment` |
 | Shift | `OrderActivities` or `TaskActivity` |
 | Candidate | external worker |
+
+## Integration Endpoint
+
+`POST /api/yandex-smena/publish-shift`
+
+Middleware: `auth:api`, `scope:personalArea`, role `manager` or `supervisor`.
+
+Payload (one of the pairs):
+
+```json
+{
+  "orderId": 1,
+  "orderActivityId": 2
+}
+```
+
+or
+
+```json
+{
+  "taskId": 1,
+  "taskActivityId": 2
+}
+```
+
+### What happens
+
+1. `PublishYandexSmenaShiftRequest` validates ownership and activity linkage.
+2. `PublishYandexSmenaShiftController` loads the activity.
+3. `SmenaShiftFactory::fromActivity()` resolves:
+   - `SmenaSite` from `Order.place_id` / `Task.place_id`;
+   - `SmenaProfession` from `activity.view_activity_id`;
+   - `SmenaPayment` from `SmenaProfession.yandex_smena_payment_id`.
+4. It computes `start_at`, `length_min`, `rest_length_min` (from profession mapping).
+5. It creates `activity.count` separate `SmenaShift` records, each with a unique `entity_id`.
+6. Each shift is published via `SmenaShiftPublisher::create()` → `provider.shift.create`.
+
+### Required mapping setup
+
+- `yandex_smena_sites`: `place_id` → Yandex `site_id`.
+- `yandex_smena_professions`: `view_activity_id` → Yandex `profession_id`; set `rest_length_min`; set `yandex_smena_payment_id`.
+- `yandex_smena_payments`: Yandex `payment_id`.
 
 ## Queue
 
@@ -225,6 +267,5 @@ Run module tests:
 
 ## Next Steps
 
-- Wire shift publishing into `OrderActivities` / `TaskActivity` workflows.
 - Build admin UI for mapping management and event log inspection.
 - Add retry/monitoring for permanently failed outgoing events.

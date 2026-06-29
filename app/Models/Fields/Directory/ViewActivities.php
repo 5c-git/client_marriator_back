@@ -5,10 +5,8 @@ namespace App\Models\Fields\Directory;
 use App\Enum\Fields\FieldsTypeEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Fields\Directory\Project;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 
 class ViewActivities extends Model implements ModelDirectoryInterface
@@ -16,9 +14,11 @@ class ViewActivities extends Model implements ModelDirectoryInterface
     use HasFactory;
 
     public static int $fieldsTypeEnum = FieldsTypeEnum::photoCheckbox->value;
+
     public static string $uuid = 'directory_view_activities';
 
     protected $table = 'directory_view_activities';
+
     protected $fillable = [
         'uuid',
         'name',
@@ -37,23 +37,24 @@ class ViewActivities extends Model implements ModelDirectoryInterface
         'external_id_verme',
         'external_id_x5',
         'external_id_timeBook',
-        'standard'
+        'standard',
     ];
 
     public $timestamps = false;
 
-    public function getDataDirectory(bool $allFields = false,array $filterData = []){
+    public function getDataDirectory(bool $allFields = false, array $filterData = [])
+    {
         $unset = false;
         $parentFields = json_decode($this->parentFields, true);
-        if(!empty($parentFields)) {
+        if (! empty($parentFields)) {
             foreach ($parentFields as $parentField) {
                 $unset = false;
                 foreach ($parentField as $oneField) {
-                    if (!in_array($oneField, $filterData,true)) {
+                    if (! in_array($oneField, $filterData, true)) {
                         $unset = true;
                     }
                 }
-                if (!$unset) {
+                if (! $unset) {
                     break;
                 }
             }
@@ -61,26 +62,26 @@ class ViewActivities extends Model implements ModelDirectoryInterface
         if ($unset) {
             return [];
         }
-        if(!$allFields) {
+        if (! $allFields) {
             return $this->uuid;
-        }else{
+        } else {
             return $this->toArray();
         }
     }
 
     public static function upsertFromImport(array $data): void
     {
-        foreach (array_chunk($data,1000) as $dataChunk) {
+        foreach (array_chunk($data, 1000) as $dataChunk) {
             $dataForUpsert = [];
             foreach ($dataChunk as $item) {
                 $name = $item['name'];
                 if (empty($name)) {
                     $name = $item['code'];
                 }
-                $dataForUpsert[] = ['uuid' => $item['id'], 'name' => $name,'active'=>true];
+                $dataForUpsert[] = ['uuid' => $item['id'], 'name' => $name, 'active' => true];
             }
             self::truncate();
-            self::upsert($dataForUpsert, ['uuid'], ['name','active']);
+            self::upsert($dataForUpsert, ['uuid'], ['name', 'active']);
         }
     }
 
@@ -91,7 +92,7 @@ class ViewActivities extends Model implements ModelDirectoryInterface
             'directory_project_directory_view_activities',
             'view_activities_id',
             'project_id'
-        )->withPivot( 'price');
+        )->withPivot('price');
     }
 
     public function belongsViewActivities(): BelongsToMany
@@ -126,7 +127,7 @@ class ViewActivities extends Model implements ModelDirectoryInterface
 
     public function standardDirectory(): BelongsTo
     {
-        return $this->belongsTo(Standard::class, 'standard','uuid');
+        return $this->belongsTo(Standard::class, 'standard', 'uuid');
     }
 
     public static function getDefault(): string|array
@@ -136,6 +137,6 @@ class ViewActivities extends Model implements ModelDirectoryInterface
 
     public static function getAllData(): Collection
     {
-        return self::query()->where('active',true)->get();
+        return self::query()->where('active', true)->get();
     }
 }

@@ -10,6 +10,7 @@ use Modules\YandexSmena\Services\Handlers\EventResultHandler;
 use Modules\YandexSmena\Services\Handlers\SignupWorkerHandler;
 use Modules\YandexSmena\Services\Handlers\WithdrawWorkerHandler;
 use Modules\YandexSmena\Services\SmenaEventProcessor;
+use Modules\YandexSmena\Services\SmenaShiftFactory;
 use Modules\YandexSmena\Services\SmenaShiftLifecycleService;
 use Modules\YandexSmena\Services\SmenaShiftPublisher;
 use Modules\YandexSmena\Services\SmenaWorkerInteractionService;
@@ -62,6 +63,12 @@ class YandexSmenaServiceProvider extends ServiceProvider
             return new SmenaShiftPublisher(
                 $app->make(YandexSmenaEventPublisher::class),
                 $app->make(\Modules\YandexSmena\Services\Mappers\ShiftMapper::class)
+            );
+        });
+
+        $this->app->singleton(SmenaShiftFactory::class, function ($app) {
+            return new SmenaShiftFactory(
+                $app->make(SmenaShiftPublisher::class)
             );
         });
 

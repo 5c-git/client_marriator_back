@@ -46,17 +46,19 @@ Snapshot of the Marriator project state and recent implementation work.
 - `app/Modules/YandexSmena/Services/YandexSmenaApiClient.php`
 - `app/Modules/YandexSmena/Services/YandexSmenaEventPublisher.php`
 - `app/Modules/YandexSmena/Services/SmenaShiftPublisher.php`
+- `app/Modules/YandexSmena/Services/SmenaShiftFactory.php`
 - `app/Modules/YandexSmena/Services/SmenaShiftLifecycleService.php`
 - `app/Modules/YandexSmena/Services/SmenaWorkerInteractionService.php`
 - `app/Modules/YandexSmena/Services/SmenaEventProcessor.php`
+- `app/Modules/YandexSmena/Http/Controllers/PublishYandexSmenaShiftController.php`
+- `app/Modules/YandexSmena/Http/Requests/PublishYandexSmenaShiftRequest.php`
 - `app/Modules/YandexSmena/Console/Commands/PollYandexSmenaEventsCommand.php`
 
 **Tests:** `tests/Feature/Modules/YandexSmena/`.
 
 **Next steps:**
-1. Wire shift publishing into `OrderActivities` / `TaskActivity` workflows.
-2. Build admin UI for mapping management and event log inspection.
-3. Add retry/monitoring for permanently failed outgoing events.
+1. Build admin UI for mapping management and event log inspection.
+2. Add retry/monitoring for permanently failed outgoing events.
 
 ### 3. User External Sync (`app/Services/UserExternalSync/`)
 
